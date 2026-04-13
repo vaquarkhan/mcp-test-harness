@@ -14,7 +14,7 @@ Short record of what we chose and why.
 
 **Decision:** Depend on `mcp-bastion-python` from PyPI as an optional security layer. Security middleware (prompt injection, PII redaction, RBAC, rate limits, policy-as-code) is a separate concern handled by [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion).
 
-**Why:** MCPLint focuses on testing. Security is a separate project with a separate lifecycle. MCPLint can pin it as a dependency for teams that need both.
+**Why:** MCP Test Harness focuses on testing. Security is a separate project with a separate lifecycle. MCP Test Harness can pin it as a dependency for teams that need both.
 
 ## 3. Async-first architecture
 

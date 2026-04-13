@@ -14,11 +14,11 @@ This tutorial walks you through testing an MCP server from scratch. By the end y
 
 ---
 
-## 1. Install MCPLint
+## 1. Install MCP Test Harness
 
 ```bash
-git clone <your-repo-url>/MCPLint.git
-cd MCPLint
+git clone https://github.com/vaquarkhan/mcp-test-harness.git
+cd mcp-test-harness
 
 python -m venv .venv
 

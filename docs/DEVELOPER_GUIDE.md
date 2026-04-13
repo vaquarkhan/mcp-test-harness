@@ -1,9 +1,9 @@
-# MCPLint Developer Guide
+# MCP Test Harness Developer Guide
 
 Author: Vaquar Khan -- https://github.com/vaquarkhan
 
 This guide explains how to add automated MCP server testing to your project
-using MCPLint. It covers everything from initial setup to advanced patterns.
+using MCP Test Harness. It covers everything from initial setup to advanced patterns.
 
 ---
 
@@ -19,7 +19,7 @@ and you want automated tests that:
 
 ---
 
-## Part 1: Adding MCPLint to your project
+## Part 1: Adding MCP Test Harness to your project
 
 ### Option A: Install from pip (when published)
 
@@ -32,8 +32,8 @@ pip install mcplint
 ```bash
 # Add to your requirements.txt or pyproject.toml
 # For now, clone and install in editable mode:
-git clone <mcplint-repo-url>
-pip install -e "./MCPLint[dev]"
+git clone https://github.com/vaquarkhan/mcp-test-harness.git
+pip install -e "./mcp-test-harness[dev]"
 ```
 
 ### Option C: Add as a dependency in your pyproject.toml
@@ -61,7 +61,7 @@ After setup, your project should look like this:
 ```
 your-mcp-server/
 +-- your_server.py              # your MCP server code
-+-- mcp-test.yaml               # MCPLint configuration
++-- mcp-test.yaml               # MCP Test Harness configuration
 +-- tests/
 |   +-- test_tools.py           # tool call tests
 |   +-- test_resources.py       # resource read tests

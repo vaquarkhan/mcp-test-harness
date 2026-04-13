@@ -1,4 +1,4 @@
-"""MCPLint -- workspace shim that pins MCP-Bastion so `pip install -e .` pulls it automatically."""
+"""MCP Test Harness -- workspace shim that pins MCP-Bastion so `pip install -e .` pulls it automatically."""
 
 from __future__ import annotations
 

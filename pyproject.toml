@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "mcplint"
 version = "0.1.0"
-description = "MCPLint -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting. License: custom non-commercial terms (see LICENSE); PyPI classifier Other/Proprietary."
+description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting. License: custom non-commercial terms (see LICENSE); PyPI classifier Other/Proprietary."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
@@ -44,9 +44,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/vaquarkhan/MCPLint"
-Repository = "https://github.com/vaquarkhan/MCPLint"
-Documentation = "https://github.com/vaquarkhan/MCPLint#readme"
+Homepage = "https://github.com/vaquarkhan/mcp-test-harness"
+Repository = "https://github.com/vaquarkhan/mcp-test-harness"
+Documentation = "https://github.com/vaquarkhan/mcp-test-harness#readme"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mcplint", "src/mcp_test_harness"]

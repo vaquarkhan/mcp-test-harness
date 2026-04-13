@@ -1,12 +1,12 @@
-# MCPLint
+# MCP Test Harness
 
 **Automated Testing Framework for Model Context Protocol (MCP) Servers**
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
-MCPLint is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically -- replacing manual validation through the MCP Inspector.
+MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically -- replacing manual validation through the MCP Inspector.
 
-No existing tool lets you programmatically test MCP servers in CI/CD pipelines. MCPLint fills that gap.
+No existing tool lets you programmatically test MCP servers in CI/CD pipelines. MCP Test Harness fills that gap.
 
 For the complete API reference, see [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md).
 
@@ -29,9 +29,9 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | GitHub Action | One-line CI integration with artifact upload |
 | Standalone binary | Single binary via PyInstaller, no Python required on target |
 
-## Why MCPLint (vs MCP Inspector)
+## Why MCP Test Harness (vs MCP Inspector)
 
-| | MCP Inspector | MCPLint |
+| | MCP Inspector | MCP Test Harness |
 |---|---|---|
 | Execution | Manual, browser-based clicking | Automated CLI, runs in CI |
 | CI/CD integration | Not possible | Native (exit codes, JUnit XML, GitHub Action) |
@@ -50,8 +50,8 @@ pip install mcplint
 Or from source:
 
 ```bash
-git clone https://github.com/vaquarkhan/MCPLint.git
-cd MCPLint
+git clone https://github.com/vaquarkhan/mcp-test-harness.git
+cd mcp-test-harness
 python -m venv .venv && source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 pip install -e ".[dev]"
 mcp-test --version
@@ -300,7 +300,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Test MCP Server
-        uses: vaquarkhan/MCPLint/.github/actions/mcp-test@main
+        uses: vaquarkhan/mcp-test-harness/.github/actions/mcp-test@main
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
@@ -318,7 +318,7 @@ jobs:
 
 ## Plugins
 
-Extend MCPLint with custom assertions, fixtures, reporters, and transports:
+Extend MCP Test Harness with custom assertions, fixtures, reporters, and transports:
 
 ```python
 from mcp_test_harness.plugins import PluginContext
@@ -364,17 +364,17 @@ No Python required on the target machine. Cross-platform: Linux, macOS, Windows.
 
 ## Security Testing with MCP-Bastion
 
-MCPLint tests that your MCP server works correctly. For production security, pair it with [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) -- an active defense middleware that protects MCP servers at runtime.
+MCP Test Harness tests that your MCP server works correctly. For production security, pair it with [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) -- an active defense middleware that protects MCP servers at runtime.
 
 | Concern | Tool | What it does |
 |---------|------|-------------|
-| Functional testing | **MCPLint** | Automated tests for tools, resources, prompts, capabilities |
+| Functional testing | **MCP Test Harness** | Automated tests for tools, resources, prompts, capabilities |
 | Prompt injection defense | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Blocks jailbreaks via Meta PromptGuard (local, under 5ms) |
 | PII redaction | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Masks SSN, email, phone via Microsoft Presidio |
 | Rate limiting | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Token budgets, iteration caps, denial-of-wallet protection |
 | RBAC | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Tool-level permissions by role |
-| Schema validation | **MCPLint** | Validates JSON-RPC responses against MCP spec |
-| Regression detection | **MCPLint** | Snapshot testing catches unintended changes |
+| Schema validation | **MCP Test Harness** | Validates JSON-RPC responses against MCP spec |
+| Regression detection | **MCP Test Harness** | Snapshot testing catches unintended changes |
 | Audit logging | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Logs who, what, when, blocked/allowed |
 
 Use both together for a complete MCP server development workflow:
@@ -461,7 +461,7 @@ redact_patterns: []                  # regex patterns to redact from verbose out
 ## Project Structure
 
 ```
-MCPLint/
+mcp-test-harness/
 +-- pyproject.toml
 +-- mcp_test_harness.spec           # PyInstaller config
 +-- src/
@@ -502,7 +502,7 @@ MCPLint/
 ## Testing
 
 ```bash
-# Run all MCPLint tests
+# Run all MCP Test Harness tests
 python -m pytest tests/ -q
 
 # Quick offline check (no heavy deps)
@@ -526,7 +526,7 @@ python -m coverage report --show-missing
 
 ## Framework Integration Packages
 
-MCPLint provides framework-specific testing helpers. Each package auto-installs `mcplint` as a dependency:
+MCP Test Harness provides framework-specific testing helpers. Each package auto-installs `mcplint` as a dependency:
 
 | Package | Tests for | Install |
 |---------|-----------|---------|

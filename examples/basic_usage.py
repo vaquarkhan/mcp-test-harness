@@ -16,7 +16,7 @@ def check_mcplint() -> None:
     """Check that MCP-Bastion dependencies are installed via mcplint."""
     from mcplint import bastion_version, bedrock_version
 
-    print("--- MCPLint: Dependency Check ---\n")
+    print("--- MCP Test Harness: Dependency Check ---\n")
 
     bv = bastion_version()
     print(f"  mcp-bastion-python : {bv}")
