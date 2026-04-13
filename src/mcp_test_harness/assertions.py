@@ -353,3 +353,138 @@ async def assert_snapshot(
             f"Snapshot mismatch for '{snapshot_name}'",
             diff=diff,
         )
+
+
+# ---------------------------------------------------------------------------
+# assert_tool_list  (Feature 1)
+# ---------------------------------------------------------------------------
+
+
+async def assert_tool_list(
+    session: Any,
+    expected_tools: list[str],
+) -> None:
+    """Assert the server exposes at least the given tool names.
+
+    The *expected_tools* list is checked as a **subset** of the actual
+    tool names -- extra tools on the server side are allowed.
+
+    Raises
+    ------
+    MCPAssertionError
+        When any expected tool name is missing from the server's tool list.
+    """
+    result = await session.list_tools()
+    tools = getattr(result, "tools", None) or []
+    actual_names = {getattr(t, "name", t) for t in tools}
+    expected_set = set(expected_tools)
+    missing = expected_set - actual_names
+    if missing:
+        diff = _diff_values(sorted(expected_set), sorted(actual_names))
+        raise MCPAssertionError(
+            f"Missing tools: {sorted(missing)}",
+            diff=diff,
+        )
+
+
+# ---------------------------------------------------------------------------
+# assert_resource_list  (Feature 1)
+# ---------------------------------------------------------------------------
+
+
+async def assert_resource_list(
+    session: Any,
+    expected_uris: list[str],
+) -> None:
+    """Assert the server exposes at least the given resource URIs.
+
+    The *expected_uris* list is checked as a **subset** of the actual
+    resource URIs -- extra resources on the server side are allowed.
+
+    Raises
+    ------
+    MCPAssertionError
+        When any expected URI is missing from the server's resource list.
+    """
+    result = await session.list_resources()
+    resources = getattr(result, "resources", None) or []
+    actual_uris = {str(getattr(r, "uri", r)) for r in resources}
+    expected_set = set(expected_uris)
+    missing = expected_set - actual_uris
+    if missing:
+        diff = _diff_values(sorted(expected_set), sorted(actual_uris))
+        raise MCPAssertionError(
+            f"Missing resources: {sorted(missing)}",
+            diff=diff,
+        )
+
+
+# ---------------------------------------------------------------------------
+# assert_tool_rejects  (Feature 2)
+# ---------------------------------------------------------------------------
+
+
+async def assert_tool_rejects(
+    session: Any,
+    tool_name: str,
+    arguments: dict,
+    error_substring: str | None = None,
+) -> None:
+    """Assert that a tool call returns an error (isError=True or raises).
+
+    Raises
+    ------
+    MCPAssertionError
+        When the tool call succeeds without error.
+    """
+    try:
+        result = await session.call_tool(tool_name, arguments)
+    except Exception as exc:
+        # The call raised -- that counts as rejection.
+        if error_substring is not None and error_substring not in str(exc):
+            raise MCPAssertionError(
+                f"Tool '{tool_name}' raised, but message does not contain "
+                f"'{error_substring}': {exc}"
+            )
+        return
+
+    # Check for isError in content items
+    content_items = getattr(result, "content", None) or []
+    for item in content_items:
+        is_error = getattr(item, "isError", False) or (
+            isinstance(item, dict) and item.get("isError", False)
+        )
+        if is_error:
+            if error_substring is not None:
+                text = getattr(item, "text", None) or (
+                    item.get("text") if isinstance(item, dict) else str(item)
+                )
+                if error_substring not in (text or ""):
+                    raise MCPAssertionError(
+                        f"Tool '{tool_name}' returned error, but message does "
+                        f"not contain '{error_substring}': {text}"
+                    )
+            return
+
+    raise MCPAssertionError(
+        f"Expected tool '{tool_name}' to return an error, but it succeeded"
+    )
+
+
+# ---------------------------------------------------------------------------
+# assert_invalid_tool  (Feature 2)
+# ---------------------------------------------------------------------------
+
+
+async def assert_invalid_tool(
+    session: Any,
+    tool_name: str,
+) -> None:
+    """Assert that calling a non-existent tool returns an error.
+
+    Raises
+    ------
+    MCPAssertionError
+        When the tool call succeeds without error.
+    """
+    await assert_tool_rejects(session, tool_name, {})

@@ -319,3 +319,98 @@ class TestMainSync:
     def test_main_returns_int(self):
         code = main(["--version"])
         assert code == 0
+
+
+# ---------------------------------------------------------------------------
+# --list flag
+# ---------------------------------------------------------------------------
+
+
+class TestListFlag:
+    def test_list_flag_parsed(self):
+        parser = _build_parser()
+        args = parser.parse_args(["--list"])
+        assert args.list is True
+
+    def test_list_default_false(self):
+        parser = _build_parser()
+        args = parser.parse_args([])
+        assert args.list is False
+
+    @pytest.mark.asyncio
+    async def test_list_prints_tests_and_returns_0(self, tmp_path, capsys):
+        test_file = tmp_path / "test_example.py"
+        test_file.write_text(
+            "async def test_alpha(): pass\nasync def test_beta(): pass\n"
+        )
+
+        code = await _async_main([
+            "--server-command", "echo hi",
+            "--list",
+            str(tmp_path),
+        ])
+
+        assert code == 0
+        captured = capsys.readouterr()
+        assert "test_alpha" in captured.out
+        assert "test_beta" in captured.out
+        assert "::" in captured.out
+
+    @pytest.mark.asyncio
+    async def test_list_no_tests_returns_0(self, tmp_path, capsys):
+        empty_dir = tmp_path / "empty"
+        empty_dir.mkdir()
+
+        code = await _async_main([
+            "--server-command", "echo hi",
+            "--list",
+            str(empty_dir),
+        ])
+
+        assert code == 0
+        captured = capsys.readouterr()
+        assert "No tests discovered" in captured.out
+
+
+# ---------------------------------------------------------------------------
+# --report-format html
+# ---------------------------------------------------------------------------
+
+
+class TestReportFormatHTML:
+    def test_html_choice_accepted(self):
+        parser = _build_parser()
+        args = parser.parse_args(["--report-format", "html"])
+        assert args.report_format == "html"
+
+    @pytest.mark.asyncio
+    async def test_html_report_written(self, tmp_path):
+        test_file = tmp_path / "test_h.py"
+        test_file.write_text("async def test_h(): pass\n")
+        report_path = tmp_path / "report.html"
+
+        mock_results = SessionResults(
+            test_results=[],
+            total_duration_ms=50.0,
+            server_capabilities={},
+            protocol_version="",
+            harness_version="0.1.0",
+            passed=1, failed=0, errored=0, skipped=0, timed_out=0,
+        )
+
+        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+            instance = MockSched.return_value
+            instance.run_sequential = AsyncMock(return_value=mock_results)
+
+            code = await _async_main([
+                "--server-command", "echo hi",
+                "--report-format", "html",
+                "--report-output", str(report_path),
+                str(tmp_path),
+            ])
+
+        assert code == 0
+        assert report_path.exists()
+        content = report_path.read_text()
+        assert "<html" in content
+        assert "MCP Test Report" in content

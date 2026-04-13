@@ -35,8 +35,9 @@ def marker(
     tags: list[str] | None = None,
     skip: bool = False,
     reason: str | None = None,
+    **kwargs: Any,
 ) -> Callable[[Callable], Callable]:
-    """Attach test markers (timeout, retry, tags, skip) to a test function.
+    """Attach test markers (timeout, retry, tags, skip, order, ...) to a test function.
 
     Usage::
 
@@ -44,6 +45,10 @@ def marker(
 
         @marker(timeout=10, retry=3, tags=["slow"])
         async def test_something(mcp_server):
+            ...
+
+        @marker(order=1)
+        async def test_first(mcp_server):
             ...
     """
 
@@ -60,6 +65,9 @@ def marker(
             markers["skip"] = True
         if reason is not None:
             markers["reason"] = reason
+        # Store any extra keyword arguments (e.g. order)
+        for key, value in kwargs.items():
+            markers[key] = value
         setattr(func, _MARKER_ATTR, markers)
         return func
 

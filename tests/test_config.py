@@ -325,3 +325,58 @@ class TestValidateConfigFile:
         # TOML errors won't have line numbers
         transport_errs = [e for e in errs if "transport" in e.message.lower()]
         assert transport_errs[0].line is None
+
+
+# ---------------------------------------------------------------------------
+# Environment variable expansion
+# ---------------------------------------------------------------------------
+
+import os
+
+from mcp_test_harness.config import _expand_env_vars
+
+
+class TestExpandEnvVars:
+    def test_simple_string_replacement(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("MY_CMD", "python server.py")
+        assert _expand_env_vars("${MY_CMD}") == "python server.py"
+
+    def test_missing_var_becomes_empty(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("NONEXISTENT_VAR_XYZ", raising=False)
+        assert _expand_env_vars("${NONEXISTENT_VAR_XYZ}") == ""
+
+    def test_partial_replacement(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("HOST", "localhost")
+        assert _expand_env_vars("http://${HOST}:8080") == "http://localhost:8080"
+
+    def test_multiple_vars(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("A", "hello")
+        monkeypatch.setenv("B", "world")
+        assert _expand_env_vars("${A} ${B}") == "hello world"
+
+    def test_dict_recursion(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("CMD", "srv")
+        data = {"server": {"command": "${CMD}"}, "other": 42}
+        result = _expand_env_vars(data)
+        assert result == {"server": {"command": "srv"}, "other": 42}
+
+    def test_list_recursion(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("DIR", "integration/")
+        data = ["${DIR}", "unit/"]
+        result = _expand_env_vars(data)
+        assert result == ["integration/", "unit/"]
+
+    def test_non_string_passthrough(self) -> None:
+        assert _expand_env_vars(42) == 42
+        assert _expand_env_vars(True) is True
+        assert _expand_env_vars(None) is None
+
+    def test_load_config_expands_env(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setenv("TEST_SERVER_CMD", "python my_server.py")
+        cfg_file = tmp_path / "mcp-test.yaml"
+        cfg_file.write_text("server:\n  command: ${TEST_SERVER_CMD}\n")
+        ns = _ns(config=str(cfg_file))
+        cfg = load_config(ns)
+        assert cfg.server_command == "python my_server.py"

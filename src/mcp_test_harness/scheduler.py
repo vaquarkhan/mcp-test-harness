@@ -64,6 +64,9 @@ class HarnessScheduler:
         capabilities: dict = {}
         protocol_version = ""
 
+        # Sort by order marker (lower runs first, default 0)
+        test_cases = sorted(test_cases, key=lambda tc: tc.markers.get("order", 0))
+
         lifecycle = ServerLifecycleManager()
         server: ManagedServer | None = None
 
@@ -214,6 +217,9 @@ class HarnessScheduler:
         results: list[CaseResult] = []
         capabilities: dict = {}
         protocol_version = ""
+
+        # Sort by order marker (lower runs first, default 0)
+        test_cases = sorted(test_cases, key=lambda tc: tc.markers.get("order", 0))
 
         lifecycle = ServerLifecycleManager()
         server: ManagedServer | None = None

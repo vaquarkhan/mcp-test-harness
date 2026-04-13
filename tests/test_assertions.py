@@ -335,3 +335,236 @@ class TestAssertSnapshot:
         )
         data = json.loads(snap.read_text())
         assert data == {"new": True}
+
+
+# ---------------------------------------------------------------------------
+# Extended FakeSession for list operations
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class FakeTool:
+    name: str = ""
+
+
+@dataclass
+class FakeToolListResult:
+    tools: list[FakeTool] = field(default_factory=list)
+
+
+@dataclass
+class FakeResource:
+    uri: str = ""
+
+
+@dataclass
+class FakeResourceListResult:
+    resources: list[FakeResource] = field(default_factory=list)
+
+
+class FakeSessionExtended(FakeSession):
+    """Extended fake session with list_tools / list_resources support."""
+
+    def __init__(
+        self,
+        tool_result: FakeToolResult | None = None,
+        resource_result: FakeResourceResult | None = None,
+        prompt_result: FakePromptResult | None = None,
+        capabilities: dict[str, Any] | None = None,
+        tool_list_result: FakeToolListResult | None = None,
+        resource_list_result: FakeResourceListResult | None = None,
+        call_tool_error: Exception | None = None,
+    ) -> None:
+        super().__init__(tool_result, resource_result, prompt_result, capabilities)
+        self._tool_list_result = tool_list_result or FakeToolListResult()
+        self._resource_list_result = resource_list_result or FakeResourceListResult()
+        self._call_tool_error = call_tool_error
+
+    async def list_tools(self) -> FakeToolListResult:
+        return self._tool_list_result
+
+    async def list_resources(self) -> FakeResourceListResult:
+        return self._resource_list_result
+
+    async def call_tool(self, name: str, arguments: dict[str, Any]) -> FakeToolResult:
+        if self._call_tool_error is not None:
+            raise self._call_tool_error
+        return self._tool_result
+
+
+from mcp_test_harness.assertions import (
+    assert_tool_list,
+    assert_resource_list,
+    assert_tool_rejects,
+    assert_invalid_tool,
+)
+
+
+# ---------------------------------------------------------------------------
+# assert_tool_list
+# ---------------------------------------------------------------------------
+
+
+class TestAssertToolList:
+    def test_pass_exact_match(self) -> None:
+        session = FakeSessionExtended(
+            tool_list_result=FakeToolListResult(
+                tools=[FakeTool(name="echo"), FakeTool(name="add")]
+            )
+        )
+        asyncio.run(assert_tool_list(session, ["echo", "add"]))
+
+    def test_pass_subset(self) -> None:
+        session = FakeSessionExtended(
+            tool_list_result=FakeToolListResult(
+                tools=[FakeTool(name="echo"), FakeTool(name="add"), FakeTool(name="mul")]
+            )
+        )
+        asyncio.run(assert_tool_list(session, ["echo"]))
+
+    def test_fail_missing_tool(self) -> None:
+        session = FakeSessionExtended(
+            tool_list_result=FakeToolListResult(
+                tools=[FakeTool(name="echo")]
+            )
+        )
+        with pytest.raises(MCPAssertionError, match="Missing tools"):
+            asyncio.run(assert_tool_list(session, ["echo", "missing_tool"]))
+
+    def test_pass_empty_expected(self) -> None:
+        session = FakeSessionExtended(
+            tool_list_result=FakeToolListResult(tools=[FakeTool(name="echo")])
+        )
+        asyncio.run(assert_tool_list(session, []))
+
+
+# ---------------------------------------------------------------------------
+# assert_resource_list
+# ---------------------------------------------------------------------------
+
+
+class TestAssertResourceList:
+    def test_pass_exact_match(self) -> None:
+        session = FakeSessionExtended(
+            resource_list_result=FakeResourceListResult(
+                resources=[FakeResource(uri="file:///a"), FakeResource(uri="file:///b")]
+            )
+        )
+        asyncio.run(assert_resource_list(session, ["file:///a", "file:///b"]))
+
+    def test_pass_subset(self) -> None:
+        session = FakeSessionExtended(
+            resource_list_result=FakeResourceListResult(
+                resources=[FakeResource(uri="file:///a"), FakeResource(uri="file:///b")]
+            )
+        )
+        asyncio.run(assert_resource_list(session, ["file:///a"]))
+
+    def test_fail_missing_uri(self) -> None:
+        session = FakeSessionExtended(
+            resource_list_result=FakeResourceListResult(
+                resources=[FakeResource(uri="file:///a")]
+            )
+        )
+        with pytest.raises(MCPAssertionError, match="Missing resources"):
+            asyncio.run(assert_resource_list(session, ["file:///a", "file:///missing"]))
+
+    def test_pass_empty_expected(self) -> None:
+        session = FakeSessionExtended(
+            resource_list_result=FakeResourceListResult(
+                resources=[FakeResource(uri="file:///a")]
+            )
+        )
+        asyncio.run(assert_resource_list(session, []))
+
+
+# ---------------------------------------------------------------------------
+# assert_tool_rejects
+# ---------------------------------------------------------------------------
+
+
+class TestAssertToolRejects:
+    def test_pass_when_tool_returns_error(self) -> None:
+        session = FakeSessionExtended(
+            tool_result=FakeToolResult(
+                content=[FakeContent(text="bad input", isError=True)]
+            )
+        )
+        asyncio.run(assert_tool_rejects(session, "bad_tool", {"x": 1}))
+
+    def test_pass_when_tool_raises(self) -> None:
+        session = FakeSessionExtended(
+            call_tool_error=RuntimeError("connection refused")
+        )
+        asyncio.run(assert_tool_rejects(session, "bad_tool", {}))
+
+    def test_fail_when_tool_succeeds(self) -> None:
+        session = FakeSessionExtended(
+            tool_result=FakeToolResult(
+                content=[FakeContent(text="ok", isError=False)]
+            )
+        )
+        with pytest.raises(MCPAssertionError, match="Expected tool.*to return an error"):
+            asyncio.run(assert_tool_rejects(session, "good_tool", {}))
+
+    def test_error_substring_match(self) -> None:
+        session = FakeSessionExtended(
+            tool_result=FakeToolResult(
+                content=[FakeContent(text="invalid argument: x", isError=True)]
+            )
+        )
+        asyncio.run(
+            assert_tool_rejects(session, "t", {"x": 1}, error_substring="invalid argument")
+        )
+
+    def test_error_substring_mismatch(self) -> None:
+        session = FakeSessionExtended(
+            tool_result=FakeToolResult(
+                content=[FakeContent(text="some error", isError=True)]
+            )
+        )
+        with pytest.raises(MCPAssertionError, match="does not contain"):
+            asyncio.run(
+                assert_tool_rejects(session, "t", {}, error_substring="not found")
+            )
+
+    def test_raises_with_substring_match(self) -> None:
+        session = FakeSessionExtended(
+            call_tool_error=RuntimeError("connection refused")
+        )
+        asyncio.run(
+            assert_tool_rejects(session, "t", {}, error_substring="connection")
+        )
+
+    def test_raises_with_substring_mismatch(self) -> None:
+        session = FakeSessionExtended(
+            call_tool_error=RuntimeError("connection refused")
+        )
+        with pytest.raises(MCPAssertionError, match="does not contain"):
+            asyncio.run(
+                assert_tool_rejects(session, "t", {}, error_substring="timeout")
+            )
+
+
+# ---------------------------------------------------------------------------
+# assert_invalid_tool
+# ---------------------------------------------------------------------------
+
+
+class TestAssertInvalidTool:
+    def test_pass_when_tool_errors(self) -> None:
+        session = FakeSessionExtended(
+            tool_result=FakeToolResult(
+                content=[FakeContent(text="unknown tool", isError=True)]
+            )
+        )
+        asyncio.run(assert_invalid_tool(session, "nonexistent_tool"))
+
+    def test_fail_when_tool_succeeds(self) -> None:
+        session = FakeSessionExtended(
+            tool_result=FakeToolResult(
+                content=[FakeContent(text="ok", isError=False)]
+            )
+        )
+        with pytest.raises(MCPAssertionError, match="Expected tool.*to return an error"):
+            asyncio.run(assert_invalid_tool(session, "actually_exists"))

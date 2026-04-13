@@ -19,6 +19,7 @@ from mcp_test_harness.config import load_config
 from mcp_test_harness.discovery import discover_tests
 from mcp_test_harness.plugins import PluginRegistry
 from mcp_test_harness.reporting import ConsoleReporter, JSONReporter, JUnitXMLReporter
+from mcp_test_harness.html_reporter import HTMLReporter
 from mcp_test_harness.scheduler import HarnessScheduler
 
 logger = logging.getLogger(__name__)
@@ -82,7 +83,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--report-format",
         dest="report_format",
         default=None,
-        choices=["json", "junit"],
+        choices=["json", "junit", "html"],
         help="Report output format",
     )
     parser.add_argument(
@@ -103,6 +104,12 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=False,
         help="Print version and exit",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        default=False,
+        help="List discovered tests and exit without running them",
     )
     parser.add_argument(
         "-k",
@@ -164,6 +171,13 @@ async def _async_main(argv: list[str] | None = None) -> int:
         print("No tests discovered.")
         return 0
 
+    # --list: print discovered test names and exit  (Feature 3)
+    if args.list:
+        for mod in modules:
+            for tc in mod.test_cases:
+                print(f"{mod.path}::{tc.name}")
+        return 0
+
     # Run tests via scheduler  (Req 13.1, 13.5)
     scheduler = HarnessScheduler()
     if config.parallel:
@@ -183,6 +197,8 @@ async def _async_main(argv: list[str] | None = None) -> int:
         report_text = JSONReporter().generate(results)
     elif config.report_format == "junit":
         report_text = JUnitXMLReporter().generate(results)
+    elif config.report_format == "html":
+        report_text = HTMLReporter().generate(results)
 
     # Write report to file if --report-output specified
     if report_text is not None and config.report_output:

@@ -128,6 +128,24 @@ def _parse_config_file(path: Path) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Environment variable expansion
+# ---------------------------------------------------------------------------
+
+
+def _expand_env_vars(data: Any) -> Any:
+    """Recursively replace ${VAR} patterns with environment variable values."""
+    if isinstance(data, str):
+        import re
+        import os
+        return re.sub(r'\$\{(\w+)\}', lambda m: os.environ.get(m.group(1), ''), data)
+    if isinstance(data, dict):
+        return {k: _expand_env_vars(v) for k, v in data.items()}
+    if isinstance(data, list):
+        return [_expand_env_vars(v) for v in data]
+    return data
+
+
+# ---------------------------------------------------------------------------
 # Unknown-key warnings
 # ---------------------------------------------------------------------------
 
@@ -264,6 +282,7 @@ def load_config(cli_args: Namespace) -> HarnessConfig:
     file_kwargs: dict[str, Any] = {}
     if config_path is not None and config_path.is_file():
         raw = _parse_config_file(config_path)
+        raw = _expand_env_vars(raw)
         file_kwargs = _flatten_config(raw)
 
     # Merge CLI on top
@@ -289,7 +308,7 @@ def load_config(cli_args: Namespace) -> HarnessConfig:
 # ---------------------------------------------------------------------------
 
 _VALID_TRANSPORTS = {"stdio", "sse", "http"}
-_VALID_REPORT_FORMATS = {"json", "junit"}
+_VALID_REPORT_FORMATS = {"json", "junit", "html"}
 
 
 def _find_yaml_line(text: str, key: str) -> int | None:

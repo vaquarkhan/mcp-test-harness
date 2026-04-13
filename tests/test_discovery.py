@@ -280,3 +280,43 @@ class TestMarkerFilter:
         f.write_text("def test_plain(): pass\n")
         modules = discover_tests([tmp_path], filter_marker="slow")
         assert modules == []
+
+
+# ---------------------------------------------------------------------------
+# marker(order=N) support
+# ---------------------------------------------------------------------------
+
+
+class TestOrderMarkerDecorator:
+    def test_order_stored_in_markers(self) -> None:
+        @marker(order=5)
+        def test_fn() -> None: ...
+
+        m = getattr(test_fn, _MARKER_ATTR)
+        assert m["order"] == 5
+
+    def test_order_combined_with_other_markers(self) -> None:
+        @marker(order=2, timeout=10, tags=["smoke"])
+        def test_fn() -> None: ...
+
+        m = getattr(test_fn, _MARKER_ATTR)
+        assert m["order"] == 2
+        assert m["timeout"] == 10
+        assert "smoke" in m["tags"]
+
+    def test_order_from_file(self, tmp_path: Path) -> None:
+        f = tmp_path / "test_ordered.py"
+        f.write_text(
+            "from mcp_test_harness.discovery import marker\n"
+            "\n"
+            "@marker(order=3)\n"
+            "def test_third(): pass\n"
+            "\n"
+            "@marker(order=1)\n"
+            "def test_first(): pass\n"
+        )
+        modules = discover_tests([tmp_path])
+        cases = modules[0].test_cases
+        orders = {tc.name: tc.markers.get("order") for tc in cases}
+        assert orders["test_third"] == 3
+        assert orders["test_first"] == 1

@@ -14,7 +14,7 @@ from typing import Any, Literal
 TransportType = Literal["stdio", "sse", "http"]
 """Supported MCP transport types."""
 
-ReportFormat = Literal["json", "junit"]
+ReportFormat = Literal["json", "junit", "html"]
 """Supported report output formats."""
 
 

@@ -375,3 +375,90 @@ class TestRunParallel:
         assert run_results.passed == 1
         # Only 1 worker should have been started (1 test, 1 bucket)
         assert lcm_instance.start.call_count == 1
+
+
+# ---------------------------------------------------------------------------
+# Test ordering by marker(order=N)
+# ---------------------------------------------------------------------------
+
+
+class TestOrderMarker:
+    @pytest.mark.asyncio
+    async def test_sequential_respects_order(self):
+        """Tests with order markers run in ascending order."""
+        tc_a = _make_test_case("test_a")
+        tc_a.markers = {"order": 3}
+        tc_b = _make_test_case("test_b")
+        tc_b.markers = {"order": 1}
+        tc_c = _make_test_case("test_c")
+        tc_c.markers = {"order": 2}
+
+        config = _make_config()
+        server = _make_managed_server()
+
+        execution_order: list[str] = []
+
+        async def mock_execute(tc, srv, fix):
+            execution_order.append(tc.name)
+            return _make_test_result(tc.name, CaseStatus.PASSED)
+
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+        ):
+            lcm_instance = MockLCM.return_value
+            lcm_instance.start = AsyncMock(return_value=server)
+            lcm_instance.shutdown = AsyncMock()
+            lcm_instance.start_monitor = MagicMock(return_value=None)
+
+            fm_instance = MockFM.return_value
+            fm_instance.teardown = AsyncMock(return_value=[])
+
+            exec_instance = MockExec.return_value
+            exec_instance.execute = AsyncMock(side_effect=mock_execute)
+
+            scheduler = HarnessScheduler()
+            await scheduler.run_sequential([tc_a, tc_b, tc_c], config)
+
+        assert execution_order == ["test_b", "test_c", "test_a"]
+
+    @pytest.mark.asyncio
+    async def test_default_order_is_zero(self):
+        """Tests without order marker default to 0 and run before higher orders."""
+        tc_no_order = _make_test_case("test_no_order")
+        tc_no_order.markers = {}
+        tc_high = _make_test_case("test_high")
+        tc_high.markers = {"order": 10}
+
+        config = _make_config()
+        server = _make_managed_server()
+
+        execution_order: list[str] = []
+
+        async def mock_execute(tc, srv, fix):
+            execution_order.append(tc.name)
+            return _make_test_result(tc.name, CaseStatus.PASSED)
+
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+        ):
+            lcm_instance = MockLCM.return_value
+            lcm_instance.start = AsyncMock(return_value=server)
+            lcm_instance.shutdown = AsyncMock()
+            lcm_instance.start_monitor = MagicMock(return_value=None)
+
+            fm_instance = MockFM.return_value
+            fm_instance.teardown = AsyncMock(return_value=[])
+
+            exec_instance = MockExec.return_value
+            exec_instance.execute = AsyncMock(side_effect=mock_execute)
+
+            scheduler = HarnessScheduler()
+            await scheduler.run_sequential([tc_high, tc_no_order], config)
+
+        assert execution_order == ["test_no_order", "test_high"]

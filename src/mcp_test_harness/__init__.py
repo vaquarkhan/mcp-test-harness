@@ -8,10 +8,14 @@ __all__ = [
     "__version__",
     "MCPAssertionError",
     "assert_capabilities",
+    "assert_invalid_tool",
     "assert_prompt",
+    "assert_resource_list",
     "assert_resource_read",
     "assert_snapshot",
     "assert_tool_call",
+    "assert_tool_list",
+    "assert_tool_rejects",
     "marker",
     "skip",
 ]
@@ -19,9 +23,13 @@ __all__ = [
 from mcp_test_harness.assertions import (
     MCPAssertionError,
     assert_capabilities,
+    assert_invalid_tool,
     assert_prompt,
+    assert_resource_list,
     assert_resource_read,
     assert_snapshot,
     assert_tool_call,
+    assert_tool_list,
+    assert_tool_rejects,
 )
 from mcp_test_harness.discovery import marker, skip

@@ -306,3 +306,56 @@ class TestJUnitXMLReporter:
         root = ET.fromstring(xml_str)
         tc = root.find(".//testcase")
         assert tc is not None
+
+
+# ---------------------------------------------------------------------------
+# HTMLReporter
+# ---------------------------------------------------------------------------
+
+from mcp_test_harness.html_reporter import HTMLReporter
+
+
+class TestHTMLReporter:
+    def test_generates_valid_html(self):
+        run = _make_results([_passed(), _failed()])
+        html = HTMLReporter().generate(run)
+        assert "<!DOCTYPE html>" in html
+        assert "<html" in html
+        assert "</html>" in html
+
+    def test_summary_counts(self):
+        run = _make_results([_passed(), _failed(), _errored(), _skipped()])
+        html = HTMLReporter().generate(run)
+        # Summary table should contain the counts
+        assert ">1<" in html  # at least one count of 1
+
+    def test_test_names_in_output(self):
+        run = _make_results([_passed("test_alpha"), _failed("test_beta")])
+        html = HTMLReporter().generate(run)
+        assert "test_alpha" in html
+        assert "test_beta" in html
+
+    def test_failure_details_shown(self):
+        run = _make_results([_failed(error="bad value", diff="- a\n+ b")])
+        html = HTMLReporter().generate(run)
+        assert "bad value" in html
+        assert "- a" in html
+
+    def test_empty_run(self):
+        run = _make_results([])
+        html = HTMLReporter().generate(run)
+        assert "MCP Test Report" in html
+        assert "0" in html
+
+    def test_html_escaping(self):
+        tr = _failed(name="test_<script>", error="x < 0 & y > 1")
+        run = _make_results([tr])
+        html = HTMLReporter().generate(run)
+        assert "<script>" not in html
+        assert "&lt;script&gt;" in html
+
+    def test_duration_shown(self):
+        run = _make_results([_passed("t", duration=42.3)], total_duration_ms=100.5)
+        html = HTMLReporter().generate(run)
+        assert "42.3ms" in html
+        assert "100.5ms" in html
