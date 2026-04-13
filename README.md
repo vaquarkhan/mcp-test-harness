@@ -524,6 +524,31 @@ python -m coverage report --show-missing
 | Server crashes during tests | Check server logs; harness marks remaining tests as errored |
 | Config file not found | Harness looks for `mcp-test.yaml` / `mcp-test.toml` in cwd, or use `--config` |
 
+## Framework Integration Packages
+
+MCPLint provides framework-specific testing helpers. Each package auto-installs `mcplint` as a dependency:
+
+| Package | Tests for | Install |
+|---------|-----------|---------|
+| `mcplint` | Any MCP server (core) | `pip install mcplint` |
+| `mcplint-fastmcp` | FastMCP servers | `pip install mcplint-fastmcp` |
+| `mcplint-langchain` | LangChain MCP tools | `pip install mcplint-langchain` |
+| `mcplint-openai` | OpenAI function calling | `pip install mcplint-openai` |
+| `mcplint-anthropic` | Anthropic Claude tool use | `pip install mcplint-anthropic` |
+| `mcplint-bedrock` | AWS Bedrock agents | `pip install mcplint-bedrock` |
+| `mcplint-gemini` | Google Gemini | `pip install mcplint-gemini` |
+| `mcplint-crewai` | CrewAI agents | `pip install mcplint-crewai` |
+| `mcplint-llamaindex` | LlamaIndex tools | `pip install mcplint-llamaindex` |
+| `mcplint-groq` | Groq inference | `pip install mcplint-groq` |
+| `mcplint-mistral` | Mistral AI | `pip install mcplint-mistral` |
+| `mcplint-cohere` | Cohere | `pip install mcplint-cohere` |
+| `mcplint-azure` | Azure OpenAI | `pip install mcplint-azure` |
+| `mcplint-vertexai` | Google Vertex AI | `pip install mcplint-vertexai` |
+| `mcplint-huggingface` | Hugging Face Inference | `pip install mcplint-huggingface` |
+| `mcplint-deepseek` | DeepSeek AI | `pip install mcplint-deepseek` |
+| `mcplint-together` | Together AI | `pip install mcplint-together` |
+| `mcplint-fireworks` | Fireworks AI | `pip install mcplint-fireworks` |
+
 ## Related Projects
 
 | Project | Purpose |
