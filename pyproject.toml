@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mcplint"
+name = "mcp-test-harness"
 version = "0.1.0"
 description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting. License: custom non-commercial terms (see LICENSE); PyPI classifier Other/Proprietary."
 readme = "README.md"
