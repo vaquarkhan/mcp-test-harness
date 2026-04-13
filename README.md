@@ -1,114 +1,84 @@
 # MCPLint
 
-Author: Vaquar Khan -- https://github.com/vaquarkhan
+**Automated Testing Framework for Model Context Protocol (MCP) Servers**
 
-MCPLint is a pytest-style testing framework and developer toolkit for [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to write and run automated tests against any MCP server, replacing manual validation through the MCP Inspector.
+Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
-No existing tool lets you programmatically test MCP servers in CI pipelines. MCPLint fills that gap.
+MCPLint is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically -- replacing manual validation through the MCP Inspector.
 
-For the complete API reference and integration guide, see [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md).
+No existing tool lets you programmatically test MCP servers in CI/CD pipelines. MCPLint fills that gap.
 
-For an **end-to-end health check** (strengths, issues, CI notes), see [docs/PROJECT_REVIEW.md](docs/PROJECT_REVIEW.md).
+For the complete API reference, see [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md).
 
----
+For production security (prompt injection defense, PII redaction, rate limiting, RBAC), see [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) -- the companion security middleware project.
 
-## Table of contents
+## Core Features
 
-- [What MCPLint does](#what-mcplint-does)
-- [Installation](#installation)
-- [Quick start -- write and run your first test](#quick-start----write-and-run-your-first-test)
-- [Configuration file](#configuration-file)
-- [All five assertion types](#all-five-assertion-types)
-- [Fixtures -- setup and teardown](#fixtures----setup-and-teardown)
-- [Markers -- timeout, retry, skip, tags](#markers----timeout-retry-skip-tags)
-- [Snapshot testing](#snapshot-testing)
-- [Schema validation](#schema-validation)
-- [Reports for CI](#reports-for-ci)
-- [Parallel execution](#parallel-execution)
-- [Testing remote servers (SSE and HTTP)](#testing-remote-servers-sse-and-http)
-- [GitHub Action](#github-action)
-- [Plugins](#plugins)
-- [Standalone binary](#standalone-binary)
-- [Dependency management (mcplint shim)](#dependency-management-mcplint-shim)
-- [CLI reference](#cli-reference)
-- [Configuration file reference](#configuration-file-reference)
-- [Project layout](#project-layout)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
+| Feature | Description |
+|---------|-------------|
+| Test discovery | Finds `test_*.py` files and `test_` functions automatically (pytest conventions) |
+| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot` |
+| Fixture system | Built-in `mcp_server` fixture with per-test and per-module scoping, custom fixtures via decorator |
+| Schema validation | Validates every JSON-RPC response against the MCP specification automatically |
+| Snapshot testing | Capture and compare server responses for regression detection |
+| Parallel execution | Run tests across multiple workers, each with its own server instance |
+| Markers | `@marker(timeout=60, retry=3, tags=["smoke"])` and `@skip(reason="...")` |
+| Reports | Console summary, JUnit XML (GitHub Actions/Jenkins/GitLab), JSON with full metadata |
+| Plugin system | Extend with custom assertions, fixtures, reporters, and transport adapters |
+| Transport support | stdio, SSE, streamable HTTP -- test local and remote servers |
+| GitHub Action | One-line CI integration with artifact upload |
+| Standalone binary | Single binary via PyInstaller, no Python required on target |
 
----
+## Why MCPLint (vs MCP Inspector)
 
-## What MCPLint does
-
-MCPLint is two things in one package:
-
-1. **MCP Test Harness** (`mcp-test` CLI) -- a pytest-style framework for automated testing of MCP servers. Write async test functions, use built-in assertions for tool calls, resource reads, prompts, and capabilities. Get JUnit/JSON reports for CI. Run tests in parallel. Extend with plugins.
-
-2. **Dependency shim** (`mcplint` package) -- pins and verifies MCP ecosystem dependencies so your team has a consistent install. If you need security middleware for your MCP server in production, MCPLint can optionally pull in [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) as a dependency.
-
-The test harness is the core of this project. Everything else supports it.
-
----
+| | MCP Inspector | MCPLint |
+|---|---|---|
+| Execution | Manual, browser-based clicking | Automated CLI, runs in CI |
+| CI/CD integration | Not possible | Native (exit codes, JUnit XML, GitHub Action) |
+| Regression detection | Manual re-testing | Snapshot testing, automated on every commit |
+| Schema validation | Manual visual check | Automatic on every response |
+| Parallel testing | No | Yes, with per-worker server isolation |
+| Reporting | Visual only | Console, JSON, JUnit XML |
+| Extensibility | None | Plugin system for custom rules |
 
 ## Installation
 
 ```bash
-git clone <your-repo-url>/MCPLint.git
-cd MCPLint
-
-python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS / Linux
-source .venv/bin/activate
-
-pip install --upgrade pip
-pip install -e ".[dev]"
+pip install mcplint
 ```
 
-Verify:
+Or from source:
 
 ```bash
+git clone https://github.com/vaquarkhan/MCPLint.git
+cd MCPLint
+python -m venv .venv && source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+pip install -e ".[dev]"
 mcp-test --version
 ```
 
----
+## Quick Start
 
-## Quick start -- write and run your first test
+### 1. Write a test
 
 Create `tests/test_my_server.py`:
 
 ```python
-"""Tests for my MCP server."""
-
 from mcp_test_harness import assert_tool_call, assert_capabilities
 
-
-async def test_server_advertises_tools(mcp_server):
-    """The server should declare tool capabilities during the MCP handshake."""
+async def test_server_has_tools(mcp_server):
+    """Verify the server advertises tool capabilities."""
     await assert_capabilities(mcp_server, {"tools": {}})
 
-
-async def test_echo_tool_works(mcp_server):
-    """The echo tool should return the input message without errors."""
-    result = await assert_tool_call(
-        mcp_server,
-        "echo",
-        {"message": "hello world"},
-    )
+async def test_echo_tool(mcp_server):
+    """Call the echo tool and check it works."""
+    result = await assert_tool_call(mcp_server, "echo", {"message": "hello"})
     assert result is not None
 ```
 
-The `mcp_server` parameter is a built-in fixture. The harness automatically:
-1. Starts your MCP server using the command you provide
-2. Connects via the MCP protocol (stdio, SSE, or HTTP)
-3. Performs the MCP initialize handshake
-4. Injects a ready-to-use ClientSession into your test function
-5. Shuts down the server when tests finish
+The `mcp_server` parameter is a built-in fixture. The harness automatically starts your server, connects via MCP, performs the initialize handshake, and injects a ready-to-use session.
 
-Run it:
+### 2. Run it
 
 ```bash
 mcp-test --server-command "python my_server.py" tests/
@@ -117,32 +87,16 @@ mcp-test --server-command "python my_server.py" tests/
 Output:
 
 ```
-  [PASS] test_server_advertises_tools (45.2ms)
-  [PASS] test_echo_tool_works (120.8ms)
+  [PASS] test_server_has_tools (45.2ms)
+  [PASS] test_echo_tool (120.8ms)
 
 2 passed, 0 failed, 0 errored, 0 skipped
 Total time: 312.5ms
 ```
 
-If a test fails, you get a diff showing expected vs actual:
+### 3. Add a config file
 
-```
-  [FAIL] test_echo_tool_works (18.5ms)
-      Tool 'echo' response mismatch
-      --- expected
-      +++ actual
-      @@ -1,3 +1,3 @@
-       [
-      -  {"text": "hello world", "isError": false}
-      +  {"text": "HELLO WORLD", "isError": false}
-       ]
-```
-
----
-
-## Configuration file
-
-Instead of passing flags every time, create `mcp-test.yaml`:
+Create `mcp-test.yaml`:
 
 ```yaml
 server:
@@ -150,105 +104,90 @@ server:
   transport: stdio
 
 test:
-  dirs:
-    - tests/
+  dirs: [tests/]
   timeout: 30
 
 report:
   format: junit
   output: reports/results.xml
-
-schema_validation: true
-
-redact_patterns:
-  - "sk-[a-zA-Z0-9]+"
-  - "Bearer [a-zA-Z0-9._-]+"
 ```
 
-TOML is also supported (`mcp-test.toml`). The harness auto-discovers the config file in the current directory. CLI flags always override config file values.
+Then just: `mcp-test`
 
-Then just run:
+## Assertion Reference
 
-```bash
-mcp-test
-```
-
----
-
-## All five assertion types
-
-**assert_tool_call** -- invoke a tool and validate the response:
+### assert_tool_call -- invoke a tool and validate the response
 
 ```python
-async def test_add_tool(mcp_server):
-    await assert_tool_call(mcp_server, "add", {"a": 1, "b": 2})
+# Basic: fail if the tool returns an error
+await assert_tool_call(mcp_server, "echo", {"message": "hello"})
 
-    await assert_tool_call(
-        mcp_server, "add", {"a": 1, "b": 2},
-        expected=[{"text": "3", "isError": False}],
-    )
+# With expected output
+await assert_tool_call(mcp_server, "add", {"a": 1, "b": 2},
+    expected=[{"text": "3", "isError": False}])
 
-    result = await assert_tool_call(mcp_server, "get_users", {})
-    assert len(result.content) > 0
+# Use the return value
+result = await assert_tool_call(mcp_server, "get_data", {})
+assert len(result.content) > 0
 ```
 
-**assert_resource_read** -- read a resource and check content/MIME type:
+### assert_resource_read -- read a resource and check content/MIME type
 
 ```python
-async def test_config_resource(mcp_server):
-    await assert_resource_read(
-        mcp_server, "file:///config.json",
-        expected_content='{"debug": true}',
-        expected_mime_type="application/json",
-    )
+await assert_resource_read(mcp_server, "file:///config.json",
+    expected_content='{"debug": true}',
+    expected_mime_type="application/json")
 ```
 
-**assert_prompt** -- get a prompt and validate message structure:
+### assert_prompt -- get a prompt and validate messages
 
 ```python
-async def test_summarize_prompt(mcp_server):
-    await assert_prompt(
-        mcp_server, "summarize",
-        arguments={"text": "The quick brown fox."},
-        expected_messages=[
-            {"role": "assistant", "content": "Summary: A fox."},
-        ],
-    )
+await assert_prompt(mcp_server, "summarize",
+    arguments={"text": "The quick brown fox."},
+    expected_messages=[{"role": "assistant", "content": "Summary: A fox."}])
 ```
 
-**assert_capabilities** -- verify server capabilities from the handshake:
+### assert_capabilities -- verify server capabilities
 
 ```python
-async def test_server_capabilities(mcp_server):
-    await assert_capabilities(mcp_server, {
-        "tools": {},
-        "resources": {},
-    })
+await assert_capabilities(mcp_server, {"tools": {}, "resources": {}})
 ```
 
-**assert_snapshot** -- compare response against a stored snapshot:
+### assert_snapshot -- regression detection via stored snapshots
 
 ```python
 from pathlib import Path
 from mcp_test_harness import assert_snapshot
 
-async def test_report_output_stable(mcp_server):
-    result = await mcp_server.call_tool("generate_report", {"format": "json"})
-    await assert_snapshot(result, "report_json", test_file=Path(__file__))
+async def test_stable_output(mcp_server):
+    result = await mcp_server.call_tool("generate_report", {})
+    await assert_snapshot(result, "report_output", test_file=Path(__file__))
 ```
 
-All assertions produce diff-style output on failure showing expected vs actual values.
+First run creates the snapshot. Later runs compare against it. Update with `mcp-test --update-snapshots`.
 
----
+All assertions produce diff output on failure:
 
-## Fixtures -- setup and teardown
+```
+  [FAIL] test_echo (18.5ms)
+      Tool 'echo' response mismatch
+      --- expected
+      +++ actual
+      @@ -1,3 +1,3 @@
+       [
+      -  {"text": "hello", "isError": false}
+      +  {"text": "HELLO", "isError": false}
+       ]
+```
+
+## Fixtures
 
 Built-in fixtures:
 
 | Fixture | Scope | Description |
 |---------|-------|-------------|
-| `mcp_server` | Per-test | Fresh ClientSession for each test |
-| `mcp_server_session` | Per-module | Shared ClientSession across all tests in a file |
+| `mcp_server` | Per-test | Fresh MCP session for each test |
+| `mcp_server_session` | Per-module | Shared session across all tests in a file |
 
 Custom fixtures:
 
@@ -260,162 +199,126 @@ async def api_key():
     return "test-key-12345"
 
 @fixture
-async def test_database():
-    db = await connect_to_test_db()
-    yield db
-    await db.close()
+async def database():
+    db = await connect()
+    yield db              # test runs here
+    await db.close()      # teardown
 
 @fixture(scope=FixtureScope.PER_MODULE)
-async def shared_resource():
-    resource = await create_expensive_resource()
-    yield resource
-    await resource.cleanup()
+async def shared_client():
+    client = await create_client()
+    yield client
+    await client.close()
 
-async def test_with_fixtures(mcp_server, test_database, api_key):
-    result = await mcp_server.call_tool("query", {
-        "db": test_database.url,
-        "key": api_key,
-    })
-    assert result is not None
+# Injected by parameter name
+async def test_query(mcp_server, database, api_key):
+    result = await mcp_server.call_tool("query", {"db": database.url, "key": api_key})
 ```
 
----
-
-## Markers -- timeout, retry, skip, tags
+## Markers
 
 ```python
 from mcp_test_harness import marker, skip
 
-@marker(timeout=120)
-async def test_slow_computation(mcp_server):
-    await assert_tool_call(mcp_server, "train_model", {"epochs": 100})
+@marker(timeout=120)                    # custom timeout
+@marker(retry=3)                        # retry on failure
+@marker(tags=["smoke", "critical"])     # tags for filtering
+@marker(timeout=60, retry=2, tags=["integration"])  # combine
 
-@marker(retry=3)
-async def test_external_api(mcp_server):
-    await assert_tool_call(mcp_server, "fetch_weather", {"city": "NYC"})
-
-@marker(tags=["smoke", "critical"])
-async def test_health_check(mcp_server):
-    await assert_capabilities(mcp_server, {"tools": {}})
-
-@skip(reason="Waiting on server fix #42")
-async def test_broken_feature(mcp_server):
-    pass
+@skip                                   # skip unconditionally
+@skip(reason="Bug #42")                # skip with reason
 ```
 
 Filter from CLI:
 
 ```bash
-mcp-test -m smoke
-mcp-test -k health
-mcp-test -k "*workflow*"
+mcp-test -m smoke           # run only smoke-tagged tests
+mcp-test -k "test_echo"     # run tests matching name
+mcp-test -k "*workflow*"    # glob patterns
 ```
 
----
-
-## Snapshot testing
-
-```python
-from pathlib import Path
-from mcp_test_harness import assert_snapshot
-
-async def test_user_list_stable(mcp_server):
-    result = await mcp_server.call_tool("list_users", {})
-    await assert_snapshot(result, "user_list", test_file=Path(__file__))
-```
-
-First run creates the snapshot. Subsequent runs compare against it. Update after intentional changes:
+## Reports
 
 ```bash
-mcp-test --update-snapshots
+# JUnit XML for CI (GitHub Actions, Jenkins, GitLab)
+mcp-test --report-format junit --report-output results.xml
+
+# JSON with full metadata (server capabilities, retry history, schema violations)
+mcp-test --report-format json --report-output results.json
 ```
 
----
+Console output is always printed:
 
-## Schema validation
+```
+  [PASS] test_echo (45.2ms)
+  [FAIL] test_divide (18.5ms)
+      Division by zero
+  [SKIP] test_future (0.0ms)
 
-By default, every JSON-RPC response is validated against the MCP specification:
-- JSON-RPC 2.0 envelope structure
-- Error objects have code (integer) and message (string)
-- Tool input schemas are valid JSON Schema
-- Resource URIs match declared URI templates
-
-Disable if needed:
-
-```yaml
-schema_validation: false
+2 passed, 1 failed, 0 errored, 1 skipped
+Total time: 200.0ms
 ```
 
----
-
-## Reports for CI
+## Parallel Execution
 
 ```bash
-# JUnit XML (GitHub Actions, Jenkins, GitLab CI)
-mcp-test --report-format junit --report-output reports/results.xml
-
-# JSON (custom dashboards, includes full metadata)
-mcp-test --report-format json --report-output reports/results.json
-```
-
----
-
-## Parallel execution
-
-```bash
-mcp-test --parallel
-mcp-test --parallel --workers 4
+mcp-test --parallel              # use all CPU cores
+mcp-test --parallel --workers 4  # specify worker count
 ```
 
 Each worker gets its own server instance. If one crashes, others continue.
 
----
+## Transport Support
 
-## Testing remote servers (SSE and HTTP)
+| Transport | Use case | Example |
+|-----------|----------|---------|
+| stdio | Local servers (default) | `--server-command "python server.py"` |
+| SSE | Remote servers via Server-Sent Events | `--transport sse --server-command "http://localhost:8080/sse"` |
+| HTTP | Remote servers via streamable HTTP | `--transport http --server-command "http://localhost:8080/mcp"` |
 
-```bash
-mcp-test --transport sse --server-command "http://localhost:8080/sse" tests/
-mcp-test --transport http --server-command "http://localhost:8080/mcp" tests/
-```
-
-With auth headers:
+With authentication:
 
 ```yaml
 server:
-  command: http://localhost:8080/sse
-  transport: sse
+  command: http://your-server.example.com/mcp
+  transport: http
   transport_options:
     headers:
-      Authorization: "Bearer my-token"
+      Authorization: "Bearer your-token"
 ```
-
----
 
 ## GitHub Action
 
 ```yaml
-- name: Test MCP Server
-  uses: ./.github/actions/mcp-test
-  with:
-    server-command: "python my_server.py"
-    test-directory: "tests/"
-    report-format: "junit"
+# .github/workflows/mcp-tests.yml
+name: MCP Server Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test MCP Server
+        uses: vaquarkhan/MCPLint/.github/actions/mcp-test@main
+        with:
+          server-command: "python my_server.py"
+          test-directory: "tests/"
+          report-format: "junit"
 ```
 
 | Input | Default | Description |
 |-------|---------|-------------|
-| `server-command` | `""` | Shell command to start the server |
-| `transport` | `stdio` | Transport type |
+| `server-command` | `""` | Command to start the server |
+| `transport` | `stdio` | stdio, sse, or http |
 | `test-directory` | `tests/` | Path to test files |
 | `config-file` | `""` | Path to config file |
-| `report-format` | `junit` | Report format |
+| `report-format` | `junit` | json or junit |
 | `harness-version` | `latest` | Version to install |
-
----
 
 ## Plugins
 
-Extend the harness with custom assertions, fixtures, reporters, and transports:
+Extend MCPLint with custom assertions, fixtures, reporters, and transports:
 
 ```python
 from mcp_test_harness.plugins import PluginContext
@@ -432,11 +335,24 @@ class MyPlugin:
 plugin = MyPlugin()
 ```
 
-Load via config or Python entry points. See `examples/reference_plugin.py`.
+Load via config:
 
----
+```yaml
+plugins:
+  - my_plugin.py
+  - my_package.plugin_module
+```
 
-## Standalone binary
+Or via Python entry points (auto-discovered):
+
+```toml
+[project.entry-points.mcp_test_harness]
+my-plugin = "my_package.plugin:plugin"
+```
+
+See [examples/reference_plugin.py](examples/reference_plugin.py) for a complete example.
+
+## Standalone Binary
 
 ```bash
 pip install -e ".[dev]"
@@ -444,13 +360,49 @@ python scripts/build_binary.py
 dist/mcp-test --version
 ```
 
-No Python required on the target machine.
+No Python required on the target machine. Cross-platform: Linux, macOS, Windows.
 
----
+## Security Testing with MCP-Bastion
 
-## Dependency management (mcplint shim)
+MCPLint tests that your MCP server works correctly. For production security, pair it with [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) -- an active defense middleware that protects MCP servers at runtime.
 
-The `mcplint` sub-package pins MCP ecosystem dependencies. It provides version helpers:
+| Concern | Tool | What it does |
+|---------|------|-------------|
+| Functional testing | **MCPLint** | Automated tests for tools, resources, prompts, capabilities |
+| Prompt injection defense | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Blocks jailbreaks via Meta PromptGuard (local, under 5ms) |
+| PII redaction | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Masks SSN, email, phone via Microsoft Presidio |
+| Rate limiting | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Token budgets, iteration caps, denial-of-wallet protection |
+| RBAC | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Tool-level permissions by role |
+| Schema validation | **MCPLint** | Validates JSON-RPC responses against MCP spec |
+| Regression detection | **MCPLint** | Snapshot testing catches unintended changes |
+| Audit logging | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Logs who, what, when, blocked/allowed |
+
+Use both together for a complete MCP server development workflow:
+
+```bash
+# Test your server
+mcp-test --server-command "python my_server.py" tests/
+
+# Secure your server
+pip install mcp-bastion-python
+```
+
+```python
+# In your server code
+from mcp_bastion import MCPBastionMiddleware
+
+bastion = MCPBastionMiddleware(
+    enable_prompt_guard=True,
+    enable_pii_redaction=True,
+    enable_rate_limit=True,
+)
+```
+
+MCP-Bastion supports 16+ framework integrations including FastMCP, LangChain, OpenAI, Anthropic, AWS Bedrock, and more. See the [MCP-Bastion README](https://github.com/vaquarkhan/MCP-Bastion) for full docs.
+
+## Dependency Management (mcplint shim)
+
+The `mcplint` sub-package pins MCP-Bastion versions and provides helpers:
 
 ```python
 from mcplint import bastion_version, bedrock_version
@@ -459,65 +411,59 @@ print(bastion_version())    # e.g. "1.0.12"
 print(bedrock_version())    # None if bedrock extra not installed
 ```
 
-This is useful for CI checks and health endpoints. If you need security middleware for your MCP server (prompt injection defense, PII redaction, RBAC, rate limits), see [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) -- a separate project that MCPLint can optionally pull in as a dependency.
+Verify: `python scripts/verify_upstream.py`
 
----
-
-## CLI reference
+## CLI Reference
 
 ```
 mcp-test [TEST_PATH] [OPTIONS]
 
-  --server-command CMD     Shell command to start the MCP server
+  --server-command CMD     Command to start the MCP server
   --transport TYPE         stdio | sse | http (default: stdio)
   --config PATH            Path to mcp-test.yaml or mcp-test.toml
   --timeout SECONDS        Per-test timeout (default: 30)
   --parallel               Run tests in parallel
-  --workers N              Number of parallel workers (default: CPU count)
-  -k PATTERN               Filter tests by name
-  -m MARKER                Filter tests by marker or tag
+  --workers N              Parallel worker count (default: CPU count)
+  -k PATTERN               Filter by test name
+  -m MARKER                Filter by marker/tag
   --report-format FORMAT   json | junit
-  --report-output PATH     Path to write the report file
+  --report-output PATH     Report file path
   --verbose                Full server communication logs
   --update-snapshots       Overwrite stored snapshots
-  --version                Print version and exit
+  --version                Print version
 ```
 
-Exit codes: 0 = all passed, 1 = failures/errors, 2 = config error
+Exit codes: `0` = passed, `1` = failures, `2` = config error
 
----
-
-## Configuration file reference
+## Configuration Reference
 
 ```yaml
 server:
-  command: python my_server.py
-  transport: stdio
-  transport_options: {}
+  command: python my_server.py       # required
+  transport: stdio                   # stdio | sse | http
+  transport_options: {}              # host, port, headers, etc.
 
 test:
-  dirs: [tests/]
-  timeout: 30
-  parallel: false
-  workers: 4
+  dirs: [tests/]                     # directories to search
+  timeout: 30                        # per-test timeout (seconds)
+  parallel: false                    # run in parallel
+  workers: 4                         # parallel worker count
 
 report:
-  format: junit
-  output: reports/results.xml
+  format: junit                      # json | junit
+  output: reports/results.xml        # output file path
 
-schema_validation: true
-plugins: []
-redact_patterns: []
+schema_validation: true              # validate JSON-RPC responses
+plugins: []                          # plugin paths or module names
+redact_patterns: []                  # regex patterns to redact from verbose output
 ```
 
----
-
-## Project layout
+## Project Structure
 
 ```
 MCPLint/
 +-- pyproject.toml
-+-- mcp_test_harness.spec
++-- mcp_test_harness.spec           # PyInstaller config
 +-- src/
 |   +-- mcplint/                    # dependency shim
 |   +-- mcp_test_harness/           # test framework (14 modules)
@@ -528,7 +474,7 @@ MCPLint/
 |       +-- scheduler.py            # sequential + parallel scheduling
 |       +-- lifecycle.py            # server start/stop/monitor
 |       +-- transport.py            # stdio, SSE, HTTP adapters
-|       +-- assertions.py           # assert_tool_call, etc.
+|       +-- assertions.py           # 5 built-in assertions
 |       +-- schema.py               # JSON-RPC / MCP schema validation
 |       +-- fixtures.py             # fixture manager
 |       +-- plugins.py              # plugin registry
@@ -537,18 +483,35 @@ MCPLint/
 |       +-- parser.py               # JSON-RPC message parser
 |       +-- models.py               # shared data models
 +-- examples/
+|   +-- basic_usage.py
+|   +-- version_gate.py
+|   +-- reference_plugin.py         # complete plugin example
 +-- scripts/
-+-- tests/                          # 370 unit tests, 96% coverage
+|   +-- verify_upstream.py
+|   +-- build_binary.py
++-- tests/                          # 370 tests, 96% coverage
 +-- docs/
-|   +-- DEVELOPER_GUIDE.md         # complete API and integration guide
-|   +-- TUTORIAL.md                # step-by-step tutorial
-|   +-- DECISIONS.md               # architecture decisions
+|   +-- DEVELOPER_GUIDE.md          # complete API and integration guide
+|   +-- TUTORIAL.md                 # step-by-step tutorial
+|   +-- DECISIONS.md                # architecture decisions
 +-- .github/
     +-- actions/mcp-test/           # reusable GitHub Action
     +-- workflows/validate.yml      # CI pipeline
 ```
 
----
+## Testing
+
+```bash
+# Run all MCPLint tests
+python -m pytest tests/ -q
+
+# Quick offline check (no heavy deps)
+python -m pytest tests/test_pyproject.py -q
+
+# With coverage
+python -m coverage run -m pytest tests/ -q
+python -m coverage report --show-missing
+```
 
 ## Troubleshooting
 
@@ -557,21 +520,22 @@ MCPLint/
 | `mcp-test: command not found` | Run `pip install -e ".[dev]"` |
 | Tests hang | Check `--timeout`; server may not respond to MCP handshake |
 | `No tests discovered` | Files must match `test_*.py` or `*_test.py`; functions must start with `test_` |
-| Snapshot mismatch after intentional change | Run `mcp-test --update-snapshots` |
+| Snapshot mismatch | Run `mcp-test --update-snapshots` after intentional changes |
 | Server crashes during tests | Check server logs; harness marks remaining tests as errored |
 | Config file not found | Harness looks for `mcp-test.yaml` / `mcp-test.toml` in cwd, or use `--config` |
 
----
+## Related Projects
+
+| Project | Purpose |
+|---------|---------|
+| [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Security middleware for MCP servers (prompt injection, PII, rate limiting, RBAC) |
+| [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) | Official Python SDK for building MCP servers and clients |
+| [MCP Inspector](https://github.com/modelcontextprotocol/inspector) | Visual debugging tool for MCP servers (manual, browser-based) |
 
 ## License
 
-MCPLint is distributed under a **custom license** ([LICENSE](LICENSE)), **not** MIT/Apache/GPL:
+Non-commercial use only with mandatory attribution.
 
-- **Non-commercial use** is allowed with **mandatory attribution** to the author (see LICENSE for wording).
-- **Commercial use** (products, services, or internal use at for-profit organizations under the license definition) requires a **separate agreement** with the author.
+Author: Vaquar Khan -- https://github.com/vaquarkhan
 
-This matches the PyPI metadata in `pyproject.toml` (`License :: Other/Proprietary License` and `license = { file = "LICENSE" }`). Do not assume standard open-source redistribution rights.
-
-**Author:** Vaquar Khan — https://github.com/vaquarkhan
-
-For commercial licensing, contact the author.
+See [LICENSE](LICENSE) for full terms. Contact the author for commercial licensing.
