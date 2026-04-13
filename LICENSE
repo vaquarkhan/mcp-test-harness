@@ -1,0 +1,48 @@
+MCPLint License
+
+Copyright (c) 2024 Vaquar Khan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, merge, publish, and distribute the Software, subject to the
+following conditions:
+
+1. ATTRIBUTION REQUIRED
+   All copies, modified versions, derivative works, and any public use of
+   this Software must include clear and visible attribution to the original
+   author:
+
+       Vaquar Khan -- https://github.com/vaquarkhan
+
+   This attribution must appear in at least one of the following:
+   - The project README or documentation
+   - A NOTICE or CREDITS file distributed with the software
+   - The "About" section of any user-facing application
+
+2. NON-COMMERCIAL USE ONLY
+   This Software may NOT be used, in whole or in part, for commercial
+   purposes. "Commercial purposes" means any activity primarily intended
+   for or directed toward commercial advantage or monetary compensation.
+
+   Examples of prohibited commercial use include, but are not limited to:
+   - Selling the Software or derivative works
+   - Using the Software in a paid product or service
+   - Using the Software internally at a for-profit company for
+     revenue-generating operations
+
+   If you wish to use this Software for commercial purposes, you must
+   obtain a separate written license from the copyright holder.
+
+3. REDISTRIBUTION
+   Redistribution of the Software, with or without modification, is
+   permitted provided that conditions 1 and 2 above are met and this
+   license notice is included in all copies or substantial portions of
+   the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

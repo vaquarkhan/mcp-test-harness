@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcplint"
+version = "0.1.0"
+description = "MCPLint -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "Vaquar Khan", email = "vaquarkhan@gmail.com"}]
+keywords = ["mcp", "mcplint", "mcp-test", "testing", "model-context-protocol", "test-harness", "json-rpc"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: Other/Proprietary License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "mcp-bastion-python>=1.0.12",
+  "mcp>=1.0.0",
+  "anyio>=4.0.0",
+  "pyyaml>=6.0",
+]
+
+[project.scripts]
+mcp-test = "mcp_test_harness.cli:main"
+
+[project.optional-dependencies]
+bedrock = [
+  "mcp-bastion-bedrock>=0.1.0",
+]
+dev = [
+  "pytest>=7.0.0",
+  "pytest-asyncio>=0.21.0",
+  "jsonschema>=4.0.0",
+  "pyinstaller>=6.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/vaquarkhan/MCPLint"
+Repository = "https://github.com/vaquarkhan/MCPLint"
+Documentation = "https://github.com/vaquarkhan/MCPLint#readme"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcplint", "src/mcp_test_harness"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/mcplint", "src/mcp_test_harness", "README.md", "docs", "scripts", "examples"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
