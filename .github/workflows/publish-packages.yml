@@ -1,10 +1,13 @@
 name: publish-packages
 
 on:
+  push:
+    tags:
+      - "pkg-*"
   workflow_dispatch:
     inputs:
       package:
-        description: "Package directory name under packages/ (e.g. mcp-test-harness-openai)"
+        description: "Package directory name under packages/"
         required: true
         type: string
 
@@ -14,7 +17,6 @@ permissions:
 
 jobs:
   publish:
-    name: Publish ${{ inputs.package }}
     runs-on: ubuntu-latest
     environment: pypi
     steps:
@@ -22,11 +24,20 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
-      - name: Install build tools
-        run: pip install build
+      - name: Determine package
+        id: pkg
+        run: |
+          if [ -n "${{ inputs.package }}" ]; then
+            echo "name=${{ inputs.package }}" >> "$GITHUB_OUTPUT"
+          else
+            TAG="${GITHUB_REF#refs/tags/pkg-}"
+            echo "name=$TAG" >> "$GITHUB_OUTPUT"
+          fi
       - name: Build package
-        run: python -m build packages/${{ inputs.package }}
+        run: |
+          pip install build
+          python -m build packages/${{ steps.pkg.outputs.name }}
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: packages/${{ inputs.package }}/dist/
+          packages-dir: packages/${{ steps.pkg.outputs.name }}/dist/
