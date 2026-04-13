@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-test-harness-together"
+version = "0.1.0"
+description = "Together AI testing helpers for MCP Test Harness"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Non-commercial use only with mandatory attribution"}
+authors = [{name = "Vaquar Khan", email = "vaquarkhan@gmail.com"}]
+keywords = ["mcp", "together", "testing", "mcp-test-harness"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "mcp-test-harness>=0.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/vaquarkhan/mcp-test-harness"
+Repository = "https://github.com/vaquarkhan/mcp-test-harness"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_test_harness_together"]
