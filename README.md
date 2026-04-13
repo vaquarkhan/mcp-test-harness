@@ -1,5 +1,12 @@
 # MCP Test Harness
 
+[![PyPI version](https://img.shields.io/pypi/v/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
+[![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
+[![License](https://img.shields.io/badge/license-non--commercial-blue)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-411%20passed-brightgreen)]()
+[![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)]()
+
 **Automated Testing Framework for Model Context Protocol (MCP) Servers**
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan)
@@ -526,28 +533,28 @@ python -m coverage report --show-missing
 
 ## Framework Integration Packages
 
-MCP Test Harness provides framework-specific testing helpers. Each package auto-installs `mcplint` as a dependency:
+MCP Test Harness provides framework-specific testing helpers. Each package auto-installs `mcp-test-harness` as a dependency:
 
-| Package | Tests for | Install |
-|---------|-----------|---------|
-| `mcplint` | Any MCP server (core) | `pip install mcplint` |
-| `mcplint-fastmcp` | FastMCP servers | `pip install mcplint-fastmcp` |
-| `mcplint-langchain` | LangChain MCP tools | `pip install mcplint-langchain` |
-| `mcplint-openai` | OpenAI function calling | `pip install mcplint-openai` |
-| `mcplint-anthropic` | Anthropic Claude tool use | `pip install mcplint-anthropic` |
-| `mcplint-bedrock` | AWS Bedrock agents | `pip install mcplint-bedrock` |
-| `mcplint-gemini` | Google Gemini | `pip install mcplint-gemini` |
-| `mcplint-crewai` | CrewAI agents | `pip install mcplint-crewai` |
-| `mcplint-llamaindex` | LlamaIndex tools | `pip install mcplint-llamaindex` |
-| `mcplint-groq` | Groq inference | `pip install mcplint-groq` |
-| `mcplint-mistral` | Mistral AI | `pip install mcplint-mistral` |
-| `mcplint-cohere` | Cohere | `pip install mcplint-cohere` |
-| `mcplint-azure` | Azure OpenAI | `pip install mcplint-azure` |
-| `mcplint-vertexai` | Google Vertex AI | `pip install mcplint-vertexai` |
-| `mcplint-huggingface` | Hugging Face Inference | `pip install mcplint-huggingface` |
-| `mcplint-deepseek` | DeepSeek AI | `pip install mcplint-deepseek` |
-| `mcplint-together` | Together AI | `pip install mcplint-together` |
-| `mcplint-fireworks` | Fireworks AI | `pip install mcplint-fireworks` |
+| Package | Tests for | Version | Downloads |
+|---------|-----------|---------|-----------|
+| `mcp-test-harness` | Any MCP server (core) | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/) |
+| `mcp-test-harness-fastmcp` | FastMCP servers | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-fastmcp)](https://pypi.org/project/mcp-test-harness-fastmcp/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-fastmcp)](https://pypi.org/project/mcp-test-harness-fastmcp/) |
+| `mcp-test-harness-openai` | OpenAI function calling | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-openai)](https://pypi.org/project/mcp-test-harness-openai/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-openai)](https://pypi.org/project/mcp-test-harness-openai/) |
+| `mcp-test-harness-anthropic` | Anthropic Claude tool use | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-anthropic)](https://pypi.org/project/mcp-test-harness-anthropic/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-anthropic)](https://pypi.org/project/mcp-test-harness-anthropic/) |
+| `mcp-test-harness-bedrock` | AWS Bedrock agents | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-bedrock)](https://pypi.org/project/mcp-test-harness-bedrock/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-bedrock)](https://pypi.org/project/mcp-test-harness-bedrock/) |
+| `mcp-test-harness-gemini` | Google Gemini | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-gemini)](https://pypi.org/project/mcp-test-harness-gemini/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-gemini)](https://pypi.org/project/mcp-test-harness-gemini/) |
+| `mcp-test-harness-langchain` | LangChain MCP tools | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-langchain)](https://pypi.org/project/mcp-test-harness-langchain/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-langchain)](https://pypi.org/project/mcp-test-harness-langchain/) |
+| `mcp-test-harness-crewai` | CrewAI agents | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-crewai)](https://pypi.org/project/mcp-test-harness-crewai/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-crewai)](https://pypi.org/project/mcp-test-harness-crewai/) |
+| `mcp-test-harness-llamaindex` | LlamaIndex tools | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-llamaindex)](https://pypi.org/project/mcp-test-harness-llamaindex/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-llamaindex)](https://pypi.org/project/mcp-test-harness-llamaindex/) |
+| `mcp-test-harness-groq` | Groq inference | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-groq)](https://pypi.org/project/mcp-test-harness-groq/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-groq)](https://pypi.org/project/mcp-test-harness-groq/) |
+| `mcp-test-harness-mistral` | Mistral AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-mistral)](https://pypi.org/project/mcp-test-harness-mistral/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-mistral)](https://pypi.org/project/mcp-test-harness-mistral/) |
+| `mcp-test-harness-cohere` | Cohere | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-cohere)](https://pypi.org/project/mcp-test-harness-cohere/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-cohere)](https://pypi.org/project/mcp-test-harness-cohere/) |
+| `mcp-test-harness-azure` | Azure OpenAI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-azure)](https://pypi.org/project/mcp-test-harness-azure/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-azure)](https://pypi.org/project/mcp-test-harness-azure/) |
+| `mcp-test-harness-vertexai` | Google Vertex AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-vertexai)](https://pypi.org/project/mcp-test-harness-vertexai/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-vertexai)](https://pypi.org/project/mcp-test-harness-vertexai/) |
+| `mcp-test-harness-huggingface` | Hugging Face Inference | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-huggingface)](https://pypi.org/project/mcp-test-harness-huggingface/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-huggingface)](https://pypi.org/project/mcp-test-harness-huggingface/) |
+| `mcp-test-harness-deepseek` | DeepSeek AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-deepseek)](https://pypi.org/project/mcp-test-harness-deepseek/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-deepseek)](https://pypi.org/project/mcp-test-harness-deepseek/) |
+| `mcp-test-harness-together` | Together AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-together)](https://pypi.org/project/mcp-test-harness-together/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-together)](https://pypi.org/project/mcp-test-harness-together/) |
+| `mcp-test-harness-fireworks` | Fireworks AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-fireworks)](https://pypi.org/project/mcp-test-harness-fireworks/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-fireworks)](https://pypi.org/project/mcp-test-harness-fireworks/) |
 
 ## Related Projects
 
