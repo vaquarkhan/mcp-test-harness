@@ -8,6 +8,8 @@ No existing tool lets you programmatically test MCP servers in CI pipelines. MCP
 
 For the complete API reference and integration guide, see [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md).
 
+For an **end-to-end health check** (strengths, issues, CI notes), see [docs/PROJECT_REVIEW.md](docs/PROJECT_REVIEW.md).
+
 ---
 
 ## Table of contents
@@ -563,8 +565,13 @@ MCPLint/
 
 ## License
 
-Non-commercial use only with mandatory attribution.
+MCPLint is distributed under a **custom license** ([LICENSE](LICENSE)), **not** MIT/Apache/GPL:
 
-Author: Vaquar Khan -- https://github.com/vaquarkhan
+- **Non-commercial use** is allowed with **mandatory attribution** to the author (see LICENSE for wording).
+- **Commercial use** (products, services, or internal use at for-profit organizations under the license definition) requires a **separate agreement** with the author.
 
-See [LICENSE](LICENSE) for full terms. Contact the author for commercial licensing.
+This matches the PyPI metadata in `pyproject.toml` (`License :: Other/Proprietary License` and `license = { file = "LICENSE" }`). Do not assume standard open-source redistribution rights.
+
+**Author:** Vaquar Khan — https://github.com/vaquarkhan
+
+For commercial licensing, contact the author.

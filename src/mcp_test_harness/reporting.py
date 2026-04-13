@@ -1,7 +1,7 @@
 """Report generators for the MCP Test Harness.
 
 Provides console, JSON, and JUnit XML reporters that consume
-:class:`~mcp_test_harness.models.TestRunResults` and produce
+:class:`~mcp_test_harness.models.SessionResults` and produce
 human-readable or machine-readable output.
 
 Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6
@@ -19,7 +19,7 @@ def xml_escape(text: str) -> str:
     """Escape text for safe inclusion in XML attributes and element bodies."""
     return _xml_escape_base(text, {'"': "&quot;", "'": "&apos;"})
 
-from mcp_test_harness.models import TestRunResults, TestResult, TestStatus
+from mcp_test_harness.models import SessionResults, CaseResult, CaseStatus
 
 
 # ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ from mcp_test_harness.models import TestRunResults, TestResult, TestStatus
 class Reporter(Protocol):
     """Interface that all reporters must satisfy."""
 
-    def generate(self, results: TestRunResults) -> str:
+    def generate(self, results: SessionResults) -> str:
         """Return the formatted report as a string."""
         ...
 
@@ -47,7 +47,7 @@ class ConsoleReporter:
     passed / failed / errored / skipped counts and total duration.
     """
 
-    def generate(self, results: TestRunResults) -> str:
+    def generate(self, results: SessionResults) -> str:
         lines: list[str] = []
 
         for tr in results.test_results:
@@ -55,12 +55,12 @@ class ConsoleReporter:
             line = f"  {symbol} {tr.name} ({tr.duration_ms:.1f}ms)"
             lines.append(line)
 
-            if tr.status in (TestStatus.FAILED, TestStatus.ERROR) and tr.error:
+            if tr.status in (CaseStatus.FAILED, CaseStatus.ERROR) and tr.error:
                 lines.append(f"      {tr.error}")
             if tr.assertion_diff:
                 for diff_line in tr.assertion_diff.splitlines():
                     lines.append(f"      {diff_line}")
-            if tr.traceback and tr.status in (TestStatus.FAILED, TestStatus.ERROR):
+            if tr.traceback and tr.status in (CaseStatus.FAILED, CaseStatus.ERROR):
                 for tb_line in tr.traceback.splitlines():
                     lines.append(f"      {tb_line}")
             if tr.flaky:
@@ -86,7 +86,7 @@ class ConsoleReporter:
 class JSONReporter:
     """Full JSON report including metadata, per-test details, and durations."""
 
-    def generate(self, results: TestRunResults) -> str:
+    def generate(self, results: SessionResults) -> str:
         report: dict[str, Any] = {
             "metadata": {
                 "harness_version": results.harness_version,
@@ -115,7 +115,7 @@ class JSONReporter:
 class JUnitXMLReporter:
     """JUnit XML report compatible with GitHub Actions, Jenkins, and GitLab CI."""
 
-    def generate(self, results: TestRunResults) -> str:
+    def generate(self, results: SessionResults) -> str:
         tests = len(results.test_results)
         failures = results.failed
         errors = results.errored
@@ -139,18 +139,18 @@ class JUnitXMLReporter:
                 f'time="{tc_time:.3f}">'
             )
 
-            if tr.status == TestStatus.FAILED:
+            if tr.status == CaseStatus.FAILED:
                 msg = xml_escape(tr.error or "assertion failure")
                 body = _junit_failure_body(tr)
                 lines.append(f'      <failure message="{msg}">{body}</failure>')
-            elif tr.status == TestStatus.ERROR:
+            elif tr.status == CaseStatus.ERROR:
                 msg = xml_escape(tr.error or "error")
                 body = _junit_failure_body(tr)
                 lines.append(f'      <error message="{msg}">{body}</error>')
-            elif tr.status == TestStatus.SKIPPED:
+            elif tr.status == CaseStatus.SKIPPED:
                 msg = xml_escape(tr.error or "skipped")
                 lines.append(f'      <skipped message="{msg}" />')
-            elif tr.status == TestStatus.TIMEOUT:
+            elif tr.status == CaseStatus.TIMEOUT:
                 msg = xml_escape(tr.error or "timeout")
                 lines.append(f'      <error message="{msg}">Test timed out</error>')
 
@@ -167,19 +167,19 @@ class JUnitXMLReporter:
 # ---------------------------------------------------------------------------
 
 
-def _status_symbol(status: TestStatus) -> str:
+def _status_symbol(status: CaseStatus) -> str:
     """Return a short symbol for console display."""
     return {
-        TestStatus.PASSED: "PASS",
-        TestStatus.FAILED: "FAIL",
-        TestStatus.ERROR: "ERR ",
-        TestStatus.TIMEOUT: "TIME",
-        TestStatus.SKIPPED: "SKIP",
+        CaseStatus.PASSED: "PASS",
+        CaseStatus.FAILED: "FAIL",
+        CaseStatus.ERROR: "ERR ",
+        CaseStatus.TIMEOUT: "TIME",
+        CaseStatus.SKIPPED: "SKIP",
     }.get(status, "?")
 
 
-def _test_result_to_dict(tr: TestResult) -> dict[str, Any]:
-    """Serialise a single TestResult for the JSON report."""
+def _test_result_to_dict(tr: CaseResult) -> dict[str, Any]:
+    """Serialise a single CaseResult for the JSON report."""
     d: dict[str, Any] = {
         "name": tr.name,
         "module": tr.module,
@@ -218,7 +218,7 @@ def _test_result_to_dict(tr: TestResult) -> dict[str, Any]:
     return d
 
 
-def _junit_failure_body(tr: TestResult) -> str:
+def _junit_failure_body(tr: CaseResult) -> str:
     """Build the text body for a JUnit <failure> or <error> element."""
     parts: list[str] = []
     if tr.assertion_diff:

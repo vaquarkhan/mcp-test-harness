@@ -23,7 +23,7 @@ from mcp_test_harness.discovery import (
     _is_test_file,
     discover_tests,
 )
-from mcp_test_harness.executor import TestExecutor
+from mcp_test_harness.executor import CaseExecutor
 from mcp_test_harness.fixtures import (
     FixtureManager,
     FixtureScope,
@@ -36,7 +36,7 @@ from mcp_test_harness.fixtures import (
 from mcp_test_harness.lifecycle import ServerLifecycleManager, ManagedServer
 from mcp_test_harness.parser import parse_message, pretty_print, serialize_message, ParseError
 from mcp_test_harness.schema import SchemaValidator, _template_to_regex
-from mcp_test_harness.scheduler import TestScheduler
+from mcp_test_harness.scheduler import HarnessScheduler
 
 
 # ---------------------------------------------------------------------------
@@ -136,7 +136,7 @@ class TestDiscoveryGaps:
 # ---------------------------------------------------------------------------
 
 
-class TestExecutorGaps:
+class CaseExecutorGaps:
     @pytest.mark.asyncio
     async def test_sync_test_function(self):
         """Cover the sync branch of _invoke (line 225)."""
@@ -146,16 +146,16 @@ class TestExecutorGaps:
             nonlocal called
             called = True
 
-        from mcp_test_harness.discovery import TestCase
+        from mcp_test_harness.discovery import HarnessCase
 
-        case = TestCase(
+        case = HarnessCase(
             name="test_sync",
             module_path=Path("fake.py"),
             func=sync_test,
             markers={},
             is_async=False,
         )
-        executor = TestExecutor()
+        executor = CaseExecutor()
         fm = FixtureManager()
         server = ManagedServer(
             process=None, session=MagicMock(), transport=MagicMock(), capabilities={}
@@ -333,19 +333,19 @@ class TestSchemaGaps:
 # ---------------------------------------------------------------------------
 
 
-class TestSchedulerGaps:
+class HarnessSchedulerGaps:
     @pytest.mark.asyncio
     async def test_sequential_module_teardown(self):
         """Cover per-module teardown between modules (line 115)."""
-        from mcp_test_harness.discovery import TestCase
-        from mcp_test_harness.models import TestResult, TestStatus
+        from mcp_test_harness.discovery import HarnessCase
+        from mcp_test_harness.models import CaseResult, CaseStatus
         from unittest.mock import patch
 
-        tc1 = TestCase(
+        tc1 = HarnessCase(
             name="test_a", module_path=Path("mod_a.py"),
             func=lambda: None, markers={}, is_async=False,
         )
-        tc2 = TestCase(
+        tc2 = HarnessCase(
             name="test_b", module_path=Path("mod_b.py"),
             func=lambda: None, markers={}, is_async=False,
         )
@@ -359,7 +359,7 @@ class TestSchedulerGaps:
 
         with (
             patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
-            patch("mcp_test_harness.scheduler.TestExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
             patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
             patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
         ):
@@ -373,11 +373,11 @@ class TestSchedulerGaps:
 
             exec_inst = MockExec.return_value
             exec_inst.execute = AsyncMock(side_effect=[
-                TestResult(name="test_a", module="mod_a.py", status=TestStatus.PASSED, duration_ms=10),
-                TestResult(name="test_b", module="mod_b.py", status=TestStatus.PASSED, duration_ms=10),
+                CaseResult(name="test_a", module="mod_a.py", status=CaseStatus.PASSED, duration_ms=10),
+                CaseResult(name="test_b", module="mod_b.py", status=CaseStatus.PASSED, duration_ms=10),
             ])
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             results = await scheduler.run_sequential([tc1, tc2], config)
 
         assert results.passed == 2

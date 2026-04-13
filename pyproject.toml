@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "mcplint"
 version = "0.1.0"
-description = "MCPLint -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting."
+description = "MCPLint -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting. License: custom non-commercial terms (see LICENSE); PyPI classifier Other/Proprietary."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}

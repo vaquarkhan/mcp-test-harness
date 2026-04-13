@@ -19,7 +19,7 @@ from mcp_test_harness.config import load_config
 from mcp_test_harness.discovery import discover_tests
 from mcp_test_harness.plugins import PluginRegistry
 from mcp_test_harness.reporting import ConsoleReporter, JSONReporter, JUnitXMLReporter
-from mcp_test_harness.scheduler import TestScheduler
+from mcp_test_harness.scheduler import HarnessScheduler
 
 logger = logging.getLogger(__name__)
 
@@ -165,7 +165,7 @@ async def _async_main(argv: list[str] | None = None) -> int:
         return 0
 
     # Run tests via scheduler  (Req 13.1, 13.5)
-    scheduler = TestScheduler()
+    scheduler = HarnessScheduler()
     if config.parallel:
         results = await scheduler.run_parallel(
             all_cases, config, workers=config.workers

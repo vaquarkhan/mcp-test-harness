@@ -139,17 +139,17 @@ class TestCLILine185:
         test_file = tmp_path / "test_v.py"
         test_file.write_text("async def test_v(): pass\n")
 
-        from mcp_test_harness.models import TestRunResults
+        from mcp_test_harness.models import SessionResults
         from unittest.mock import patch
 
-        mock_results = TestRunResults(
+        mock_results = SessionResults(
             test_results=[], total_duration_ms=10.0,
             server_capabilities={}, protocol_version="",
             harness_version="0.1.0",
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.TestScheduler") as MockSched:
+        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 

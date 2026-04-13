@@ -12,26 +12,23 @@ permissions:
 
 jobs:
   quick:
-    name: Quick (offline checks)
+    name: Quick (no MCP-Bastion / no torch)
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
         with:
           python-version: "3.12"
-      - name: Install test dependencies
-        run: python -m pip install --upgrade pip pytest pyyaml jsonschema anyio
+      - name: Install harness runtime + test deps (matches core deps, not Bastion)
+        run: |
+          python -m pip install --upgrade pip
+          pip install "mcp>=1.0.0" "pyyaml>=6.0" "jsonschema>=4.0" "anyio>=4.0" pytest pytest-asyncio
       - name: Offline pyproject checks
         run: python -m pytest tests/test_pyproject.py -q
-      - name: Harness unit tests (no server needed)
-        run: |
-          python -m pytest tests/test_config.py tests/test_parser.py \
-            tests/test_discovery.py tests/test_fixtures.py \
-            tests/test_schema.py tests/test_reporting.py \
-            tests/test_transport.py tests/test_plugins.py \
-            tests/test_executor.py tests/test_lifecycle.py \
-            tests/test_scheduler.py tests/test_assertions.py \
-            tests/test_snapshots.py tests/test_cli.py -q
+      - name: All harness unit tests (excludes mcplint/Bastion smoke — needs full install)
+        run: python -m pytest tests/ --ignore=tests/test_workspace.py -q
 
   full:
     name: Full (all dependencies + all tests)

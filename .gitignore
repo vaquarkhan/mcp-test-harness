@@ -27,6 +27,7 @@ htmlcov/
 .kiro/
 
 # IDE
+.cursor/
 .idea/
 .vscode/
 *.swp

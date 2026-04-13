@@ -95,7 +95,7 @@ class TestAssertToolCall:
         session = FakeSession(
             tool_result=FakeToolResult(content=[FakeContent(text="ok")])
         )
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             assert_tool_call(session, "my_tool", {"a": 1})
         )
         assert result.content[0].text == "ok"
@@ -105,7 +105,7 @@ class TestAssertToolCall:
             tool_result=FakeToolResult(content=[FakeContent(text="hello")])
         )
         expected = [{"text": "hello", "isError": False}]
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_tool_call(session, "t", {}, expected=expected)
         )
 
@@ -115,7 +115,7 @@ class TestAssertToolCall:
         )
         expected = [{"text": "expected", "isError": False}]
         with pytest.raises(MCPAssertionError, match="response mismatch"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_tool_call(session, "t", {}, expected=expected)
             )
 
@@ -126,7 +126,7 @@ class TestAssertToolCall:
             )
         )
         with pytest.raises(MCPAssertionError, match="returned an error.*boom"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_tool_call(session, "t", {})
             )
 
@@ -135,7 +135,7 @@ class TestAssertToolCall:
             tool_result=FakeToolResult(content=[FakeContent(text="a")])
         )
         with pytest.raises(MCPAssertionError) as exc_info:
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_tool_call(session, "t", {}, expected=[{"text": "b", "isError": False}])
             )
         assert exc_info.value.diff is not None
@@ -155,7 +155,7 @@ class TestAssertResourceRead:
                 contents=[FakeResourceContent(text="data", mimeType="text/plain")]
             )
         )
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_resource_read(session, "file:///a.txt", expected_content="data")
         )
 
@@ -165,7 +165,7 @@ class TestAssertResourceRead:
                 contents=[FakeResourceContent(text="x", mimeType="application/json")]
             )
         )
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_resource_read(
                 session, "file:///a", expected_mime_type="application/json"
             )
@@ -178,7 +178,7 @@ class TestAssertResourceRead:
             )
         )
         with pytest.raises(MCPAssertionError, match="content mismatch"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_resource_read(session, "u", expected_content="expected")
             )
 
@@ -189,7 +189,7 @@ class TestAssertResourceRead:
             )
         )
         with pytest.raises(MCPAssertionError, match="MIME type mismatch"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_resource_read(session, "u", expected_mime_type="text/plain")
             )
 
@@ -198,7 +198,7 @@ class TestAssertResourceRead:
             resource_result=FakeResourceResult(contents=[])
         )
         with pytest.raises(MCPAssertionError, match="no content items"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_resource_read(session, "u")
             )
 
@@ -216,7 +216,7 @@ class TestAssertPrompt:
             )
         )
         expected = [{"role": "assistant", "content": "hi"}]
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_prompt(session, "greet", expected_messages=expected)
         )
 
@@ -228,7 +228,7 @@ class TestAssertPrompt:
         )
         expected = [{"role": "assistant", "content": "y"}]
         with pytest.raises(MCPAssertionError, match="message structure mismatch"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_prompt(session, "p", expected_messages=expected)
             )
 
@@ -236,7 +236,7 @@ class TestAssertPrompt:
         session = FakeSession(
             prompt_result=FakePromptResult(messages=[FakeMessage()])
         )
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_prompt(session, "p")
         )
 
@@ -249,35 +249,35 @@ class TestAssertPrompt:
 class TestAssertCapabilities:
     def test_pass(self) -> None:
         session = FakeSession(capabilities={"tools": True, "prompts": True})
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_capabilities(session, {"tools": True})
         )
 
     def test_fail_missing_key(self) -> None:
         session = FakeSession(capabilities={"tools": True})
         with pytest.raises(MCPAssertionError, match="capabilities mismatch"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_capabilities(session, {"resources": True})
             )
 
     def test_fail_value_mismatch(self) -> None:
         session = FakeSession(capabilities={"tools": False})
         with pytest.raises(MCPAssertionError, match="capabilities mismatch"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_capabilities(session, {"tools": True})
             )
 
     def test_fail_no_capabilities(self) -> None:
         session = FakeSession()
         with pytest.raises(MCPAssertionError, match="no.*capabilities"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_capabilities(session, {"tools": True})
             )
 
     def test_diff_in_error(self) -> None:
         session = FakeSession(capabilities={"tools": False})
         with pytest.raises(MCPAssertionError) as exc_info:
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_capabilities(session, {"tools": True})
             )
         assert exc_info.value.diff is not None
@@ -292,7 +292,7 @@ class TestAssertSnapshot:
     def test_creates_snapshot_when_missing(self, tmp_path: Path) -> None:
         test_file = tmp_path / "test_example.py"
         test_file.touch()
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_snapshot({"key": "value"}, "my_snap", test_file)
         )
         snap = tmp_path / "__snapshots__" / "my_snap.snap"
@@ -307,7 +307,7 @@ class TestAssertSnapshot:
         snap_dir.mkdir()
         snap = snap_dir / "s.snap"
         snap.write_text(json.dumps({"a": 1}, indent=2, sort_keys=True) + "\n")
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_snapshot({"a": 1}, "s", test_file)
         )
 
@@ -319,7 +319,7 @@ class TestAssertSnapshot:
         snap = snap_dir / "s.snap"
         snap.write_text(json.dumps({"a": 1}, indent=2, sort_keys=True) + "\n")
         with pytest.raises(MCPAssertionError, match="Snapshot mismatch"):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 assert_snapshot({"a": 2}, "s", test_file)
             )
 
@@ -330,7 +330,7 @@ class TestAssertSnapshot:
         snap_dir.mkdir()
         snap = snap_dir / "s.snap"
         snap.write_text(json.dumps({"old": True}, indent=2, sort_keys=True) + "\n")
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             assert_snapshot({"new": True}, "s", test_file, update=True)
         )
         data = json.loads(snap.read_text())

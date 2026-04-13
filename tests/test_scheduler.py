@@ -9,10 +9,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from mcp_test_harness.config import HarnessConfig
-from mcp_test_harness.discovery import TestCase
+from mcp_test_harness.discovery import HarnessCase
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError
-from mcp_test_harness.models import TestResult, TestStatus
-from mcp_test_harness.scheduler import TestScheduler, _aggregate_results
+from mcp_test_harness.models import CaseResult, CaseStatus
+from mcp_test_harness.scheduler import HarnessScheduler, _aggregate_results
 
 
 # ---------------------------------------------------------------------------
@@ -26,11 +26,11 @@ def _make_config(**overrides) -> HarnessConfig:
     return HarnessConfig(**defaults)
 
 
-def _make_test_case(name: str = "test_one", module: str = "test_mod.py") -> TestCase:
+def _make_test_case(name: str = "test_one", module: str = "test_mod.py") -> HarnessCase:
     async def _fn():
         pass
 
-    return TestCase(
+    return HarnessCase(
         name=name,
         module_path=Path(module),
         func=_fn,
@@ -48,8 +48,8 @@ def _make_managed_server() -> ManagedServer:
     )
 
 
-def _make_test_result(name: str, status: TestStatus = TestStatus.PASSED) -> TestResult:
-    return TestResult(
+def _make_test_result(name: str, status: CaseStatus = CaseStatus.PASSED) -> CaseResult:
+    return CaseResult(
         name=name,
         module="test_mod.py",
         status=status,
@@ -74,12 +74,12 @@ class TestAggregateResults:
 
     def test_counts_statuses(self):
         results = [
-            _make_test_result("t1", TestStatus.PASSED),
-            _make_test_result("t2", TestStatus.FAILED),
-            _make_test_result("t3", TestStatus.ERROR),
-            _make_test_result("t4", TestStatus.SKIPPED),
-            _make_test_result("t5", TestStatus.TIMEOUT),
-            _make_test_result("t6", TestStatus.PASSED),
+            _make_test_result("t1", CaseStatus.PASSED),
+            _make_test_result("t2", CaseStatus.FAILED),
+            _make_test_result("t3", CaseStatus.ERROR),
+            _make_test_result("t4", CaseStatus.SKIPPED),
+            _make_test_result("t5", CaseStatus.TIMEOUT),
+            _make_test_result("t6", CaseStatus.PASSED),
         ]
         run = _aggregate_results(results, 500.0, {"tools": {}}, "2024-11-05")
         assert run.passed == 2
@@ -109,7 +109,7 @@ class TestRunSequential:
             patch(
                 "mcp_test_harness.scheduler.ServerLifecycleManager"
             ) as MockLCM,
-            patch("mcp_test_harness.scheduler.TestExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
             patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
             patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
         ):
@@ -124,12 +124,12 @@ class TestRunSequential:
             exec_instance = MockExec.return_value
             exec_instance.execute = AsyncMock(
                 side_effect=[
-                    _make_test_result("test_a", TestStatus.PASSED),
-                    _make_test_result("test_b", TestStatus.FAILED),
+                    _make_test_result("test_a", CaseStatus.PASSED),
+                    _make_test_result("test_b", CaseStatus.FAILED),
                 ]
             )
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             run_results = await scheduler.run_sequential([tc1, tc2], config)
 
         assert run_results.passed == 1
@@ -150,7 +150,7 @@ class TestRunSequential:
             patch(
                 "mcp_test_harness.scheduler.ServerLifecycleManager"
             ) as MockLCM,
-            patch("mcp_test_harness.scheduler.TestExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
             patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
             patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
         ):
@@ -165,19 +165,19 @@ class TestRunSequential:
             exec_instance = MockExec.return_value
             exec_instance.execute = AsyncMock(
                 side_effect=[
-                    _make_test_result("test_a", TestStatus.PASSED),
+                    _make_test_result("test_a", CaseStatus.PASSED),
                     ServerCrashedError("process exited with code 1"),
                 ]
             )
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             run_results = await scheduler.run_sequential([tc1, tc2, tc3], config)
 
         assert len(run_results.test_results) == 3
-        assert run_results.test_results[0].status == TestStatus.PASSED
-        assert run_results.test_results[1].status == TestStatus.ERROR
+        assert run_results.test_results[0].status == CaseStatus.PASSED
+        assert run_results.test_results[1].status == CaseStatus.ERROR
         assert "crashed" in run_results.test_results[1].error.lower()
-        assert run_results.test_results[2].status == TestStatus.ERROR
+        assert run_results.test_results[2].status == CaseStatus.ERROR
 
     @pytest.mark.asyncio
     async def test_startup_failure_marks_all_errored(self):
@@ -193,11 +193,11 @@ class TestRunSequential:
             lcm_instance.start = AsyncMock(side_effect=RuntimeError("cannot start"))
             lcm_instance.shutdown = AsyncMock()
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             run_results = await scheduler.run_sequential([tc1, tc2], config)
 
         assert len(run_results.test_results) == 2
-        assert all(r.status == TestStatus.ERROR for r in run_results.test_results)
+        assert all(r.status == CaseStatus.ERROR for r in run_results.test_results)
         assert all("startup failed" in r.error.lower() for r in run_results.test_results)
 
     @pytest.mark.asyncio
@@ -222,7 +222,7 @@ class TestRunSequential:
             fm_instance = MockFM.return_value
             fm_instance.teardown = AsyncMock(return_value=[])
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             run_results = await scheduler.run_sequential([], config)
 
         # Server is still started (sequential starts before checking tests)
@@ -247,7 +247,7 @@ class TestRunParallel:
             patch(
                 "mcp_test_harness.scheduler.ServerLifecycleManager"
             ) as MockLCM,
-            patch("mcp_test_harness.scheduler.TestExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
             patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
             patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
         ):
@@ -262,11 +262,11 @@ class TestRunParallel:
             exec_instance = MockExec.return_value
             exec_instance.execute = AsyncMock(
                 side_effect=lambda tc, srv, fix: _make_test_result(
-                    tc.name, TestStatus.PASSED
+                    tc.name, CaseStatus.PASSED
                 )
             )
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             run_results = await scheduler.run_parallel(test_cases, config, workers=2)
 
         assert len(run_results.test_results) == 4
@@ -289,13 +289,13 @@ class TestRunParallel:
             call_count += 1
             if tc.name == "test_a":
                 raise ServerCrashedError("boom")
-            return _make_test_result(tc.name, TestStatus.PASSED)
+            return _make_test_result(tc.name, CaseStatus.PASSED)
 
         with (
             patch(
                 "mcp_test_harness.scheduler.ServerLifecycleManager"
             ) as MockLCM,
-            patch("mcp_test_harness.scheduler.TestExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
             patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
             patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
         ):
@@ -310,14 +310,14 @@ class TestRunParallel:
             exec_instance = MockExec.return_value
             exec_instance.execute = AsyncMock(side_effect=mock_execute)
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             run_results = await scheduler.run_parallel([tc1, tc2], config, workers=2)
 
         assert len(run_results.test_results) == 2
         # test_a errored from crash, test_b passed on the other worker
         statuses = {r.name: r.status for r in run_results.test_results}
-        assert statuses["test_a"] == TestStatus.ERROR
-        assert statuses["test_b"] == TestStatus.PASSED
+        assert statuses["test_a"] == CaseStatus.ERROR
+        assert statuses["test_b"] == CaseStatus.PASSED
 
     @pytest.mark.asyncio
     async def test_default_worker_count(self):
@@ -325,7 +325,7 @@ class TestRunParallel:
         config = _make_config()
 
         with patch("mcp_test_harness.scheduler.os.cpu_count", return_value=4):
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             # With no tests, just verify it doesn't crash
             run_results = await scheduler.run_parallel([], config, workers=None)
 
@@ -336,7 +336,7 @@ class TestRunParallel:
     async def test_empty_test_list_parallel(self):
         """Empty test list returns empty results without starting workers."""
         config = _make_config()
-        scheduler = TestScheduler()
+        scheduler = HarnessScheduler()
         run_results = await scheduler.run_parallel([], config, workers=2)
         assert len(run_results.test_results) == 0
 
@@ -351,7 +351,7 @@ class TestRunParallel:
             patch(
                 "mcp_test_harness.scheduler.ServerLifecycleManager"
             ) as MockLCM,
-            patch("mcp_test_harness.scheduler.TestExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
             patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
             patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
         ):
@@ -365,10 +365,10 @@ class TestRunParallel:
 
             exec_instance = MockExec.return_value
             exec_instance.execute = AsyncMock(
-                return_value=_make_test_result("test_only", TestStatus.PASSED)
+                return_value=_make_test_result("test_only", CaseStatus.PASSED)
             )
 
-            scheduler = TestScheduler()
+            scheduler = HarnessScheduler()
             run_results = await scheduler.run_parallel([tc1], config, workers=8)
 
         assert len(run_results.test_results) == 1

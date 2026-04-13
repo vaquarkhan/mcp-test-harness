@@ -10,9 +10,9 @@ import pytest
 from mcp_test_harness.models import (
     AttemptResult,
     SchemaViolation,
-    TestResult,
-    TestRunResults,
-    TestStatus,
+    CaseResult,
+    SessionResults,
+    CaseStatus,
 )
 from mcp_test_harness.reporting import (
     ConsoleReporter,
@@ -27,30 +27,30 @@ from mcp_test_harness.reporting import (
 
 
 def _make_results(
-    test_results: list[TestResult] | None = None,
+    test_results: list[CaseResult] | None = None,
     *,
     total_duration_ms: float = 150.0,
-) -> TestRunResults:
-    """Build a minimal TestRunResults for testing."""
+) -> SessionResults:
+    """Build a minimal SessionResults for testing."""
     results = test_results or []
-    return TestRunResults(
+    return SessionResults(
         test_results=results,
         total_duration_ms=total_duration_ms,
         server_capabilities={"tools": True, "resources": True},
         protocol_version="2025-03-26",
         harness_version="0.1.0",
-        passed=sum(1 for r in results if r.status == TestStatus.PASSED),
-        failed=sum(1 for r in results if r.status == TestStatus.FAILED),
-        errored=sum(1 for r in results if r.status == TestStatus.ERROR),
-        skipped=sum(1 for r in results if r.status == TestStatus.SKIPPED),
-        timed_out=sum(1 for r in results if r.status == TestStatus.TIMEOUT),
+        passed=sum(1 for r in results if r.status == CaseStatus.PASSED),
+        failed=sum(1 for r in results if r.status == CaseStatus.FAILED),
+        errored=sum(1 for r in results if r.status == CaseStatus.ERROR),
+        skipped=sum(1 for r in results if r.status == CaseStatus.SKIPPED),
+        timed_out=sum(1 for r in results if r.status == CaseStatus.TIMEOUT),
     )
 
 
-def _passed(name: str = "test_ok", duration: float = 10.0) -> TestResult:
-    return TestResult(
+def _passed(name: str = "test_ok", duration: float = 10.0) -> CaseResult:
+    return CaseResult(
         name=name, module="tests/test_example.py",
-        status=TestStatus.PASSED, duration_ms=duration,
+        status=CaseStatus.PASSED, duration_ms=duration,
     )
 
 
@@ -59,34 +59,34 @@ def _failed(
     error: str = "expected 1 got 2",
     diff: str | None = "- 1\n+ 2",
     tb: str | None = "Traceback ...",
-) -> TestResult:
-    return TestResult(
+) -> CaseResult:
+    return CaseResult(
         name=name, module="tests/test_example.py",
-        status=TestStatus.FAILED, duration_ms=20.0,
+        status=CaseStatus.FAILED, duration_ms=20.0,
         error=error, traceback=tb, assertion_diff=diff,
     )
 
 
-def _errored(name: str = "test_err") -> TestResult:
-    return TestResult(
+def _errored(name: str = "test_err") -> CaseResult:
+    return CaseResult(
         name=name, module="tests/test_example.py",
-        status=TestStatus.ERROR, duration_ms=5.0,
+        status=CaseStatus.ERROR, duration_ms=5.0,
         error="RuntimeError: boom", traceback="Traceback ...",
     )
 
 
-def _skipped(name: str = "test_skip") -> TestResult:
-    return TestResult(
+def _skipped(name: str = "test_skip") -> CaseResult:
+    return CaseResult(
         name=name, module="tests/test_example.py",
-        status=TestStatus.SKIPPED, duration_ms=0.0,
+        status=CaseStatus.SKIPPED, duration_ms=0.0,
         error="not ready",
     )
 
 
-def _timed_out(name: str = "test_slow") -> TestResult:
-    return TestResult(
+def _timed_out(name: str = "test_slow") -> CaseResult:
+    return CaseResult(
         name=name, module="tests/test_example.py",
-        status=TestStatus.TIMEOUT, duration_ms=30000.0,
+        status=CaseStatus.TIMEOUT, duration_ms=30000.0,
         error="Test exceeded 30s timeout",
     )
 
@@ -187,14 +187,14 @@ class TestJSONReporter:
         assert data["tests"][0]["duration_ms"] == 42.5
 
     def test_retry_info_included(self):
-        tr = TestResult(
+        tr = CaseResult(
             name="test_flaky", module="m.py",
-            status=TestStatus.PASSED, duration_ms=50.0,
+            status=CaseStatus.PASSED, duration_ms=50.0,
             retry_count=2, flaky=True,
             attempt_results=[
-                AttemptResult(attempt=1, status=TestStatus.FAILED, duration_ms=10.0, error="fail"),
-                AttemptResult(attempt=2, status=TestStatus.FAILED, duration_ms=10.0, error="fail"),
-                AttemptResult(attempt=3, status=TestStatus.PASSED, duration_ms=30.0),
+                AttemptResult(attempt=1, status=CaseStatus.FAILED, duration_ms=10.0, error="fail"),
+                AttemptResult(attempt=2, status=CaseStatus.FAILED, duration_ms=10.0, error="fail"),
+                AttemptResult(attempt=3, status=CaseStatus.PASSED, duration_ms=30.0),
             ],
         )
         run = _make_results([tr])

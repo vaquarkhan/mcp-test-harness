@@ -94,7 +94,7 @@ def skip(func: Callable | None = None, *, reason: str | None = None) -> Any:
 
 
 @dataclass
-class TestCase:
+class HarnessCase:
     """A single discovered test case."""
 
     name: str
@@ -105,11 +105,11 @@ class TestCase:
 
 
 @dataclass
-class TestModule:
+class HarnessModule:
     """A discovered test module containing test cases."""
 
     path: Path
-    test_cases: list[TestCase] = field(default_factory=list)
+    test_cases: list[HarnessCase] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -130,9 +130,9 @@ def _get_markers(obj: Any) -> dict[str, Any]:
     return dict(getattr(obj, _MARKER_ATTR, {}))
 
 
-def _extract_test_cases(module: Any, module_path: Path) -> list[TestCase]:
+def _extract_test_cases(module: Any, module_path: Path) -> list[HarnessCase]:
     """Extract ``test_`` functions and methods from ``Test`` classes."""
-    cases: list[TestCase] = []
+    cases: list[HarnessCase] = []
 
     for attr_name in sorted(dir(module)):
         obj = getattr(module, attr_name, None)
@@ -144,7 +144,7 @@ def _extract_test_cases(module: Any, module_path: Path) -> list[TestCase]:
             inspect.isfunction(obj) or inspect.iscoroutinefunction(obj)
         ):
             cases.append(
-                TestCase(
+                HarnessCase(
                     name=attr_name,
                     module_path=module_path,
                     func=obj,
@@ -165,7 +165,7 @@ def _extract_test_cases(module: Any, module_path: Path) -> list[TestCase]:
                 if not (inspect.isfunction(method) or inspect.iscoroutinefunction(method)):
                     continue
                 cases.append(
-                    TestCase(
+                    HarnessCase(
                         name=f"{attr_name}.{method_name}",
                         module_path=module_path,
                         func=method,
@@ -227,7 +227,7 @@ def discover_tests(
     paths: list[Path],
     filter_name: str | None = None,
     filter_marker: str | None = None,
-) -> list[TestModule]:
+) -> list[HarnessModule]:
     """Recursively discover test modules and extract test cases.
 
     Parameters
@@ -241,7 +241,7 @@ def discover_tests(
 
     Returns
     -------
-    list[TestModule]
+    list[HarnessModule]
         Discovered modules with their test cases.
     """
     test_files: list[Path] = []
@@ -255,7 +255,7 @@ def discover_tests(
                 if _is_test_file(child):
                     test_files.append(child)
 
-    modules: list[TestModule] = []
+    modules: list[HarnessModule] = []
 
     for file_path in test_files:
         mod = _load_module_from_path(file_path)
@@ -273,6 +273,6 @@ def discover_tests(
             ]
 
         if cases:
-            modules.append(TestModule(path=file_path, test_cases=cases))
+            modules.append(HarnessModule(path=file_path, test_cases=cases))
 
     return modules

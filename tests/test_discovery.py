@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from mcp_test_harness.discovery import (
-    TestCase,
-    TestModule,
+    HarnessCase,
+    HarnessModule,
     _MARKER_ATTR,
     discover_tests,
     marker,

@@ -9,11 +9,11 @@ from unittest.mock import MagicMock
 import pytest
 
 from mcp_test_harness.assertions import MCPAssertionError
-from mcp_test_harness.discovery import TestCase
-from mcp_test_harness.executor import TestExecutor
+from mcp_test_harness.discovery import HarnessCase
+from mcp_test_harness.executor import CaseExecutor
 from mcp_test_harness.fixtures import FixtureManager, FixtureScope
 from mcp_test_harness.lifecycle import ManagedServer
-from mcp_test_harness.models import TestStatus
+from mcp_test_harness.models import CaseStatus
 
 
 # ---------------------------------------------------------------------------
@@ -42,11 +42,11 @@ def _make_case(
     name: str = "test_example",
     markers: dict | None = None,
     is_async: bool | None = None,
-) -> TestCase:
-    """Build a TestCase wrapping *func*."""
+) -> HarnessCase:
+    """Build a HarnessCase wrapping *func*."""
     import inspect
 
-    return TestCase(
+    return HarnessCase(
         name=name,
         module_path=Path("tests/fake_test.py"),
         func=func,
@@ -66,10 +66,10 @@ async def test_sync_passing_test():
     def my_test():
         pass
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.PASSED
+    assert result.status == CaseStatus.PASSED
     assert result.error is None
     assert result.duration_ms >= 0
 
@@ -80,10 +80,10 @@ async def test_async_passing_test():
     async def my_test():
         pass
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.PASSED
+    assert result.status == CaseStatus.PASSED
     assert result.error is None
 
 
@@ -93,10 +93,10 @@ async def test_assertion_error_marks_failed():
     def my_test():
         assert False, "expected failure"
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.FAILED
+    assert result.status == CaseStatus.FAILED
     assert "expected failure" in (result.error or "")
     assert result.traceback is not None
 
@@ -107,10 +107,10 @@ async def test_mcp_assertion_error_captures_diff():
     async def my_test():
         raise MCPAssertionError("mismatch", diff="- expected\n+ actual")
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.FAILED
+    assert result.status == CaseStatus.FAILED
     assert result.assertion_diff == "- expected\n+ actual"
     assert "mismatch" in (result.error or "")
 
@@ -121,10 +121,10 @@ async def test_unhandled_exception_marks_failed():
     def my_test():
         raise RuntimeError("boom")
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.FAILED
+    assert result.status == CaseStatus.FAILED
     assert "RuntimeError" in (result.error or "")
     assert result.traceback is not None
 
@@ -144,10 +144,10 @@ async def test_skip_marker():
         call_count += 1
 
     case = _make_case(my_test, markers={"skip": True, "reason": "not ready"})
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(case, _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.SKIPPED
+    assert result.status == CaseStatus.SKIPPED
     assert result.error == "not ready"
     assert call_count == 0
 
@@ -164,10 +164,10 @@ async def test_timeout_enforcement():
         await asyncio.sleep(10)
 
     case = _make_case(my_test, markers={"timeout": 0.05})
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(case, _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.TIMEOUT
+    assert result.status == CaseStatus.TIMEOUT
     assert "timeout" in (result.error or "").lower()
 
 
@@ -177,10 +177,10 @@ async def test_default_timeout_used():
     async def my_test():
         await asyncio.sleep(10)
 
-    executor = TestExecutor(default_timeout=0.05)
+    executor = CaseExecutor(default_timeout=0.05)
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.TIMEOUT
+    assert result.status == CaseStatus.TIMEOUT
 
 
 # ---------------------------------------------------------------------------
@@ -200,16 +200,16 @@ async def test_retry_eventual_pass_is_flaky():
             raise AssertionError("not yet")
 
     case = _make_case(my_test, markers={"retry": 3})
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(case, _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.PASSED
+    assert result.status == CaseStatus.PASSED
     assert result.flaky is True
     assert result.retry_count == 2  # 2 retries before passing
     assert len(result.attempt_results) == 3
-    assert result.attempt_results[0].status == TestStatus.FAILED
-    assert result.attempt_results[1].status == TestStatus.FAILED
-    assert result.attempt_results[2].status == TestStatus.PASSED
+    assert result.attempt_results[0].status == CaseStatus.FAILED
+    assert result.attempt_results[1].status == CaseStatus.FAILED
+    assert result.attempt_results[2].status == CaseStatus.PASSED
 
 
 @pytest.mark.asyncio
@@ -219,10 +219,10 @@ async def test_retry_all_fail():
         raise AssertionError("always fails")
 
     case = _make_case(my_test, markers={"retry": 2})
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(case, _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.FAILED
+    assert result.status == CaseStatus.FAILED
     assert result.flaky is False
     assert result.retry_count == 2
     assert len(result.attempt_results) == 3  # initial + 2 retries
@@ -234,10 +234,10 @@ async def test_no_retry_marker_means_single_attempt():
     def my_test():
         raise AssertionError("fail")
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.FAILED
+    assert result.status == CaseStatus.FAILED
     assert result.retry_count == 0
     assert len(result.attempt_results) == 1
 
@@ -259,7 +259,7 @@ async def test_attempt_results_have_durations():
             raise AssertionError("first fail")
 
     case = _make_case(my_test, markers={"retry": 1})
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(case, _make_server(), _make_fixtures())
 
     assert len(result.attempt_results) == 2
@@ -283,10 +283,10 @@ async def test_fixture_injection():
     fm = _make_fixtures()
     fm.register("greeting", lambda: "hello", FixtureScope.PER_TEST)
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), fm)
 
-    assert result.status == TestStatus.PASSED
+    assert result.status == CaseStatus.PASSED
     assert received["greeting"] == "hello"
 
 
@@ -296,10 +296,10 @@ async def test_fixture_error_marks_error():
     def my_test(nonexistent_fixture: str):
         pass
 
-    executor = TestExecutor()
+    executor = CaseExecutor()
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.ERROR
+    assert result.status == CaseStatus.ERROR
     assert "Fixture error" in (result.error or "")
 
 
@@ -314,10 +314,10 @@ async def test_execute_returns_result_on_failure():
     def my_test():
         raise RuntimeError("crash")
 
-    executor = TestExecutor()
-    # Should not raise -- returns a TestResult
+    executor = CaseExecutor()
+    # Should not raise -- returns a CaseResult
     result = await executor.execute(_make_case(my_test), _make_server(), _make_fixtures())
 
-    assert result.status == TestStatus.FAILED
+    assert result.status == CaseStatus.FAILED
     assert result.name == "test_example"
     assert Path(result.module) == Path("tests/fake_test.py")

@@ -33,7 +33,7 @@ from typing import Any
 
 from mcp_test_harness.assertions import MCPAssertionError
 from mcp_test_harness.fixtures import FixtureScope
-from mcp_test_harness.models import TestRunResults, TestStatus
+from mcp_test_harness.models import SessionResults, CaseStatus
 from mcp_test_harness.plugins import PluginContext
 
 
@@ -121,7 +121,7 @@ class MarkdownReporter:
     saving as a ``.md`` file.
     """
 
-    def generate(self, results: TestRunResults) -> str:
+    def generate(self, results: SessionResults) -> str:
         """Return a Markdown-formatted test report.
 
         Parameters
@@ -167,7 +167,7 @@ class MarkdownReporter:
         failures = [
             tr
             for tr in results.test_results
-            if tr.status in (TestStatus.FAILED, TestStatus.ERROR)
+            if tr.status in (CaseStatus.FAILED, CaseStatus.ERROR)
         ]
         if failures:
             lines.append("")
@@ -187,14 +187,14 @@ class MarkdownReporter:
         return "\n".join(lines)
 
 
-def _status_icon(status: TestStatus) -> str:
+def _status_icon(status: CaseStatus) -> str:
     """Return a text label for the given test status."""
     return {
-        TestStatus.PASSED: "PASS",
-        TestStatus.FAILED: "FAIL",
-        TestStatus.ERROR: "ERROR",
-        TestStatus.TIMEOUT: "TIMEOUT",
-        TestStatus.SKIPPED: "SKIP",
+        CaseStatus.PASSED: "PASS",
+        CaseStatus.FAILED: "FAIL",
+        CaseStatus.ERROR: "ERROR",
+        CaseStatus.TIMEOUT: "TIMEOUT",
+        CaseStatus.SKIPPED: "SKIP",
     }.get(status, "?")
 
 

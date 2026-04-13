@@ -17,10 +17,10 @@ import traceback
 from dataclasses import dataclass, field
 
 from mcp_test_harness.assertions import MCPAssertionError
-from mcp_test_harness.discovery import TestCase
+from mcp_test_harness.discovery import HarnessCase
 from mcp_test_harness.fixtures import FixtureError, FixtureManager, FixtureScope
 from mcp_test_harness.lifecycle import ManagedServer
-from mcp_test_harness.models import AttemptResult, TestResult, TestStatus
+from mcp_test_harness.models import AttemptResult, CaseResult, CaseStatus
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 _DEFAULT_TIMEOUT = 30.0
 
 
-class TestExecutor:
+class CaseExecutor:
     """Execute individual test cases with timeout and retry handling.
 
     The executor resolves fixtures via :class:`FixtureManager`, calls the
@@ -45,10 +45,10 @@ class TestExecutor:
 
     async def execute(
         self,
-        test_case: TestCase,
+        test_case: HarnessCase,
         server: ManagedServer,
         fixtures: FixtureManager,
-    ) -> TestResult:
+    ) -> CaseResult:
         """Execute a single test case and return its result.
 
         Parameters
@@ -62,17 +62,17 @@ class TestExecutor:
 
         Returns
         -------
-        TestResult
+        CaseResult
             The outcome including status, duration, error info, and retry
             history.
         """
         # Check for skip marker first (Req 2.7 -- skipped tests)
         if test_case.markers.get("skip"):
             reason = test_case.markers.get("reason", "")
-            return TestResult(
+            return CaseResult(
                 name=test_case.name,
                 module=str(test_case.module_path),
-                status=TestStatus.SKIPPED,
+                status=CaseStatus.SKIPPED,
                 duration_ms=0.0,
                 error=reason or None,
             )
@@ -109,11 +109,11 @@ class TestExecutor:
             )
 
             # If passed, stop retrying
-            if outcome.status == TestStatus.PASSED:
+            if outcome.status == CaseStatus.PASSED:
                 break
 
             # If not retryable (e.g. ERROR from fixture failure), stop
-            if outcome.status == TestStatus.ERROR:
+            if outcome.status == CaseStatus.ERROR:
                 break
 
             # For FAILED / TIMEOUT -- retry if attempts remain
@@ -133,15 +133,15 @@ class TestExecutor:
 
         # Determine flaky: passed after at least one prior failure (Req 14.4)
         flaky = (
-            last_result.status == TestStatus.PASSED
+            last_result.status == CaseStatus.PASSED
             and len(attempt_results) > 1
-            and any(a.status != TestStatus.PASSED for a in attempt_results[:-1])
+            and any(a.status != CaseStatus.PASSED for a in attempt_results[:-1])
         )
 
         if flaky:
             logger.warning("Test '%s' is flaky -- passed after retry", test_case.name)
 
-        return TestResult(
+        return CaseResult(
             name=test_case.name,
             module=str(test_case.module_path),
             status=last_result.status,
@@ -160,7 +160,7 @@ class TestExecutor:
 
     async def _run_once(
         self,
-        test_case: TestCase,
+        test_case: HarnessCase,
         fixtures: FixtureManager,
         timeout: float,
         attempt: int,
@@ -174,7 +174,7 @@ class TestExecutor:
         except FixtureError as exc:
             duration_ms = (time.monotonic() - start) * 1000.0
             return _AttemptOutcome(
-                status=TestStatus.ERROR,
+                status=CaseStatus.ERROR,
                 duration_ms=duration_ms,
                 error=f"Fixture error: {exc}",
                 tb=traceback.format_exc(),
@@ -189,14 +189,14 @@ class TestExecutor:
         except asyncio.TimeoutError:
             duration_ms = (time.monotonic() - start) * 1000.0
             return _AttemptOutcome(
-                status=TestStatus.TIMEOUT,
+                status=CaseStatus.TIMEOUT,
                 duration_ms=duration_ms,
                 error=f"Test exceeded {timeout}s timeout",
             )
         except MCPAssertionError as exc:
             duration_ms = (time.monotonic() - start) * 1000.0
             return _AttemptOutcome(
-                status=TestStatus.FAILED,
+                status=CaseStatus.FAILED,
                 duration_ms=duration_ms,
                 error=str(exc),
                 tb=traceback.format_exc(),
@@ -205,7 +205,7 @@ class TestExecutor:
         except AssertionError as exc:
             duration_ms = (time.monotonic() - start) * 1000.0
             return _AttemptOutcome(
-                status=TestStatus.FAILED,
+                status=CaseStatus.FAILED,
                 duration_ms=duration_ms,
                 error=str(exc),
                 tb=traceback.format_exc(),
@@ -213,7 +213,7 @@ class TestExecutor:
         except Exception as exc:  # noqa: BLE001
             duration_ms = (time.monotonic() - start) * 1000.0
             return _AttemptOutcome(
-                status=TestStatus.FAILED,
+                status=CaseStatus.FAILED,
                 duration_ms=duration_ms,
                 error=f"{type(exc).__name__}: {exc}",
                 tb=traceback.format_exc(),
@@ -230,7 +230,7 @@ class TestExecutor:
 
         duration_ms = (time.monotonic() - start) * 1000.0
         return _AttemptOutcome(
-            status=TestStatus.PASSED,
+            status=CaseStatus.PASSED,
             duration_ms=duration_ms,
         )
 
@@ -256,7 +256,7 @@ class TestExecutor:
 class _AttemptOutcome:
     """Internal result of a single test attempt."""
 
-    status: TestStatus
+    status: CaseStatus
     duration_ms: float
     error: str | None = None
     tb: str | None = None

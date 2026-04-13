@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, patch, MagicMock
 import pytest
 
 from mcp_test_harness.cli import _build_parser, _async_main, main
-from mcp_test_harness.models import TestRunResults, TestStatus
+from mcp_test_harness.models import SessionResults, CaseStatus
 
 
 # ---------------------------------------------------------------------------
@@ -179,7 +179,7 @@ class TestAsyncMainFullRun:
         test_file = tmp_path / "test_ok.py"
         test_file.write_text("async def test_pass(): pass\n")
 
-        mock_results = TestRunResults(
+        mock_results = SessionResults(
             test_results=[],
             total_duration_ms=100.0,
             server_capabilities={},
@@ -188,7 +188,7 @@ class TestAsyncMainFullRun:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.TestScheduler") as MockSched:
+        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
             instance.run_parallel = AsyncMock(return_value=mock_results)
@@ -205,7 +205,7 @@ class TestAsyncMainFullRun:
         test_file = tmp_path / "test_fail.py"
         test_file.write_text("async def test_fail(): assert False\n")
 
-        mock_results = TestRunResults(
+        mock_results = SessionResults(
             test_results=[],
             total_duration_ms=50.0,
             server_capabilities={},
@@ -214,7 +214,7 @@ class TestAsyncMainFullRun:
             passed=0, failed=1, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.TestScheduler") as MockSched:
+        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 
@@ -230,7 +230,7 @@ class TestAsyncMainFullRun:
         test_file = tmp_path / "test_err.py"
         test_file.write_text("async def test_err(): pass\n")
 
-        mock_results = TestRunResults(
+        mock_results = SessionResults(
             test_results=[],
             total_duration_ms=50.0,
             server_capabilities={},
@@ -239,7 +239,7 @@ class TestAsyncMainFullRun:
             passed=0, failed=0, errored=1, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.TestScheduler") as MockSched:
+        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 
@@ -255,7 +255,7 @@ class TestAsyncMainFullRun:
         test_file = tmp_path / "test_p.py"
         test_file.write_text("async def test_p(): pass\n")
 
-        mock_results = TestRunResults(
+        mock_results = SessionResults(
             test_results=[],
             total_duration_ms=50.0,
             server_capabilities={},
@@ -264,7 +264,7 @@ class TestAsyncMainFullRun:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.TestScheduler") as MockSched:
+        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_parallel = AsyncMock(return_value=mock_results)
             instance.run_sequential = AsyncMock(return_value=mock_results)
@@ -284,7 +284,7 @@ class TestAsyncMainFullRun:
         test_file.write_text("async def test_r(): pass\n")
         report_path = tmp_path / "report.json"
 
-        mock_results = TestRunResults(
+        mock_results = SessionResults(
             test_results=[],
             total_duration_ms=50.0,
             server_capabilities={},
@@ -293,7 +293,7 @@ class TestAsyncMainFullRun:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.TestScheduler") as MockSched:
+        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 

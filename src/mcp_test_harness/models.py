@@ -23,7 +23,7 @@ ReportFormat = Literal["json", "junit"]
 # ---------------------------------------------------------------------------
 
 
-class TestStatus(Enum):
+class CaseStatus(Enum):
     """Outcome status for a single test case or attempt."""
 
     PASSED = "passed"
@@ -43,18 +43,18 @@ class AttemptResult:
     """Result of a single execution attempt (used for retries)."""
 
     attempt: int
-    status: TestStatus
+    status: CaseStatus
     duration_ms: float
     error: str | None = None
 
 
 @dataclass
-class TestResult:
+class CaseResult:
     """Full result for one test case, including retry history."""
 
     name: str
     module: str
-    status: TestStatus
+    status: CaseStatus
     duration_ms: float
     error: str | None = None
     traceback: str | None = None
@@ -66,10 +66,10 @@ class TestResult:
 
 
 @dataclass
-class TestRunResults:
+class SessionResults:
     """Aggregated results for an entire test run."""
 
-    test_results: list[TestResult]
+    test_results: list[CaseResult]
     total_duration_ms: float
     server_capabilities: dict[str, Any]
     protocol_version: str
