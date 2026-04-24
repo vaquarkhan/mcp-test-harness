@@ -28,7 +28,7 @@ from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_c
 logger = logging.getLogger(__name__)
 
 # Harness version -- used in SessionResults metadata
-_HARNESS_VERSION = "0.1.1"
+_HARNESS_VERSION = "1.0.0"
 
 
 async def _assert_mcp_compliance(

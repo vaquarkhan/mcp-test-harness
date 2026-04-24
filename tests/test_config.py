@@ -317,6 +317,21 @@ class TestValidateConfigFile:
         errs = validate_config_file(f)
         assert any("schema_validation" in e.message for e in errs)
 
+    def test_validate_schema_each_worker_not_bool(self, tmp_path: Path) -> None:
+        f = tmp_path / "mcp-test.yaml"
+        f.write_text(
+            "server:\n  command: srv\n"
+            "validate_schema_each_parallel_worker: 1\n"
+        )
+        errs = validate_config_file(f)
+        assert any("validate_schema_each_parallel_worker" in e.message for e in errs)
+
+    def test_schema_probe_call_tool_not_bool(self, tmp_path: Path) -> None:
+        f = tmp_path / "mcp-test.yaml"
+        f.write_text("server:\n  command: srv\nschema_probe_call_tool: 2\n")
+        errs = validate_config_file(f)
+        assert any("schema_probe_call_tool" in e.message for e in errs)
+
     def test_toml_validation(self, tmp_path: Path) -> None:
         f = tmp_path / "mcp-test.toml"
         f.write_text(

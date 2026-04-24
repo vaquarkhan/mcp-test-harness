@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness"
-version = "0.1.1"
+version = "1.0.0"
 description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,13 +12,14 @@ license = {file = "LICENSE"}
 authors = [{name = "Vaquar Khan", email = "vaquarkhan@gmail.com"}]
 keywords = ["mcp", "mcplint", "mcp-test", "testing", "model-context-protocol", "test-harness", "json-rpc"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Quality Assurance",
   "Topic :: Software Development :: Testing",
 ]
@@ -51,6 +52,10 @@ dev = [
 Homepage = "https://github.com/vaquarkhan/mcp-test-harness"
 Repository = "https://github.com/vaquarkhan/mcp-test-harness"
 Documentation = "https://github.com/vaquarkhan/mcp-test-harness#readme"
+Changelog = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/CHANGELOG.md"
+Docker = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/DOCKER.md"
+Architecture = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/ARCHITECTURE.md"
+Editors = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/EDITORS.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mcplint", "src/mcp_test_harness"]
@@ -60,6 +65,8 @@ include = [
   "src/mcplint",
   "src/mcp_test_harness",
   "README.md",
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
   "LICENSE",
   "NOTICE",
   "CITATION.cff",
@@ -73,8 +80,8 @@ include = [
 asyncio_mode = "auto"
 pythonpath = ["src"]
 
-# Coverage: 100% on framework modules. stdio_mcp is vendored subprocess I/O
-# (fully exercised in real stdio runs); omit from the fail-under gate.
+# 100% line gate on the harness; stdio_mcp is covered by test_stdio_mcp* but several
+# vendored I/O and parse-error branches are not worth maintaining synthetic mocks for.
 [tool.coverage.run]
 source = ["src/mcp_test_harness"]
 omit = [

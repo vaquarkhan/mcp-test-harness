@@ -28,18 +28,23 @@ test_dirs:
 _TEST_PY = '''"""
 MCP server tests — starter file created by `mcp-test init`.
 
+Run with:  mcp-test  (or mcp-test --config mcp-test.yaml)
+
 Replace tool names and assertions with checks that match your server.
 """
 
 from __future__ import annotations
 
-import pytest
-
-from mcp_test_harness import assert_latency, assert_tool_call, assert_tool_list, marker
+from mcp_test_harness import (
+    assert_latency,
+    assert_tool_call,
+    assert_tool_list,
+    marker,
+    skip,
+)
 
 
 @marker(tags=["smoke"])
-@pytest.mark.asyncio
 async def test_server_list_tools_succeeds(mcp_server) -> None:
     """Harness session can call list_tools (empty tool list is OK)."""
     res = await mcp_server.list_tools()
@@ -47,17 +52,14 @@ async def test_server_list_tools_succeeds(mcp_server) -> None:
     assert isinstance(tools, list)
 
 
-@pytest.mark.asyncio
 async def test_expected_tools_if_you_know_them(mcp_server) -> None:
     """Uncomment and list tool names your server must expose (subset check)."""
     # await assert_tool_list(mcp_server, ["my_tool", "other_tool"])
 
 
-@pytest.mark.asyncio
+@skip(reason="Remove @skip and set a real tool + arguments for your server")
 async def test_call_tool_example(mcp_server) -> None:
     """Un-skip and set a real tool name from list_tools()."""
-    pytest.skip("Remove skip and set a real tool + arguments for your server")
-
     # await assert_tool_call(
     #     mcp_server,
     #     "example_tool",
@@ -67,7 +69,6 @@ async def test_call_tool_example(mcp_server) -> None:
 
 
 # @marker(tags=["perf"])
-# @pytest.mark.asyncio
 # async def test_tool_latency_budget(mcp_server) -> None:
 #     """Uncomment: enforce max latency (see docs on assert_latency, PERFORMANCE.md)."""
 #     # await assert_latency(

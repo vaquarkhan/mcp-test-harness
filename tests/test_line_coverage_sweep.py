@@ -196,6 +196,143 @@ async def test_async_main_watch_max_outer() -> None:
 
 
 @pytest.mark.asyncio
+async def test_async_main_watch_debounce_runs_once_then_second_outer(
+    tmp_path: Path,
+) -> None:
+    """Exercise watch poll + debounce (not only harness run + immediate exit)."""
+    d = str(tmp_path)
+    cfg = HarnessConfig(
+        server_command="echo a",
+        test_dirs=[d],
+        report_format="console",
+        report_output=None,
+        schema_validation=False,
+    )
+    calls: list[str] = []
+
+    def snap_side(_dirs) -> tuple[tuple[str, float], ...]:
+        n = len(calls)
+        calls.append("snap")
+        if n == 0:
+            return (("f.py", 1.0),)
+        if n == 1:
+            return (("f.py", 2.0),)
+        return (("f.py", 2.0),)
+
+    with (
+        patch.dict(
+            os.environ,
+            {
+                "MCP_TEST_HARNESS_WATCH_MAX_OUTER": "2",
+                "MCP_TEST_HARNESS_WATCH_INTERVAL": "0.001",
+                "MCP_TEST_HARNESS_WATCH_DEBOUNCE": "0.001",
+            },
+        ),
+        patch("mcp_test_harness.cli._run_harness", new_callable=AsyncMock) as r,
+        patch("mcp_test_harness.cli._test_tree_snapshot", side_effect=snap_side),
+        patch("mcp_test_harness.cli.load_config", return_value=cfg),
+        patch("asyncio.sleep", new_callable=AsyncMock),
+    ):
+        r.return_value = 0
+        code = await _async_main([d, "--watch", "--server-command", "x"])
+    assert code == 0
+    assert r.await_count == 2
+    assert len(calls) == 3
+
+
+@pytest.mark.asyncio
+async def test_async_main_watch_debounce_churn_before_stable(
+    tmp_path: Path,
+) -> None:
+    """Second debounce snapshot differs from first; then stabilizes (covers last = snap2)."""
+    d = str(tmp_path)
+    cfg = HarnessConfig(
+        server_command="echo a",
+        test_dirs=[d],
+        report_format="console",
+        report_output=None,
+        schema_validation=False,
+    )
+    seq = [
+        (("f.py", 1.0),),
+        (("f.py", 2.0),),
+        (("f.py", 3.0),),
+        (("f.py", 3.0),),
+    ]
+    i = {"n": 0}
+
+    def snap_side(_dirs):
+        k = i["n"]
+        i["n"] += 1
+        return seq[k]
+
+    with (
+        patch.dict(
+            os.environ,
+            {
+                "MCP_TEST_HARNESS_WATCH_MAX_OUTER": "2",
+                "MCP_TEST_HARNESS_WATCH_INTERVAL": "0.001",
+                "MCP_TEST_HARNESS_WATCH_DEBOUNCE": "0.001",
+            },
+        ),
+        patch("mcp_test_harness.cli._run_harness", new_callable=AsyncMock) as r,
+        patch("mcp_test_harness.cli._test_tree_snapshot", side_effect=snap_side),
+        patch("mcp_test_harness.cli.load_config", return_value=cfg),
+        patch("asyncio.sleep", new_callable=AsyncMock),
+    ):
+        r.return_value = 0
+        code = await _async_main([d, "--watch", "--server-command", "x"])
+    assert code == 0
+    assert r.await_count == 2
+
+
+def test_stashed_list_tools_session_int_key_safe() -> None:
+    from mcp_test_harness.assertions import _stashed_list_tools_result
+
+    assert _stashed_list_tools_result(1) is None
+
+
+@pytest.mark.asyncio
+async def test_list_tools_cache_weakkey_only_session() -> None:
+    """Slotted session (no instance ``__dict__``) uses WeakKeyDictionary; needs ``__weakref__`` slot."""
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from mcp_test_harness.assertions import _list_tools_cached
+
+    class Slotted:
+        __slots__ = ("list_tools", "__weakref__")
+
+    s = Slotted()
+    s.list_tools = AsyncMock(
+        return_value=SimpleNamespace(tools=[{"name": "a", "inputSchema": {}}])
+    )
+    await _list_tools_cached(s)
+    await _list_tools_cached(s)
+    assert s.list_tools.await_count == 1
+
+
+@pytest.mark.asyncio
+async def test_list_tools_cache_weakkey_typeerror_falls_back_no_cache() -> None:
+    """If the session is slotted without ``__weakref__``, cache store fails; list_tools may run twice."""
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from mcp_test_harness.assertions import _list_tools_cached
+
+    class SlottedNoWr:
+        __slots__ = ("list_tools",)
+
+    s = SlottedNoWr()
+    s.list_tools = AsyncMock(
+        return_value=SimpleNamespace(tools=[{"name": "a", "inputSchema": {}}])
+    )
+    await _list_tools_cached(s)
+    await _list_tools_cached(s)
+    assert s.list_tools.await_count == 2
+
+
+@pytest.mark.asyncio
 async def test_async_main_html_report_write(tmp_path: Path) -> None:
     from mcp_test_harness.discovery import HarnessModule
     from mcp_test_harness.models import SessionResults, CaseResult, CaseStatus
@@ -216,7 +353,7 @@ async def test_async_main_html_report_write(tmp_path: Path) -> None:
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="",
-        harness_version="0.1.1",
+        harness_version="1.0.0",
         passed=1,
     )
     with (
@@ -257,7 +394,7 @@ async def test_async_main_junit_report_write(tmp_path: Path) -> None:
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="",
-        harness_version="0.1.1",
+        harness_version="1.0.0",
         passed=1,
     )
     with (

@@ -51,7 +51,7 @@ test = [
 
 ```bash
 mcp-test --version
-# mcp-test 0.1.1
+# mcp-test 1.0.0
 ```
 
 ### Scaffold starter files (optional)

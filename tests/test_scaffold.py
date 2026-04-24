@@ -22,8 +22,10 @@ def test_init_writes_test_and_config(tmp_path: Path) -> None:
     )
     assert code == 0
     tf = tmp_path / "tests" / "test_x.py"
-    assert tf.is_file()
-    assert "mcp_server" in tf.read_text(encoding="utf-8")
+    text = tf.read_text(encoding="utf-8")
+    assert "mcp_server" in text
+    assert "@skip" in text and "pytest.skip" not in text
+    assert "import pytest" not in text
     y = tmp_path / "mcp-test.yaml"
     assert y.is_file()
     txt = y.read_text(encoding="utf-8")

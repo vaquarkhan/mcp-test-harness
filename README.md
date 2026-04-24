@@ -14,7 +14,7 @@
 
 **Automated Testing Framework for Model Context Protocol (MCP) Servers**
 
-> **Documentation:** structured **hub** and **adoption paths** (same pattern as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) are in [docs/README.md](docs/README.md) — start there for [QUICK_START](docs/QUICK_START.md), the full [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, **[how we compare to other MCP tools](docs/COMPARISON.md)**, and **[ecosystem / registry discovery (release checklist)](docs/DISCOVERY.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
+> **Documentation:** structured **hub** and **adoption paths** (same pattern as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) are in [docs/README.md](docs/README.md) — start there for [QUICK_START](docs/QUICK_START.md), the full [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, **[how we compare to other MCP tools](docs/COMPARISON.md)**, **[ecosystem / registry discovery (release checklist)](docs/DISCOVERY.md)**, and **[CHANGELOG](CHANGELOG.md)** / **[CONTRIBUTING](CONTRIBUTING.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
@@ -38,6 +38,11 @@ For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** th
 | [docs/IMPLEMENTATION_CHECKLIST.md](docs/IMPLEMENTATION_CHECKLIST.md) | Maintainer: features vs. code locations |
 | [docs/COMPARISON.md](docs/COMPARISON.md) | **Ecosystem** — Conformance, mcp-eval, MCPMark, testmcpy; when to use Harness + Bastion |
 | [docs/DISCOVERY.md](docs/DISCOVERY.md) | **Registries and promotion** — internal checklist (PyPI, [server.json](server.json), awesome lists) |
+| [docs/DOCKER.md](docs/DOCKER.md) | **Docker & OCI** — PyPI, **GHCR** / **GitHub Packages** links, build targets, `docker run` |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | **Mermaid** diagrams: CLI → scheduler → lifecycle → session → tests |
+| [docs/EDITORS.md](docs/EDITORS.md) | **Visual Studio Code & Cursor** — snippets, Mermaid preview, recommended extensions |
+| [CHANGELOG.md](CHANGELOG.md) | **Release history** (Keep a Changelog) |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | **How to contribute** (tests, coverage, release bumps) |
 | [CITATION.cff](CITATION.cff) | **Optional citation** — machine-readable metadata (not required by the license) |
 | [Dockerfile](Dockerfile) (and [`.dockerignore`](.dockerignore)) | **Container image** for `mcp-test` — see [Docker](#docker) |
 
@@ -106,7 +111,9 @@ mcp-test --version
 
 ### Docker
 
-Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small).
+**One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
+
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). **Pre-built** images on **GitHub Container Registry** (`ghcr.io`) are not guaranteed until a release workflow publishes them; see [docs/DOCKER.md](docs/DOCKER.md) for the canonical **image / package** links and how to find **GitHub Packages** for this org.
 
 | Build | Description |
 |-------|-------------|
@@ -601,6 +608,8 @@ redact_patterns: []                  # regex patterns to redact from verbose out
 ```
 mcp-test-harness/
 +-- pyproject.toml
++-- CHANGELOG.md                    # version history (Keep a Changelog)
++-- CONTRIBUTING.md                 # how to contribute; links docs hub + tests
 +-- server.json                     # MCP registry / tooling metadata (bump with releases)
 +-- mcp_test_harness.spec           # PyInstaller config
 +-- src/
