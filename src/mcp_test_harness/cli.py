@@ -126,7 +126,10 @@ def _build_parser() -> argparse.ArgumentParser:
         "--watch",
         action="store_true",
         default=False,
-        help="Re-run tests when .py files under the test paths change (polling)",
+        help=(
+            "Re-run tests when .py files under the test paths change (polling; "
+            "MCP_TEST_HARNESS_WATCH_INTERVAL, MCP_TEST_HARNESS_WATCH_DEBOUNCE)"
+        ),
     )
 
     return parser
@@ -239,8 +242,11 @@ async def _async_main(argv: list[str] | None = None) -> int:
     if args.watch:
         # Optional cap for tests (0 = unlimited; one outer iteration = one harness run)
         watch_max_outer = int(os.environ.get("MCP_TEST_HARNESS_WATCH_MAX_OUTER", "0") or 0)
+        watch_interval = float(os.environ.get("MCP_TEST_HARNESS_WATCH_INTERVAL", "1.0") or 1.0)
+        watch_debounce = float(os.environ.get("MCP_TEST_HARNESS_WATCH_DEBOUNCE", "0.4") or 0.4)
         print(
-            "Watch mode: re-running when tests change (1s poll). Ctrl+C to stop.",
+            f"Watch mode: re-run when test *.py change "
+            f"(poll {watch_interval:g}s, debounce {watch_debounce:g}s). Ctrl+C to stop.",
             file=sys.stderr,
         )
         state = _test_tree_snapshot(test_dirs)
@@ -251,10 +257,18 @@ async def _async_main(argv: list[str] | None = None) -> int:
             if watch_max_outer and outer >= watch_max_outer:
                 return 0
             while True:  # pragma: no cover (infinite watch poll; run via --watch in dev)
-                await asyncio.sleep(1.0)  # pragma: no cover
+                await asyncio.sleep(watch_interval)  # pragma: no cover
                 snap = _test_tree_snapshot(test_dirs)  # pragma: no cover
                 if snap != state:  # pragma: no cover
-                    state = snap  # pragma: no cover
+                    # Wait until the tree is stable across debounce to coalesce rapid saves.
+                    last = snap
+                    while True:  # pragma: no cover
+                        await asyncio.sleep(watch_debounce)  # pragma: no cover
+                        snap2 = _test_tree_snapshot(test_dirs)  # pragma: no cover
+                        if snap2 == last:  # pragma: no cover
+                            state = snap2  # pragma: no cover
+                            break  # pragma: no cover
+                        last = snap2  # pragma: no cover
                     break  # pragma: no cover
 
     return await _run_harness(config, list_only=bool(args.list))

@@ -38,7 +38,7 @@ def _make_results(
         total_duration_ms=total_duration_ms,
         server_capabilities={"tools": True, "resources": True},
         protocol_version="2025-03-26",
-        harness_version="0.1.0",
+        harness_version="0.1.1",
         passed=sum(1 for r in results if r.status == CaseStatus.PASSED),
         failed=sum(1 for r in results if r.status == CaseStatus.FAILED),
         errored=sum(1 for r in results if r.status == CaseStatus.ERROR),
@@ -154,7 +154,7 @@ class TestJSONReporter:
         data = json.loads(JSONReporter().generate(run))
 
         meta = data["metadata"]
-        assert meta["harness_version"] == "0.1.0"
+        assert meta["harness_version"] == "0.1.1"
         assert meta["protocol_version"] == "2025-03-26"
         assert meta["server_capabilities"] == {"tools": True, "resources": True}
 

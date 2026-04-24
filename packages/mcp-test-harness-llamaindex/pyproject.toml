@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness-llamaindex"
-version = "0.1.0"
+version = "0.1.1"
 description = "LlamaIndex tool testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-test-harness>=0.1.0",
+  "mcp-test-harness>=0.1.1",
 ]
 
 [project.urls]

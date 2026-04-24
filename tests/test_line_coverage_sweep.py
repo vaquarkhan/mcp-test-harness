@@ -216,7 +216,7 @@ async def test_async_main_html_report_write(tmp_path: Path) -> None:
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="",
-        harness_version="0.1.0",
+        harness_version="0.1.1",
         passed=1,
     )
     with (
@@ -257,7 +257,7 @@ async def test_async_main_junit_report_write(tmp_path: Path) -> None:
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="",
-        harness_version="0.1.0",
+        harness_version="0.1.1",
         passed=1,
     )
     with (

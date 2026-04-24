@@ -28,17 +28,29 @@ from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_c
 logger = logging.getLogger(__name__)
 
 # Harness version -- used in SessionResults metadata
-_HARNESS_VERSION = "0.1.0"
+_HARNESS_VERSION = "0.1.1"
 
 
-async def _assert_mcp_compliance(config: HarnessConfig, server: ManagedServer) -> None:
+async def _assert_mcp_compliance(
+    config: HarnessConfig,
+    server: ManagedServer,
+    *,
+    worker_id: int = 0,
+) -> None:
     """Run optional MCP shape / tool-schema checks; raise on failure (caller shuts down)."""
     if not config.schema_validation:
+        return
+    if (
+        config.parallel
+        and not config.validate_schema_each_parallel_worker
+        and worker_id != 0
+    ):
         return
     viol = await validate_mcp_server_after_connect(
         server.session,
         server.init_result,
         SchemaValidator(True),
+        schema_probe_call_tool=config.schema_probe_call_tool,
     )
     if not viol:
         return
@@ -92,7 +104,7 @@ class HarnessScheduler:
 
         try:
             server = await lifecycle.start(config)
-            await _assert_mcp_compliance(config, server)
+            await _assert_mcp_compliance(config, server, worker_id=0)
             capabilities = server.capabilities
             protocol_version = capabilities.get("protocolVersion", "")
             lifecycle.start_monitor(server)
@@ -263,7 +275,7 @@ class HarnessScheduler:
 
         try:
             server = await lifecycle.start(config)
-            await _assert_mcp_compliance(config, server)
+            await _assert_mcp_compliance(config, server, worker_id=worker_id)
             capabilities = server.capabilities
             protocol_version = capabilities.get("protocolVersion", "")
             lifecycle.start_monitor(server)

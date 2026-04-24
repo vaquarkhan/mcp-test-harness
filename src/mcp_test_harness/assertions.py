@@ -33,6 +33,34 @@ class MCPAssertionError(AssertionError):
         super().__init__(full)
 
 
+_MCP_HARNESS_LIST_TOOLS = "_mcp_harness_list_tools_result"
+
+
+def _stashed_list_tools_result(session: Any) -> Any | None:
+    """Read cached ``list_tools`` result without tripping ``MagicMock`` auto-attrs.
+
+    ``getattr(m, "key", None)`` is unsafe for :class:`unittest.mock.MagicMock` because
+    the mock may synthesize a child mock for *any* name, so the default is never used.
+    """
+    d = getattr(session, "__dict__", None)
+    if not isinstance(d, dict):
+        return None
+    return d.get(_MCP_HARNESS_LIST_TOOLS)
+
+
+async def _list_tools_cached(session: Any) -> Any:
+    """Cache ``list_tools()`` on the session so repeated calls do not hammer the server."""
+    c = _stashed_list_tools_result(session)
+    if c is not None:
+        return c
+    c = await session.list_tools()
+    try:
+        setattr(session, _MCP_HARNESS_LIST_TOOLS, c)
+    except Exception:  # pragma: no cover
+        pass
+    return c
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
@@ -117,7 +145,7 @@ async def _validate_arguments_against_schema(
         import jsonschema
     except ImportError:  # pragma: no cover
         return  # pragma: no cover
-    res = await session.list_tools()
+    res = await _list_tools_cached(session)
     tools = getattr(res, "tools", None) or []
     for t in tools:
         n = getattr(t, "name", None)
@@ -468,7 +496,7 @@ async def assert_tool_list(
     MCPAssertionError
         When any expected tool name is missing from the server's tool list.
     """
-    result = await session.list_tools()
+    result = await _list_tools_cached(session)
     tools = getattr(result, "tools", None) or []
     actual_names = {getattr(t, "name", t) for t in tools}
     expected_set = set(expected_tools)
@@ -595,7 +623,7 @@ async def assert_tool_schema(
     expected_input_schema: dict[str, Any],
 ) -> None:
     """Assert the tool's ``inputSchema`` exactly matches *expected_input_schema*."""
-    res = await session.list_tools()
+    res = await _list_tools_cached(session)
     tools = getattr(res, "tools", None) or []
     for t in tools:
         n = getattr(t, "name", None)

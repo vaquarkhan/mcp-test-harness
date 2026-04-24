@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.vaquarkhan/mcp-test-harness",
+  "title": "MCP Test Harness",
+  "description": "Pytest-style testing framework and mcp-test CLI: automated discovery, parallel runs, assertions, schema checks, and CI reports (JUnit/JSON/HTML) for MCP servers over stdio, SSE, or streamable HTTP. Developer tooling; connects to your server process—this package is not an MCP server implementation.",
+  "repository": {
+    "url": "https://github.com/vaquarkhan/mcp-test-harness",
+    "source": "github"
+  },
+  "version": "0.1.1",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "mcp-test-harness",
+      "version": "0.1.1",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

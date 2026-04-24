@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -23,7 +23,6 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-bastion-python>=1.0.12",
   "mcp>=1.0.0",
   "anyio>=4.0.0",
   "pyyaml>=6.0",
@@ -33,10 +32,15 @@ dependencies = [
 mcp-test = "mcp_test_harness.cli:main"
 
 [project.optional-dependencies]
+# Pins MCP-Bastion for the mcplint shim (optional; core harness does not need it)
+mcplint = [
+  "mcp-bastion-python>=1.0.12",
+]
 bedrock = [
   "mcp-bastion-bedrock>=0.1.0",
 ]
 dev = [
+  "mcp-bastion-python>=1.0.12",
   "pytest>=7.0.0",
   "pytest-asyncio>=0.21.0",
   "jsonschema>=4.0.0",
@@ -59,6 +63,7 @@ include = [
   "LICENSE",
   "NOTICE",
   "CITATION.cff",
+  "server.json",
   "docs",
   "scripts",
   "examples",
