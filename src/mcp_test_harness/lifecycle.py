@@ -173,8 +173,15 @@ class ServerLifecycleManager:
         # 4. Extract capabilities from the handshake result
         capabilities = self._extract_capabilities(init_result)
 
-        # 5. Determine the subprocess handle (stdio only)
+        # 5. Subprocess handle (stdio) — required for crash monitoring and shutdown
         process = self._extract_process(transport)
+        if config.transport == "stdio" and process is None:
+            await self._safe_close_transport(transport)
+            raise StartupError(
+                "Stdio transport did not expose a subprocess handle after connect. "
+                "Crash detection and clean shutdown need the server process; "
+                "check StdioTransportAdapter and stdio_client_exposing_process."
+            )
 
         server = ManagedServer(
             process=process,

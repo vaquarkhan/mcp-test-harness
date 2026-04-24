@@ -521,7 +521,7 @@ def test_validate_initialize_result_branches() -> None:
 def test_list_tools_list_resources_list_prompts_shapes() -> None:
     v = SchemaValidator(True)
     assert v.validate_list_tools_shape(
-        [SimpleNamespace(name=1, description=None, inputSchema=[])],
+        [SimpleNamespace(name=1, description="", inputSchema=[])],
     )
     assert v.validate_list_resources_shape(
         [SimpleNamespace(uri=1, name="n", mimeType="t")],
@@ -529,6 +529,12 @@ def test_list_tools_list_resources_list_prompts_shapes() -> None:
     assert v.validate_list_prompts_shape(
         [SimpleNamespace(name=1, arguments={})],
     )
+
+
+def test_content_item_missing_type() -> None:
+    v = SchemaValidator(True)
+    u = v.validate_content_items_shape([{"text": "x"}])
+    assert any("type" in x.message for x in u)
 
 
 def test_content_image_mime_violation() -> None:

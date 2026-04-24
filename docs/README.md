@@ -34,7 +34,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), `marker(tags=[…])` + `mcp-test -m perf` |
 | [COMPARISON.md](COMPARISON.md) | **Ecosystem map:** other MCP tools (conformance, evals, benchmarks) and how they fit with Harness + Bastion |
 | [Dockerfile](../Dockerfile) (repo root) | **OCI image** for `mcp-test` — build/run notes in root [README.md](../README.md#docker) |
-| [CITATION.cff](../CITATION.cff) (repo root) | **Cite the software** — metadata; [LICENSE](../LICENSE) Section 2 for legal obligations |
+| [CITATION.cff](../CITATION.cff) (repo root) | **Optional citation** — metadata; [LICENSE](../LICENSE) is MIT |
 | [DECISIONS.md](DECISIONS.md) | Product and architecture **decision log** |
 | [IMPLEMENTATION_CHECKLIST.md](IMPLEMENTATION_CHECKLIST.md) | **Maintainer** checklist for features vs. source locations |
 

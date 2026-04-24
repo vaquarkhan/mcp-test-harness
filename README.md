@@ -8,7 +8,7 @@
 [![PyPI downloads](https://img.shields.io/pypi/dm/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![CI](https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&label=CI)](https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml)
-[![License](https://img.shields.io/badge/license-MIT%2B%20citation%20terms-blue)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)]()
 
@@ -20,7 +20,7 @@ Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
 MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically—replacing manual validation through the MCP Inspector.
 
-**License:** the core project is distributed under the [LICENSE](LICENSE) file: the **OSI-style MIT** grant (Section 1) plus **supplemental** citation and attribution terms (Section 2) so the work can be used freely while **credit** is preserved in the ways described. See [NOTICE](NOTICE) and [CITATION.cff](CITATION.cff). *(Optional packages under `packages/` may list their own terms in each package’s `pyproject.toml`.)*
+**License:** the core project is under the [MIT License](LICENSE); see [NOTICE](NOTICE). [CITATION.cff](CITATION.cff) suggests how to cite the software in papers (optional, not a license condition). *(Optional packages under `packages/` may list their own terms in each package’s `pyproject.toml`.)*
 
 For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** that gap. For **spec conformance**, **LLM-in-the-loop** evals, and **model benchmarks**, other tools exist; see [docs/COMPARISON.md](docs/COMPARISON.md).
 
@@ -37,7 +37,7 @@ For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** th
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture and product decisions |
 | [docs/IMPLEMENTATION_CHECKLIST.md](docs/IMPLEMENTATION_CHECKLIST.md) | Maintainer: features vs. code locations |
 | [docs/COMPARISON.md](docs/COMPARISON.md) | **Ecosystem** — Conformance, mcp-eval, MCPMark, testmcpy; when to use Harness + Bastion |
-| [CITATION.cff](CITATION.cff) | **Cite this software** — machine-readable metadata (and see [License and citation](#license-and-citation)) |
+| [CITATION.cff](CITATION.cff) | **Optional citation** — machine-readable metadata (not required by the license) |
 | [Dockerfile](Dockerfile) (and [`.dockerignore`](.dockerignore)) | **Container image** for `mcp-test` — see [Docker](#docker) |
 
 For production security (prompt injection defense, PII redaction, rate limiting, RBAC), see [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) — the companion **security** middleware; this repo is for **test automation**.
@@ -689,12 +689,9 @@ Third-party **testing and evaluation** tools (e.g. official conformance, agent-c
 
 ## License and citation
 
-The **mcp-test-harness** core is distributed under the terms in **[LICENSE](LICENSE)**:
+The **mcp-test-harness** core is distributed under the **[MIT License](https://opensource.org/licenses/MIT)** — see the **[LICENSE](LICENSE)** file in this repository. That includes **commercial** use, modification, and distribution, subject to preserving the copyright and license notice.
 
-- **Section 1** is the same kind of **permissive grant** as the widely used [MIT License](https://opensource.org/licenses/MIT) (use, copy, modify, merge, publish, distribute, sublicense, and sell, subject to including the copyright and permission text).
-- **Section 2** adds **obligations** for **redistribution** and for **citing or acknowledging** the project when you publish research, public documentation, or public training that **materially** builds on the Software, and it describes the **process** (what to file where). **Private, internal** use and ordinary **internal CI** are addressed in **Section 2.3** of **LICENSE**.
-
-**How to cite (quick):** use the metadata in **[CITATION.cff](CITATION.cff)** (GitHub and many tools read this automatically). In papers, prefer a @software or @misc entry with the project name, author, repository URL, and version or year. Keep **[NOTICE](NOTICE)** in redistributed trees when the license file requires it.
+**Citing the project (optional):** the **[CITATION.cff](CITATION.cff)** file provides metadata for academic or technical citations; it is not a legal requirement of the license.
 
 Optional sub-packages under `packages/` may specify different license metadata in their own `pyproject.toml` files.
 

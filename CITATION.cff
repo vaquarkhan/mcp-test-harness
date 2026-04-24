@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: >-
-  If you use or build on MCP Test Harness, please cite it. The LICENSE file
-  includes the MIT terms plus supplemental attribution and citation
-  requirements (Section 2). Use this file for consistent bibliographic data.
+  If you use or build on MCP Test Harness, consider citing it (optional).
+  The project is under the MIT License. This file provides consistent
+  bibliographic data for papers and reports.
 type: software
 title: "MCP Test Harness"
 version: 0.1.0

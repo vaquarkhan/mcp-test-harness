@@ -81,8 +81,11 @@ class HarnessScheduler:
         capabilities: dict = {}
         protocol_version = ""
 
-        # Sort by order marker (lower runs first, default 0)
-        test_cases = sorted(test_cases, key=lambda tc: tc.markers.get("order", 0))
+        # Sort so all tests from the same file run together, then by @marker order.
+        test_cases = sorted(
+            test_cases,
+            key=lambda tc: (str(tc.module_path), tc.markers.get("order", 0), tc.name),
+        )
 
         lifecycle = ServerLifecycleManager()
         server: ManagedServer | None = None
@@ -98,7 +101,7 @@ class HarnessScheduler:
             fixtures = FixtureManager()
             register_builtin_fixtures(fixtures)
 
-            for test_case in test_cases:
+            for i, test_case in enumerate(test_cases):
                 try:
                     result = await executor.execute(test_case, server, fixtures)
                 except ServerCrashedError as exc:
@@ -112,7 +115,7 @@ class HarnessScheduler:
                     )
                     results.append(result)
                     # Mark remaining tests as errored
-                    remaining = test_cases[test_cases.index(test_case) + 1 :]
+                    remaining = test_cases[i + 1 :]
                     for remaining_tc in remaining:
                         results.append(
                             CaseResult(
@@ -128,11 +131,7 @@ class HarnessScheduler:
                     results.append(result)
 
                 # Teardown per-module fixtures between modules
-                if (
-                    test_cases.index(test_case) < len(test_cases) - 1
-                    and test_case.module_path
-                    != test_cases[test_cases.index(test_case) + 1].module_path
-                ):
+                if i < len(test_cases) - 1 and test_case.module_path != test_cases[i + 1].module_path:
                     await fixtures.teardown(FixtureScope.PER_MODULE)
 
             # Final per-module teardown
@@ -253,8 +252,11 @@ class HarnessScheduler:
         capabilities: dict = {}
         protocol_version = ""
 
-        # Sort by order marker (lower runs first, default 0)
-        test_cases = sorted(test_cases, key=lambda tc: tc.markers.get("order", 0))
+        # Same ordering as :meth:`run_sequential`: module path, then order, then name.
+        test_cases = sorted(
+            test_cases,
+            key=lambda tc: (str(tc.module_path), tc.markers.get("order", 0), tc.name),
+        )
 
         lifecycle = ServerLifecycleManager()
         server: ManagedServer | None = None
@@ -270,7 +272,7 @@ class HarnessScheduler:
             fixtures = FixtureManager()
             register_builtin_fixtures(fixtures)
 
-            for test_case in test_cases:
+            for i, test_case in enumerate(test_cases):
                 try:
                     result = await executor.execute(test_case, server, fixtures)
                 except ServerCrashedError as exc:
@@ -289,7 +291,7 @@ class HarnessScheduler:
                     )
                     results.append(result)
                     # Mark remaining tests in this worker as errored
-                    remaining = test_cases[test_cases.index(test_case) + 1 :]
+                    remaining = test_cases[i + 1 :]
                     for remaining_tc in remaining:
                         results.append(
                             CaseResult(
@@ -303,8 +305,12 @@ class HarnessScheduler:
                     break
                 else:
                     results.append(result)
+                # Per-module fixture teardown when the next test is a different file
+                # (same rule as :meth:`run_sequential`).
+                if i < len(test_cases) - 1 and test_case.module_path != test_cases[i + 1].module_path:
+                    await fixtures.teardown(FixtureScope.PER_MODULE)
 
-            # Teardown per-module fixtures
+            # Final per-module teardown for the last file in this worker
             await fixtures.teardown(FixtureScope.PER_MODULE)
 
         except Exception as exc:
