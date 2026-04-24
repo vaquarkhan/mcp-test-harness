@@ -11,6 +11,8 @@
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
+*Enhancement branch last updated: 2026-04-24*
+
 MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically -- replacing manual validation through the MCP Inspector.
 
 No existing tool lets you programmatically test MCP servers in CI/CD pipelines. MCP Test Harness fills that gap.
