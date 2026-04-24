@@ -16,6 +16,7 @@ This page is for **people working in the mcp-test-harness repo** (patches, relea
 | **Docker and OCI** | [DOCKER.md](DOCKER.md) |
 | **Feature traceability (for maintainers)** | [IMPLEMENTATION_CHECKLIST.md](IMPLEMENTATION_CHECKLIST.md) |
 | **Changelog and semver** | [CHANGELOG.md](../CHANGELOG.md) |
+| **PyPI + GHCR release (tag `v*`)** | [RELEASING.md](RELEASING.md) |
 
 ## Clone and run the test suite
 

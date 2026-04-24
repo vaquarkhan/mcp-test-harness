@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Added
 
+- [`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml) — on **`v*`** tags, build and push **runtime** and **dev** images to **GHCR** (`ghcr.io/vaquarkhan/mcp-test-harness`). [docs/RELEASING.md](docs/RELEASING.md) documents PyPI + Docker release steps with GitHub settings.
 - [docs/LLM_TEST_GENERATION.md](docs/LLM_TEST_GENERATION.md) — guidance on **LLM-assisted** test drafting vs **automatic** “connected LLM” generation in CI; linked from [COMPARISON](docs/COMPARISON.md) and the [docs hub](docs/README.md).
 - **Docs:** [DEVELOPER.md](docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate) — **stdio_mcp.py** and the **100%** `coverage` fail-under: intentional `omit` (maintainer policy), **integration** coverage, and production-grade quality for the **rest** of `mcp_test_harness` under the gate.
 - An expanded [examples](examples/README.md) set: [assertions_async_demo.py](examples/assertions_async_demo.py), [validate_mcp_test_config.py](examples/validate_mcp_test_config.py), [sample_mcp_test.yaml](examples/sample_mcp_test.yaml), [patterns_mcp_test.md](examples/patterns_mcp_test.md). Cross-links from the [docs hub](docs/README.md), [README](README.md), and [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md).

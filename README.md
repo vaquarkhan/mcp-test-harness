@@ -41,6 +41,7 @@ For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** th
 | [docs/COLLECTIONS.md](docs/COLLECTIONS.md) | **Postman / Newman–style** multi-step flows, “environments”, and roadmap (declarative collections not in core yet) |
 | [docs/DISCOVERY.md](docs/DISCOVERY.md) | **Registries and promotion** — internal checklist (PyPI, [server.json](server.json), awesome lists) |
 | [docs/DOCKER.md](docs/DOCKER.md) | **Docker & OCI** — PyPI, **GHCR** / **GitHub Packages** links, build targets, `docker run` |
+| [docs/RELEASING.md](docs/RELEASING.md) | **Ship `v*`** — PyPI trusted publishing + GHCR images in one tag |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | **Mermaid** diagrams: CLI → scheduler → lifecycle → session → tests |
 | [docs/EDITORS.md](docs/EDITORS.md) | **Visual Studio Code & Cursor** — snippets, Mermaid preview, recommended extensions |
 | [docs/MARKDOWN_CONVENTIONS.md](docs/MARKDOWN_CONVENTIONS.md) | **Markdown** — `[!TIP]` / `**Feature**` callouts and fenced code for readable docs |
@@ -116,7 +117,7 @@ mcp-test --version
 
 **One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
 
-Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). **Pre-built** images on **GitHub Container Registry** (`ghcr.io`) are not guaranteed until a release workflow publishes them; see [docs/DOCKER.md](docs/DOCKER.md) for the canonical **image / package** links and how to find **GitHub Packages** for this org.
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). On each **`v*`** git tag, GitHub Actions also pushes **`ghcr.io/vaquarkhan/mcp-test-harness`** (`:latest`, `:X.Y.Z`, `:dev`, `:X.Y.Z-dev`). Pull the runtime image with `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. Full steps: [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
 
 | Build | Description |
 |-------|-------------|

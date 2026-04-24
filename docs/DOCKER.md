@@ -8,10 +8,11 @@ MCP Test Harness ships a [Dockerfile](../Dockerfile) at the repository root. Use
 |------|------|
 | **PyPI (Python wheel + sdist)** | [https://pypi.org/project/mcp-test-harness/](https://pypi.org/project/mcp-test-harness/) |
 | **This repo’s `Dockerfile` (source of truth)** | [Dockerfile in main](https://github.com/vaquarkhan/mcp-test-harness/blob/main/Dockerfile) |
-| **GitHub** — source, Issues, **Packages** (if the project publishes a container) | [Repository](https://github.com/vaquarkhan/mcp-test-harness) · [org packages (vaquarkhan)](https://github.com/vaquarkhan?tab=packages) |
+| **GitHub** — source, Issues, **Packages** (container images) | [Repository](https://github.com/vaquarkhan/mcp-test-harness) · [Packages for this repo](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness) · [org packages (vaquarkhan)](https://github.com/vaquarkhan?tab=packages) |
+| **GHCR (pre-built images)** | `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest` — published on each **`v*`** tag by [`.github/workflows/docker-publish.yml`](../.github/workflows/docker-publish.yml) (see [RELEASING.md](RELEASING.md)). |
 | **Docker product docs** (install, `docker run`, volume mounts) | [https://docs.docker.com/](https://docs.docker.com/) |
 
-**Note:** Release automation in this repository currently publishes the **Python package to PyPI** (see [`.github/workflows/publish.yml`](../.github/workflows/publish.yml)). **Pre-built** `linux/amd64` (or multi-arch) images on **GitHub Container Registry** (`ghcr.io`) may be added later; when they exist, they will typically appear under the repo’s [Packages](https://github.com/vaquarkhan/mcp-test-harness) tab or the organization’s [packages](https://github.com/vaquarkhan?tab=packages). Until then, build any image you need locally (below).
+**Note:** Pushing a **`vX.Y.Z`** tag runs **PyPI** ([`publish.yml`](../.github/workflows/publish.yml)) and **GHCR** ([`docker-publish.yml`](../.github/workflows/docker-publish.yml)) in parallel. You can still **build locally** with the [Dockerfile](../Dockerfile) (below).
 
 ## Image targets (one Dockerfile, two use cases)
 
@@ -52,12 +53,13 @@ docker build -t mcp-test-harness:dev --target dev .
 docker run --rm -v "$PWD":/work -w /work --entrypoint pytest mcp-test-harness:dev tests/ -q
 ```
 
-## If you add GHCR (maintainers)
+## GHCR in CI (implemented)
 
-When publishing a container to **GitHub Container Registry**, a common tag shape is:
+On **`v*`** tags, [`.github/workflows/docker-publish.yml`](../.github/workflows/docker-publish.yml) pushes:
 
-`ghcr.io/vaquarkhan/mcp-test-harness:<git-tag>`
+- **Runtime:** `ghcr.io/vaquarkhan/mcp-test-harness:<semver>` and `:latest`
+- **Dev:** `ghcr.io/vaquarkhan/mcp-test-harness:<semver>-dev` and `:dev`
 
-For example, after implementing a `docker push` step in CI on `v*`, add that URL to the [Discovery checklist](DISCOVERY.md) and to the root [README](../README.md) next to the Docker section so users can **discover the image in one click**.
+One-time GitHub **Actions** workflow permission **Read and write** is required so `GITHUB_TOKEN` can push packages. Maintainer checklist: [RELEASING.md](RELEASING.md).
 
-**Related:** [CHANGELOG](../CHANGELOG.md) (what changed in each release) · [Contributing / tests in Docker](../CONTRIBUTING.md).
+**Related:** [CHANGELOG](../CHANGELOG.md) · [Contributing / tests in Docker](../CONTRIBUTING.md) · [Discovery checklist](DISCOVERY.md).

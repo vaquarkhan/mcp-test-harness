@@ -18,6 +18,7 @@
 | **How we compare to other MCP tools** | [COMPARISON.md](COMPARISON.md) |
 | **Using an LLM to help write tests** | [LLM_TEST_GENERATION.md](LLM_TEST_GENERATION.md) |
 | **Postman-style collections and multi-step flows** | [COLLECTIONS.md](COLLECTIONS.md) |
+| **PyPI + Docker (GHCR) release** | [RELEASING.md](RELEASING.md) |
 | **Root project README** (features, Docker, CLI) | [../README.md](../README.md) |
 
 **Repository:** [github.com/vaquarkhan/mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness) · **PyPI:** [mcp-test-harness](https://pypi.org/project/mcp-test-harness/)

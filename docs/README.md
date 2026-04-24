@@ -28,6 +28,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Why the harness looks like this** (architecture / trade-offs) | [DECISIONS.md](DECISIONS.md) |
 | **Gap / implementation checklist** (for maintainers) | [IMPLEMENTATION_CHECKLIST.md](IMPLEMENTATION_CHECKLIST.md) |
 | **Releases, upgrades, what changed** | [CHANGELOG.md](../CHANGELOG.md) |
+| **PyPI + GHCR release** (tag `v*`, trusted publishing, checklist) | [RELEASING.md](RELEASING.md) |
 | **How to contribute** (tests, PRs, release checklist) | [CONTRIBUTING.md](../CONTRIBUTING.md) |
 
 ---
@@ -57,6 +58,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [DECISIONS.md](DECISIONS.md) | Product and architecture **decision log** |
 | [IMPLEMENTATION_CHECKLIST.md](IMPLEMENTATION_CHECKLIST.md) | **Maintainer** checklist for features vs. source locations |
 | [CHANGELOG.md](../CHANGELOG.md) | **Version history** (Keep a Changelog; for PyPI / release notes) |
+| [RELEASING.md](RELEASING.md) | **Ship a version:** bump files, tag `vX.Y.Z`, PyPI + `ghcr.io` workflows |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | **Contributing** — dev setup, `pytest` + coverage, release checklist |
 
 <p align="center">

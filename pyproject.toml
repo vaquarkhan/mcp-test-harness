@@ -57,6 +57,7 @@ Docker = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/DOCKER.m
 Architecture = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/ARCHITECTURE.md"
 Editors = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/EDITORS.md"
 Collections = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/COLLECTIONS.md"
+Releasing = "https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/RELEASING.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mcplint", "src/mcp_test_harness"]
