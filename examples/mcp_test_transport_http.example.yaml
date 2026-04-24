@@ -1,0 +1,16 @@
+# Streamable HTTP — replace base URL, path, and headers
+server:
+  command: "https://api.example.com"
+  transport: http
+  transport_options:
+    host: api.example.com
+    port: 443
+    path: /mcp
+    headers:
+      Authorization: "Bearer replace-me"
+test:
+  dirs:
+    - tests/
+  timeout: 90
+schema_validation: true
+plugins: []

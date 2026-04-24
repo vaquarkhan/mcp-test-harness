@@ -1,0 +1,11 @@
+# JSON report (full result metadata) — adjust server.command
+server:
+  command: python -m your_server
+  transport: stdio
+test:
+  dirs:
+    - tests/
+report:
+  format: json
+  output: reports/mcp-results.json
+schema_validation: true

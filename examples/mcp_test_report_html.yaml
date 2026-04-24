@@ -1,0 +1,11 @@
+# HTML report (human-readable) — adjust server.command
+server:
+  command: python -m your_server
+  transport: stdio
+test:
+  dirs:
+    - tests/
+report:
+  format: html
+  output: reports/mcp-results.html
+schema_validation: true

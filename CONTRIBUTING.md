@@ -7,6 +7,8 @@ Thanks for helping improve **MCP Test Harness**.
 | What | Where |
 |------|--------|
 | **User + maintainer docs** | [docs/README.md](docs/README.md) (hub) |
+| **Developer handbook (this repo)** | [docs/DEVELOPER.md](docs/DEVELOPER.md) |
+| **Runnable examples by feature** | [examples/README.md](examples/README.md) |
 | **Release & upgrade notes** | [CHANGELOG.md](CHANGELOG.md) |
 | **Registries, PyPI, promotion** | [docs/DISCOVERY.md](docs/DISCOVERY.md) |
 | **Docker & OCI (images, GHCR, PyPI)** | [docs/DOCKER.md](docs/DOCKER.md) |
@@ -30,7 +32,7 @@ set PYTHONPATH=src   # Windows; on POSIX: export PYTHONPATH=src
 python -m pytest tests/ -q --cov=src/mcp_test_harness --cov-fail-under=100
 ```
 
-The project targets **100%** line coverage on `src/mcp_test_harness` (see [pyproject.toml](pyproject.toml) `[tool.coverage.*]`; `stdio_mcp.py` is listed under `omit` for the fail-under gate).
+The project targets **100%** line coverage on `src/mcp_test_harness` (see [pyproject.toml](pyproject.toml) `[tool.coverage.*]`). **[`stdio_mcp.py`](src/mcp_test_harness/stdio_mcp.py) is excluded from that gate** on purpose: vendored I/O and error branches are covered by **integration** tests and runtime use, not a second layer of line-by-line synthetic mocks. See [docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate](docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate) for the rationale.
 
 ## Releases
 

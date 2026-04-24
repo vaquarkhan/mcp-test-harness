@@ -25,9 +25,13 @@ Other projects solve different problems. Use the table below to pick the right t
 
 None of these replace the others for their core question.
 
+**LLM “auto-generate” tests?** The harness is for **deterministic** CI, not for running an LLM **inside** `mcp-test`. Using an **external** LLM to **draft** tests can be useful with **human review**; see [LLM_TEST_GENERATION.md](LLM_TEST_GENERATION.md).
+
 ## Postman- or JMeter-style ideas (not in core today)
 
-**Collections** (declarative multi-step flows + environments) and **load/throughput** tools (concurrency, long-run stress) are common asks. They are **not** part of the harness yet; today, multi-step behavior is expressed in **Python** tests, and [PERFORMANCE.md](PERFORMANCE.md) documents **single-client** latency (`assert_latency`), not cluster-scale load testing. If you add these, treat them as optional surfaces (e.g. a `run` / `load` subcommand) so default **pytest** CI stays fast and stable.
+**Collections** (declarative multi-step flows + optional **environments**, like Postman / Newman) and **load/throughput** runners (concurrency, long-run stress) are common asks. They are **not** first-class in the `mcp-test` CLI today.
+
+**Practical doc:** [COLLECTIONS.md](COLLECTIONS.md) — maps Postman terms to MCP, shows how to build **chainable, multi-step** flows in **Python** tests (fixtures, `mcp_test.yaml` “environment”, markers), and states the **roadmap** for a possible optional YAML/JSON **collection** runner. **Load at scale** stays outside core; use [PERFORMANCE.md](PERFORMANCE.md) for single-client latency (`assert_latency`) and external tools (k6, JMeter, etc.) for cluster-style load. If a declarative **collection** command is ever added, it should be an **optional** surface (e.g. `mcp-test run` / `collection` subcommand) so default **pytest** CI stays fast and stable.
 
 ## Companion: MCP-Bastion
 

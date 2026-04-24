@@ -37,10 +37,13 @@ For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** th
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture and product decisions |
 | [docs/IMPLEMENTATION_CHECKLIST.md](docs/IMPLEMENTATION_CHECKLIST.md) | Maintainer: features vs. code locations |
 | [docs/COMPARISON.md](docs/COMPARISON.md) | **Ecosystem** — Conformance, mcp-eval, MCPMark, testmcpy; when to use Harness + Bastion |
+| [docs/LLM_TEST_GENERATION.md](docs/LLM_TEST_GENERATION.md) | **LLM + tests** — draft-with-review: good; **auto** trusted in CI: bad fit for this harness |
+| [docs/COLLECTIONS.md](docs/COLLECTIONS.md) | **Postman / Newman–style** multi-step flows, “environments”, and roadmap (declarative collections not in core yet) |
 | [docs/DISCOVERY.md](docs/DISCOVERY.md) | **Registries and promotion** — internal checklist (PyPI, [server.json](server.json), awesome lists) |
 | [docs/DOCKER.md](docs/DOCKER.md) | **Docker & OCI** — PyPI, **GHCR** / **GitHub Packages** links, build targets, `docker run` |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | **Mermaid** diagrams: CLI → scheduler → lifecycle → session → tests |
 | [docs/EDITORS.md](docs/EDITORS.md) | **Visual Studio Code & Cursor** — snippets, Mermaid preview, recommended extensions |
+| [docs/MARKDOWN_CONVENTIONS.md](docs/MARKDOWN_CONVENTIONS.md) | **Markdown** — `[!TIP]` / `**Feature**` callouts and fenced code for readable docs |
 | [CHANGELOG.md](CHANGELOG.md) | **Release history** (Keep a Changelog) |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | **How to contribute** (tests, coverage, release bumps) |
 | [CITATION.cff](CITATION.cff) | **Optional citation** — machine-readable metadata (not required by the license) |
@@ -493,6 +496,8 @@ my-plugin = "my_package.plugin:plugin"
 
 See [examples/reference_plugin.py](examples/reference_plugin.py) for a complete example.
 
+**More examples and patterns:** [examples/README.md](examples/README.md) and the **per-feature checklist** [examples/FEATURES_INDEX.md](examples/FEATURES_INDEX.md) (assertions demo, config validation, reports, transports, GitHub Action, Docker, watch mode, …). Copy-paste tests: [patterns_mcp_test.md](examples/patterns_mcp_test.md). For working on the harness source tree, use [docs/DEVELOPER.md](docs/DEVELOPER.md).
+
 ## Standalone Binary
 
 ```bash
@@ -632,13 +637,21 @@ mcp-test-harness/
 |       +-- parser.py               # JSON-RPC message parser
 |       +-- models.py               # shared data models
 +-- examples/
+|   +-- README.md                  # catalog + per-feature table
+|   +-- FEATURES_INDEX.md         # 1:1 map: README core feature -> example
+|   +-- example_*.md              # one feature per file (transports, reports, watch, …)
+|   +-- mcp_test_*.yaml            # report + transport copy-paste configs
 |   +-- basic_usage.py
 |   +-- version_gate.py
 |   +-- reference_plugin.py         # complete plugin example
+|   +-- assertions_async_demo.py    # assert_* with a fake session
+|   +-- validate_mcp_test_config.py # YAML/TOML schema check
+|   +-- sample_mcp_test.yaml
+|   +-- patterns_mcp_test.md        # copy-paste yaml, markers, snapshots
 +-- scripts/
 |   +-- verify_upstream.py
 |   +-- build_binary.py
-+-- tests/                          # 400+ unit tests, 96% coverage
++-- tests/                          # 500+ tests; 100% line gate on mcp_test_harness except stdio_mcp (see [docs/DEVELOPER.md](docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate))
 +-- docs/
 |   +-- README.md                   # documentation hub
 |   +-- index.md                    # short landing (e.g. GitHub Pages)
@@ -664,6 +677,8 @@ python -m pytest tests/test_pyproject.py -q
 python -m coverage run -m pytest tests/ -q
 python -m coverage report --show-missing
 ```
+
+The repo enforces **100%** line coverage on `src/mcp_test_harness` **except** [`stdio_mcp.py`](src/mcp_test_harness/stdio_mcp.py), which is **omitted** from the gate in [`pyproject.toml`](pyproject.toml) (intentional: subprocess/stdio I/O; see [docs/DEVELOPER.md](docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate)). That is **not** a quality gap for the rest of the tree.
 
 If imports resolve to a different installed copy of the package, run from the repo root so `src/` is used, or: `pip install -e ".[dev]"`.
 

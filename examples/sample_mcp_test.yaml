@@ -1,0 +1,30 @@
+# Example mcp-test.yaml — copy to your project root and adjust `server.command`.
+# Validate without running tests:  python examples/validate_mcp_test_config.py  path/to/this-file.yaml
+
+server:
+  command: python -m your_package.mcp_server
+  transport: stdio
+  # For SSE/HTTP, also set:
+  # transport: sse
+  # transport_options:
+  #   host: localhost
+  #   port: 8765
+  #   path: /mcp
+
+test:
+  dirs:
+    - tests/
+  timeout: 120
+  parallel: true
+  workers: 4
+
+report:
+  format: junit
+  output: reports/mcp-harness.xml
+
+schema_validation: true
+validate_schema_each_parallel_worker: false
+schema_probe_call_tool: true
+
+plugins: []
+redact_patterns: []

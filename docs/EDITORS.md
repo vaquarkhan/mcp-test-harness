@@ -23,6 +23,9 @@ These are *not* hard dependencies; they add a lot of value for day-to-day work.
 | **YAML** (Red Hat) | `mcp-test.yaml` / `mcp-test.yml` with schema-like highlighting and structure. |
 | **Even Better TOML** (tamasfe) | If you use `mcp-test.toml` config. |
 | **Markdown** (built-in) | Read `docs/*.md` with preview (*Markdown: Open Preview*). **Mermaid** diagrams in this repo (e.g. [ARCHITECTURE.md](ARCHITECTURE.md), [DOCKER.md](DOCKER.md)) **render in GitHub**; in VS Code, install **“Markdown Preview Mermaid Support”** (or open the file on GitHub) to see the diagrams. |
+| **Markdown All in One** (optional) | Table of contents, list editing, and small conveniences; not required. |
+
+**Highlighting “feature” in `.md` files:** on **GitHub**, use **alert** blocks and bold labels (see [MARKDOWN_CONVENTIONS.md](MARKDOWN_CONVENTIONS.md)) — e.g. `> [!TIP]` with `> **Feature — …**` for callouts that stand out from body text. In the editor, the built-in highlighter still colors `**bold**` and code fences; **Preview** is the best place to see GitHub-style alerts if your theme supports them.
 
 **Cursor** users: the same **VS Code** extension ecosystem and workspace folders apply; your **AI chat** can use the open `docs/DEVELOPER_GUIDE.md` and `mcp-test.yaml` as context for accurate answers.
 

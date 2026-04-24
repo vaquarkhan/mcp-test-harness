@@ -2,7 +2,7 @@
 
 Author: Vaquar Khan -- https://github.com/vaquarkhan
 
-**Before this deep-dive:** the documentation **hub** and **adoption paths** (same style as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) live in [README.md in this `docs/` folder](README.md). For a short path to first green run, see [QUICK_START.md](QUICK_START.md). For **CI, JUnit, and whether to publish report files**, see [CI_AND_REPORTS.md](CI_AND_REPORTS.md).
+**Before this deep-dive:** the documentation **hub** and **adoption paths** (same style as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) live in [README.md in this `docs/` folder](README.md). For a short path to first green run, see [QUICK_START.md](QUICK_START.md). For **CI, JUnit, and whether to publish report files**, see [CI_AND_REPORTS.md](CI_AND_REPORTS.md). For **runnable and copy-paste examples** (assertion demo, config validation, `mcp-test.yaml` sample), see [../examples/README.md](../examples/README.md). For **harness repo** layout and running the full `pytest` suite, see [DEVELOPER.md](DEVELOPER.md).
 
 This guide explains how to add automated MCP server testing to your project
 using MCP Test Harness. It covers everything from initial setup to advanced patterns.
