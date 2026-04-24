@@ -378,3 +378,24 @@ class TestInjectedDependencies:
 
         resolved = await mgr.resolve(test_fn)
         assert resolved["api_client"] == "client(http://localhost:8080)"
+
+
+# ---------------------------------------------------------------------------
+# Dependency cycles
+# ---------------------------------------------------------------------------
+
+
+class TestFixtureCycleDetection:
+    @pytest.mark.asyncio
+    async def test_self_referential_async_fixture_raises(self) -> None:
+        mgr = FixtureManager()
+
+        async def loop_factory(loop: int) -> object:
+            yield 1
+
+        mgr.register("loop", loop_factory)
+
+        async def test_fn(loop: int) -> None: ...
+
+        with pytest.raises(FixtureError, match="Circular"):
+            await mgr.resolve(test_fn)

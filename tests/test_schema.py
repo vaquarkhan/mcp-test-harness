@@ -9,7 +9,11 @@ from typing import Any
 import pytest
 
 from mcp_test_harness.models import SchemaViolation
-from mcp_test_harness.schema import SchemaValidator, _template_to_regex
+from mcp_test_harness.schema import (
+    SchemaValidator,
+    _template_to_regex,
+    validate_mcp_server_after_connect,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -293,3 +297,56 @@ class TestTemplateToRegex:
         pat = _template_to_regex("http://localhost:8080/health")
         assert pat.match("http://localhost:8080/health")
         assert not pat.match("http://localhost:8080/other")
+
+
+# ---------------------------------------------------------------------------
+# MCP handshake / list shapes
+# ---------------------------------------------------------------------------
+
+
+class TestInitializeResultValidation:
+    def test_valid_initialize_result(self) -> None:
+        from types import SimpleNamespace
+
+        ir = SimpleNamespace(
+            protocolVersion="2024-11-05",
+            capabilities={},
+            serverInfo=SimpleNamespace(name="srv", version="1.0.0"),
+        )
+        assert SchemaValidator(True).validate_initialize_result(ir) == []
+
+    def test_missing_server_info(self) -> None:
+        from types import SimpleNamespace
+
+        ir = SimpleNamespace(
+            protocolVersion="2024-11-05",
+            capabilities={},
+        )
+        v = SchemaValidator(True).validate_initialize_result(ir)
+        assert any("serverInfo" in x.message for x in v)
+
+
+class TestValidateMcpServerAfterConnect:
+    @pytest.mark.asyncio
+    async def test_happy_path_empty_optional_lists(self) -> None:
+        from types import SimpleNamespace
+        from unittest.mock import AsyncMock, MagicMock
+
+        tool = SimpleNamespace(
+            name="t",
+            description="d",
+            inputSchema={"type": "object", "properties": {}},
+        )
+        session = MagicMock()
+        session.list_tools = AsyncMock(return_value=SimpleNamespace(tools=[tool]))
+        session.list_resources = AsyncMock(return_value=SimpleNamespace(resources=[]))
+        session.list_prompts = AsyncMock(return_value=SimpleNamespace(prompts=[]))
+        ir = SimpleNamespace(
+            protocolVersion="2024-11-05",
+            capabilities={},
+            serverInfo=SimpleNamespace(name="s", version="1"),
+        )
+        viol = await validate_mcp_server_after_connect(
+            session, ir, SchemaValidator(True)
+        )
+        assert viol == []

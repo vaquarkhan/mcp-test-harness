@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
+
+import pytest
 
 from mcp_test_harness.discovery import (
     HarnessCase,
@@ -320,3 +323,20 @@ class TestOrderMarkerDecorator:
         orders = {tc.name: tc.markers.get("order") for tc in cases}
         assert orders["test_third"] == 3
         assert orders["test_first"] == 1
+
+
+# ---------------------------------------------------------------------------
+# Import failures
+# ---------------------------------------------------------------------------
+
+
+class TestDiscoveryImportErrors:
+    def test_broken_file_logs_warning(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        bad = tmp_path / "test_syntax_error.py"
+        bad.write_text("def oops( unclosed\n", encoding="utf-8")
+        with caplog.at_level(logging.WARNING):
+            assert discover_tests([tmp_path]) == []
+        assert "Failed to import" in caplog.text
+        assert "test_syntax_error" in caplog.text

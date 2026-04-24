@@ -1,0 +1,31 @@
+# VCS and local env
+.git
+.github
+.venv
+.env
+.env.*
+
+# Python / tooling
+__pycache__
+*.py[cod]
+*$py.class
+.pytest_cache
+.mypy_cache
+.ruff_cache
+htmlcov
+.coverage
+.coverage.*
+*.egg-info
+dist
+build
+
+# Not needed in image build context
+tests
+docs
+examples
+.vscode
+
+# Agent / IDE
+.cursor
+.idea
+*.code-workspace

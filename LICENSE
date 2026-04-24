@@ -1,43 +1,29 @@
-MCP Test Harness License
+MCP Test Harness — License and supplemental terms
+===================================================
 
-Copyright (c) 2024 Vaquar Khan
+This software is released under the **MIT License** (Section 1 below) for broad use, modification, and
+distribution. **Section 2** states additional, non-exclusive obligations regarding **attribution and
+citation** that apply to everyone who uses, modifies, or distributes the Software. By using the
+Software, you agree to both Section 1 and Section 2.
+
+The canonical **preferred citation** and machine-readable metadata are in **CITATION.cff** in this
+repository. If **CITATION.cff** is missing, follow the “How to cite” text in the project **README**.
+
+
+1. MIT License
+--------------
+
+Copyright (c) 2024–2026 Vaquar Khan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to use,
-copy, modify, merge, publish, and distribute the Software, subject to the
-following conditions:
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-1. ATTRIBUTION REQUIRED
-   All copies, modified versions, derivative works, and any public use of
-   this Software must include clear and visible attribution to the original
-   author:
-
-       Vaquar Khan -- https://github.com/vaquarkhan
-
-   This attribution must appear in at least one of the following:
-   - The project README or documentation
-   - A NOTICE or CREDITS file distributed with the software
-   - The "About" section of any user-facing application
-
-2. NON-COMMERCIAL USE ONLY
-   This Software may NOT be used, in whole or in part, for commercial
-   purposes. "Commercial purposes" means any activity primarily intended
-   for or directed toward commercial advantage or monetary compensation.
-
-   Examples of prohibited commercial use include, but are not limited to:
-   - Selling the Software or derivative works
-   - Using the Software in a paid product or service
-   - Using the Software internally at a for-profit company for
-     revenue-generating operations
-
-   If you wish to use this Software for commercial purposes, you must
-   obtain a separate written license from the copyright holder.
-
-3. REDISTRIBUTION
-   Redistribution of the Software, with or without modification, is
-   permitted provided that conditions 1 and 2 above are met and this
-   license notice is included in all copies or substantial portions of
-   the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -46,3 +32,64 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+2. Supplemental terms — attribution, citation, and process
+----------------------------------------------------------
+
+These terms apply in addition to Section 1. They are intended to ensure fair credit for the
+project while keeping the Software **free to use** for most purposes, including **commercial use**,
+subject to the rules below.
+
+2.1 Redistribution of the Software
+    Whenever you **redistribute** the Software in source or binary form (for example, in a
+    repository, package, or container image that includes a substantial part of this codebase),
+    you must:
+    (a) Keep intact the **copyright notice**, this **entire LICENSE file** (Sections 1 and 2), and
+        **NOTICE** (or equivalent project attribution file) in your distribution; and
+    (b) Not remove or misrepresent the origin of the Software.
+
+2.2 Acknowledgment and citation (public, research, and documented products)
+    If you do **any** of the following, you must provide a **citation or acknowledgment** that
+    meets the **preferred format** in **CITATION.cff** (or the “License and citation” / “How to cite”
+    section in the project **README** if **CITATION.cff** is unavailable), including at minimum the
+    **project name** (MCP Test Harness), **author** (as listed in **CITATION.cff** or **NOTICE**),
+    **source URL** of this project, and **year or version** when applicable:
+
+    (a) **Academic, research, or technical publication** (paper, preprint, thesis, report) that
+        describes or evaluates work that **materially** uses or builds on the Software;
+    (b) **Publicly distributed** software, services, or products whose **end-user or developer
+        documentation** (including README, help pages, or release notes) describes a feature
+        that **substantially** relies on the Software, unless that documentation is limited to
+        “internal” packages not offered to the public; or
+    (c) **Public training, courses, or similar materials** (including slides or videos offered to
+        third parties) that **teach** or **demonstrate** this Software or a derivative in a
+        **substantive** way.
+
+2.3 Private and internal use
+    **Solely private** or **internal** use (e.g. running tests in your private CI, without
+    redistributing the Software or **publicly** claiming a product that depends on it in a way
+    covered by 2.2) does not require a separate public citation, provided you still comply with
+    Section 1 and 2.1 for any **redistribution** you perform.
+
+2.4 Process (how to comply in practice)
+    (1) **Publications and formal reports:** Cite the Software using the **metadata and suggested
+        wording** in **CITATION.cff** (BibTeX, APA, or similar block as provided or adapted there);
+        include the **repository URL** and, when applicable, a **version or commit** and **date
+        accessed**.
+    (2) **Repositories and forks:** Keep a copy of this **LICENSE**, **NOTICE**, and
+        **CITATION.cff** (or a short “see upstream LICENSE” link that preserves the same
+        obligations) in your tree when you **redistribute** a substantial part of the Software.
+    (3) **Products and services:** In **public** documentation, credits, or “About” pages,
+        add a one-line **acknowledgment** per **CITATION.cff** / README.
+    (4) **Unknown format:** If your venue does not have a @software type, use a **@misc** or
+        **acknowledgment paragraph** with the same bibliographic data as in **CITATION.cff**.
+
+2.5 No additional patent grant; no trademark
+    Nothing in this file grants any trademark or patent rights. You must not use the author’s
+    or project’s names to imply endorsement without permission, except to **attribute** the
+    Software as required above.
+
+2.6 Severability
+    If any part of Section 2 is held unenforceable, the remaining terms, including Section 1,
+    remain in effect to the maximum extent permitted by law.

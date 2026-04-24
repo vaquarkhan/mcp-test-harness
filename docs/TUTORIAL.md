@@ -448,6 +448,6 @@ For the full CLI reference and config file options, see the [README](../README.m
 ## License
 
 Non-commercial use with mandatory attribution.
-See [LICENSE](../LICENSE) for full terms.
+See [LICENSE](../LICENSE) for full terms; use [CITATION.cff](../CITATION.cff) to cite the project in publications or public write-ups, as required by Section 2.
 
 Attribution: Vaquar Khan -- https://github.com/vaquarkhan

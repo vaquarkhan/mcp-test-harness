@@ -9,8 +9,12 @@ from __future__ import annotations
 
 import difflib
 import json
+import math
+import re
+import statistics
+import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from mcp_test_harness.snapshots import SnapshotManager
 
@@ -60,7 +64,7 @@ def _serialize(value: Any) -> Any:
     if isinstance(value, (list, tuple)):
         return [_serialize(v) for v in value]
     if isinstance(value, dict):
-        return {k: _serialize(v) for k, v in value.items()}
+        return {k: _serialize(v) for k, v in sorted(value.items())}
     # Duck-type: try common attribute patterns from MCP SDK objects
     if hasattr(value, "__dict__"):
         return {k: _serialize(v) for k, v in value.__dict__.items() if not k.startswith("_")}
@@ -72,11 +76,80 @@ def _serialize(value: Any) -> Any:
 # ---------------------------------------------------------------------------
 
 
+def _drop_field_paths(data: Any, field_paths: list[str] | None) -> Any:
+    """Remove keys at any depth when they appear in *field_paths* (key names)."""
+    if not field_paths:
+        return data
+    drop = set(field_paths)
+    return _drop_keys(data, drop)
+
+
+def _drop_keys(value: Any, drop: set[str]) -> Any:
+    if isinstance(value, dict):
+        return {
+            k: _drop_keys(v, drop)
+            for k, v in value.items()
+            if k not in drop
+        }
+    if isinstance(value, list):
+        return [_drop_keys(x, drop) for x in value]
+    return value
+
+
+def _apply_mask_strings(value: Any, patterns: list[re.Pattern[str]] | None) -> Any:
+    if not patterns:
+        return value
+    if isinstance(value, str):
+        for pat in patterns:
+            value = pat.sub("<masked>", value)
+        return value
+    if isinstance(value, dict):
+        return {k: _apply_mask_strings(v, patterns) for k, v in sorted(value.items())}
+    if isinstance(value, list):
+        return [_apply_mask_strings(x, patterns) for x in value]
+    return value
+
+
+async def _validate_arguments_against_schema(
+    session: Any, tool_name: str, arguments: dict[str, Any]
+) -> None:
+    try:
+        import jsonschema
+    except ImportError:  # pragma: no cover
+        return  # pragma: no cover
+    res = await session.list_tools()
+    tools = getattr(res, "tools", None) or []
+    for t in tools:
+        n = getattr(t, "name", None)
+        if n is None and isinstance(t, dict):
+            n = t.get("name")
+        if n != tool_name:
+            continue
+        schema = getattr(t, "inputSchema", None)
+        if schema is None and isinstance(t, dict):
+            schema = t.get("inputSchema")
+        if not isinstance(schema, dict):
+            return
+        try:
+            jsonschema.validate(
+                instance=arguments,
+                schema=schema,
+            )
+        except jsonschema.ValidationError as exc:  # type: ignore[attr-defined]
+            raise MCPAssertionError(
+                f"Arguments for tool '{tool_name}' do not match inputSchema: {exc.message}"
+            ) from exc
+        return
+    return
+
+
 async def assert_tool_call(
     session: Any,
     tool_name: str,
     arguments: dict[str, Any],
     expected: Any | None = None,
+    *,
+    validate_against_input_schema: bool = False,
 ) -> Any:
     """Invoke a tool on the server and validate the response.
 
@@ -91,6 +164,9 @@ async def assert_tool_call(
         Arguments dict passed to the tool.
     expected:
         If provided, the response content is compared against this value.
+    validate_against_input_schema:
+        When True, validate *arguments* with ``jsonschema`` against the
+        tool's ``inputSchema`` (requires the ``jsonschema`` package).
 
     Returns
     -------
@@ -102,6 +178,9 @@ async def assert_tool_call(
         When the tool returns an error or the response does not match
         *expected*.
     """
+    if validate_against_input_schema:
+        await _validate_arguments_against_schema(session, tool_name, arguments)
+
     result = await session.call_tool(tool_name, arguments)
 
     # The MCP SDK result has a `.content` list.  If any content item
@@ -317,6 +396,9 @@ async def assert_snapshot(
     snapshot_name: str,
     test_file: Path,
     update: bool = False,
+    *,
+    ignore_fields: list[str] | None = None,
+    mask_patterns: list[str] | None = None,
 ) -> None:
     """Compare *actual* against a stored snapshot.
 
@@ -335,20 +417,32 @@ async def assert_snapshot(
         ``<test_dir>/__snapshots__/<snapshot_name>.snap``.
     update:
         When ``True`` overwrite the stored snapshot unconditionally.
+    ignore_fields:
+        Key names to strip recursively before comparing (e.g. volatile IDs).
+    mask_patterns:
+        Regex patterns (as strings) applied to all string values for masking
+        (matched substrings replaced with ``<masked>``).
     """
+    patterns = [re.compile(p) for p in (mask_patterns or [])]
+    working = _serialize(actual)
+    working = _drop_field_paths(working, ignore_fields)
+    working = _apply_mask_strings(working, patterns if patterns else None)
+
     mgr = SnapshotManager(update=update)
     snap_path = mgr.get_snapshot_path(test_file, snapshot_name)
     stored = mgr.read_snapshot(snap_path)
 
     if stored is None or update:
-        mgr.write_snapshot(snap_path, _serialize(actual))
+        mgr.write_snapshot(snap_path, working)
         return
 
-    actual_ser = _serialize(actual)
-    if json.dumps(stored, sort_keys=True, default=str) != json.dumps(
-        actual_ser, sort_keys=True, default=str
+    stored_adj = _drop_field_paths(_serialize(stored), ignore_fields)
+    stored_adj = _apply_mask_strings(stored_adj, patterns if patterns else None)
+
+    if json.dumps(stored_adj, sort_keys=True, default=str) != json.dumps(
+        working, sort_keys=True, default=str
     ):
-        diff = mgr.diff(stored, actual_ser)
+        diff = mgr.diff(stored_adj, working)
         raise MCPAssertionError(
             f"Snapshot mismatch for '{snapshot_name}'",
             diff=diff,
@@ -488,3 +582,198 @@ async def assert_invalid_tool(
         When the tool call succeeds without error.
     """
     await assert_tool_rejects(session, tool_name, {})
+
+
+# ---------------------------------------------------------------------------
+# assert_tool_schema
+# ---------------------------------------------------------------------------
+
+
+async def assert_tool_schema(
+    session: Any,
+    tool_name: str,
+    expected_input_schema: dict[str, Any],
+) -> None:
+    """Assert the tool's ``inputSchema`` exactly matches *expected_input_schema*."""
+    res = await session.list_tools()
+    tools = getattr(res, "tools", None) or []
+    for t in tools:
+        n = getattr(t, "name", None)
+        if n is None and isinstance(t, dict):
+            n = t.get("name")
+        if n != tool_name:
+            continue
+        isc = getattr(t, "inputSchema", None)
+        if isc is None and isinstance(t, dict):
+            isc = t.get("inputSchema")
+        if not isinstance(isc, dict):
+            raise MCPAssertionError(
+                f"Tool '{tool_name}' has no dict inputSchema",
+            )
+        if _serialize(isc) != _serialize(expected_input_schema):
+            diff = _diff_values(
+                _serialize(expected_input_schema),
+                _serialize(isc),
+            )
+            raise MCPAssertionError(
+                f"inputSchema for '{tool_name}' does not match",
+                diff=diff,
+            )
+        return
+
+    raise MCPAssertionError(f"Tool '{tool_name}' not found via list_tools()")
+
+
+# ---------------------------------------------------------------------------
+# assert_protocol_version
+# ---------------------------------------------------------------------------
+
+
+async def assert_protocol_version(
+    session: Any,
+    expected: str = "2024-11-05",
+) -> None:
+    """Assert the negotiated MCP ``protocolVersion`` matches *expected*.
+
+    Works when the session was created by the harness, which stashes
+    ``session._mcp_harness_init_result`` after ``initialize()``.
+    """
+    ir: Any = getattr(session, "_mcp_harness_init_result", None)
+    if ir is None:
+        raise MCPAssertionError(
+            "No initialize result on session (expected _mcp_harness_init_result). "
+            "Use a harness-managed server or assign it from initialize().",
+        )
+    pv = getattr(ir, "protocolVersion", None)
+    if pv is None and isinstance(ir, dict):
+        pv = ir.get("protocolVersion")
+    if str(pv) != str(expected):
+        diff = _diff_values(expected, pv)
+        raise MCPAssertionError(
+            f"protocolVersion is {pv!r}, expected {expected!r}",
+            diff=diff,
+        )
+
+
+# ---------------------------------------------------------------------------
+# assert_tool_idempotent
+# ---------------------------------------------------------------------------
+
+
+async def assert_tool_idempotent(
+    session: Any,
+    tool_name: str,
+    arguments: dict[str, Any],
+    *,
+    runs: int = 3,
+) -> None:
+    """Call a tool *runs* times and require identical serialised content each time."""
+    first: Any = None
+    for _ in range(runs):
+        result = await session.call_tool(tool_name, arguments)
+        content = getattr(result, "content", None) or result
+        ser = _serialize(content)
+        if first is None:
+            first = ser
+        elif ser != first:
+            diff = _diff_values(first, ser)
+            raise MCPAssertionError(
+                f"Tool '{tool_name}' returned differing results across calls",
+                diff=diff,
+            )
+
+
+# ---------------------------------------------------------------------------
+# assert_latency
+# ---------------------------------------------------------------------------
+
+_LatencyAggregate = Literal["max", "p95", "p99", "mean", "median"]
+
+
+def _aggregate_latency_ms(timings: list[float], aggregate: _LatencyAggregate) -> float:
+    """Reduce multiple samples to a single value for budget comparison."""
+    if not timings:
+        return 0.0
+    if aggregate == "max":
+        return max(timings)
+    if aggregate == "mean":
+        return float(statistics.mean(timings))
+    if aggregate == "median":
+        return float(statistics.median(timings))
+    q = 0.95 if aggregate == "p95" else 0.99
+    s = sorted(timings)
+    n = len(s)
+    if n == 1:
+        return s[0]
+    # Linear interpolation on sorted samples (R7 / Hyndman & Fan type 7)
+    pos = (n - 1) * q
+    lo = int(math.floor(pos))
+    hi = int(math.ceil(pos))
+    if lo == hi:
+        return s[lo]
+    w = pos - lo
+    return s[lo] * (1 - w) + s[hi] * w
+
+
+async def assert_latency(
+    session: Any,
+    tool_name: str,
+    arguments: dict[str, Any],
+    *,
+    max_ms: float,
+    runs: int = 1,
+    warmup: int = 0,
+    aggregate: _LatencyAggregate = "max",
+) -> None:
+    """Fail if ``call_tool`` latency exceeds a budget (single shot or stats over repeats).
+
+    Use in **performance** / regression tests next to functional checks. Tag tests with
+    ``@marker(tags=[\"perf\"])`` and run them selectively with ``mcp-test -m perf``.
+
+    Parameters
+    ----------
+    max_ms
+        Budget in **milliseconds** (after aggregate when ``runs > 1``).
+    runs
+        Number of **timed** iterations (default ``1`` = same as historical behavior).
+    warmup
+        Number of **untimed** ``call_tool`` invocations before measuring (JIT / cold start).
+    aggregate
+        How to combine samples when ``runs > 1``: ``"max"`` (worst case), ``"p95"`` / ``"p99"``,
+        ``"mean"``, or ``"median"`` (all in milliseconds from ``perf_counter``).
+    """
+    for _ in range(warmup):
+        await session.call_tool(tool_name, arguments)
+
+    timings: list[float] = []
+    for _ in range(max(1, runs)):
+        t0 = time.perf_counter()
+        await session.call_tool(tool_name, arguments)
+        timings.append((time.perf_counter() - t0) * 1000.0)
+
+    value = _aggregate_latency_ms(timings, aggregate) if len(timings) > 1 else timings[0]
+    if value > max_ms:
+        extra = f" samples={timings!r} aggregate={aggregate!r}" if len(timings) > 1 else ""
+        raise MCPAssertionError(
+            f"Tool '{tool_name}' latency {value:.1f}ms exceeds budget {max_ms}ms{extra}",
+        )
+
+
+# ---------------------------------------------------------------------------
+# assert_tool_call_validates_input
+# ---------------------------------------------------------------------------
+
+
+async def assert_tool_call_validates_input(
+    session: Any,
+    tool_name: str,
+    bad_arguments: dict[str, Any],
+    expected_error_substring: str | None = None,
+) -> None:
+    """Assert the server rejects *bad_arguments* (invalid per server rules)."""
+    await assert_tool_rejects(
+        session,
+        tool_name,
+        bad_arguments,
+        expected_error_substring,
+    )

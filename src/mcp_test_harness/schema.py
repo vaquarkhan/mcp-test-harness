@@ -44,8 +44,8 @@ def _check_jsonschema_available() -> bool:
     try:
         import jsonschema as _jsonschema  # noqa: F401
         return True
-    except ImportError:
-        return False
+    except ImportError:  # pragma: no cover
+        return False  # pragma: no cover
 
 
 # ---------------------------------------------------------------------------
@@ -433,6 +433,255 @@ class SchemaValidator:
                 )
             )
         return violations
+
+    def validate_initialize_result(self, init_result: Any) -> list[SchemaViolation]:
+        """Validate the MCP ``initialize`` handshake result structure."""
+        if not self._enabled:
+            return []
+        violations: list[SchemaViolation] = []
+        if init_result is None:
+            violations.append(
+                SchemaViolation(
+                    json_path="$.result",
+                    expected_type="InitializeResult",
+                    actual_value=None,
+                    message="Initialize result is missing",
+                )
+            )
+            return violations
+        proto = _get(init_result, "protocolVersion", None)
+        if proto is None or not isinstance(proto, (str, int)):
+            violations.append(
+                SchemaViolation(
+                    json_path="$.protocolVersion",
+                    expected_type="string | integer",
+                    actual_value=proto,
+                    message="Initialize result must include 'protocolVersion' (string or integer)",
+                )
+            )
+        caps = _get(init_result, "capabilities", None)
+        if caps is None:
+            violations.append(
+                SchemaViolation(
+                    json_path="$.capabilities",
+                    expected_type="object",
+                    actual_value=None,
+                    message="Initialize result must include 'capabilities'",
+                )
+            )
+        sinfo = _get(init_result, "serverInfo", None)
+        if sinfo is None:
+            violations.append(
+                SchemaViolation(
+                    json_path="$.serverInfo",
+                    expected_type="object",
+                    actual_value=None,
+                    message="Initialize result must include 'serverInfo'",
+                )
+            )
+        elif isinstance(sinfo, dict):
+            if "name" not in sinfo or not isinstance(sinfo.get("name"), str):
+                violations.append(
+                    SchemaViolation(
+                        json_path="$.serverInfo.name",
+                        expected_type="string",
+                        actual_value=_get(sinfo, "name", None),
+                        message="serverInfo must include string 'name'",
+                    )
+                )
+        elif hasattr(sinfo, "name"):
+            n = _get(sinfo, "name", None)
+            if n is None or not isinstance(n, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path="$.serverInfo.name",
+                        expected_type="string",
+                        actual_value=n,
+                        message="serverInfo must include string 'name'",
+                    )
+                )
+        return violations
+
+    def validate_list_tools_shape(self, tools: list[Any]) -> list[SchemaViolation]:
+        """Validate each tool in ``tools/list`` has required MCP fields."""
+        if not self._enabled:
+            return []
+        violations: list[SchemaViolation] = []
+        for idx, tool in enumerate(tools):
+            pfx = f"$.tools[{idx}]"
+            name = _get(tool, "name", None)
+            if not isinstance(name, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.name",
+                        expected_type="string (non-empty)",
+                        actual_value=name,
+                        message="Each tool must have a string 'name'",
+                    )
+                )
+            desc = _get(tool, "description", None)
+            if desc is not None and not isinstance(desc, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.description",
+                        expected_type="string | null",
+                        actual_value=desc,
+                        message="Tool 'description' must be a string if present",
+                    )
+                )
+            ischema = _get(tool, "inputSchema", None)
+            if not isinstance(ischema, dict):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.inputSchema",
+                        expected_type="object (JSON Schema)",
+                        actual_value=ischema,
+                        message="Each tool must have an object 'inputSchema'",
+                    )
+                )
+        return violations
+
+    def validate_list_resources_shape(self, resources: list[Any]) -> list[SchemaViolation]:
+        """Validate each resource in ``resources/list`` has required MCP fields."""
+        if not self._enabled:
+            return []
+        violations: list[SchemaViolation] = []
+        for idx, res in enumerate(resources):
+            pfx = f"$.resources[{idx}]"
+            uri = _get(res, "uri", None)
+            if uri is None or not isinstance(uri, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.uri",
+                        expected_type="string",
+                        actual_value=uri,
+                        message="Each resource must have a string 'uri'",
+                    )
+                )
+            name = _get(res, "name", None)
+            if not isinstance(name, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.name",
+                        expected_type="string",
+                        actual_value=name,
+                        message="Each resource must have a string 'name'",
+                    )
+                )
+            mt = _get(res, "mimeType", None)
+            if mt is not None and not isinstance(mt, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.mimeType",
+                        expected_type="string | null",
+                        actual_value=mt,
+                        message="Resource 'mimeType' must be a string if present",
+                    )
+                )
+        return violations
+
+    def validate_list_prompts_shape(self, prompts: list[Any]) -> list[SchemaViolation]:
+        """Validate each prompt in ``prompts/list`` has required MCP fields."""
+        if not self._enabled:
+            return []
+        violations: list[SchemaViolation] = []
+        for idx, pr in enumerate(prompts):
+            pfx = f"$.prompts[{idx}]"
+            name = _get(pr, "name", None)
+            if not isinstance(name, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.name",
+                        expected_type="string",
+                        actual_value=name,
+                        message="Each prompt must have a string 'name'",
+                    )
+                )
+            args = _get(pr, "arguments", None)
+            if args is not None and not isinstance(args, list):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.arguments",
+                        expected_type="array | null",
+                        actual_value=args,
+                        message="Prompt 'arguments' must be an array if present",
+                    )
+                )
+        return violations
+
+    def validate_content_items_shape(self, items: list[Any]) -> list[SchemaViolation]:
+        """Validate tool/prompt result content items (Text, Image, …)."""
+        if not self._enabled:
+            return []
+        violations: list[SchemaViolation] = []
+        for i, item in enumerate(items):
+            pfx = f"$.content[{i}]"
+            typ = _get(item, "type", None)
+            if typ == "text":
+                if not isinstance(_get(item, "text", None), str):
+                    violations.append(
+                        SchemaViolation(
+                            json_path=f"{pfx}.text",
+                            expected_type="string",
+                            actual_value=_get(item, "text", None),
+                            message="TextContent requires string 'text'",
+                        )
+                    )
+            elif typ == "image":
+                if not isinstance(_get(item, "data", None), str):
+                    violations.append(
+                        SchemaViolation(
+                            json_path=f"{pfx}.data",
+                            expected_type="string (base64)",
+                            actual_value=None,
+                            message="ImageContent requires string 'data'",
+                        )
+                    )
+                if not isinstance(_get(item, "mimeType", None), str):
+                    violations.append(
+                        SchemaViolation(
+                            json_path=f"{pfx}.mimeType",
+                            expected_type="string",
+                            actual_value=_get(item, "mimeType", None),
+                            message="ImageContent requires string 'mimeType'",
+                        )
+                    )
+        return violations
+
+
+async def validate_mcp_server_after_connect(
+    session: Any,
+    init_result: Any,
+    validator: SchemaValidator,
+) -> list[SchemaViolation]:
+    """Run MCP shape checks and tool inputSchema validation after connect."""
+    v: list[SchemaViolation] = []
+    v.extend(validator.validate_initialize_result(init_result))
+    try:
+        lt = await session.list_tools()
+        tools = getattr(lt, "tools", None) or []
+        v.extend(validator.validate_list_tools_shape(tools))
+        v.extend(validator.validate_tool_schemas(tools))
+    except Exception as exc:  # noqa: BLE001
+        v.append(
+            SchemaViolation(
+                json_path="$.list_tools",
+                expected_type="ListToolsResult",
+                actual_value=None,
+                message=f"list_tools failed: {exc}",
+            )
+        )
+    for call, name, shape_fn, attr in (
+        (lambda: session.list_resources(), "list_resources", "validate_list_resources_shape", "resources"),
+        (lambda: session.list_prompts(), "list_prompts", "validate_list_prompts_shape", "prompts"),
+    ):
+        try:
+            res = await call()
+        except Exception:
+            continue
+        items = getattr(res, attr, None) or []
+        v.extend(getattr(validator, shape_fn)(items))
+    return v
 
 
 # ---------------------------------------------------------------------------

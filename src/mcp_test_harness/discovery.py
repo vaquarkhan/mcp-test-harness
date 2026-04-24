@@ -14,11 +14,14 @@ from __future__ import annotations
 import fnmatch
 import importlib.util
 import inspect
+import logging
 import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -195,8 +198,13 @@ def _load_module_from_path(path: Path) -> Any:
     sys.modules[module_name] = module
     try:
         spec.loader.exec_module(module)
-    except Exception:
-        # If the module fails to import, skip it silently.
+    except Exception as exc:
+        logger.warning(
+            "Failed to import test module %s: %s",
+            path,
+            exc,
+            exc_info=True,
+        )
         sys.modules.pop(module_name, None)
         return None
     return module
