@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -251,6 +252,51 @@ class TestValidateResourceUris:
 
 
 # ---------------------------------------------------------------------------
+# list_resources shape (MCP Python SDK may use AnyUrl, not str)
+# ---------------------------------------------------------------------------
+
+
+class TestListResourcesShapeUriStrCoercion:
+    def test_accepts_str_like_uri_not_subclass_of_str(self) -> None:
+        class NotPlainStr:
+            def __str__(self) -> str:
+                return "file:///a/b"
+
+        v = SchemaValidator(True)
+        res = SimpleNamespace(
+            name="n",
+            uri=NotPlainStr(),
+            mimeType=None,
+        )
+        assert v.validate_list_resources_shape([res]) == []
+
+    def test_list_resources_shape_disabled(self) -> None:
+        v = SchemaValidator(False)
+        assert v.validate_list_resources_shape([object()]) == []
+
+    def test_rejects_number_uri(self) -> None:
+        v = SchemaValidator(True)
+        r = SimpleNamespace(name="n", uri=99, mimeType=None)
+        vio = v.validate_list_resources_shape([r])
+        assert vio and "uri" in vio[0].json_path
+
+    def test_rejects_str_that_normalizes_to_empty(self) -> None:
+        class Empty:
+            def __str__(self) -> str:
+                return ""
+
+        v = SchemaValidator(True)
+        r = SimpleNamespace(name="n", uri=Empty(), mimeType=None)
+        assert v.validate_list_resources_shape([r])
+
+    def test_missing_uri_field(self) -> None:
+        v = SchemaValidator(True)
+        r = SimpleNamespace(name="n", mimeType=None)
+        vio = v.validate_list_resources_shape([r])
+        assert vio and "uri" in vio[0].json_path
+
+
+# ---------------------------------------------------------------------------
 # Disabled validation
 # ---------------------------------------------------------------------------
 
@@ -353,3 +399,37 @@ class TestValidateMcpServerAfterConnect:
             session, ir, SchemaValidator(True)
         )
         assert viol == []
+
+    @pytest.mark.asyncio
+    async def test_content_probe_call_tool_failure_logs_debug(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        from unittest.mock import AsyncMock, MagicMock
+
+        tool = SimpleNamespace(
+            name="t",
+            description="d",
+            inputSchema={"type": "object", "properties": {}},
+        )
+        session = MagicMock()
+        session.list_tools = AsyncMock(
+            return_value=SimpleNamespace(tools=[tool])
+        )
+        session.list_resources = AsyncMock(
+            return_value=SimpleNamespace(resources=[])
+        )
+        session.list_prompts = AsyncMock(return_value=SimpleNamespace(prompts=[]))
+        session.call_tool = AsyncMock(side_effect=RuntimeError("call_tool failed"))
+        ir = SimpleNamespace(
+            protocolVersion="2024-11-05",
+            capabilities={},
+            serverInfo=SimpleNamespace(name="s", version="1"),
+        )
+        with caplog.at_level(logging.DEBUG, logger="mcp_test_harness.schema"):
+            await validate_mcp_server_after_connect(
+                session, ir, SchemaValidator(True), schema_probe_call_tool=True
+            )
+        assert any(
+            "call_tool failed" in r.getMessage() or "content probe" in r.getMessage()
+            for r in caplog.records
+        )

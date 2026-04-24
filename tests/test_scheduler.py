@@ -12,7 +12,11 @@ from mcp_test_harness.config import HarnessConfig
 from mcp_test_harness.discovery import HarnessCase
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError
 from mcp_test_harness.models import CaseResult, CaseStatus
-from mcp_test_harness.scheduler import HarnessScheduler, _aggregate_results
+from mcp_test_harness.scheduler import (
+    HarnessScheduler,
+    _aggregate_results,
+    _assert_mcp_compliance,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -513,3 +517,19 @@ class TestParallelModuleGrouping:
 
         assert lcm_instance.start.call_count == 1
         assert exec_instance.execute.call_count == 2
+
+
+class TestAssertMcpCompliance:
+    @pytest.mark.asyncio
+    async def test_parallel_nonzero_worker_skips_post_connect_validation(self) -> None:
+        with patch(
+            "mcp_test_harness.scheduler.validate_mcp_server_after_connect",
+            new_callable=AsyncMock,
+        ) as val:
+            cfg = _make_config(
+                schema_validation=True,
+                parallel=True,
+                validate_schema_each_parallel_worker=False,
+            )
+            await _assert_mcp_compliance(cfg, _make_managed_server(), worker_id=1)
+        val.assert_not_called()

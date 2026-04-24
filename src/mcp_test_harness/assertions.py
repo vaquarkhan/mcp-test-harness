@@ -13,6 +13,7 @@ import math
 import re
 import statistics
 import time
+import weakref
 from pathlib import Path
 from typing import Any, Literal
 
@@ -34,29 +35,44 @@ class MCPAssertionError(AssertionError):
 
 
 _MCP_HARNESS_LIST_TOOLS = "_mcp_harness_list_tools_result"
+# Do not store cache on the session object (``__slots__`` / Pydantic sessions reject extra attrs).
+_list_tools_result_cache: weakref.WeakKeyDictionary[Any, Any] = weakref.WeakKeyDictionary()
 
 
 def _stashed_list_tools_result(session: Any) -> Any | None:
-    """Read cached ``list_tools`` result without tripping ``MagicMock`` auto-attrs.
-
-    ``getattr(m, "key", None)`` is unsafe for :class:`unittest.mock.MagicMock` because
-    the mock may synthesize a child mock for *any* name, so the default is never used.
-    """
+    """Read cached ``list_tools`` for *session* (avoids tripping :class:`MagicMock` auto-attrs)."""
     d = getattr(session, "__dict__", None)
-    if not isinstance(d, dict):
+    if isinstance(d, dict) and _MCP_HARNESS_LIST_TOOLS in d:
+        return d[_MCP_HARNESS_LIST_TOOLS]
+    try:
+        return _list_tools_result_cache.get(session)
+    except TypeError:
         return None
-    return d.get(_MCP_HARNESS_LIST_TOOLS)
 
 
 async def _list_tools_cached(session: Any) -> Any:
-    """Cache ``list_tools()`` on the session so repeated calls do not hammer the server."""
+    """Cache ``list_tools()`` so repeated calls do not hammer the server.
+
+    Uses a :class:`weakref.WeakKeyDictionary` for normal sessions; for
+    :class:`unittest.mock.MagicMock` and types that allow it, the result is also stored
+    on ``session.__dict__`` so :func:`_stashed_list_tools_result` can read it without
+    synthesizing mock children.
+    """
     c = _stashed_list_tools_result(session)
     if c is not None:
         return c
     c = await session.list_tools()
+    d = getattr(session, "__dict__", None)
+    if isinstance(d, dict):
+        try:
+            d[_MCP_HARNESS_LIST_TOOLS] = c
+            return c
+        except (TypeError, AttributeError):  # pragma: no cover
+            # Non-assignable instance mapping (e.g. frozen/odd __dict__); use WeakKey path.
+            pass
     try:
-        setattr(session, _MCP_HARNESS_LIST_TOOLS, c)
-    except Exception:  # pragma: no cover
+        _list_tools_result_cache[session] = c
+    except TypeError:
         pass
     return c
 
@@ -375,10 +391,10 @@ async def assert_capabilities(
     Parameters
     ----------
     session:
-        An MCP ``ClientSession``.  The capabilities are read from
-        ``session.server_capabilities`` (set during the initialize
-        handshake).  If that attribute is missing the function falls
-        back to ``session.capabilities``.
+        An MCP ``ClientSession``. Capabilities are read from
+        ``session.server_capabilities``, then ``session.capabilities``, then
+        ``session._mcp_harness_init_result`` (from the harness handshake) if
+        present.
     expected:
         A dict describing the capabilities the server must advertise.
 
@@ -391,8 +407,16 @@ async def assert_capabilities(
     if caps is None:
         caps = getattr(session, "capabilities", None)
     if caps is None:
+        ir = getattr(session, "_mcp_harness_init_result", None)
+        if ir is not None:
+            if isinstance(ir, dict):
+                caps = ir.get("capabilities")
+            else:
+                caps = getattr(ir, "capabilities", None)
+    if caps is None:
         raise MCPAssertionError(
-            "Session has no 'server_capabilities' or 'capabilities' attribute"
+            "Session has no server capabilities (expected server_capabilities, "
+            "capabilities, or _mcp_harness_init_result.capabilities)"
         )
 
     actual = _serialize(caps)

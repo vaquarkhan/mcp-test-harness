@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -574,3 +575,18 @@ class TestHelpers:
 
     def test_force_kill_timeout_value(self) -> None:
         assert _FORCE_KILL_TIMEOUT == 10.0
+
+    @pytest.mark.asyncio
+    async def test_safe_session_aexit_suppresses_exception_from_aexit(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        manager = ServerLifecycleManager()
+        session = MagicMock()
+
+        def bad_aexit(*_a: object, **_k: object) -> None:
+            raise OSError("aexit failed")
+
+        session.__aexit__ = bad_aexit
+        with caplog.at_level(logging.DEBUG, logger="mcp_test_harness.lifecycle"):
+            await manager._safe_session_aexit(session, None, None, None)
+        assert any("aexit" in r.message.lower() for r in caplog.records)

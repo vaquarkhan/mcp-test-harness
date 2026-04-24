@@ -5,6 +5,11 @@
 | Start here | Link |
 |------------|------|
 | **Docs hub** (read first) | [README.md](README.md) |
+| **Changelog (releases, upgrades)** | [CHANGELOG.md](../CHANGELOG.md) |
+| **Contributing** | [CONTRIBUTING.md](../CONTRIBUTING.md) |
+| **Docker & container links** (PyPI, GitHub Packages, `docker run`) | [DOCKER.md](DOCKER.md) |
+| **Architecture (Mermaid diagrams)** | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| **Visual Studio Code & Cursor** | [EDITORS.md](EDITORS.md) |
 | **Fastest install + first run** | [QUICK_START.md](QUICK_START.md) |
 | **Ecosystem, registries, promotion checklist** | [DISCOVERY.md](DISCOVERY.md) |
 | **How we compare to other MCP tools** | [COMPARISON.md](COMPARISON.md) |

@@ -99,6 +99,24 @@ class TestAssertionAsync:
         session.server_capabilities = 42
         await ass.assert_capabilities(session, {})
 
+    async def test_assert_capabilities_uses_mcp_harness_init_result(self) -> None:
+        from types import SimpleNamespace
+
+        s = SimpleNamespace()
+        s._mcp_harness_init_result = SimpleNamespace(
+            capabilities={"sampling": {}, "tools": {"listChanged": True}}
+        )
+        await ass.assert_capabilities(s, {"tools": {"listChanged": True}})
+
+    async def test_assert_capabilities_init_result_dict(self) -> None:
+        from types import SimpleNamespace
+
+        s = SimpleNamespace()
+        s._mcp_harness_init_result = {
+            "capabilities": {"sampling": {}, "x": 1},
+        }
+        await ass.assert_capabilities(s, {"x": 1})
+
     async def test_assert_tool_schema_mismatch(self) -> None:
         t = SimpleNamespace(
             name="e",
@@ -191,10 +209,10 @@ def test_test_tree_snapshot_stat_oserror(tmp_path: Path) -> None:
     sub.write_text("1", encoding="utf-8")
     real = Path.stat
 
-    def stat_sel(self: Path) -> object:
+    def stat_sel(self: Path, *args: object, **kwargs: object) -> object:
         if self == sub:
             raise OSError("x")
-        return real(self)
+        return real(self, *args, **kwargs)
 
     with patch.object(Path, "stat", stat_sel):
         out = _test_tree_snapshot([tmp_path])

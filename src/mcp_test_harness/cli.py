@@ -256,20 +256,20 @@ async def _async_main(argv: list[str] | None = None) -> int:
             outer += 1
             if watch_max_outer and outer >= watch_max_outer:
                 return 0
-            while True:  # pragma: no cover (infinite watch poll; run via --watch in dev)
-                await asyncio.sleep(watch_interval)  # pragma: no cover
-                snap = _test_tree_snapshot(test_dirs)  # pragma: no cover
-                if snap != state:  # pragma: no cover
+            while True:
+                await asyncio.sleep(watch_interval)
+                snap = _test_tree_snapshot(test_dirs)
+                if snap != state:
                     # Wait until the tree is stable across debounce to coalesce rapid saves.
                     last = snap
-                    while True:  # pragma: no cover
-                        await asyncio.sleep(watch_debounce)  # pragma: no cover
-                        snap2 = _test_tree_snapshot(test_dirs)  # pragma: no cover
-                        if snap2 == last:  # pragma: no cover
-                            state = snap2  # pragma: no cover
-                            break  # pragma: no cover
-                        last = snap2  # pragma: no cover
-                    break  # pragma: no cover
+                    while True:
+                        await asyncio.sleep(watch_debounce)
+                        snap2 = _test_tree_snapshot(test_dirs)
+                        if snap2 == last:
+                            state = snap2
+                            break
+                        last = snap2
+                    break
 
     return await _run_harness(config, list_only=bool(args.list))
 

@@ -125,6 +125,18 @@ class TestLoadConfigExtraBranches:
         cfg = load_config(ns)
         assert cfg.server_command == "echo hi"
 
+    def test_yaml_loads_schema_parallel_and_probe_flags(self, tmp_path: Path):
+        f = tmp_path / "mcp-test.yaml"
+        f.write_text(
+            "server:\n  command: x\n"
+            "validate_schema_each_parallel_worker: true\n"
+            "schema_probe_call_tool: false\n"
+        )
+        ns = _ns(config=str(f))
+        cfg = load_config(ns)
+        assert cfg.validate_schema_each_parallel_worker is True
+        assert cfg.schema_probe_call_tool is False
+
     def test_non_dict_yaml_raises(self, tmp_path: Path):
         f = tmp_path / "mcp-test.yaml"
         f.write_text("- item1\n- item2\n")

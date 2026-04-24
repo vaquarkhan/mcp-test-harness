@@ -548,16 +548,37 @@ class SchemaValidator:
         violations: list[SchemaViolation] = []
         for idx, res in enumerate(resources):
             pfx = f"$.resources[{idx}]"
-            uri = _get(res, "uri", None)
-            if uri is None or not isinstance(uri, str):
+            raw_uri = _get(res, "uri", None)
+            if raw_uri is None:
                 violations.append(
                     SchemaViolation(
                         json_path=f"{pfx}.uri",
                         expected_type="string",
-                        actual_value=uri,
+                        actual_value=raw_uri,
                         message="Each resource must have a string 'uri'",
                     )
                 )
+            elif isinstance(raw_uri, bool) or isinstance(raw_uri, (int, float)):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.uri",
+                        expected_type="string",
+                        actual_value=raw_uri,
+                        message="Each resource must have a string 'uri'",
+                    )
+                )
+            else:
+                # MCP Python SDK may use pydantic AnyUrl (not a plain str); str() is stable.
+                uri_str = raw_uri if isinstance(raw_uri, str) else str(raw_uri)
+                if not uri_str:
+                    violations.append(
+                        SchemaViolation(
+                            json_path=f"{pfx}.uri",
+                            expected_type="string",
+                            actual_value=raw_uri,
+                            message="Each resource must have a string 'uri'",
+                        )
+                    )
             name = _get(res, "name", None)
             if not isinstance(name, str):
                 violations.append(
@@ -685,16 +706,18 @@ async def validate_mcp_server_after_connect(
             )
         )
         tools = []
-    for call, name, shape_fn, attr in (
-        (lambda: session.list_resources(), "list_resources", "validate_list_resources_shape", "resources"),
-        (lambda: session.list_prompts(), "list_prompts", "validate_list_prompts_shape", "prompts"),
-    ):
-        try:
-            res = await call()
-        except Exception:
-            continue
-        items = getattr(res, attr, None) or []
-        v.extend(getattr(validator, shape_fn)(items))
+    try:
+        lr = await session.list_resources()
+        ritems = getattr(lr, "resources", None) or []
+        v.extend(validator.validate_list_resources_shape(ritems))
+    except Exception:
+        pass
+    try:
+        lpr = await session.list_prompts()
+        pitems = getattr(lpr, "prompts", None) or []
+        v.extend(validator.validate_list_prompts_shape(pitems))
+    except Exception:
+        pass
 
     # Best-effort: validate tool *result* content shapes once (first tool, empty args).
     if (
