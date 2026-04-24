@@ -49,7 +49,7 @@ def _make_mock_session(capabilities: Any = None) -> MagicMock:
     """Create a mock ClientSession that supports async context manager."""
     session = MagicMock()
     session.__aenter__ = AsyncMock(return_value=session)
-    session.__aexit__ = AsyncMock(return_value=False)
+    session.__aexit__ = AsyncMock(return_value=None)
 
     init_result = MagicMock()
     if capabilities is not None:

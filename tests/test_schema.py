@@ -341,6 +341,9 @@ class TestValidateMcpServerAfterConnect:
         session.list_tools = AsyncMock(return_value=SimpleNamespace(tools=[tool]))
         session.list_resources = AsyncMock(return_value=SimpleNamespace(resources=[]))
         session.list_prompts = AsyncMock(return_value=SimpleNamespace(prompts=[]))
+        session.call_tool = AsyncMock(
+            return_value=SimpleNamespace(content=[])
+        )
         ir = SimpleNamespace(
             protocolVersion="2024-11-05",
             capabilities={},

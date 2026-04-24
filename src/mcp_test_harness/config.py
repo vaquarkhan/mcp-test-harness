@@ -29,6 +29,8 @@ _KNOWN_TOP_KEYS = frozenset(
         "test",
         "report",
         "schema_validation",
+        "validate_schema_each_parallel_worker",
+        "schema_probe_call_tool",
         "plugins",
         "redact_patterns",
     }
@@ -76,6 +78,12 @@ class HarnessConfig:
     schema_validation: bool = True
     filter_name: str | None = None
     filter_marker: str | None = None
+    # When ``parallel`` is true, only worker 0 runs full post-connect schema
+    # checks unless this is set (avoids N× list_tools on large servers).
+    validate_schema_each_parallel_worker: bool = False
+    # After tools/list, optionally call the first tool with ``{}`` to validate
+    # ``content`` item shapes (best-effort; failures are logged, not fatal).
+    schema_probe_call_tool: bool = True
 
 
 # ---------------------------------------------------------------------------
@@ -208,6 +216,12 @@ def _flatten_config(raw: dict[str, Any]) -> dict[str, Any]:
     # -- top-level scalars / lists --
     if "schema_validation" in raw:
         result["schema_validation"] = bool(raw["schema_validation"])
+    if "validate_schema_each_parallel_worker" in raw:
+        result["validate_schema_each_parallel_worker"] = bool(
+            raw["validate_schema_each_parallel_worker"]
+        )
+    if "schema_probe_call_tool" in raw:
+        result["schema_probe_call_tool"] = bool(raw["schema_probe_call_tool"])
     if "plugins" in raw:
         result["plugins"] = raw["plugins"]
 
@@ -455,5 +469,13 @@ def validate_config_file(path: Path) -> list[ConfigError]:
     if sv is not None and not isinstance(sv, bool):
         line = _find_yaml_line(text, "schema_validation") if is_yaml else None
         errors.append(ConfigError("'schema_validation' must be a boolean", line=line))
+    for key in (
+        "validate_schema_each_parallel_worker",
+        "schema_probe_call_tool",
+    ):
+        v = raw.get(key)
+        if v is not None and not isinstance(v, bool):
+            line = _find_yaml_line(text, key) if is_yaml else None
+            errors.append(ConfigError(f"{key!r} must be a boolean", line=line))
 
     return errors

@@ -14,7 +14,7 @@
 
 **Automated Testing Framework for Model Context Protocol (MCP) Servers**
 
-> **Documentation:** structured **hub** and **adoption paths** (same pattern as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) are in [docs/README.md](docs/README.md) — start there for [QUICK_START](docs/QUICK_START.md), the full [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, and **[how we compare to other MCP tools](docs/COMPARISON.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
+> **Documentation:** structured **hub** and **adoption paths** (same pattern as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) are in [docs/README.md](docs/README.md) — start there for [QUICK_START](docs/QUICK_START.md), the full [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, **[how we compare to other MCP tools](docs/COMPARISON.md)**, and **[ecosystem / registry discovery (release checklist)](docs/DISCOVERY.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
@@ -37,6 +37,7 @@ For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** th
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture and product decisions |
 | [docs/IMPLEMENTATION_CHECKLIST.md](docs/IMPLEMENTATION_CHECKLIST.md) | Maintainer: features vs. code locations |
 | [docs/COMPARISON.md](docs/COMPARISON.md) | **Ecosystem** — Conformance, mcp-eval, MCPMark, testmcpy; when to use Harness + Bastion |
+| [docs/DISCOVERY.md](docs/DISCOVERY.md) | **Registries and promotion** — internal checklist (PyPI, [server.json](server.json), awesome lists) |
 | [CITATION.cff](CITATION.cff) | **Optional citation** — machine-readable metadata (not required by the license) |
 | [Dockerfile](Dockerfile) (and [`.dockerignore`](.dockerignore)) | **Container image** for `mcp-test` — see [Docker](#docker) |
 
@@ -49,10 +50,10 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | Test discovery | Finds `test_*.py` files and `test_` functions automatically (pytest conventions); broken files log a warning with path and exception |
 | MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (single-call or **p95/p99/mean** over N runs + **warmup**) — see [docs/PERFORMANCE.md](docs/PERFORMANCE.md) |
 | Fixture system | Built-in `mcp_server` / `mcp_server_session`, custom fixtures; **cycle detection** for dependency errors |
-| Schema validation | JSON-RPC envelope checks; with `schema_validation: true` (default), post-connect checks on `initialize`, `tools/list` (+ tool `inputSchema`), and optional `resources` / `prompts` list shapes |
+| Schema validation | JSON-RPC envelope checks; with `schema_validation: true` (default), post-connect checks on `initialize`, `tools/list` (+ tool `inputSchema`), `resources` / `prompts` list shapes, and a best-effort `call_tool` probe to validate `content` item shapes |
 | Snapshot testing | Compare responses; `ignore_fields` and `mask_patterns` for unstable data |
 | Parallel execution | Multiple workers; **tests from the same file stay on one worker** so per-module fixtures remain correct |
-| Watch mode | `mcp-test --watch` re-runs when test `*.py` files change (polling) |
+| Watch mode | `mcp-test --watch` re-runs when test `*.py` files change (configurable poll interval; debounce coalesces rapid saves) |
 | Markers | `@marker(timeout=60, retry=3, tags=["smoke"])` and `@skip(reason="...")` |
 | Reports | Console summary, JUnit XML (GitHub Actions/Jenkins/GitLab), JSON with full metadata |
 | Plugin system | Extend with custom assertions, fixtures, reporters, and transport adapters |
@@ -79,7 +80,17 @@ MCP Test Harness is **deterministic** (your tests call the protocol directly; no
 
 ## Installation
 
+Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
+
 ```bash
+pip install mcp-test-harness
+```
+
+**Optional** [mcplint](src/mcplint/) / MCP-Bastion pin helpers (transitive set can be **large**; same as a full Bastion install):
+
+```bash
+pip install mcp-test-harness[mcplint]
+# or the historical PyPI name for the monorepo shim:
 pip install mcplint
 ```
 
@@ -137,7 +148,7 @@ For coverage as in [pyproject.toml](pyproject.toml), you can add `--cov=src/mcp_
 docker run --rm -v "${PWD}:/work" -w /work mcp-test-harness:local
 ```
 
-**Size and first-build time** mirror `pip install mcp-test-harness`: the package depends on `mcp-bastion-python`, and the resolver may pull a **large** transitive set (e.g. Presidio / NLP and, on many Linux x86_64 wheels, very large ML/CUDA-related packages). The first `docker build` can take a long time and produce a **multi-gigabyte** image. That is expected for a full install of the current dependency tree, not a bug in the `Dockerfile`.
+**Size and first-build time** depend on what you install: the default **runtime** image matches `mcp-bastion-python`-free core dependencies. If you add **`[dev]`**, **`[mcplint]`**, or `pip install mcp-bastion-python` in the same environment, the resolver may pull a **large** transitive set (e.g. Presidio / NLP and, on many Linux x86_64 wheels, very large ML/CUDA-related packages). The first `docker build` with those extras can take a long time and produce a **multi-gigabyte** image. That is expected for a full install of the Bastion tree, not a bug in the `Dockerfile` when you opt into that stack.
 
 > **Note:** The Docker image is optional; many teams use `pip install` in CI. Use the image when you need a **reproducible, Python-isolated** environment without a local venv, or a **portable** `mcp-test` in pipelines that standardize on containers.
 
@@ -550,7 +561,7 @@ mcp-test [TEST_PATH] [OPTIONS]
   -k PATTERN               Filter by test name
   -m MARKER                Filter by marker/tag
   --list                   List tests and exit
-  --watch                  Re-run on test file changes (1s poll; not with --list)
+  --watch                  Re-run on test file changes (poll + debounce via env; not with --list)
   --report-format FORMAT   json | junit | html
   --report-output PATH     Report file path
   --verbose                Full server communication logs
@@ -578,7 +589,9 @@ report:
   format: junit                      # json | junit
   output: reports/results.xml        # output file path
 
-schema_validation: true              # validate JSON-RPC responses
+schema_validation: true              # validate JSON-RPC responses; parallel: only worker 0 runs full checks unless true
+validate_schema_each_parallel_worker: false  # set true to run post-connect schema on every worker
+schema_probe_call_tool: true         # best-effort call first tool with {} to validate result content
 plugins: []                          # plugin paths or module names
 redact_patterns: []                  # regex patterns to redact from verbose output
 ```
@@ -588,6 +601,7 @@ redact_patterns: []                  # regex patterns to redact from verbose out
 ```
 mcp-test-harness/
 +-- pyproject.toml
++-- server.json                     # MCP registry / tooling metadata (bump with releases)
 +-- mcp_test_harness.spec           # PyInstaller config
 +-- src/
 |   +-- mcplint/                    # dependency shim
@@ -617,6 +631,9 @@ mcp-test-harness/
 |   +-- build_binary.py
 +-- tests/                          # 400+ unit tests, 96% coverage
 +-- docs/
+|   +-- README.md                   # documentation hub
+|   +-- index.md                    # short landing (e.g. GitHub Pages)
+|   +-- DISCOVERY.md                # registries / release promotion checklist
 |   +-- DEVELOPER_GUIDE.md          # complete API and integration guide
 |   +-- TUTORIAL.md                 # step-by-step tutorial
 |   +-- DECISIONS.md                # architecture decisions

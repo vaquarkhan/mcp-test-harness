@@ -10,7 +10,9 @@ Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
 from __future__ import annotations
 
 import asyncio
+import inspect
 import logging
+import sys
 from dataclasses import dataclass
 from typing import Any
 
@@ -142,23 +144,30 @@ class ServerLifecycleManager:
             ) from exc
 
         # 3. Create a ClientSession and perform the initialize handshake
-        #    with the configured timeout (Req 1.3).
+        #    with the configured timeout (Req 1.3).  Use __aenter__ / __aexit__
+        #    so a failed ``initialize()`` does not leave the session half-open.
         session = ClientSession(read_stream, write_stream)
 
         init_result: Any = None
+        session_entered = False
         try:
+            await session.__aenter__()
+            session_entered = True
             init_result = await asyncio.wait_for(
-                self._initialize_session(session),
+                session.initialize(),
                 timeout=config.timeout,
             )
         except asyncio.TimeoutError:
-            # Clean up the transport on timeout
+            if session_entered:
+                await self._safe_session_aexit(session, None, None, None)
             await self._safe_close_transport(transport)
             raise StartupError(
                 f"MCP initialize handshake timed out after {config.timeout}s. "
                 "Aborting test run."
             )
         except Exception as exc:
+            if session_entered:
+                await self._safe_session_aexit(session, *sys.exc_info())
             await self._safe_close_transport(transport)
             raise StartupError(
                 f"MCP initialize handshake failed: {exc}"
@@ -218,6 +227,9 @@ class ServerLifecycleManager:
             except asyncio.CancelledError:
                 pass
             self._monitor_task = None
+
+        # Close MCP session context (pairs with __aenter__ in ``start``)
+        await self._safe_session_aexit(server.session, None, None, None)
 
         # Close the transport (sends any protocol-level shutdown)
         await self._safe_close_transport(server.transport)
@@ -305,10 +317,22 @@ class ServerLifecycleManager:
     # ------------------------------------------------------------------
 
     @staticmethod
-    async def _initialize_session(session: Any) -> Any:
-        """Enter the session context and perform the MCP initialize handshake."""
-        await session.__aenter__()
-        return await session.initialize()
+    async def _safe_session_aexit(
+        session: Any,
+        exc_type: Any,
+        exc_val: Any,
+        exc_tb: Any,
+    ) -> None:
+        """Call ``session.__aexit__`` if present (async or sync)."""
+        aexit = getattr(session, "__aexit__", None)
+        if aexit is None:
+            return
+        try:
+            out = aexit(exc_type, exc_val, exc_tb)
+            if inspect.isawaitable(out):
+                await out
+        except Exception:
+            logger.debug("Error in session __aexit__ (ignored)", exc_info=True)
 
     @staticmethod
     def _extract_capabilities(init_result: Any) -> dict[str, Any]:
@@ -327,18 +351,15 @@ class ServerLifecycleManager:
         return {}
 
     @staticmethod
-    def _extract_process(transport: TransportAdapter) -> asyncio.subprocess.Process | None:
-        """Try to extract the subprocess handle from a stdio transport."""
-        # StdioTransportAdapter uses an AsyncExitStack internally.
-        # We look for a _process attribute or walk the exit stack.
-        # For non-stdio transports, return None.
-        process = getattr(transport, "_process", None)
-        if process is not None:
-            return process
-        # The StdioTransportAdapter wraps stdio_client via an AsyncExitStack.
-        # The subprocess is managed by the SDK internally -- we may not have
-        # direct access. Return None and rely on transport-level monitoring.
-        return None
+    def _extract_process(transport: TransportAdapter) -> Any:
+        """Return the stdio subprocess handle from the transport adapter.
+
+        Non-stdio transports do not use a local process — this is always
+        ``None`` for them. For **stdio**, :meth:`start` raises
+        :class:`StartupError` if this is ``None`` after connect; there is
+        no alternate code path.
+        """
+        return getattr(transport, "_process", None)
 
     @staticmethod
     async def _safe_close_transport(transport: TransportAdapter) -> None:

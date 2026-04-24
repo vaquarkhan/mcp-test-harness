@@ -309,6 +309,9 @@ class TestSchemaBranches:
         )
         session.list_resources = AsyncMock(return_value=SimpleNamespace(resources=[]))
         session.list_prompts = AsyncMock(side_effect=TypeError("no"))
+        session.call_tool = AsyncMock(
+            return_value=SimpleNamespace(content=[])
+        )
         v = await validate_mcp_server_after_connect(
             session,
             SimpleNamespace(
@@ -367,7 +370,7 @@ async def test_mcp_compliance_raises() -> None:
     srv = SimpleNamespace(session=MagicMock(), init_result=object())
     cfg = HarnessConfig(server_command="c", schema_validation=True)
 
-    async def bad(_s, _i, _v):
+    async def bad(_s, _i, _v, **_kwargs):
         return [SchemaViolation("a", "b", None, "bad")]
 
     with (

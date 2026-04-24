@@ -663,10 +663,13 @@ async def validate_mcp_server_after_connect(
     session: Any,
     init_result: Any,
     validator: SchemaValidator,
+    *,
+    schema_probe_call_tool: bool = True,
 ) -> list[SchemaViolation]:
     """Run MCP shape checks and tool inputSchema validation after connect."""
     v: list[SchemaViolation] = []
     v.extend(validator.validate_initialize_result(init_result))
+    tools: list[Any] = []
     try:
         lt = await session.list_tools()
         tools = getattr(lt, "tools", None) or []
@@ -681,6 +684,7 @@ async def validate_mcp_server_after_connect(
                 message=f"list_tools failed: {exc}",
             )
         )
+        tools = []
     for call, name, shape_fn, attr in (
         (lambda: session.list_resources(), "list_resources", "validate_list_resources_shape", "resources"),
         (lambda: session.list_prompts(), "list_prompts", "validate_list_prompts_shape", "prompts"),
@@ -691,6 +695,28 @@ async def validate_mcp_server_after_connect(
             continue
         items = getattr(res, attr, None) or []
         v.extend(getattr(validator, shape_fn)(items))
+
+    # Best-effort: validate tool *result* content shapes once (first tool, empty args).
+    if (
+        schema_probe_call_tool
+        and tools
+        and not v
+        and hasattr(session, "call_tool")
+    ):
+        tprobe = ""
+        try:
+            t0 = tools[0]
+            tprobe = _get(t0, "name", None) or ""
+            if isinstance(tprobe, str) and tprobe:
+                ctr = await session.call_tool(tprobe, {})
+                raw_items = getattr(ctr, "content", None) or []
+                v.extend(validator.validate_content_items_shape(list(raw_items)))
+        except Exception as exc:  # noqa: BLE001
+            logger.debug(
+                "Schema content probe (call_tool %r) skipped: %s",
+                tprobe,
+                exc,
+            )
     return v
 
 
