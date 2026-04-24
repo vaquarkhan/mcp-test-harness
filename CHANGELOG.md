@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- [docs/LLM_TEST_GENERATION.md](docs/LLM_TEST_GENERATION.md) — guidance on **LLM-assisted** test drafting vs **automatic** “connected LLM” generation in CI; linked from [COMPARISON](docs/COMPARISON.md) and the [docs hub](docs/README.md).
+- **Docs:** [DEVELOPER.md](docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate) — **stdio_mcp.py** and the **100%** `coverage` fail-under: intentional `omit` (maintainer policy), **integration** coverage, and production-grade quality for the **rest** of `mcp_test_harness` under the gate.
+- An expanded [examples](examples/README.md) set: [assertions_async_demo.py](examples/assertions_async_demo.py), [validate_mcp_test_config.py](examples/validate_mcp_test_config.py), [sample_mcp_test.yaml](examples/sample_mcp_test.yaml), [patterns_mcp_test.md](examples/patterns_mcp_test.md). Cross-links from the [docs hub](docs/README.md), [README](README.md), and [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md).
+- [docs/COLLECTIONS.md](docs/COLLECTIONS.md) — **Postman / Newman–style** multi-step flows, environments, and how to express them in **Python** today; **roadmap** for optional declarative collections; linked from [COMPARISON](docs/COMPARISON.md) and the [docs hub](docs/README.md).
+- [examples/FEATURES_INDEX.md](examples/FEATURES_INDEX.md) and **per-feature** `example_*.md` / `mcp_test_*.yaml` in [examples](examples/) so every README *core* feature has a **dedicated** sample; [examples/README.md](examples/README.md) expanded.
+
 ## [1.0.0] - 2026-04-24
 
 ### Changed

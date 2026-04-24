@@ -1,0 +1,11 @@
+# JUnit XML for GitHub Actions / CI — adjust server.command
+server:
+  command: python -m your_server
+  transport: stdio
+test:
+  dirs:
+    - tests/
+report:
+  format: junit
+  output: reports/mcp-junit.xml
+schema_validation: true

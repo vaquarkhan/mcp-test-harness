@@ -18,7 +18,7 @@ from mcp_test_harness import __version__ as harness_version
 
 
 MINIMUM_BASTION = "1.0.12"
-MINIMUM_HARNESS = "0.1.0"
+MINIMUM_HARNESS = "1.0.0"
 
 
 def enforce_minimum_versions() -> None:

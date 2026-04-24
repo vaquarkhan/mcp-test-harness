@@ -65,4 +65,6 @@ You can use both in one test if the tool is idempotent and you want speed + stab
 - **Not** a load testing tool (no concurrent VUs) — for that, add JMeter, k6, or a dedicated load runner next to the harness.
 - **Not** a substitute for **production** APM; this is for **CI** and **regression** on a single test server process (per the harness’s normal execution model).
 
+For **Postman-style multi-step “collection”** scenarios (chaining tool calls, environment-like config, roadmap for a declarative format), see [COLLECTIONS.md](COLLECTIONS.md).
+
 For runtime protection (rate limits, cost caps) in **production**, see [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion).
