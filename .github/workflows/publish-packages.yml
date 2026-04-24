@@ -1,3 +1,6 @@
+# Publishes ONE optional wheel under packages/<name>/ to PyPI.
+# Tag format: pkg-<directory-name>  e.g. pkg-mcp-test-harness-openai
+# NOT pkg-1.0.1 (that resolves to packages/1.0.1 — use v1.0.1 for the main package).
 name: publish-packages
 
 on:
@@ -32,6 +35,18 @@ jobs:
           else
             TAG="${GITHUB_REF#refs/tags/pkg-}"
             echo "name=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Verify package directory exists
+        run: |
+          NAME="${{ steps.pkg.outputs.name }}"
+          if [ ! -d "packages/$NAME" ]; then
+            echo "::error::packages/$NAME is not a directory."
+            echo "The part after pkg- must be a folder name under packages/, not a version number."
+            echo "Examples of valid tags: pkg-mcp-test-harness-openai  pkg-mcp-test-harness-anthropic"
+            echo "For the main mcp-test-harness project use a v* tag (e.g. v1.0.1) → workflow publish.yml, not publish-packages.yml."
+            echo "Existing package directories:"
+            ls -1 packages/ || true
+            exit 1
           fi
       - name: Build package
         run: |

@@ -46,7 +46,16 @@ docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest
 docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version
 ```
 
-**Optional packages** under `packages/` use [`.github/workflows/publish-packages.yml`](../.github/workflows/publish-packages.yml) with tags `pkg-<directory-name>` or **workflow_dispatch**.
+### Optional `packages/*` wheels (separate PyPI projects)
+
+These use [`.github/workflows/publish-packages.yml`](../.github/workflows/publish-packages.yml), **not** the main `publish.yml`.
+
+| Correct | Wrong |
+|---------|--------|
+| Tag **`pkg-mcp-test-harness-openai`** (directory under `packages/`) | Tag **`pkg-1.0.1`** → CI looks for `packages/1.0.1` and fails with *Source packages/1.0.1 is not a directory* |
+| Or **Actions →** `publish-packages` → **Run workflow** → `package` = `mcp-test-harness-openai` | Using **`pkg-`** + semver — use **`v1.0.1`** for the **root** [pyproject.toml](../pyproject.toml) package only |
+
+**Main package** → always **`vX.Y.Z`** (e.g. `v1.0.1`) → `publish.yml`.
 
 ## Related
 
