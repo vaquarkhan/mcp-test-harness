@@ -14,7 +14,7 @@ keywords = ["mcp", "mcplint", "mcp-test", "testing", "model-context-protocol", "
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
-  # License terms: see LICENSE (OSI-style MIT in §1, plus mandatory citation/attribution in §2)
+  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",

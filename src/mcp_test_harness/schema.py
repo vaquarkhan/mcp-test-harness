@@ -520,13 +520,13 @@ class SchemaValidator:
                     )
                 )
             desc = _get(tool, "description", None)
-            if desc is not None and not isinstance(desc, str):
+            if not isinstance(desc, str):
                 violations.append(
                     SchemaViolation(
                         json_path=f"{pfx}.description",
-                        expected_type="string | null",
+                        expected_type="string",
                         actual_value=desc,
-                        message="Tool 'description' must be a string if present",
+                        message="Each tool must include a string 'description' (may be empty)",
                     )
                 )
             ischema = _get(tool, "inputSchema", None)
@@ -617,6 +617,16 @@ class SchemaValidator:
         for i, item in enumerate(items):
             pfx = f"$.content[{i}]"
             typ = _get(item, "type", None)
+            if typ is None or not isinstance(typ, str):
+                violations.append(
+                    SchemaViolation(
+                        json_path=f"{pfx}.type",
+                        expected_type="string",
+                        actual_value=typ,
+                        message="Content item must include string 'type' (e.g. 'text', 'image')",
+                    )
+                )
+                continue
             if typ == "text":
                 if not isinstance(_get(item, "text", None), str):
                     violations.append(

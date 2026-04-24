@@ -193,13 +193,19 @@ def _load_module_from_path(path: Path) -> Any:
     module_name = f"_mcp_discovered_{path.stem}_{id(path)}"
     spec = importlib.util.spec_from_file_location(module_name, path)
     if spec is None or spec.loader is None:
+        logger.warning(
+            "Could not build import spec for test file %s (skipping this path)",
+            path,
+        )
         return None
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
     try:
         spec.loader.exec_module(module)
     except Exception as exc:
-        logger.warning(
+        # Use error level so default CLI log settings (warning+) always show
+        # why a file produced no tests, not only in --verbose.
+        logger.error(
             "Failed to import test module %s: %s",
             path,
             exc,

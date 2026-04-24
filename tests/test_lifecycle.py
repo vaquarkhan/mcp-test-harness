@@ -39,6 +39,9 @@ def _make_mock_transport(read: Any = None, write: Any = None) -> AsyncMock:
     transport = AsyncMock()
     transport.connect = AsyncMock(return_value=(read or MagicMock(), write or MagicMock()))
     transport.close = AsyncMock()
+    # Real stdio exposes a process handle; avoid AsyncMock’s auto children so
+    # ``_extract_process`` does not get a truthy fake ``_process`` by default.
+    transport._process = _make_mock_process()
     return transport
 
 
@@ -275,6 +278,30 @@ class TestStart:
             server = await manager.start(config)
 
         assert server.capabilities == {"tools": {"listChanged": True}}
+
+    @pytest.mark.asyncio
+    async def test_start_stdio_fails_without_subprocess_handle(self) -> None:
+        """Stdio must expose a process for monitoring and clean shutdown (Req 1.6)."""
+        config = _make_config()
+        manager = ServerLifecycleManager()
+        mock_transport = _make_mock_transport()
+        mock_transport._process = None
+        mock_session = _make_mock_session()
+        mock_cls = MagicMock(return_value=mock_session)
+
+        with (
+            patch(
+                "mcp_test_harness.lifecycle.create_transport_adapter",
+                return_value=mock_transport,
+            ),
+            patch(
+                "mcp_test_harness.lifecycle._get_client_session_class",
+                return_value=mock_cls,
+            ),
+            pytest.raises(StartupError, match="subprocess handle"),
+        ):
+            await manager.start(config)
+        mock_transport.close.assert_awaited_once()
 
 
 # ---------------------------------------------------------------------------

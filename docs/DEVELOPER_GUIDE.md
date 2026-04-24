@@ -1191,6 +1191,6 @@ Exit codes:
 ## License
 
 Non-commercial use with mandatory attribution.
-See [LICENSE](../LICENSE) for full terms (MIT-style grant in Section 1; citation and attribution in Section 2). [CITATION.cff](../CITATION.cff) lists how to cite the software.
+See [LICENSE](../LICENSE) for full terms. [CITATION.cff](../CITATION.cff) lists how to cite the software in publications (optional).
 
 Attribution: Vaquar Khan -- https://github.com/vaquarkhan

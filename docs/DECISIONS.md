@@ -68,6 +68,6 @@ Short record of what we chose and why.
 
 ## 11. MIT license (core project)
 
-**Decision:** The core **mcp-test-harness** package is distributed under [LICENSE](../LICENSE): an MIT-style grant (Section 1) plus supplemental citation and attribution terms (Section 2). `NOTICE` and [CITATION.cff](../CITATION.cff) support compliance.
+**Decision:** The core **mcp-test-harness** package is distributed under the [MIT License](../LICENSE), with [CITATION.cff](../CITATION.cff) for optional academic citations and `NOTICE` for distribution attribution.
 
 **Why:** Maximize adoption in commercial CI/CD and open-source projects while keeping terms standard and well understood. Optional add-on packages under `packages/` may declare their own licenses in their `pyproject.toml` files.
