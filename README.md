@@ -1,41 +1,64 @@
+<p align="center">
+  <img src="docs/images/testherness.png" alt="MCP Test Harness" width="100%" />
+</p>
+
 # MCP Test Harness
 
 [![PyPI version](https://img.shields.io/pypi/v/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![PyPI downloads](https://img.shields.io/pypi/dm/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
-[![License](https://img.shields.io/badge/license-non--commercial-blue)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-411%20passed-brightgreen)]()
-[![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)]()
+[![CI](https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&label=CI)](https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml)
+[![License](https://img.shields.io/badge/license-MIT%2B%20citation%20terms-blue)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
+[![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)]()
 
 **Automated Testing Framework for Model Context Protocol (MCP) Servers**
 
+> **Documentation:** structured **hub** and **adoption paths** (same pattern as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) are in [docs/README.md](docs/README.md) — start there for [QUICK_START](docs/QUICK_START.md), the full [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, and **[how we compare to other MCP tools](docs/COMPARISON.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
+
 Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
-*Enhancement branch last updated: 2026-04-24*
+MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically—replacing manual validation through the MCP Inspector.
 
-MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically -- replacing manual validation through the MCP Inspector.
+**License:** the core project is distributed under the [LICENSE](LICENSE) file: the **OSI-style MIT** grant (Section 1) plus **supplemental** citation and attribution terms (Section 2) so the work can be used freely while **credit** is preserved in the ways described. See [NOTICE](NOTICE) and [CITATION.cff](CITATION.cff). *(Optional packages under `packages/` may list their own terms in each package’s `pyproject.toml`.)*
 
-No existing tool lets you programmatically test MCP servers in CI/CD pipelines. MCP Test Harness fills that gap.
+For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** that gap. For **spec conformance**, **LLM-in-the-loop** evals, and **model benchmarks**, other tools exist; see [docs/COMPARISON.md](docs/COMPARISON.md).
 
-For the complete API reference, see [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md).
+## Documentation
 
-For production security (prompt injection defense, PII redaction, rate limiting, RBAC), see [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) -- the companion security middleware project.
+**Hub (table of all guides + suggested reading order):** [docs/README.md](docs/README.md)
+
+| Document | Contents |
+|----------|----------|
+| [docs/QUICK_START.md](docs/QUICK_START.md) | **Fastest path** — install, `mcp-test init`, run |
+| [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | **Canonical reference** — setup, config, stdio/parallel/validation, assertions, reporting |
+| [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) | **CI, JUnit, JSON, HTML** — do you need to *publish* test reports? (usually: no) |
+| [docs/TUTORIAL.md](docs/TUTORIAL.md) | Step-by-step tutorial |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture and product decisions |
+| [docs/IMPLEMENTATION_CHECKLIST.md](docs/IMPLEMENTATION_CHECKLIST.md) | Maintainer: features vs. code locations |
+| [docs/COMPARISON.md](docs/COMPARISON.md) | **Ecosystem** — Conformance, mcp-eval, MCPMark, testmcpy; when to use Harness + Bastion |
+| [CITATION.cff](CITATION.cff) | **Cite this software** — machine-readable metadata (and see [License and citation](#license-and-citation)) |
+| [Dockerfile](Dockerfile) (and [`.dockerignore`](.dockerignore)) | **Container image** for `mcp-test` — see [Docker](#docker) |
+
+For production security (prompt injection defense, PII redaction, rate limiting, RBAC), see [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) — the companion **security** middleware; this repo is for **test automation**.
 
 ## Core Features
 
 | Feature | Description |
 |---------|-------------|
-| Test discovery | Finds `test_*.py` files and `test_` functions automatically (pytest conventions) |
-| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot` |
-| Fixture system | Built-in `mcp_server` fixture with per-test and per-module scoping, custom fixtures via decorator |
-| Schema validation | Validates every JSON-RPC response against the MCP specification automatically |
-| Snapshot testing | Capture and compare server responses for regression detection |
-| Parallel execution | Run tests across multiple workers, each with its own server instance |
+| Test discovery | Finds `test_*.py` files and `test_` functions automatically (pytest conventions); broken files log a warning with path and exception |
+| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (single-call or **p95/p99/mean** over N runs + **warmup**) — see [docs/PERFORMANCE.md](docs/PERFORMANCE.md) |
+| Fixture system | Built-in `mcp_server` / `mcp_server_session`, custom fixtures; **cycle detection** for dependency errors |
+| Schema validation | JSON-RPC envelope checks; with `schema_validation: true` (default), post-connect checks on `initialize`, `tools/list` (+ tool `inputSchema`), and optional `resources` / `prompts` list shapes |
+| Snapshot testing | Compare responses; `ignore_fields` and `mask_patterns` for unstable data |
+| Parallel execution | Multiple workers; **tests from the same file stay on one worker** so per-module fixtures remain correct |
+| Watch mode | `mcp-test --watch` re-runs when test `*.py` files change (polling) |
 | Markers | `@marker(timeout=60, retry=3, tags=["smoke"])` and `@skip(reason="...")` |
 | Reports | Console summary, JUnit XML (GitHub Actions/Jenkins/GitLab), JSON with full metadata |
 | Plugin system | Extend with custom assertions, fixtures, reporters, and transport adapters |
 | Transport support | stdio, SSE, streamable HTTP -- test local and remote servers |
 | GitHub Action | One-line CI integration with artifact upload |
+| **Docker** | [`Dockerfile`](Dockerfile) — OCI image with `mcp-test` (runtime) or `pytest` + dev extras via `--target dev` (see [Docker](#docker)) |
 | Standalone binary | Single binary via PyInstaller, no Python required on target |
 
 ## Why MCP Test Harness (vs MCP Inspector)
@@ -49,6 +72,10 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | Parallel testing | No | Yes, with per-worker server isolation |
 | Reporting | Visual only | Console, JSON, JUnit XML |
 | Extensibility | None | Plugin system for custom rules |
+
+## Ecosystem (Conformance, evals, benchmarks)
+
+MCP Test Harness is **deterministic** (your tests call the protocol directly; no LLM required). The wider MCP space includes **protocol conformance** suites, **agent/LLM** evaluation frameworks, and **model** benchmarks. A concise map of tools, when to use each, and how they **complement** (not replace) the harness is in **[docs/COMPARISON.md](docs/COMPARISON.md)**.
 
 ## Installation
 
@@ -66,7 +93,73 @@ pip install -e ".[dev]"
 mcp-test --version
 ```
 
+### Docker
+
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small).
+
+| Build | Description |
+|-------|-------------|
+| **Default (runtime)** | `mcp-test` and core dependencies only — smallest image. |
+| **`--target dev`** | Adds the same optional packages as `pip install -e ".[dev]"` (e.g. **pytest**, **jsonschema**, **PyInstaller**). Use this when you want to run the project’s `tests/` inside a container. |
+
+**Build the default image** (from the repository root; requires [Docker](https://docs.docker.com/get-docker/)):
+
+```bash
+docker build -t mcp-test-harness:local .
+```
+
+**Smoke the CLI** (the image entrypoint is `mcp-test`):
+
+```bash
+docker run --rm mcp-test-harness:local --version
+```
+
+**Run `mcp-test` against a project** mounted into the working directory (paths below use POSIX shells; on Windows, use PowerShell and replace `$PWD` with your project path, e.g. ``${PWD}`` in Git Bash, or the full `C:\...` form):
+
+```bash
+docker run --rm -v "$PWD":/work -w /work mcp-test-harness:local
+```
+
+The default command shows `mcp-test --help`. Pass the same arguments you use locally, for example `docker run --rm -v "$PWD":/work -w /work mcp-test-harness:local .` to discover and run tests in the current config.
+
+**Build the dev image and run the test suite** (requires your test tree mounted into `/work`):
+
+```bash
+docker build -t mcp-test-harness:dev --target dev .
+docker run --rm -v "$PWD":/work -w /work --entrypoint pytest mcp-test-harness:dev tests/ -q
+```
+
+For coverage as in [pyproject.toml](pyproject.toml), you can add `--cov=src/mcp_test_harness` if your `tests/` and config are on the mount.
+
+**Windows (PowerShell)**, using Docker Desktop, mount the current directory, for example:
+
+```powershell
+docker run --rm -v "${PWD}:/work" -w /work mcp-test-harness:local
+```
+
+**Size and first-build time** mirror `pip install mcp-test-harness`: the package depends on `mcp-bastion-python`, and the resolver may pull a **large** transitive set (e.g. Presidio / NLP and, on many Linux x86_64 wheels, very large ML/CUDA-related packages). The first `docker build` can take a long time and produce a **multi-gigabyte** image. That is expected for a full install of the current dependency tree, not a bug in the `Dockerfile`.
+
+> **Note:** The Docker image is optional; many teams use `pip install` in CI. Use the image when you need a **reproducible, Python-isolated** environment without a local venv, or a **portable** `mcp-test` in pipelines that standardize on containers.
+
 ## Quick Start
+
+### 0. Scaffold a starter (optional)
+
+With `mcp-test` on your `PATH` (after `pip install`):
+
+```bash
+mcp-test init
+```
+
+This writes `tests/test_mcp_server_example.py` and a minimal `mcp-test.yaml`. Set your real launch command, for example:
+
+```bash
+mcp-test init --server-command "python -m your_package.mcp"
+```
+
+Options: `mcp-test init --help` (custom `--dir`, `--filename`, `--no-config`, `--force`).
+
+**Editor snippets:** the repo includes [`.vscode/mcp-test-harness.code-snippets`](.vscode/mcp-test-harness.code-snippets) — in VS Code or Cursor, type prefixes like `mcp-assert-tool` or `mcp-test-async` in a `*.py` file to insert common patterns.
 
 ### 1. Write a test
 
@@ -135,10 +228,18 @@ await assert_tool_call(mcp_server, "echo", {"message": "hello"})
 await assert_tool_call(mcp_server, "add", {"a": 1, "b": 2},
     expected=[{"text": "3", "isError": False}])
 
+# Validate arguments against the tool’s inputSchema (requires `jsonschema`)
+await assert_tool_call(
+    mcp_server, "add", {"a": 1, "b": 2},
+    validate_against_input_schema=True,
+)
+
 # Use the return value
 result = await assert_tool_call(mcp_server, "get_data", {})
 assert len(result.content) > 0
 ```
+
+Other helpers: `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, `assert_latency`, `assert_tool_call_validates_input` — see **Part 3b** in the [Developer Guide](docs/DEVELOPER_GUIDE.md).
 
 ### assert_resource_read -- read a resource and check content/MIME type
 
@@ -171,6 +272,17 @@ from mcp_test_harness import assert_snapshot
 async def test_stable_output(mcp_server):
     result = await mcp_server.call_tool("generate_report", {})
     await assert_snapshot(result, "report_output", test_file=Path(__file__))
+
+# Drop volatile fields or mask dynamic strings (regex patterns)
+async def test_noisy_output(mcp_server):
+    result = await mcp_server.call_tool("with_ids", {})
+    await assert_snapshot(
+        result,
+        "noisy",
+        test_file=Path(__file__),
+        ignore_fields=["requestId", "timestamp"],
+        mask_patterns=[r"req_[a-f0-9]+"],
+    )
 ```
 
 First run creates the snapshot. Later runs compare against it. Update with `mcp-test --update-snapshots`.
@@ -276,6 +388,8 @@ mcp-test --parallel --workers 4  # specify worker count
 ```
 
 Each worker gets its own server instance. If one crashes, others continue.
+
+**Module grouping:** tests from the same file are always scheduled on the **same** worker, so per-module fixtures (`mcp_server_session`, etc.) stay valid. Do not rely on test order *across* different files in parallel mode.
 
 ## Transport Support
 
@@ -435,7 +549,9 @@ mcp-test [TEST_PATH] [OPTIONS]
   --workers N              Parallel worker count (default: CPU count)
   -k PATTERN               Filter by test name
   -m MARKER                Filter by marker/tag
-  --report-format FORMAT   json | junit
+  --list                   List tests and exit
+  --watch                  Re-run on test file changes (1s poll; not with --list)
+  --report-format FORMAT   json | junit | html
   --report-output PATH     Report file path
   --verbose                Full server communication logs
   --update-snapshots       Overwrite stored snapshots
@@ -483,7 +599,8 @@ mcp-test-harness/
 |       +-- scheduler.py            # sequential + parallel scheduling
 |       +-- lifecycle.py            # server start/stop/monitor
 |       +-- transport.py            # stdio, SSE, HTTP adapters
-|       +-- assertions.py           # 5 built-in assertions
+|       +-- stdio_mcp.py            # stdio client + process handle
+|       +-- assertions.py           # MCP assertion helpers
 |       +-- schema.py               # JSON-RPC / MCP schema validation
 |       +-- fixtures.py             # fixture manager
 |       +-- plugins.py              # plugin registry
@@ -498,7 +615,7 @@ mcp-test-harness/
 +-- scripts/
 |   +-- verify_upstream.py
 |   +-- build_binary.py
-+-- tests/                          # 370 tests, 96% coverage
++-- tests/                          # 400+ unit tests, 96% coverage
 +-- docs/
 |   +-- DEVELOPER_GUIDE.md          # complete API and integration guide
 |   +-- TUTORIAL.md                 # step-by-step tutorial
@@ -511,7 +628,7 @@ mcp-test-harness/
 ## Testing
 
 ```bash
-# Run all MCP Test Harness tests
+# Run all MCP Test Harness tests (pythonpath=src is set in pyproject.toml for pytest)
 python -m pytest tests/ -q
 
 # Quick offline check (no heavy deps)
@@ -522,13 +639,15 @@ python -m coverage run -m pytest tests/ -q
 python -m coverage report --show-missing
 ```
 
+If imports resolve to a different installed copy of the package, run from the repo root so `src/` is used, or: `pip install -e ".[dev]"`.
+
 ## Troubleshooting
 
 | Problem | Fix |
 |---------|-----|
 | `mcp-test: command not found` | Run `pip install -e ".[dev]"` |
 | Tests hang | Check `--timeout`; server may not respond to MCP handshake |
-| `No tests discovered` | Files must match `test_*.py` or `*_test.py`; functions must start with `test_` |
+| `No tests discovered` | Files must match `test_*.py` or `*_test.py`; functions must start with `test_`. Check logs: a **warning** is emitted if a test file fails to import |
 | Snapshot mismatch | Run `mcp-test --update-snapshots` after intentional changes |
 | Server crashes during tests | Check server logs; harness marks remaining tests as errored |
 | Config file not found | Harness looks for `mcp-test.yaml` / `mcp-test.toml` in cwd, or use `--config` |
@@ -566,10 +685,17 @@ MCP Test Harness provides framework-specific testing helpers. Each package auto-
 | [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk) | Official Python SDK for building MCP servers and clients |
 | [MCP Inspector](https://github.com/modelcontextprotocol/inspector) | Visual debugging tool for MCP servers (manual, browser-based) |
 
-## License
+Third-party **testing and evaluation** tools (e.g. official conformance, agent-centric evals, model benchmarks) are mapped in **[docs/COMPARISON.md](docs/COMPARISON.md)** so you can pick the right tool for the job.
 
-Non-commercial use only with mandatory attribution.
+## License and citation
 
-Author: Vaquar Khan -- https://github.com/vaquarkhan
+The **mcp-test-harness** core is distributed under the terms in **[LICENSE](LICENSE)**:
 
-See [LICENSE](LICENSE) for full terms. Contact the author for commercial licensing.
+- **Section 1** is the same kind of **permissive grant** as the widely used [MIT License](https://opensource.org/licenses/MIT) (use, copy, modify, merge, publish, distribute, sublicense, and sell, subject to including the copyright and permission text).
+- **Section 2** adds **obligations** for **redistribution** and for **citing or acknowledging** the project when you publish research, public documentation, or public training that **materially** builds on the Software, and it describes the **process** (what to file where). **Private, internal** use and ordinary **internal CI** are addressed in **Section 2.3** of **LICENSE**.
+
+**How to cite (quick):** use the metadata in **[CITATION.cff](CITATION.cff)** (GitHub and many tools read this automatically). In papers, prefer a @software or @misc entry with the project name, author, repository URL, and version or year. Keep **[NOTICE](NOTICE)** in redistributed trees when the license file requires it.
+
+Optional sub-packages under `packages/` may specify different license metadata in their own `pyproject.toml` files.
+
+Author: [Vaquar Khan](https://github.com/vaquarkhan)

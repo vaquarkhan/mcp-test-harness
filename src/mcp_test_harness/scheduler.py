@@ -14,19 +14,36 @@ import asyncio
 import logging
 import os
 import time
+from collections import defaultdict
 from dataclasses import dataclass
 
 from mcp_test_harness.config import HarnessConfig
 from mcp_test_harness.discovery import HarnessCase
 from mcp_test_harness.executor import CaseExecutor
 from mcp_test_harness.fixtures import FixtureManager, FixtureScope, register_builtin_fixtures
-from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager
+from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager, StartupError
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
+from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_connect
 
 logger = logging.getLogger(__name__)
 
 # Harness version -- used in SessionResults metadata
 _HARNESS_VERSION = "0.1.0"
+
+
+async def _assert_mcp_compliance(config: HarnessConfig, server: ManagedServer) -> None:
+    """Run optional MCP shape / tool-schema checks; raise on failure (caller shuts down)."""
+    if not config.schema_validation:
+        return
+    viol = await validate_mcp_server_after_connect(
+        server.session,
+        server.init_result,
+        SchemaValidator(True),
+    )
+    if not viol:
+        return
+    msg = "; ".join(v.message for v in viol[:15])
+    raise StartupError(f"MCP protocol validation failed: {msg}")
 
 
 class HarnessScheduler:
@@ -72,6 +89,7 @@ class HarnessScheduler:
 
         try:
             server = await lifecycle.start(config)
+            await _assert_mcp_compliance(config, server)
             capabilities = server.capabilities
             protocol_version = capabilities.get("protocolVersion", "")
             lifecycle.start_monitor(server)
@@ -169,10 +187,27 @@ class HarnessScheduler:
             total_duration_ms = (time.monotonic() - start_time) * 1000.0
             return _aggregate_results([], total_duration_ms, {}, "")
 
-        # Distribute tests across workers in round-robin fashion
+        # Group by module so per-module fixtures (e.g. mcp_server_session) stay
+        # coherent within one worker, then round-robin whole modules.
+        by_mod: dict[Any, list[HarnessCase]] = defaultdict(list)
+        module_order: list[Any] = []
+        for tc in test_cases:
+            key = tc.module_path
+            if key not in by_mod:
+                module_order.append(key)
+            by_mod[key].append(tc)
+        for k in module_order:
+            by_mod[k] = sorted(
+                by_mod[k], key=lambda t: t.markers.get("order", 0)
+            )
+
+        module_chunks: list[list[HarnessCase]] = []
+        for k in module_order:
+            module_chunks.append(by_mod[k])
+
         buckets: list[list[HarnessCase]] = [[] for _ in range(worker_count)]
-        for i, tc in enumerate(test_cases):
-            buckets[i % worker_count].append(tc)
+        for i, chunk in enumerate(module_chunks):
+            buckets[i % worker_count].extend(chunk)
 
         # Remove empty buckets (when fewer tests than workers)
         buckets = [b for b in buckets if b]
@@ -226,6 +261,7 @@ class HarnessScheduler:
 
         try:
             server = await lifecycle.start(config)
+            await _assert_mcp_compliance(config, server)
             capabilities = server.capabilities
             protocol_version = capabilities.get("protocolVersion", "")
             lifecycle.start_monitor(server)

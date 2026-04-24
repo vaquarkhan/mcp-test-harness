@@ -21,7 +21,14 @@ from mcp_test_harness.scheduler import HarnessScheduler, _aggregate_results
 
 
 def _make_config(**overrides) -> HarnessConfig:
-    defaults = dict(server_command="echo hello", transport="stdio", timeout=5.0)
+    # Mocks do not provide a real MCP initialize / list_tools — disable
+    # post-connect protocol checks for unit tests.
+    defaults = dict(
+        server_command="echo hello",
+        transport="stdio",
+        timeout=5.0,
+        schema_validation=False,
+    )
     defaults.update(overrides)
     return HarnessConfig(**defaults)
 
@@ -45,6 +52,7 @@ def _make_managed_server() -> ManagedServer:
         session=MagicMock(),
         transport=MagicMock(),
         capabilities={"protocolVersion": "2024-11-05"},
+        init_result=None,
     )
 
 
@@ -239,7 +247,10 @@ class TestRunParallel:
     @pytest.mark.asyncio
     async def test_distributes_across_workers(self):
         """Tests are distributed across workers and results aggregated."""
-        test_cases = [_make_test_case(f"test_{i}") for i in range(4)]
+        # One module per test so round-robin assigns work to multiple workers.
+        test_cases = [
+            _make_test_case(f"test_{i}", module=f"mod_{i}.py") for i in range(4)
+        ]
         config = _make_config()
         server = _make_managed_server()
 
@@ -462,3 +473,43 @@ class TestOrderMarker:
             await scheduler.run_sequential([tc_high, tc_no_order], config)
 
         assert execution_order == ["test_no_order", "test_high"]
+
+
+# ---------------------------------------------------------------------------
+# Parallel: whole-module placement (per-module fixture safety)
+# ---------------------------------------------------------------------------
+
+
+class TestParallelModuleGrouping:
+    @pytest.mark.asyncio
+    async def test_one_module_uses_one_worker_even_if_more_available(self) -> None:
+        """A single test module is never split; extra workers are unused."""
+        t1 = _make_test_case("test_a", module="shared_mod.py")
+        t2 = _make_test_case("test_b", module="shared_mod.py")
+        config = _make_config()
+        server = _make_managed_server()
+
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+        ):
+            lcm_instance = MockLCM.return_value
+            lcm_instance.start = AsyncMock(return_value=server)
+            lcm_instance.shutdown = AsyncMock()
+            lcm_instance.start_monitor = MagicMock(return_value=None)
+
+            fm_instance = MockFM.return_value
+            fm_instance.teardown = AsyncMock(return_value=[])
+
+            exec_instance = MockExec.return_value
+            exec_instance.execute = AsyncMock(
+                return_value=_make_test_result("x", CaseStatus.PASSED)
+            )
+
+            scheduler = HarnessScheduler()
+            await scheduler.run_parallel([t1, t2], config, workers=4)
+
+        assert lcm_instance.start.call_count == 1
+        assert exec_instance.execute.call_count == 2

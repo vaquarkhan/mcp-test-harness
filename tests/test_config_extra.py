@@ -22,7 +22,7 @@ def _ns(**kwargs):
         "timeout": None, "verbose": None, "parallel": None,
         "workers": None, "report_format": None, "report_output": None,
         "update_snapshots": None, "filter_name": None, "filter_marker": None,
-        "test_path": None,
+        "test_path": None, "list": None, "watch": None,
     }
     defaults.update(kwargs)
     return Namespace(**defaults)

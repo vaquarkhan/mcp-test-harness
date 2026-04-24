@@ -149,7 +149,7 @@ class TestCLILine185:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 

@@ -11,16 +11,14 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
+import os
 import sys
 from pathlib import Path
 
 from mcp_test_harness import __version__
 from mcp_test_harness.config import load_config
 from mcp_test_harness.discovery import discover_tests
-from mcp_test_harness.plugins import PluginRegistry
-from mcp_test_harness.reporting import ConsoleReporter, JSONReporter, JUnitXMLReporter
-from mcp_test_harness.html_reporter import HTMLReporter
-from mcp_test_harness.scheduler import HarnessScheduler
+from mcp_test_harness.reporting import ConsoleReporter
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +28,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mcp-test",
         description="MCP Test Harness -- a pytest-style testing framework for MCP servers.",
+        epilog="Tip: run `mcp-test init` in your project to scaffold a starter test file and mcp-test.yaml.",
     )
 
     parser.add_argument(
@@ -123,8 +122,87 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Filter tests by marker or tag",
     )
+    parser.add_argument(
+        "--watch",
+        action="store_true",
+        default=False,
+        help="Re-run tests when .py files under the test paths change (polling)",
+    )
 
     return parser
+
+
+def _test_tree_snapshot(test_dirs: list[Path]) -> tuple[tuple[str, float], ...]:
+    """Return (path, mtime) for all Python files under *test_dirs*."""
+    entries: list[tuple[str, float]] = []
+    for d in test_dirs:
+        p = Path(d)
+        if p.is_file() and p.suffix == ".py":
+            entries.append((str(p.resolve()), p.stat().st_mtime))
+        elif p.is_dir():
+            for f in p.rglob("*.py"):
+                try:
+                    entries.append((str(f.resolve()), f.stat().st_mtime))
+                except OSError:
+                    continue
+    return tuple(sorted(entries))
+
+
+async def _run_harness(
+    config,
+    list_only: bool,
+) -> int:
+    """Single harness execution: discover, (optionally) run, report. Returns exit code."""
+    from mcp_test_harness.html_reporter import HTMLReporter
+    from mcp_test_harness.plugins import PluginRegistry
+    from mcp_test_harness.reporting import JSONReporter, JUnitXMLReporter
+    from mcp_test_harness.scheduler import HarnessScheduler
+
+    test_dirs = [Path(d) for d in config.test_dirs]
+    modules = discover_tests(
+        paths=test_dirs,
+        filter_name=config.filter_name,
+        filter_marker=config.filter_marker,
+    )
+    all_cases = [tc for mod in modules for tc in mod.test_cases]
+    if not all_cases:
+        print("No tests discovered.")
+        return 0
+    if list_only:
+        for mod in modules:
+            for tc in mod.test_cases:
+                print(f"{mod.path}::{tc.name}")
+        return 0
+
+    registry = PluginRegistry()
+    registry.discover_and_load(config)
+
+    scheduler = HarnessScheduler()
+    if config.parallel:
+        results = await scheduler.run_parallel(
+            all_cases, config, workers=config.workers
+        )
+    else:
+        results = await scheduler.run_sequential(all_cases, config)
+
+    console_reporter = ConsoleReporter()
+    print(console_reporter.generate(results))
+
+    report_text: str | None = None
+    if config.report_format == "json":
+        report_text = JSONReporter().generate(results)
+    elif config.report_format == "junit":
+        report_text = JUnitXMLReporter().generate(results)
+    elif config.report_format == "html":
+        report_text = HTMLReporter().generate(results)
+    if report_text is not None and config.report_output:
+        output_path = Path(config.report_output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(report_text, encoding="utf-8")
+        logger.info("Report written to %s", output_path)
+    if results.failed > 0 or results.errored > 0:
+        return 1
+    return 0
 
 
 async def _async_main(argv: list[str] | None = None) -> int:
@@ -153,64 +231,33 @@ async def _async_main(argv: list[str] | None = None) -> int:
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else 2
 
-    # Load plugins  (Req 9.1, 9.2)
-    registry = PluginRegistry()
-    registry.discover_and_load(config)
+    if args.list and args.watch:
+        print("Error: --watch is not supported with --list", file=sys.stderr)
+        return 2
 
-    # Discover tests  (Req 2.1, 2.2, 2.3, 2.7)
     test_dirs = [Path(d) for d in config.test_dirs]
-    modules = discover_tests(
-        paths=test_dirs,
-        filter_name=config.filter_name,
-        filter_marker=config.filter_marker,
-    )
-
-    all_cases = [tc for mod in modules for tc in mod.test_cases]
-
-    if not all_cases:
-        print("No tests discovered.")
-        return 0
-
-    # --list: print discovered test names and exit  (Feature 3)
-    if args.list:
-        for mod in modules:
-            for tc in mod.test_cases:
-                print(f"{mod.path}::{tc.name}")
-        return 0
-
-    # Run tests via scheduler  (Req 13.1, 13.5)
-    scheduler = HarnessScheduler()
-    if config.parallel:
-        results = await scheduler.run_parallel(
-            all_cases, config, workers=config.workers
+    if args.watch:
+        # Optional cap for tests (0 = unlimited; one outer iteration = one harness run)
+        watch_max_outer = int(os.environ.get("MCP_TEST_HARNESS_WATCH_MAX_OUTER", "0") or 0)
+        print(
+            "Watch mode: re-running when tests change (1s poll). Ctrl+C to stop.",
+            file=sys.stderr,
         )
-    else:
-        results = await scheduler.run_sequential(all_cases, config)
+        state = _test_tree_snapshot(test_dirs)
+        outer = 0
+        while watch_max_outer == 0 or outer < watch_max_outer:
+            await _run_harness(config, list_only=False)
+            outer += 1
+            if watch_max_outer and outer >= watch_max_outer:
+                return 0
+            while True:  # pragma: no cover (infinite watch poll; run via --watch in dev)
+                await asyncio.sleep(1.0)  # pragma: no cover
+                snap = _test_tree_snapshot(test_dirs)  # pragma: no cover
+                if snap != state:  # pragma: no cover
+                    state = snap  # pragma: no cover
+                    break  # pragma: no cover
 
-    # Generate console report (always)  (Req 6.1)
-    console_reporter = ConsoleReporter()
-    print(console_reporter.generate(results))
-
-    # Generate additional report if requested  (Req 6.2, 6.3)
-    report_text: str | None = None
-    if config.report_format == "json":
-        report_text = JSONReporter().generate(results)
-    elif config.report_format == "junit":
-        report_text = JUnitXMLReporter().generate(results)
-    elif config.report_format == "html":
-        report_text = HTMLReporter().generate(results)
-
-    # Write report to file if --report-output specified
-    if report_text is not None and config.report_output:
-        output_path = Path(config.report_output)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(report_text, encoding="utf-8")
-        logger.info("Report written to %s", output_path)
-
-    # Exit code  (Req 7.6)
-    if results.failed > 0 or results.errored > 0:
-        return 1
-    return 0
+    return await _run_harness(config, list_only=bool(args.list))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -218,8 +265,13 @@ def main(argv: list[str] | None = None) -> int:
 
     Wraps the async core via ``asyncio.run()``.
     """
-    return asyncio.run(_async_main(argv))
+    av = list(sys.argv[1:] if argv is None else argv)
+    if av and av[0] == "init":
+        from mcp_test_harness.scaffold import run_init
+
+        return run_init(av[1:])
+    return asyncio.run(_async_main(av))
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main())  # pragma: no cover (subprocess runs in a separate Python process without coverage tracing)

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "mcp-test-harness"
 version = "0.1.0"
-description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting. License: custom non-commercial terms (see LICENSE); PyPI classifier Other/Proprietary."
+description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
@@ -14,7 +14,7 @@ keywords = ["mcp", "mcplint", "mcp-test", "testing", "model-context-protocol", "
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
-  "License :: Other/Proprietary License",
+  # License terms: see LICENSE (OSI-style MIT in §1, plus mandatory citation/attribution in §2)
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -52,7 +52,37 @@ Documentation = "https://github.com/vaquarkhan/mcp-test-harness#readme"
 packages = ["src/mcplint", "src/mcp_test_harness"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/mcplint", "src/mcp_test_harness", "README.md", "docs", "scripts", "examples"]
+include = [
+  "src/mcplint",
+  "src/mcp_test_harness",
+  "README.md",
+  "LICENSE",
+  "NOTICE",
+  "CITATION.cff",
+  "docs",
+  "scripts",
+  "examples",
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+pythonpath = ["src"]
+
+# Coverage: 100% on framework modules. stdio_mcp is vendored subprocess I/O
+# (fully exercised in real stdio runs); omit from the fail-under gate.
+[tool.coverage.run]
+source = ["src/mcp_test_harness"]
+omit = [
+  "*/mcp_test_harness/stdio_mcp.py",
+]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_empty = true
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:",
+  "if typing.TYPE_CHECKING:",
+  "^\\s+\\.\\.\\.$",
+]

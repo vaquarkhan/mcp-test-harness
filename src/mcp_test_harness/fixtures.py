@@ -76,6 +76,7 @@ class FixtureManager:
         self._per_module_generators: list[tuple[str, AsyncIterator[Any]]] = []
         # Injected dependencies available to fixture factories
         self._injected: dict[str, Any] = {}
+        self._resolving: set[str] = set()
 
     # ------------------------------------------------------------------
     # Dependency injection for built-in fixtures
@@ -220,27 +221,35 @@ class FixtureManager:
         if defn.scope is FixtureScope.PER_TEST and name in self._per_test_cache:
             return self._per_test_cache[name]
 
-        # Resolve any dependencies the factory itself needs
-        factory_kwargs = await self._resolve_factory_deps(defn.factory)
+        if name in self._resolving:
+            raise FixtureError(
+                f"Circular fixture dependency involving parameter '{name}'"
+            )
+        self._resolving.add(name)
+        try:
+            # Resolve any dependencies the factory itself needs
+            factory_kwargs = await self._resolve_factory_deps(defn.factory)
 
-        # Instantiate
-        value = await self._instantiate(defn, factory_kwargs)
+            # Instantiate
+            value = await self._instantiate(defn, factory_kwargs)
 
-        # Cache
-        if defn.scope is FixtureScope.PER_MODULE:
-            self._per_module_cache[name] = value
-        else:
-            self._per_test_cache[name] = value
+            # Cache
+            if defn.scope is FixtureScope.PER_MODULE:
+                self._per_module_cache[name] = value
+            else:
+                self._per_test_cache[name] = value
 
-        return value
+            return value
+        finally:
+            self._resolving.discard(name)
 
     async def _resolve_factory_deps(self, factory: Callable[..., Any]) -> dict[str, Any]:
         """Resolve dependencies that a fixture factory itself requires."""
         sig = inspect.signature(factory)
         kwargs: dict[str, Any] = {}
         for param_name in sig.parameters:
-            if param_name == "self":
-                continue
+            if param_name == "self":  # pragma: no cover
+                continue  # pragma: no cover
             # Try injected deps first, then registered fixtures
             if param_name in self._injected:
                 kwargs[param_name] = self._injected[param_name]

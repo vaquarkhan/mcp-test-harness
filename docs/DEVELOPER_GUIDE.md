@@ -2,6 +2,8 @@
 
 Author: Vaquar Khan -- https://github.com/vaquarkhan
 
+**Before this deep-dive:** the documentation **hub** and **adoption paths** (same style as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) live in [README.md in this `docs/` folder](README.md). For a short path to first green run, see [QUICK_START.md](QUICK_START.md). For **CI, JUnit, and whether to publish report files**, see [CI_AND_REPORTS.md](CI_AND_REPORTS.md).
+
 This guide explains how to add automated MCP server testing to your project
 using MCP Test Harness. It covers everything from initial setup to advanced patterns.
 
@@ -51,6 +53,18 @@ test = [
 mcp-test --version
 # mcp-test 0.1.0
 ```
+
+### Scaffold starter files (optional)
+
+From your project root (where you want `tests/` and `mcp-test.yaml`):
+
+```bash
+mcp-test init
+mcp-test init --server-command "python -m your_package.mcp"   # set command in one step
+mcp-test init --help
+```
+
+This creates a ready-to-edit test module using the `mcp_server` fixture and comments showing `assert_tool_call` / `assert_tool_list`. Editor users can copy snippets from `.vscode/mcp-test-harness.code-snippets` in the harness repository (prefixes like `mcp-assert-tool`).
 
 ---
 
@@ -176,6 +190,69 @@ The harness looks for config files in this order:
 4. `mcp-test.toml` in the current directory
 
 CLI flags always override config file values.
+
+### `mcp-test` CLI flags (reference)
+
+| Flag | Description |
+|------|-------------|
+| `--server-command` | Command to start the MCP server (or URL for SSE/HTTP) |
+| `--transport` | `stdio` (default), `sse`, or `http` |
+| `--config` | Path to `mcp-test.yaml` / `mcp-test.toml` |
+| `--timeout` | Default per-test timeout (seconds) |
+| `--parallel` | Run tests in parallel (multiple workers) |
+| `--workers` | Number of workers when `--parallel` is set |
+| `--report-format` / `--report-output` | `json`, `junit`, or `html` report to a file |
+| `--update-snapshots` | Overwrite snapshot files |
+| `-k` / `-m` | Filter tests by name or marker/tag |
+| `--list` | List discovered tests and exit |
+| `--watch` | Re-run the suite when any `*.py` under the test paths changes (1s poll). Not compatible with `--list`. |
+| `--verbose` | Verbose logging |
+
+---
+
+## Part 3b: Reliability features (v0.1+)
+
+### Post-connect protocol validation (`schema_validation: true`)
+
+When enabled (the default), after a successful `initialize` handshake the harness:
+
+- Validates the `initialize` result shape (protocol version, capabilities, `serverInfo`).
+- Calls `tools/list` and checks each tool’s `name` and `inputSchema`, and validates `inputSchema` as a JSON Schema (when the `jsonschema` package is installed).
+- Optionally calls `resources/list` and `prompts/list` when the server supports them, and checks basic field shapes.
+
+If anything fails, startup aborts with `StartupError` and a message listing the first violations. This runs for both sequential and parallel schedulers. Set `schema_validation: false` in config to skip (for debugging only).
+
+### Stdio process monitoring
+
+For `transport: stdio`, the client keeps a handle to the server subprocess. If the process exits while tests are still running, the harness raises `ServerCrashedError` instead of waiting for a generic timeout. Remote transports (SSE/HTTP) have no local process, so this does not apply.
+
+### Parallel execution and per-module fixtures
+
+Workers are given **entire test modules** (all tests from the same `test_*.py` file) in round-robin order, not isolated single tests. That way **`mcp_server_session`** and other per-module fixtures stay on one worker and remain meaningful. Use sequential mode if you need global ordering across files.
+
+### Command parsing (`stdio`)
+
+The server command string is split with Python’s `shlex.split` (not plain `str.split`), so quoted arguments and spaces are handled like a shell. Example: `python -c "print(1)"` is parsed as one executable plus correct argv.
+
+### Test discovery and broken files
+
+If a `test_*.py` file cannot be imported (syntax error, `ImportError`, etc.), the harness logs a **warning** with the file path and traceback, then skips that file. Check logs when you see “0 tests discovered” unexpectedly.
+
+### Fixture dependency cycles
+
+If fixture `A` depends on `B` and `B` depends on `A` (or any cycle), resolution raises `FixtureError: Circular fixture dependency` instead of a `RecursionError`.
+
+### Additional assertions (API)
+
+| Function | Use |
+|----------|-----|
+| `assert_tool_call(..., validate_against_input_schema=True)` | Validate arguments with `jsonschema` before calling the tool (requires `jsonschema`). |
+| `assert_tool_schema(session, name, expected_input_schema)` | Assert a tool’s `inputSchema` dict exactly. |
+| `assert_protocol_version(session, expected="2024-11-05")` | Compare negotiated protocol version (requires a harness-started session, which sets `_mcp_harness_init_result`). |
+| `assert_tool_idempotent(...)` | Same tool+args `n` times; identical results. |
+| `assert_latency(..., max_ms=..., runs=..., aggregate=...)` | Latency budget on a tool call; optional multi-run p95/p99 and warmup (see [PERFORMANCE.md](PERFORMANCE.md)). |
+| `assert_tool_call_validates_input(...)` | Assert the server rejects bad arguments; wraps `assert_tool_rejects`. |
+| `assert_snapshot(..., ignore_fields=[...], mask_patterns=[...])` | Snapshots: drop volatile keys or mask strings matching regexes. |
 
 ---
 
@@ -1114,6 +1191,6 @@ Exit codes:
 ## License
 
 Non-commercial use with mandatory attribution.
-See [LICENSE](../LICENSE) for full terms.
+See [LICENSE](../LICENSE) for full terms (MIT-style grant in Section 1; citation and attribution in Section 2). [CITATION.cff](../CITATION.cff) lists how to cite the software.
 
 Attribution: Vaquar Khan -- https://github.com/vaquarkhan

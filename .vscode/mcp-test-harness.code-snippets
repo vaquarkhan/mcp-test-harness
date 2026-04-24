@@ -1,0 +1,48 @@
+{
+  "MCP test: list_tools": {
+    "prefix": "mcp-list-tools",
+    "body": [
+      "res = await mcp_server.list_tools()",
+      "tools = getattr(res, \"tools\", None) or []",
+      "assert len(tools) >= 0"
+    ],
+    "description": "MCP: list tools from harness session"
+  },
+  "MCP test: assert_tool_call": {
+    "prefix": "mcp-assert-tool",
+    "body": [
+      "await assert_tool_call(",
+      "    mcp_server,",
+      "    \"${1:tool_name}\",",
+      "    {${2:}}",
+      ")"
+    ],
+    "description": "MCP: assert_tool_call (basic)"
+  },
+  "MCP test: assert_tool_call + schema": {
+    "prefix": "mcp-assert-tool-schema",
+    "body": [
+      "await assert_tool_call(",
+      "    mcp_server,",
+      "    \"${1:tool_name}\",",
+      "    {${2:}},",
+      "    validate_against_input_schema=True",
+      ")"
+    ],
+    "description": "MCP: assert_tool_call with inputSchema validation"
+  },
+  "MCP test: marker smoke": {
+    "prefix": "mcp-marker",
+    "body": ["@marker(tags=[\"${1:smoke}\"])"],
+    "description": "MCP: @marker tag"
+  },
+  "MCP test: async def with session": {
+    "prefix": "mcp-test-async",
+    "body": [
+      "@pytest.mark.asyncio",
+      "async def ${1:test_something}(mcp_server) -> None:",
+      "    $0"
+    ],
+    "description": "MCP: async test with mcp_server fixture"
+  }
+}

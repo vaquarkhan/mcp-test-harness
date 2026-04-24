@@ -121,6 +121,15 @@ class TestBuildParser:
         assert args.transport == "sse"
         assert args.test_path == "tests/"
 
+    def test_watch_flag(self):
+        parser = _build_parser()
+        args = parser.parse_args(["--watch"])
+        assert args.watch is True
+
+    def test_watch_default_false(self):
+        parser = _build_parser()
+        assert parser.parse_args([]).watch is False
+
 
 # ---------------------------------------------------------------------------
 # _async_main -- version
@@ -188,7 +197,7 @@ class TestAsyncMainFullRun:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
             instance.run_parallel = AsyncMock(return_value=mock_results)
@@ -214,7 +223,7 @@ class TestAsyncMainFullRun:
             passed=0, failed=1, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 
@@ -239,7 +248,7 @@ class TestAsyncMainFullRun:
             passed=0, failed=0, errored=1, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 
@@ -264,7 +273,7 @@ class TestAsyncMainFullRun:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_parallel = AsyncMock(return_value=mock_results)
             instance.run_sequential = AsyncMock(return_value=mock_results)
@@ -293,7 +302,7 @@ class TestAsyncMainFullRun:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 
@@ -373,6 +382,28 @@ class TestListFlag:
 
 
 # ---------------------------------------------------------------------------
+# --watch + --list conflict
+# ---------------------------------------------------------------------------
+
+
+class TestWatchListConflict:
+    @pytest.mark.asyncio
+    async def test_watch_with_list_returns_2(self, tmp_path):
+        f = tmp_path / "t.py"
+        f.write_text("async def test_x(): pass\n")
+        code = await _async_main(
+            [
+                "--server-command",
+                "echo hi",
+                "--watch",
+                "--list",
+                str(tmp_path),
+            ],
+        )
+        assert code == 2
+
+
+# ---------------------------------------------------------------------------
 # --report-format html
 # ---------------------------------------------------------------------------
 
@@ -398,7 +429,7 @@ class TestReportFormatHTML:
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
-        with patch("mcp_test_harness.cli.HarnessScheduler") as MockSched:
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
             instance = MockSched.return_value
             instance.run_sequential = AsyncMock(return_value=mock_results)
 

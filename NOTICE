@@ -1,0 +1,20 @@
+MCP Test Harness
+================
+
+Copyright (c) 2024–2026 Vaquar Khan
+https://github.com/vaquarkhan/mcp-test-harness
+
+Licensing
+---------
+
+Use, modification, and distribution are allowed under the MIT License in LICENSE (Section 1),
+together with supplemental attribution and citation obligations in LICENSE (Section 2). Everyone
+may use the software broadly; public documentation, research, and redistributions that meet the
+conditions in LICENSE must also follow the citation and acknowledgment process there.
+
+- Full terms:     LICENSE
+- Citation data:  CITATION.cff
+- How to comply:  README (License and citation), and LICENSE Section 2.4
+
+Optional dependencies and their licenses are described in package metadata and third-party
+notices where applicable.

@@ -11,7 +11,11 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import os
+import shlex
 from typing import Any, Protocol, runtime_checkable
+
+from mcp_test_harness.stdio_mcp import stdio_client_exposing_process
 
 from mcp_test_harness.models import TransportType
 
@@ -69,13 +73,18 @@ class StdioTransportAdapter:
         self._server_command = server_command
         self._transport_options = transport_options or {}
         self._cm: contextlib.AsyncExitStack | None = None
+        # Populated in connect() for stdio — used by ServerLifecycleManager monitoring
+        self._process: Any = None
 
     async def connect(self) -> tuple[Any, Any]:
-        from mcp.client.stdio import StdioServerParameters, stdio_client
+        from mcp.client.stdio import StdioServerParameters
 
-        parts = self._server_command.split()
+        # POSIX=False on Windows preserves backslashes in paths; POSIX=True elsewhere
+        parts = shlex.split(self._server_command, posix=os.name != "nt")
+        if not parts:
+            raise ValueError("server_command is empty or contains no arguments")
         command = parts[0]
-        args = parts[1:] if len(parts) > 1 else []
+        args = parts[1:]
 
         params = StdioServerParameters(
             command=command,
@@ -84,8 +93,8 @@ class StdioTransportAdapter:
         )
 
         self._cm = contextlib.AsyncExitStack()
-        read_stream, write_stream = await self._cm.enter_async_context(
-            stdio_client(params),
+        read_stream, write_stream, self._process = await self._cm.enter_async_context(
+            stdio_client_exposing_process(params),
         )
         return read_stream, write_stream
 
@@ -93,6 +102,7 @@ class StdioTransportAdapter:
         if self._cm is not None:
             await self._cm.aclose()
             self._cm = None
+        self._process = None
 
 
 # ---------------------------------------------------------------------------

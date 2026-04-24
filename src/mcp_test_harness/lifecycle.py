@@ -63,20 +63,23 @@ class ManagedServer:
     Attributes
     ----------
     process:
-        The subprocess handle for stdio servers, or ``None`` for remote
-        (SSE / HTTP) servers.
+        The subprocess handle for stdio servers (``anyio.abc.Process`` on most
+        platforms), or ``None`` for remote (SSE / HTTP) servers.
     session:
         The active ``mcp.ClientSession`` connected to the server.
     transport:
         The transport adapter managing the underlying connection.
     capabilities:
         The server capabilities returned by the MCP initialize handshake.
+    init_result:
+        Raw object returned from ``session.initialize()`` for schema checks.
     """
 
-    process: asyncio.subprocess.Process | None
+    process: Any
     session: Any  # mcp.ClientSession
     transport: TransportAdapter
     capabilities: dict[str, Any]
+    init_result: Any = None
 
 
 # ---------------------------------------------------------------------------
@@ -142,6 +145,7 @@ class ServerLifecycleManager:
         #    with the configured timeout (Req 1.3).
         session = ClientSession(read_stream, write_stream)
 
+        init_result: Any = None
         try:
             init_result = await asyncio.wait_for(
                 self._initialize_session(session),
@@ -160,6 +164,12 @@ class ServerLifecycleManager:
                 f"MCP initialize handshake failed: {exc}"
             ) from exc
 
+        # For assertions such as ``assert_protocol_version`` on harness-started sessions
+        try:
+            setattr(session, "_mcp_harness_init_result", init_result)
+        except Exception:  # pragma: no cover
+            pass  # pragma: no cover
+
         # 4. Extract capabilities from the handshake result
         capabilities = self._extract_capabilities(init_result)
 
@@ -171,6 +181,7 @@ class ServerLifecycleManager:
             session=session,
             transport=transport,
             capabilities=capabilities,
+            init_result=init_result,
         )
 
         logger.info(

@@ -60,14 +60,14 @@ Short record of what we chose and why.
 
 **Why:** MCP servers use different transports. Tests should work identically regardless of how the server communicates.
 
-## 10. Schema validation built-in
+## 10. Schema and protocol validation
 
-**Decision:** Every JSON-RPC response is validated against the MCP specification schemas by default. Can be disabled via config.
+**Decision:** Validate JSON-RPC envelopes and, when `schema_validation` is true (default), run post-connect checks on the `initialize` result and `tools/list` (plus optional `resources` / `prompts` list shapes) and each tool’s `inputSchema` document. Can be disabled via config.
 
-**Why:** Catches protocol violations automatically. Server authors don't need to write boilerplate validation code.
+**Why:** Catches invalid MCP handshakes and broken tool metadata before tests run, so failures are fast and explicit.
 
-## 11. Non-commercial license
+## 11. MIT license (core project)
 
-**Decision:** Non-commercial use only with mandatory attribution.
+**Decision:** The core **mcp-test-harness** package is distributed under [LICENSE](../LICENSE): an MIT-style grant (Section 1) plus supplemental citation and attribution terms (Section 2). `NOTICE` and [CITATION.cff](../CITATION.cff) support compliance.
 
-**Why:** Author's choice. Commercial licensing available on request.
+**Why:** Maximize adoption in commercial CI/CD and open-source projects while keeping terms standard and well understood. Optional add-on packages under `packages/` may declare their own licenses in their `pyproject.toml` files.

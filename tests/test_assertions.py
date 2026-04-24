@@ -10,9 +10,11 @@ from typing import Any
 
 import pytest
 
+import mcp_test_harness.assertions as assertions_mod
 from mcp_test_harness.assertions import (
     MCPAssertionError,
     assert_capabilities,
+    assert_latency,
     assert_prompt,
     assert_resource_read,
     assert_snapshot,
@@ -549,6 +551,106 @@ class TestAssertToolRejects:
 # ---------------------------------------------------------------------------
 # assert_invalid_tool
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# assert_latency
+# ---------------------------------------------------------------------------
+
+
+class _SleepSession:
+    """Session whose call_tool sleeps a fixed time (for perf assertions)."""
+
+    def __init__(self, sleep_ms: float) -> None:
+        self._sleep_ms = sleep_ms
+
+    async def call_tool(self, *args: object, **kwargs: object) -> FakeToolResult:
+        await asyncio.sleep(self._sleep_ms / 1000.0)
+        return FakeToolResult(content=[FakeContent(text="ok")])
+
+
+class _IndexedSleepSession:
+    """Sleep duration chosen by 0-based call index (for warmup + mixed timings)."""
+
+    def __init__(self, per_call_ms: list[float]) -> None:
+        self._per = per_call_ms
+        self._i = 0
+
+    async def call_tool(self, *args: object, **kwargs: object) -> FakeToolResult:
+        ms = self._per[self._i] if self._i < len(self._per) else self._per[-1]
+        self._i += 1
+        await asyncio.sleep(ms / 1000.0)
+        return FakeToolResult(content=[FakeContent(text="ok")])
+
+
+_agg = assertions_mod._aggregate_latency_ms  # type: ignore[attr-defined]
+
+
+class TestAggregateLatencyMs:
+    def test_empty(self) -> None:
+        assert _agg([], "p95") == 0.0
+
+    def test_percentile_single_sample(self) -> None:
+        assert _agg([12.0], "p99") == 12.0
+
+    def test_max_mean_median(self) -> None:
+        t = [1.0, 2.0, 9.0, 3.0]
+        assert _agg(t, "max") == 9.0
+        assert _agg(t, "mean") == 3.75
+        assert _agg(t, "median") == 2.5
+
+    def test_p95_p99_interpolation(self) -> None:
+        p = [0.0, 10.0]
+        v = _agg(p, "p95")
+        assert 9.0 < v < 10.0
+
+    def test_percentile_hits_exact_rank_index(self) -> None:
+        s = [float(i) for i in range(21)]
+        assert _agg(s, "p95") == s[19]
+
+    def test_p99(self) -> None:
+        t = [1.0, 2.0, 3.0, 4.0, 5.0]
+        assert 4.0 < _agg(t, "p99") <= 5.0
+
+
+class TestAssertLatency:
+    def test_pass_single_run(self) -> None:
+        s = _SleepSession(0.0)
+        asyncio.run(
+            assert_latency(s, "t", {}, max_ms=5000.0),
+        )
+
+    def test_fail_too_slow(self) -> None:
+        s = _SleepSession(50.0)
+        with pytest.raises(MCPAssertionError, match="exceeds budget"):
+            asyncio.run(
+                assert_latency(s, "t", {}, max_ms=1.0),
+            )
+
+    def test_p95_agg_fails(self) -> None:
+        s = _SleepSession(20.0)
+        with pytest.raises(MCPAssertionError, match="exceeds budget"):
+            asyncio.run(
+                assert_latency(
+                    s, "t", {}, max_ms=1.0, runs=4, aggregate="p95"
+                )
+            )
+
+    def test_p95_agg_passes(self) -> None:
+        s = _SleepSession(0.0)
+        asyncio.run(
+            assert_latency(
+                s, "t", {}, max_ms=100.0, runs=3, aggregate="p95"
+            )
+        )
+
+    def test_warmup_not_in_timings_for_budget(self) -> None:
+        s = _IndexedSleepSession([200.0, 200.0, 0.0])
+        asyncio.run(
+            assert_latency(
+                s, "t", {}, max_ms=10.0, warmup=2, runs=1, aggregate="max"
+            )
+        )
 
 
 class TestAssertInvalidTool:

@@ -37,6 +37,8 @@ def _ns(**kwargs: object) -> Namespace:
         "filter_name": None,
         "filter_marker": None,
         "test_path": None,
+        "list": None,
+        "watch": None,
     }
     defaults.update(kwargs)
     return Namespace(**defaults)
