@@ -47,7 +47,6 @@ MCP Test Harness also supports a practical **Responsible AI** posture by giving 
 | [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | **Canonical reference** - setup, config, stdio/parallel/validation, assertions, reporting |
 | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) | **CI, JUnit, JSON, HTML** - do you need to *publish* test reports? (usually: no) |
 | [docs/PERFORMANCE_TESTING_STRATEGY.md](docs/PERFORMANCE_TESTING_STRATEGY.md) | **Product pitch** - why MCP performance testing belongs in the harness; roadmap and scope |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | **Roadmap** - now/next/later delivery plan for security, perf, compatibility, and DX |
 | [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) | **Security testing** - MCP-aware security assertions and CI guidance |
 | [docs/CONTRACT_AND_COMPAT.md](docs/CONTRACT_AND_COMPAT.md) | **Contracts & compatibility** - drift protection and protocol/client matrix strategy |
 | [docs/ENTERPRISE_GOVERNANCE.md](docs/ENTERPRISE_GOVERNANCE.md) | **Enterprise** - audit/policy/tenant governance guidance (including EU AI Act evidence mapping notes) |

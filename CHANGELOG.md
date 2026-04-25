@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Changed
+
+- **Docs:** removed public `docs/ROADMAP.md`; near-term delivery priorities and scope guardrails live under [CONTRIBUTING.md — Maintainer delivery plan](CONTRIBUTING.md#maintainer-delivery-plan) for contributors only. [docs/README.md](docs/README.md), [docs/index.md](docs/index.md), [README.md](README.md), and [PERFORMANCE_TESTING_STRATEGY.md](docs/PERFORMANCE_TESTING_STRATEGY.md) no longer link a standalone roadmap file.
+
 ## [1.1.0] - 2026-04-25
 
 ### Added

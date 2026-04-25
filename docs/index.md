@@ -17,7 +17,7 @@
 | **Fastest install + first run** | [QUICK_START.md](QUICK_START.md) |
 | **Ecosystem, registries, promotion checklist** | [DISCOVERY.md](DISCOVERY.md) |
 | **How we compare to other MCP tools** | [COMPARISON.md](COMPARISON.md) |
-| **Product roadmap** | [ROADMAP.md](ROADMAP.md) |
+| **Maintainer priorities** (delivery plan, not a public commitment) | [CONTRIBUTING.md](../CONTRIBUTING.md#maintainer-delivery-plan) |
 | **Security testing strategy** | [SECURITY_TESTING.md](SECURITY_TESTING.md) |
 | **Contract + compatibility strategy** | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) |
 | **Enterprise governance notes** | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) |
