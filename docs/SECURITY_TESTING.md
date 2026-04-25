@@ -19,6 +19,15 @@ Catch high-value security regressions in CI using MCP-aware tests:
 4. **Auth/RBAC checks** for protected tool calls.
 5. **Output leak scanner** for API keys/tokens/JWT/SSH key patterns.
 
+## New auth boundary assertions
+
+The harness now includes security-oriented assertion helpers for authorization tests:
+
+- `assert_tool_denied(...)` - verifies a protected call is rejected.
+- `assert_authorization_boundary(...)` - verifies the same operation is allowed for one context and denied for another.
+
+These helpers are designed for per-operation checks that reduce "confused deputy" risk in MCP integrations.
+
 ## Integration model
 
 - Keep core assertions deterministic and cheap.

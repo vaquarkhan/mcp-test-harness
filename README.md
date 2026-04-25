@@ -34,6 +34,8 @@ MCP Test Harness combines **three testing modes in one tool**:
 
 This combination means one MCP-aware workflow can validate both **answer quality** and **time-to-answer** in CI.
 
+MCP Test Harness also supports a practical **Responsible AI** posture by giving teams repeatable evidence that MCP behavior is safe, reliable, and governable: protocol/schema conformance checks reduce unexpected behavior, security-focused test packs catch common misuse patterns early, and rich run reports provide auditable artifacts for internal governance programs and external frameworks such as the EU AI Act.
+
 ## Documentation
 
 **Hub (table of all guides + suggested reading order):** [docs/README.md](docs/README.md)
@@ -87,17 +89,8 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | **Docker** | [`Dockerfile`](Dockerfile) - OCI image with `mcp-test` (runtime) or `pytest` + dev extras via `--target dev` (see [Docker](#docker)) |
 | Standalone binary | Single binary via PyInstaller, no Python required on target |
 
-## Why MCP Test Harness (vs MCP Inspector)
-
-| | MCP Inspector | MCP Test Harness |
-|---|---|---|
-| Execution | Manual, browser-based clicking | Automated CLI, runs in CI |
-| CI/CD integration | Not possible | Native (exit codes, JUnit XML, GitHub Action) |
-| Regression detection | Manual re-testing | Snapshot testing, automated on every commit |
-| Schema validation | Manual visual check | Automatic on every response |
-| Parallel testing | No | Yes, with per-worker server isolation |
-| Reporting | Visual only | Console, JSON, JUnit XML |
-| Extensibility | None | Plugin system for custom rules |
+**Beginner demo packs by testing type:** [functional-testing](examples/feature-demo/functional-testing/README.md) · [regression-testing](examples/feature-demo/regression-testing/README.md) · [performance-testing](examples/feature-demo/performance-testing/README.md) (each includes runnable tests plus JSON/JUnit/HTML report config).  
+**Full scenario index:** [examples/feature-demo/README.md](examples/feature-demo/README.md)
 
 ## Ecosystem (Conformance, evals, benchmarks)
 
@@ -279,7 +272,7 @@ result = await assert_tool_call(mcp_server, "get_data", {})
 assert len(result.content) > 0
 ```
 
-Other helpers: `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, `assert_latency`, `assert_tool_call_validates_input` - see **Part 3b** in the [Developer Guide](docs/DEVELOPER_GUIDE.md).
+Other helpers: `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, `assert_latency`, `assert_tool_call_validates_input`, `assert_tool_denied`, `assert_authorization_boundary` - see **Part 3b** in the [Developer Guide](docs/DEVELOPER_GUIDE.md).
 
 ### assert_resource_read -- read a resource and check content/MIME type
 

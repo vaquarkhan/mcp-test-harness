@@ -15,6 +15,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | Goal | Read in order |
 |------|----------------|
 | **Fastest first run** (install, scaffold, one command) | [QUICK_START.md](QUICK_START.md) |
+| **See all three testing types in examples** (functional, regression, performance) | [../examples/feature-demo/README.md](../examples/feature-demo/README.md) |
 | **Step-by-step tutorial** | [TUTORIAL.md](TUTORIAL.md) |
 | **Everything else** (config, assertions, parallel, reports, plugins) | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) |
 | **Repo developer setup, test layout, examples index** | [DEVELOPER.md](DEVELOPER.md) |
@@ -48,6 +49,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [QUICK_START.md](QUICK_START.md) | **Time-to-value:** install, `mcp-test init`, run tests |
 | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) | **Canonical reference** — config, stdio/SSE/HTTP, assertions, fixtures, schema, reporting, plugins |
 | [DEVELOPER.md](DEVELOPER.md) | **This repository:** clone, pytest + coverage, module map, link to [examples/](../examples/README.md) |
+| [../examples/feature-demo/README.md](../examples/feature-demo/README.md) | **Feature demo packs:** separate folders for functional, regression, and performance examples with report configs |
 | [TUTORIAL.md](TUTORIAL.md) | Longer **walkthrough** for new users |
 | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) | **CI and reports:** exit codes, JUnit for Actions, when to upload/publish HTML |
 | [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), `marker(tags=[…])` + `mcp-test -m perf` |

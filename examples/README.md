@@ -16,6 +16,13 @@ pip install -e ".[dev]"
 
 Need runnable scenario code too? Use **[feature-demo/python-scenarios/README.md](feature-demo/python-scenarios/README.md)** for 30 corresponding `test_demo_*.py` files (one Python file per scenario).
 
+Need separate demos by test type? Use:
+- **[feature-demo/functional-testing/README.md](feature-demo/functional-testing/README.md)**
+- **[feature-demo/regression-testing/README.md](feature-demo/regression-testing/README.md)**
+- **[feature-demo/performance-testing/README.md](feature-demo/performance-testing/README.md)**
+- **[feature-demo/responsible-ai/README.md](feature-demo/responsible-ai/README.md)**
+- **[feature-demo/usa-interest/README.md](feature-demo/usa-interest/README.md)**
+
 ## One example per core feature (checklist)
 
 Start here: **[FEATURES_INDEX.md](FEATURES_INDEX.md)** — maps each [README Core feature](../README.md#core-features) row to **one** primary example (markdown, YAML, or Python).

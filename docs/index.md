@@ -9,6 +9,7 @@
 | **Contributing** | [CONTRIBUTING.md](../CONTRIBUTING.md) |
 | **This repo: dev setup, tests, example index** | [DEVELOPER.md](DEVELOPER.md) |
 | **Runnable & copy-paste examples** | [../examples/README.md](../examples/README.md) |
+| **Feature demo packs (functional/regression/performance)** | [../examples/feature-demo/README.md](../examples/feature-demo/README.md) |
 | **Docker & container links** (PyPI, GitHub Packages, `docker run`) | [DOCKER.md](DOCKER.md) |
 | **Architecture (Mermaid diagrams)** | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | **Visual Studio Code & Cursor** | [EDITORS.md](EDITORS.md) |

@@ -637,6 +637,54 @@ async def assert_invalid_tool(
 
 
 # ---------------------------------------------------------------------------
+# Authorization-focused helpers
+# ---------------------------------------------------------------------------
+
+
+async def assert_tool_denied(
+    session: Any,
+    tool_name: str,
+    arguments: dict[str, Any],
+    *,
+    error_substring: str | None = None,
+) -> None:
+    """Assert a protected operation is denied for the provided call context.
+
+    This is an alias with security-oriented naming so tests read clearly for
+    auth/RBAC/tenant boundaries (for example "this role must be denied").
+    """
+    await assert_tool_rejects(
+        session,
+        tool_name,
+        arguments,
+        error_substring=error_substring,
+    )
+
+
+async def assert_authorization_boundary(
+    session: Any,
+    tool_name: str,
+    *,
+    allowed_arguments: dict[str, Any],
+    denied_arguments: dict[str, Any],
+    denied_error_substring: str | None = None,
+) -> None:
+    """Assert one context is allowed and another is denied for one operation.
+
+    This helper is useful for "confused deputy" and per-operation authorization
+    checks where the same tool should succeed for one principal and fail for
+    another.
+    """
+    await assert_tool_call(session, tool_name, allowed_arguments)
+    await assert_tool_rejects(
+        session,
+        tool_name,
+        denied_arguments,
+        error_substring=denied_error_substring,
+    )
+
+
+# ---------------------------------------------------------------------------
 # assert_tool_schema
 # ---------------------------------------------------------------------------
 

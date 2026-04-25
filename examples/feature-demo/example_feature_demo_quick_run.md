@@ -5,6 +5,14 @@
 1. **Scenario markdowns** (`scenarios/`) — concept + links
 2. **Runnable Python tests** (`python-scenarios/`) — one test file per scenario
 
+It also has three **separate test-type demo packs**:
+
+- `functional-testing/`
+- `regression-testing/`
+- `performance-testing/`
+- `responsible-ai/`
+- `usa-interest/`
+
 ## Run all 30 Python scenarios
 
 ```bash
@@ -30,5 +38,15 @@ mcp-test --server-command "python -m your_server" \
   --report-format html \
   --report-output reports/feature-demo.html \
   examples/feature-demo/python-scenarios
+```
+
+## Run each test type pack with reports
+
+```bash
+mcp-test -c examples/feature-demo/functional-testing/mcp_test_functional_demo.yaml
+mcp-test -c examples/feature-demo/regression-testing/mcp_test_regression_demo.yaml
+mcp-test -c examples/feature-demo/performance-testing/mcp_test_performance_demo.yaml
+mcp-test -c examples/feature-demo/responsible-ai/mcp_test_responsible_ai_demo.yaml
+mcp-test -c examples/feature-demo/usa-interest/mcp_test_usa_interest_demo.yaml
 ```
 
