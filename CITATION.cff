@@ -5,7 +5,7 @@ message: >-
   bibliographic data for papers and reports.
 type: software
 title: "MCP Test Harness"
-version: 1.0.0
+version: 1.1.0
 abstract: >-
   A pytest-style testing framework for Model Context Protocol (MCP) servers
   (automated discovery, assertions, CI reporting, transports).
@@ -16,7 +16,7 @@ authors:
 repository-code: "https://github.com/vaquarkhan/mcp-test-harness"
 url: "https://github.com/vaquarkhan/mcp-test-harness"
 license: MIT
-date-released: 2026-04-24
+date-released: 2026-04-25
 keywords:
   - mcp
   - model-context-protocol

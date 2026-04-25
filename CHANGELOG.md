@@ -4,8 +4,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-04-25
+
 ### Added
 
+- **`assert_throughput`:** concurrent `call_tool` load-style checks with optional minimum **RPS** budget (complements `assert_latency`).
+- **CLI:** `--fail-fast` (stop after first failure, error, or timeout), `--last-failed` (re-run from `.mcp_test_harness/last-failed.json`); stricter list/config handling as documented in [RELEASING](docs/RELEASING.md).
+- **Scheduler:** **LPT (greedy) assignment** of whole test modules to parallel workers; shared fail-stop for parallel `--fail-fast`.
+- **Config:** validate `mcp-test.yaml` / `mcp-test.toml` before `HarnessConfig` load (clear aggregated errors, exit 2 on failure).
 - [`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml) — on **`v*`** tags, build and push **runtime** and **dev** images to **GHCR** (`ghcr.io/vaquarkhan/mcp-test-harness`). [docs/RELEASING.md](docs/RELEASING.md) documents PyPI + Docker release steps with GitHub settings.
 - [docs/LLM_TEST_GENERATION.md](docs/LLM_TEST_GENERATION.md) — guidance on **LLM-assisted** test drafting vs **automatic** “connected LLM” generation in CI; linked from [COMPARISON](docs/COMPARISON.md) and the [docs hub](docs/README.md).
 - **Docs:** [DEVELOPER.md](docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate) — **stdio_mcp.py** and the **100%** `coverage` fail-under: intentional `omit` (maintainer policy), **integration** coverage, and production-grade quality for the **rest** of `mcp_test_harness` under the gate.

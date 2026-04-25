@@ -145,7 +145,7 @@ class TestCLILine185:
         mock_results = SessionResults(
             test_results=[], total_duration_ms=10.0,
             server_capabilities={}, protocol_version="",
-            harness_version="1.0.0",
+            harness_version="1.1.0",
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 

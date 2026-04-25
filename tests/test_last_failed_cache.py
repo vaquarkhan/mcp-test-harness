@@ -87,7 +87,7 @@ def test_keys_skips_empty_module() -> None:
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="",
-        harness_version="1.0.0",
+        harness_version="1.1.0",
     )
     assert keys_from_session_results(sr) == []
 
@@ -115,7 +115,7 @@ def test_keys_from_session_results() -> None:
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="",
-        harness_version="1.0.0",
+        harness_version="1.1.0",
         passed=0,
         failed=0,
         errored=0,

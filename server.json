@@ -7,12 +7,12 @@
     "url": "https://github.com/vaquarkhan/mcp-test-harness",
     "source": "github"
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "mcp-test-harness",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "transport": {
         "type": "stdio"
       }

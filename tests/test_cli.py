@@ -150,7 +150,7 @@ class TestAsyncMainVersion:
         assert code == 0
         captured = capsys.readouterr()
         assert "mcp-test" in captured.out
-        assert "1.0.0" in captured.out
+        assert "1.1.0" in captured.out
 
 
 # ---------------------------------------------------------------------------
@@ -284,7 +284,7 @@ class TestAsyncMainFullRun:
             total_duration_ms=100.0,
             server_capabilities={},
             protocol_version="2024-11-05",
-            harness_version="1.0.0",
+            harness_version="1.1.0",
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
@@ -311,7 +311,7 @@ class TestAsyncMainFullRun:
             total_duration_ms=50.0,
             server_capabilities={},
             protocol_version="",
-            harness_version="1.0.0",
+            harness_version="1.1.0",
             passed=0, failed=1, errored=0, skipped=0, timed_out=0,
         )
 
@@ -336,7 +336,7 @@ class TestAsyncMainFullRun:
             total_duration_ms=50.0,
             server_capabilities={},
             protocol_version="",
-            harness_version="1.0.0",
+            harness_version="1.1.0",
             passed=0, failed=0, errored=1, skipped=0, timed_out=0,
         )
 
@@ -361,7 +361,7 @@ class TestAsyncMainFullRun:
             total_duration_ms=50.0,
             server_capabilities={},
             protocol_version="",
-            harness_version="1.0.0",
+            harness_version="1.1.0",
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
@@ -391,7 +391,7 @@ class TestAsyncMainFullRun:
             total_duration_ms=50.0,
             server_capabilities={},
             protocol_version="",
-            harness_version="1.0.0",
+            harness_version="1.1.0",
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
@@ -524,7 +524,7 @@ class TestReportFormatHTML:
             total_duration_ms=50.0,
             server_capabilities={},
             protocol_version="",
-            harness_version="1.0.0",
+            harness_version="1.1.0",
             passed=1, failed=0, errored=0, skipped=0, timed_out=0,
         )
 
