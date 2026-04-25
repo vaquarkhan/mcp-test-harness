@@ -16,6 +16,7 @@ from mcp_test_harness.scheduler import (
     HarnessScheduler,
     _aggregate_results,
     _assert_mcp_compliance,
+    _lpt_assign_modules,
 )
 
 
@@ -267,6 +268,112 @@ class TestRunSequential:
             await scheduler.run_sequential([tc1], config, plugin_registry=plugin_registry)
 
         plugin_registry.register_fixtures.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_fail_fast_skips_remaining(self) -> None:
+        tc1 = _make_test_case("test_a")
+        tc2 = _make_test_case("test_b")
+        tc3 = _make_test_case("test_c")
+        config = _make_config()
+        server = _make_managed_server()
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+        ):
+            MockLCM.return_value.start = AsyncMock(return_value=server)
+            MockLCM.return_value.shutdown = AsyncMock()
+            MockLCM.return_value.start_monitor = MagicMock()
+            MockFM.return_value.teardown = AsyncMock(return_value=[])
+            MockExec.return_value.execute = AsyncMock(
+                return_value=_make_test_result("x", CaseStatus.FAILED)
+            )
+            r = await HarnessScheduler().run_sequential(
+                [tc1, tc2, tc3], config, fail_fast=True
+            )
+        assert len(r.test_results) == 3
+        assert r.test_results[0].status == CaseStatus.FAILED
+        assert r.test_results[1].status == CaseStatus.SKIPPED
+        assert r.test_results[2].status == CaseStatus.SKIPPED
+        assert MockExec.return_value.execute.call_count == 1
+
+
+# ---------------------------------------------------------------------------
+# LPT + parallel fail-fast
+# ---------------------------------------------------------------------------
+
+
+def _chunk(names: list[str], module: str) -> list[HarnessCase]:
+    return [_make_test_case(n, module=module) for n in names]
+
+
+class TestLptAndParallelFailFast:
+    def test_lpt_empty_chunks(self) -> None:
+        assert _lpt_assign_modules([], 2) == []
+
+    def test_lpt_puts_largest_module_on_least_loaded_worker(self) -> None:
+        a = _chunk([f"t{i}" for i in range(3)], "big.py")
+        b = _chunk(["u1"], "b.py")
+        c = _chunk(["v1"], "c.py")
+        buckets = _lpt_assign_modules([a, b, c], 2)
+        sizes = sorted([len(b) for b in buckets], reverse=True)
+        assert sizes == [3, 2]
+
+    @pytest.mark.asyncio
+    async def test_fail_fast_parallel_one_worker(self) -> None:
+        t1 = _make_test_case("a", "m.py")
+        t2 = _make_test_case("b", "m.py")
+        config = _make_config()
+        server = _make_managed_server()
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+        ):
+            MockLCM.return_value.start = AsyncMock(return_value=server)
+            MockLCM.return_value.shutdown = AsyncMock()
+            MockLCM.return_value.start_monitor = MagicMock()
+            MockFM.return_value.teardown = AsyncMock(return_value=[])
+            MockExec.return_value.execute = AsyncMock(
+                side_effect=[
+                    _make_test_result("a", CaseStatus.FAILED),
+                    _make_test_result("b", CaseStatus.PASSED),
+                ]
+            )
+            r = await HarnessScheduler().run_parallel(
+                [t1, t2], config, workers=1, fail_fast=True
+            )
+        assert len(r.test_results) == 2
+        assert r.test_results[0].status == CaseStatus.FAILED
+        assert r.test_results[1].status == CaseStatus.SKIPPED
+        assert MockExec.return_value.execute.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_fail_fast_parallel_server_crash_sets_stop(self) -> None:
+        t1 = _make_test_case("a", "m.py")
+        t2 = _make_test_case("b", "m.py")
+        config = _make_config()
+        server = _make_managed_server()
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+        ):
+            MockLCM.return_value.start = AsyncMock(return_value=server)
+            MockLCM.return_value.shutdown = AsyncMock()
+            MockLCM.return_value.start_monitor = MagicMock()
+            MockFM.return_value.teardown = AsyncMock(return_value=[])
+            MockExec.return_value.execute = AsyncMock(
+                side_effect=ServerCrashedError("crash")
+            )
+            r = await HarnessScheduler().run_parallel(
+                [t1, t2], config, workers=1, fail_fast=True
+            )
+        assert len(r.test_results) == 2
+        assert MockExec.return_value.execute.call_count == 1
 
 
 # ---------------------------------------------------------------------------

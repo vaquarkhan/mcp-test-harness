@@ -7,6 +7,7 @@ with a diff-style message showing expected vs actual values.
 
 from __future__ import annotations
 
+import asyncio
 import difflib
 import json
 import math
@@ -856,6 +857,58 @@ async def assert_latency(
         extra = f" samples={timings!r} aggregate={aggregate!r}" if len(timings) > 1 else ""
         raise MCPAssertionError(
             f"Tool '{tool_name}' latency {value:.1f}ms exceeds budget {max_ms}ms{extra}",
+        )
+
+
+async def assert_throughput(
+    session: Any,
+    tool_name: str,
+    arguments: dict[str, Any],
+    *,
+    concurrent: int = 4,
+    total_calls: int = 16,
+    min_rps: float | None = None,
+    warmup: int = 0,
+) -> None:
+    """Run concurrent ``call_tool`` invocations and optionally enforce a minimum RPS.
+
+    Complements :func:`assert_latency` (which targets single-request latency) with a
+    **load** check: many overlapping calls, bounded by a semaphore.
+
+    Parameters
+    ----------
+    concurrent
+        Maximum in-flight calls at once (semaphore size).
+    total_calls
+        Number of ``call_tool`` invocations in the measured window.
+    min_rps
+        If set, the run fails when ``total_calls / wall_seconds`` is below this value.
+    warmup
+        Untimed ``call_tool`` calls before the measured burst (single-threaded).
+    """
+    c = max(1, int(concurrent))
+    n = max(1, int(total_calls))
+
+    for _ in range(warmup):
+        await session.call_tool(tool_name, arguments)
+
+    sem = asyncio.Semaphore(c)
+
+    async def _one() -> None:
+        await session.call_tool(tool_name, arguments)
+
+    async def _bounded() -> None:
+        async with sem:
+            await _one()
+
+    t0 = time.perf_counter()
+    await asyncio.gather(*[_bounded() for _ in range(n)])
+    elapsed = time.perf_counter() - t0
+    rps = n / elapsed if elapsed > 0 else float("inf")
+    if min_rps is not None and rps < float(min_rps):
+        raise MCPAssertionError(
+            f"Tool '{tool_name}' sustained ~{rps:.2f} req/s; "
+            f"minimum {float(min_rps):.2f} req/s (concurrent={c}, n={n}, {elapsed*1000:.1f}ms wall)",
         )
 
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from io import StringIO
 from unittest.mock import AsyncMock, patch, MagicMock
@@ -130,6 +131,12 @@ class TestBuildParser:
         parser = _build_parser()
         assert parser.parse_args([]).watch is False
 
+    def test_fail_fast_and_last_failed_flags(self):
+        parser = _build_parser()
+        a = parser.parse_args(["--fail-fast", "--last-failed", "--server-command", "x"])
+        assert a.fail_fast is True
+        assert a.last_failed is True
+
 
 # ---------------------------------------------------------------------------
 # _async_main -- version
@@ -194,6 +201,71 @@ class TestAsyncMainNoTests:
         assert code == 0
         captured = capsys.readouterr()
         assert "No tests discovered" in captured.out
+
+
+# ---------------------------------------------------------------------------
+# _async_main -- --last-failed and --list + --fail-fast
+# ---------------------------------------------------------------------------
+
+
+class TestLastFailedAndListFailFast:
+    @pytest.mark.asyncio
+    async def test_last_failed_empty_cache(self, tmp_path, capsys, monkeypatch) -> None:
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / "test_x.py").write_text("async def test_a(): pass\n")
+        code = await _async_main(
+            [
+                "--server-command",
+                "echo hi",
+                str(tmp_path),
+                "--last-failed",
+            ]
+        )
+        assert code == 0
+        err = capsys.readouterr().err
+        assert "last-failed cache is empty" in err
+
+    @pytest.mark.asyncio
+    async def test_last_failed_no_match(self, tmp_path, capsys, monkeypatch) -> None:
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / "test_x.py").write_text("async def test_a(): pass\n")
+        cache = tmp_path / ".mcp_test_harness" / "last-failed.json"
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "failed": [{"module": "nope/nope.py", "name": "nope_test"}],
+                }
+            ),
+            encoding="utf-8",
+        )
+        code = await _async_main(
+            [
+                "--server-command",
+                "echo hi",
+                str(tmp_path),
+                "--last-failed",
+            ]
+        )
+        assert code == 0
+        err = capsys.readouterr().err
+        assert "No tests matched" in err
+
+    @pytest.mark.asyncio
+    async def test_list_with_fail_fast_returns_2(self, tmp_path, capsys) -> None:
+        code = await _async_main(
+            [
+                "--list",
+                "--fail-fast",
+                "--server-command",
+                "echo hi",
+                str(tmp_path),
+            ]
+        )
+        assert code == 2
+        err = capsys.readouterr().err
+        assert "cannot be used" in err
 
 
 # ---------------------------------------------------------------------------
