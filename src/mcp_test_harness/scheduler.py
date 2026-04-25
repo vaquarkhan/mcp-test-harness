@@ -22,7 +22,12 @@ from pathlib import Path
 from mcp_test_harness.config import HarnessConfig
 from mcp_test_harness.discovery import HarnessCase
 from mcp_test_harness.executor import CaseExecutor
-from mcp_test_harness.fixtures import FixtureManager, FixtureScope, register_builtin_fixtures
+from mcp_test_harness.fixtures import (
+    FixtureManager,
+    FixtureScope,
+    register_builtin_fixtures,
+    register_decorated_fixtures,
+)
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager, StartupError
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
 from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_connect
@@ -92,6 +97,7 @@ class HarnessScheduler:
         self,
         test_cases: list[HarnessCase],
         config: HarnessConfig,
+        plugin_registry: object | None = None,
     ) -> SessionResults:
         """Run tests one at a time with a single server instance.
 
@@ -135,6 +141,9 @@ class HarnessScheduler:
             executor = CaseExecutor(default_timeout=config.timeout)
             fixtures = FixtureManager()
             register_builtin_fixtures(fixtures)
+            register_decorated_fixtures(fixtures)
+            if plugin_registry is not None and hasattr(plugin_registry, "register_fixtures"):
+                plugin_registry.register_fixtures(fixtures)
 
             for i, test_case in enumerate(test_cases):
                 try:
@@ -212,6 +221,7 @@ class HarnessScheduler:
         test_cases: list[HarnessCase],
         config: HarnessConfig,
         workers: int | None = None,
+        plugin_registry: object | None = None,
     ) -> SessionResults:
         """Run tests across multiple workers, each with its own server.
 
@@ -273,7 +283,7 @@ class HarnessScheduler:
 
         # Run all workers concurrently
         worker_tasks = [
-            self._run_worker(bucket, config, worker_id=idx)
+            self._run_worker(bucket, config, worker_id=idx, plugin_registry=plugin_registry)
             for idx, bucket in enumerate(buckets)
         ]
         worker_results = await asyncio.gather(*worker_tasks, return_exceptions=False)
@@ -311,6 +321,7 @@ class HarnessScheduler:
         test_cases: list[HarnessCase],
         config: HarnessConfig,
         worker_id: int,
+        plugin_registry: object | None = None,
     ) -> _WorkerResult:
         """Run a batch of tests on a dedicated server instance.
 
@@ -343,6 +354,9 @@ class HarnessScheduler:
             executor = CaseExecutor(default_timeout=config.timeout)
             fixtures = FixtureManager()
             register_builtin_fixtures(fixtures)
+            register_decorated_fixtures(fixtures)
+            if plugin_registry is not None and hasattr(plugin_registry, "register_fixtures"):
+                plugin_registry.register_fixtures(fixtures)
 
             for i, test_case in enumerate(test_cases):
                 try:

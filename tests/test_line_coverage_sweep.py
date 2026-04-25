@@ -363,6 +363,8 @@ async def test_async_main_html_report_write(tmp_path: Path) -> None:
         patch("mcp_test_harness.cli.load_config", return_value=cfg),
     ):
         prg.return_value.discover_and_load = MagicMock()
+        prg.return_value.expose_assertions = MagicMock()
+        prg.return_value.apply_discovery_hooks = MagicMock(side_effect=lambda mods: mods)
         hs.return_value.run_sequential = AsyncMock(return_value=ses)
         code = await _async_main(
             [d, "--server-command", "echo a", "--report-format", "html", "--report-output", str(rep)],
@@ -404,6 +406,8 @@ async def test_async_main_junit_report_write(tmp_path: Path) -> None:
         patch("mcp_test_harness.cli.load_config", return_value=cfg),
     ):
         prg.return_value.discover_and_load = MagicMock()
+        prg.return_value.expose_assertions = MagicMock()
+        prg.return_value.apply_discovery_hooks = MagicMock(side_effect=lambda mods: mods)
         hs.return_value.run_sequential = AsyncMock(return_value=ses)
         code = await _async_main(
             [d, "--server-command", "echo a", "--report-format", "junit", "--report-output", str(rep)],

@@ -157,6 +157,25 @@ class TestAsyncMainConfigError:
         code = await _async_main([])
         assert code == 2
 
+    @pytest.mark.asyncio
+    async def test_invalid_config_returns_2_with_messages(self, tmp_path, capsys):
+        cfg = tmp_path / "mcp-test.yaml"
+        cfg.write_text("server:\n  command: ok\ntests:\n  roots: [tests/]\n")
+        code = await _async_main(["--config", str(cfg)])
+        assert code == 2
+        captured = capsys.readouterr()
+        assert "Configuration validation failed" in captured.err
+        assert "Unknown top-level key" in captured.err
+
+    @pytest.mark.asyncio
+    async def test_invalid_toml_config_reports_non_line_errors(self, tmp_path, capsys):
+        cfg = tmp_path / "mcp-test.toml"
+        cfg.write_text('[server]\ncommand = "ok"\ntransport = "bad"\n')
+        code = await _async_main(["--config", str(cfg)])
+        assert code == 2
+        captured = capsys.readouterr()
+        assert "Invalid transport" in captured.err
+
 
 # ---------------------------------------------------------------------------
 # _async_main -- no tests discovered
@@ -208,6 +227,7 @@ class TestAsyncMainFullRun:
             ])
 
         assert code == 0
+        assert "plugin_registry" in instance.run_sequential.await_args.kwargs
 
     @pytest.mark.asyncio
     async def test_failures_return_1(self, tmp_path):
@@ -286,6 +306,7 @@ class TestAsyncMainFullRun:
 
         instance.run_parallel.assert_awaited_once()
         instance.run_sequential.assert_not_awaited()
+        assert "plugin_registry" in instance.run_parallel.await_args.kwargs
 
     @pytest.mark.asyncio
     async def test_report_output_written(self, tmp_path):

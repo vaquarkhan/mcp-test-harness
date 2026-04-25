@@ -241,6 +241,33 @@ class TestRunSequential:
         assert len(run_results.test_results) == 0
         assert run_results.passed == 0
 
+    @pytest.mark.asyncio
+    async def test_plugin_registry_fixtures_are_registered(self):
+        tc1 = _make_test_case("test_a")
+        config = _make_config()
+        server = _make_managed_server()
+        plugin_registry = MagicMock()
+
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+            patch("mcp_test_harness.scheduler.register_decorated_fixtures"),
+        ):
+            lcm_instance = MockLCM.return_value
+            lcm_instance.start = AsyncMock(return_value=server)
+            lcm_instance.shutdown = AsyncMock()
+            lcm_instance.start_monitor = MagicMock(return_value=None)
+            MockFM.return_value.teardown = AsyncMock(return_value=[])
+            MockExec.return_value.execute = AsyncMock(
+                return_value=_make_test_result("test_a", CaseStatus.PASSED)
+            )
+            scheduler = HarnessScheduler()
+            await scheduler.run_sequential([tc1], config, plugin_registry=plugin_registry)
+
+        plugin_registry.register_fixtures.assert_called_once()
+
 
 # ---------------------------------------------------------------------------
 # Parallel execution
@@ -390,6 +417,33 @@ class TestRunParallel:
         assert run_results.passed == 1
         # Only 1 worker should have been started (1 test, 1 bucket)
         assert lcm_instance.start.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_plugin_registry_fixtures_are_registered_per_worker(self):
+        tc1 = _make_test_case("test_only")
+        config = _make_config()
+        server = _make_managed_server()
+        plugin_registry = MagicMock()
+
+        with (
+            patch("mcp_test_harness.scheduler.ServerLifecycleManager") as MockLCM,
+            patch("mcp_test_harness.scheduler.CaseExecutor") as MockExec,
+            patch("mcp_test_harness.scheduler.FixtureManager") as MockFM,
+            patch("mcp_test_harness.scheduler.register_builtin_fixtures"),
+            patch("mcp_test_harness.scheduler.register_decorated_fixtures"),
+        ):
+            lcm_instance = MockLCM.return_value
+            lcm_instance.start = AsyncMock(return_value=server)
+            lcm_instance.shutdown = AsyncMock()
+            lcm_instance.start_monitor = MagicMock(return_value=None)
+            MockFM.return_value.teardown = AsyncMock(return_value=[])
+            MockExec.return_value.execute = AsyncMock(
+                return_value=_make_test_result("test_only", CaseStatus.PASSED)
+            )
+            scheduler = HarnessScheduler()
+            await scheduler.run_parallel([tc1], config, workers=1, plugin_registry=plugin_registry)
+
+        plugin_registry.register_fixtures.assert_called_once()
 
 
 # ---------------------------------------------------------------------------

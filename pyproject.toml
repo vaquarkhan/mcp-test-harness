@@ -82,18 +82,9 @@ include = [
 asyncio_mode = "auto"
 pythonpath = ["src"]
 
-# 100% line gate on the harness package, excluding this file on purpose.
-# stdio_mcp.py is vendored-style subprocess + stdio I/O. Integration tests
-# (e.g. test_stdio_mcp*) and real stdio runs exercise it, but many branches
-# (parse edges, I/O errors) are costly to cover with synthetic mocks. Omitting
-# it from the fail-under gate is a maintainer policy choice — not a bug and
-# not a signal that the rest of the code is "only 0.5 ready"; the rest of
-# mcp_test_harness is required at 100% for merge confidence.
+# 100% line gate on the harness package.
 [tool.coverage.run]
 source = ["src/mcp_test_harness"]
-omit = [
-  "*/mcp_test_harness/stdio_mcp.py",
-]
 
 [tool.coverage.report]
 fail_under = 100

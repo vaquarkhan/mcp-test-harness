@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import types
 from dataclasses import dataclass
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
 
@@ -100,6 +100,18 @@ class TestPluginContext:
         ctx.add_discovery_hook(hook)
         assert len(ctx.discovery_hooks) == 1
         assert ctx.discovery_hooks[0] is hook
+
+    def test_register_fixtures_into_manager(self):
+        ctx = PluginContext()
+
+        async def f():
+            return 1
+
+        ctx.add_fixture("plug_fix", f, FixtureScope.PER_MODULE)
+        registry = PluginRegistry(context=ctx)
+        manager = MagicMock()
+        registry.register_fixtures(manager)
+        manager.register.assert_called_once_with("plug_fix", f, FixtureScope.PER_MODULE)
 
 
 # ---------------------------------------------------------------------------

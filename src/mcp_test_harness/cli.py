@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 from mcp_test_harness import __version__
-from mcp_test_harness.config import load_config
+from mcp_test_harness.config import _discover_config_file, load_config, validate_config_file
 from mcp_test_harness.discovery import discover_tests
 from mcp_test_harness.reporting import ConsoleReporter
 
@@ -164,12 +164,17 @@ async def _run_harness(
     from mcp_test_harness.reporting import JSONReporter, JUnitXMLReporter
     from mcp_test_harness.scheduler import HarnessScheduler
 
+    registry = PluginRegistry()
+    registry.discover_and_load(config)
+    registry.expose_assertions()
+
     test_dirs = [Path(d) for d in config.test_dirs]
     modules = discover_tests(
         paths=test_dirs,
         filter_name=config.filter_name,
         filter_marker=config.filter_marker,
     )
+    modules = registry.apply_discovery_hooks(modules)
     all_cases = [tc for mod in modules for tc in mod.test_cases]
     if not all_cases:
         print("No tests discovered.")
@@ -180,16 +185,15 @@ async def _run_harness(
                 print(f"{mod.path}::{tc.name}")
         return 0
 
-    registry = PluginRegistry()
-    registry.discover_and_load(config)
-
     scheduler = HarnessScheduler()
     if config.parallel:
         results = await scheduler.run_parallel(
-            all_cases, config, workers=config.workers
+            all_cases, config, workers=config.workers, plugin_registry=registry
         )
     else:
-        results = await scheduler.run_sequential(all_cases, config)
+        results = await scheduler.run_sequential(
+            all_cases, config, plugin_registry=registry
+        )
 
     console_reporter = ConsoleReporter()
     print(console_reporter.generate(results))
@@ -230,6 +234,19 @@ async def _async_main(argv: list[str] | None = None) -> int:
         level=log_level,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+
+    # Validate config before load so users get an aggregated error list.
+    cfg_path = Path(args.config) if args.config else _discover_config_file()
+    if cfg_path is not None and cfg_path.is_file():
+        cfg_errors = validate_config_file(cfg_path)
+        if cfg_errors:
+            print(f"Configuration validation failed for {cfg_path}:", file=sys.stderr)
+            for err in cfg_errors:
+                if err.line is not None:
+                    print(f"  - line {err.line}: {err.message}", file=sys.stderr)
+                else:
+                    print(f"  - {err.message}", file=sys.stderr)
+            return 2
 
     # Load config -- merges CLI flags + config file  (Req 7.4, 7.5)
     try:
