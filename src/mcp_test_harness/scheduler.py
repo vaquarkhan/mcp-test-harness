@@ -22,7 +22,12 @@ from pathlib import Path
 from mcp_test_harness.config import HarnessConfig
 from mcp_test_harness.discovery import HarnessCase
 from mcp_test_harness.executor import CaseExecutor
-from mcp_test_harness.fixtures import FixtureManager, FixtureScope, register_builtin_fixtures
+from mcp_test_harness.fixtures import (
+    FixtureManager,
+    FixtureScope,
+    register_builtin_fixtures,
+    register_decorated_fixtures,
+)
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager, StartupError
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
 from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_connect
@@ -31,6 +36,29 @@ logger = logging.getLogger(__name__)
 
 # Harness version -- used in SessionResults metadata
 _HARNESS_VERSION = "1.0.0"
+
+_FAIL_FAST_SKIP = "Not run (--fail-fast) after an earlier failure."
+
+
+def _status_stops_run(status: CaseStatus) -> bool:
+    return status in (CaseStatus.FAILED, CaseStatus.ERROR, CaseStatus.TIMEOUT)
+
+
+def _lpt_assign_modules(
+    module_chunks: list[list[HarnessCase]], worker_count: int
+) -> list[list[HarnessCase]]:
+    """Assign whole-module chunks to workers using a greedy LPT (largest-first) balance."""
+    n_workers = max(1, worker_count)
+    if not module_chunks:
+        return []
+    chunks = sorted(module_chunks, key=lambda ch: -len(ch))
+    bucket_load = [0] * n_workers
+    buckets: list[list[HarnessCase]] = [[] for _ in range(n_workers)]
+    for chunk in chunks:
+        w = min(range(n_workers), key=lambda j: bucket_load[j])
+        buckets[w].extend(chunk)
+        bucket_load[w] += len(chunk)
+    return [b for b in buckets if b]
 
 
 def _utc_iso() -> str:
@@ -92,6 +120,9 @@ class HarnessScheduler:
         self,
         test_cases: list[HarnessCase],
         config: HarnessConfig,
+        plugin_registry: object | None = None,
+        *,
+        fail_fast: bool = False,
     ) -> SessionResults:
         """Run tests one at a time with a single server instance.
 
@@ -135,6 +166,9 @@ class HarnessScheduler:
             executor = CaseExecutor(default_timeout=config.timeout)
             fixtures = FixtureManager()
             register_builtin_fixtures(fixtures)
+            register_decorated_fixtures(fixtures)
+            if plugin_registry is not None and hasattr(plugin_registry, "register_fixtures"):
+                plugin_registry.register_fixtures(fixtures)
 
             for i, test_case in enumerate(test_cases):
                 try:
@@ -168,6 +202,20 @@ class HarnessScheduler:
                     break
                 else:
                     results.append(result)
+                    if fail_fast and _status_stops_run(result.status):
+                        for remaining_tc in test_cases[i + 1 :]:
+                            results.append(
+                                CaseResult(
+                                    name=remaining_tc.name,
+                                    module=str(remaining_tc.module_path),
+                                    status=CaseStatus.SKIPPED,
+                                    duration_ms=0.0,
+                                    error=_FAIL_FAST_SKIP,
+                                    file=Path(remaining_tc.module_path).as_posix(),
+                                    tags=list(remaining_tc.markers.get("tags", [])),
+                                )
+                            )
+                        break
 
                 # Teardown per-module fixtures between modules
                 if i < len(test_cases) - 1 and test_case.module_path != test_cases[i + 1].module_path:
@@ -212,6 +260,9 @@ class HarnessScheduler:
         test_cases: list[HarnessCase],
         config: HarnessConfig,
         workers: int | None = None,
+        plugin_registry: object | None = None,
+        *,
+        fail_fast: bool = False,
     ) -> SessionResults:
         """Run tests across multiple workers, each with its own server.
 
@@ -264,16 +315,19 @@ class HarnessScheduler:
         for k in module_order:
             module_chunks.append(by_mod[k])
 
-        buckets: list[list[HarnessCase]] = [[] for _ in range(worker_count)]
-        for i, chunk in enumerate(module_chunks):
-            buckets[i % worker_count].extend(chunk)
+        buckets = _lpt_assign_modules(module_chunks, worker_count)
 
-        # Remove empty buckets (when fewer tests than workers)
-        buckets = [b for b in buckets if b]
-
+        fail_stop: asyncio.Event | None = asyncio.Event() if fail_fast else None
         # Run all workers concurrently
         worker_tasks = [
-            self._run_worker(bucket, config, worker_id=idx)
+            self._run_worker(
+                bucket,
+                config,
+                worker_id=idx,
+                plugin_registry=plugin_registry,
+                fail_stop=fail_stop,
+                fail_fast=fail_fast,
+            )
             for idx, bucket in enumerate(buckets)
         ]
         worker_results = await asyncio.gather(*worker_tasks, return_exceptions=False)
@@ -311,6 +365,10 @@ class HarnessScheduler:
         test_cases: list[HarnessCase],
         config: HarnessConfig,
         worker_id: int,
+        plugin_registry: object | None = None,
+        *,
+        fail_stop: asyncio.Event | None = None,
+        fail_fast: bool = False,
     ) -> _WorkerResult:
         """Run a batch of tests on a dedicated server instance.
 
@@ -343,8 +401,25 @@ class HarnessScheduler:
             executor = CaseExecutor(default_timeout=config.timeout)
             fixtures = FixtureManager()
             register_builtin_fixtures(fixtures)
+            register_decorated_fixtures(fixtures)
+            if plugin_registry is not None and hasattr(plugin_registry, "register_fixtures"):
+                plugin_registry.register_fixtures(fixtures)
 
             for i, test_case in enumerate(test_cases):
+                if fail_stop is not None and fail_stop.is_set():
+                    for remaining_tc in test_cases[i:]:
+                        results.append(
+                            CaseResult(
+                                name=remaining_tc.name,
+                                module=str(remaining_tc.module_path),
+                                status=CaseStatus.SKIPPED,
+                                duration_ms=0.0,
+                                error=_FAIL_FAST_SKIP,
+                                file=Path(remaining_tc.module_path).as_posix(),
+                                tags=list(remaining_tc.markers.get("tags", [])),
+                            )
+                        )
+                    break
                 try:
                     result = await executor.execute(test_case, server, fixtures)
                 except ServerCrashedError as exc:
@@ -378,9 +453,13 @@ class HarnessScheduler:
                                 tags=list(remaining_tc.markers.get("tags", [])),
                             )
                         )
+                    if fail_fast and fail_stop is not None:
+                        fail_stop.set()
                     break
                 else:
                     results.append(result)
+                    if fail_fast and fail_stop is not None and _status_stops_run(result.status):
+                        fail_stop.set()
                 # Per-module fixture teardown when the next test is a different file
                 # (same rule as :meth:`run_sequential`).
                 if i < len(test_cases) - 1 and test_case.module_path != test_cases[i + 1].module_path:

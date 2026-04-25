@@ -16,6 +16,7 @@ from mcp_test_harness.assertions import (
     assert_authorization_boundary,
     assert_capabilities,
     assert_latency,
+    assert_throughput,
     assert_prompt,
     assert_resource_read,
     assert_snapshot,
@@ -656,6 +657,42 @@ class TestAssertLatency:
             assert_latency(
                 s, "t", {}, max_ms=10.0, warmup=2, runs=1, aggregate="max"
             )
+        )
+
+
+# ---------------------------------------------------------------------------
+# assert_throughput
+# ---------------------------------------------------------------------------
+
+
+class TestAssertThroughput:
+    def test_pass_no_min_rps(self) -> None:
+        s = _SleepSession(0.0)
+        asyncio.run(
+            assert_throughput(s, "t", {}, concurrent=2, total_calls=4, min_rps=None)
+        )
+
+    def test_fails_min_rps(self) -> None:
+        s = _SleepSession(50.0)
+        with pytest.raises(MCPAssertionError, match="minimum"):
+            asyncio.run(
+                assert_throughput(
+                    s, "t", {}, concurrent=2, total_calls=2, min_rps=1_000_000.0
+                )
+            )
+
+    def test_pass_min_rps_loose(self) -> None:
+        s = _SleepSession(0.0)
+        asyncio.run(
+            assert_throughput(
+                s, "t", {}, concurrent=2, total_calls=4, min_rps=0.01
+            )
+        )
+
+    def test_warmup(self) -> None:
+        s = _IndexedSleepSession([5.0, 5.0, 0.0, 0.0, 0.0])
+        asyncio.run(
+            assert_throughput(s, "t", {}, concurrent=1, total_calls=2, warmup=2)
         )
 
 

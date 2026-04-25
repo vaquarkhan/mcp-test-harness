@@ -154,6 +154,13 @@ def _extract_test_cases(module: Any, module_path: Path) -> list[HarnessCase]:
         if attr_name.startswith("test_") and (
             inspect.isfunction(obj) or inspect.iscoroutinefunction(obj)
         ):
+            if inspect.isgeneratorfunction(obj) or inspect.isasyncgenfunction(obj):
+                logger.warning(
+                    "Skipping generator test %s in %s: test functions cannot be generators",
+                    attr_name,
+                    module_path,
+                )
+                continue
             cases.append(
                 HarnessCase(
                     name=attr_name,
@@ -174,6 +181,14 @@ def _extract_test_cases(module: Any, module_path: Path) -> list[HarnessCase]:
                 if method is None:
                     continue
                 if not (inspect.isfunction(method) or inspect.iscoroutinefunction(method)):
+                    continue
+                if inspect.isgeneratorfunction(method) or inspect.isasyncgenfunction(method):
+                    logger.warning(
+                        "Skipping generator test %s.%s in %s: test functions cannot be generators",
+                        attr_name,
+                        method_name,
+                        module_path,
+                    )
                     continue
                 cases.append(
                     HarnessCase(

@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 from mcp_test_harness import __version__
-from mcp_test_harness.config import load_config
+from mcp_test_harness.config import _discover_config_file, load_config, validate_config_file
 from mcp_test_harness.discovery import discover_tests
 from mcp_test_harness.reporting import ConsoleReporter
 
@@ -134,6 +134,18 @@ def _build_parser() -> argparse.ArgumentParser:
             "MCP_TEST_HARNESS_WATCH_INTERVAL, MCP_TEST_HARNESS_WATCH_DEBOUNCE)"
         ),
     )
+    parser.add_argument(
+        "--fail-fast",
+        action="store_true",
+        default=False,
+        help="Stop after the first test failure, error, or timeout (skip remaining as SKIPPED).",
+    )
+    parser.add_argument(
+        "--last-failed",
+        action="store_true",
+        default=False,
+        help="Re-run only tests that failed, errored, or timed out in the previous run (see .mcp_test_harness/last-failed.json).",
+    )
 
     return parser
 
@@ -157,12 +169,25 @@ def _test_tree_snapshot(test_dirs: list[Path]) -> tuple[tuple[str, float], ...]:
 async def _run_harness(
     config,
     list_only: bool,
+    *,
+    fail_fast: bool = False,
+    last_failed: bool = False,
 ) -> int:
     """Single harness execution: discover, (optionally) run, report. Returns exit code."""
     from mcp_test_harness.html_reporter import HTMLReporter
+    from mcp_test_harness.last_failed_cache import (
+        filter_harness_cases,
+        keys_from_session_results,
+        read_last_failed_keys,
+        write_last_failed_keys,
+    )
     from mcp_test_harness.plugins import PluginRegistry
     from mcp_test_harness.reporting import JSONReporter, JUnitXMLReporter
     from mcp_test_harness.scheduler import HarnessScheduler
+
+    registry = PluginRegistry()
+    registry.discover_and_load(config)
+    registry.expose_assertions()
 
     test_dirs = [Path(d) for d in config.test_dirs]
     modules = discover_tests(
@@ -170,26 +195,43 @@ async def _run_harness(
         filter_name=config.filter_name,
         filter_marker=config.filter_marker,
     )
+    modules = registry.apply_discovery_hooks(modules)
     all_cases = [tc for mod in modules for tc in mod.test_cases]
-    if not all_cases:
+
+    if last_failed:
+        lf_keys = read_last_failed_keys()
+        if not lf_keys:
+            print("No tests to run: last-failed cache is empty.", file=sys.stderr)
+            return 0
+        all_cases = filter_harness_cases(all_cases, lf_keys)
+        if not all_cases:
+            print("No tests matched --last-failed filter.", file=sys.stderr)
+            return 0
+    elif not all_cases:
         print("No tests discovered.")
         return 0
     if list_only:
-        for mod in modules:
-            for tc in mod.test_cases:
-                print(f"{mod.path}::{tc.name}")
+        by_mod: dict[Path, list] = {}
+        for tc in all_cases:
+            by_mod.setdefault(tc.module_path, []).append(tc)
+        for mod_path in sorted(by_mod.keys(), key=str):
+            for tc in by_mod[mod_path]:
+                print(f"{mod_path}::{tc.name}")
         return 0
-
-    registry = PluginRegistry()
-    registry.discover_and_load(config)
 
     scheduler = HarnessScheduler()
     if config.parallel:
         results = await scheduler.run_parallel(
-            all_cases, config, workers=config.workers
+            all_cases,
+            config,
+            workers=config.workers,
+            plugin_registry=registry,
+            fail_fast=fail_fast,
         )
     else:
-        results = await scheduler.run_sequential(all_cases, config)
+        results = await scheduler.run_sequential(
+            all_cases, config, plugin_registry=registry, fail_fast=fail_fast
+        )
 
     console_reporter = ConsoleReporter()
     print(console_reporter.generate(results))
@@ -206,6 +248,9 @@ async def _run_harness(
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(report_text, encoding="utf-8")
         logger.info("Report written to %s", output_path)
+    if not list_only:
+        write_last_failed_keys(keys_from_session_results(results))
+
     if results.failed > 0 or results.errored > 0:
         return 1
     return 0
@@ -231,6 +276,19 @@ async def _async_main(argv: list[str] | None = None) -> int:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
 
+    # Validate config before load so users get an aggregated error list.
+    cfg_path = Path(args.config) if args.config else _discover_config_file()
+    if cfg_path is not None and cfg_path.is_file():
+        cfg_errors = validate_config_file(cfg_path)
+        if cfg_errors:
+            print(f"Configuration validation failed for {cfg_path}:", file=sys.stderr)
+            for err in cfg_errors:
+                if err.line is not None:
+                    print(f"  - line {err.line}: {err.message}", file=sys.stderr)
+                else:
+                    print(f"  - {err.message}", file=sys.stderr)
+            return 2
+
     # Load config -- merges CLI flags + config file  (Req 7.4, 7.5)
     try:
         config = load_config(args)
@@ -255,7 +313,12 @@ async def _async_main(argv: list[str] | None = None) -> int:
         state = _test_tree_snapshot(test_dirs)
         outer = 0
         while watch_max_outer == 0 or outer < watch_max_outer:
-            await _run_harness(config, list_only=False)
+            await _run_harness(
+                config,
+                list_only=False,
+                fail_fast=bool(args.fail_fast),
+                last_failed=bool(args.last_failed),
+            )
             outer += 1
             if watch_max_outer and outer >= watch_max_outer:
                 return 0
@@ -274,7 +337,16 @@ async def _async_main(argv: list[str] | None = None) -> int:
                         last = snap2
                     break
 
-    return await _run_harness(config, list_only=bool(args.list))
+    if args.list and args.fail_fast:
+        print("Error: --list cannot be used with --fail-fast", file=sys.stderr)
+        return 2
+
+    return await _run_harness(
+        config,
+        list_only=bool(args.list),
+        fail_fast=bool(args.fail_fast),
+        last_failed=bool(args.last_failed),
+    )
 
 
 def main(argv: list[str] | None = None) -> int:

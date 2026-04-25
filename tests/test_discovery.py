@@ -159,6 +159,20 @@ class TestExtraction:
         modules = discover_tests([tmp_path])
         assert modules == []
 
+    def test_generator_method_is_skipped_with_warning(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        f = tmp_path / "test_gen_cls.py"
+        f.write_text(
+            "class TestGen:\n"
+            "    async def test_stream(self):\n"
+            "        yield 1\n"
+        )
+        with caplog.at_level(logging.WARNING):
+            modules = discover_tests([tmp_path])
+        assert modules == []
+        assert "cannot be generators" in caplog.text
+
 
 # ---------------------------------------------------------------------------
 # Async detection
@@ -177,6 +191,16 @@ class TestAsyncDetection:
         f.write_text("async def test_async(): pass\n")
         modules = discover_tests([tmp_path])
         assert modules[0].test_cases[0].is_async is True
+
+    def test_async_generator_test_is_skipped_with_warning(
+        self, tmp_path: Path, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        f = tmp_path / "test_stream.py"
+        f.write_text("async def test_stream():\n    yield 1\n")
+        with caplog.at_level(logging.WARNING):
+            modules = discover_tests([tmp_path])
+        assert modules == []
+        assert "cannot be generators" in caplog.text
 
 
 # ---------------------------------------------------------------------------

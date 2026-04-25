@@ -151,6 +151,44 @@ class PluginRegistry:
         for path_or_name in plugin_paths:
             self._load_from_path(path_or_name)
 
+    def register_fixtures(self, manager: Any) -> None:
+        """Register plugin-provided fixtures into a FixtureManager."""
+        for name, factory, scope in self.context.fixtures:
+            manager.register(name, factory, scope)
+
+    def expose_assertions(self) -> None:
+        """Expose plugin assertions via package namespaces.
+
+        This makes plugin assertions available as attributes on both
+        ``mcp_test_harness`` and ``mcp_test_harness.assertions`` so user
+        tests can call them naturally after plugin load.
+        """
+        if not self.context.assertions:
+            return
+        try:
+            pkg = importlib.import_module("mcp_test_harness")
+            assertions_mod = importlib.import_module("mcp_test_harness.assertions")
+        except Exception:  # noqa: BLE001
+            logger.debug("Could not import harness modules to expose assertions", exc_info=True)
+            return
+
+        for name, func in self.context.assertions.items():
+            setattr(pkg, name, func)
+            setattr(assertions_mod, name, func)
+            all_list = getattr(pkg, "__all__", None)
+            if isinstance(all_list, list) and name not in all_list:
+                all_list.append(name)
+
+    def apply_discovery_hooks(self, test_modules: list[Any]) -> list[Any]:
+        """Apply plugin discovery hooks in registration order."""
+        out = test_modules
+        for hook in self.context.discovery_hooks:
+            try:
+                out = hook(out)
+            except Exception:  # noqa: BLE001
+                logger.error("Discovery hook failed: %s", traceback.format_exc())
+        return out
+
     # ------------------------------------------------------------------
     # Internal: entry-point loading
     # ------------------------------------------------------------------

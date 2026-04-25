@@ -128,3 +128,44 @@ class TestDiscoverAndLoadFull:
             registry.discover_and_load(FakeConfig())
 
         assert "ep_dict" in registry._loaded_names
+
+
+class TestRuntimeWiring:
+    def test_expose_assertions_adds_to_package(self):
+        called = {"ok": False}
+
+        def _plug_assert():
+            called["ok"] = True
+
+        ctx = PluginContext()
+        ctx.add_assertion("plug_assert", _plug_assert)
+        registry = PluginRegistry(context=ctx)
+        registry.expose_assertions()
+
+        import mcp_test_harness
+
+        assert hasattr(mcp_test_harness, "plug_assert")
+        mcp_test_harness.plug_assert()
+        assert called["ok"] is True
+        assert "plug_assert" in mcp_test_harness.__all__
+
+    def test_apply_discovery_hooks_chains_outputs(self):
+        ctx = PluginContext()
+        ctx.add_discovery_hook(lambda mods: mods + ["a"])
+        ctx.add_discovery_hook(lambda mods: mods + ["b"])
+        registry = PluginRegistry(context=ctx)
+        assert registry.apply_discovery_hooks([]) == ["a", "b"]
+
+    def test_apply_discovery_hooks_logs_and_continues_on_error(self):
+        ctx = PluginContext()
+        ctx.add_discovery_hook(lambda mods: (_ for _ in ()).throw(RuntimeError("boom")))
+        ctx.add_discovery_hook(lambda mods: mods + ["ok"])
+        registry = PluginRegistry(context=ctx)
+        assert registry.apply_discovery_hooks([]) == ["ok"]
+
+    def test_expose_assertions_import_failure_is_safe(self):
+        ctx = PluginContext()
+        ctx.add_assertion("x", lambda: None)
+        registry = PluginRegistry(context=ctx)
+        with patch("mcp_test_harness.plugins.importlib.import_module", side_effect=ImportError("x")):
+            registry.expose_assertions()
