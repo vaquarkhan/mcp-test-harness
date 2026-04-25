@@ -95,7 +95,7 @@ That sentence captures the product story and avoids overlap with unrelated bench
 
 ## Related strategy docs
 
-- [ROADMAP.md](ROADMAP.md)
+- [CONTRIBUTING.md](../CONTRIBUTING.md#maintainer-delivery-plan) (maintainer delivery plan)
 - [SECURITY_TESTING.md](SECURITY_TESTING.md)
 - [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md)
 - [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md)

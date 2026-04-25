@@ -22,7 +22,6 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **CI, JUnit, JSON, HTML — do I need to “publish” reports?** | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) |
 | **Performance / latency** (same tests as functional; `assert_latency`, `-m perf`) | [PERFORMANCE.md](PERFORMANCE.md) |
 | **Performance strategy** (why perf belongs in the harness; scope + roadmap) | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) |
-| **Roadmap** (delivery phases and scope guardrails) | [ROADMAP.md](ROADMAP.md) |
 | **Security testing strategy** (prompt injection, payload checks, leak detection) | [SECURITY_TESTING.md](SECURITY_TESTING.md) |
 | **Contract + compatibility strategy** (drift protection, version/client matrix) | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) |
 | **Enterprise governance** (audit/policy/tenant guidance) | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) |
@@ -39,6 +38,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Releases, upgrades, what changed** | [CHANGELOG.md](../CHANGELOG.md) |
 | **PyPI + GHCR release** (tag `v*`, trusted publishing, checklist) | [RELEASING.md](RELEASING.md) |
 | **How to contribute** (tests, PRs, release checklist) | [CONTRIBUTING.md](../CONTRIBUTING.md) |
+| **Maintainer priorities** (delivery plan; not a public product commitment) | [CONTRIBUTING.md#maintainer-delivery-plan](../CONTRIBUTING.md#maintainer-delivery-plan) |
 
 ---
 
@@ -54,7 +54,6 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) | **CI and reports:** exit codes, JUnit for Actions, when to upload/publish HTML |
 | [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), `marker(tags=[…])` + `mcp-test -m perf` |
 | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) | **Performance product story:** why MCP perf must be protocol-aware, what is in-core vs out-of-scope, and the proposed production-grade roadmap |
-| [ROADMAP.md](ROADMAP.md) | **Planned delivery:** now/next/later priorities and scope guardrails |
 | [SECURITY_TESTING.md](SECURITY_TESTING.md) | **Security-first CI strategy:** payloads, auth checks, and leak scanning guidance |
 | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) | **Compatibility strategy:** contract replay and protocol/client matrix direction |
 | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) | **Governance:** audit/policy/tenant requirements, plus practical EU AI Act evidence mapping |
@@ -75,7 +74,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [IMPLEMENTATION_CHECKLIST.md](IMPLEMENTATION_CHECKLIST.md) | **Maintainer** checklist for features vs. source locations |
 | [CHANGELOG.md](../CHANGELOG.md) | **Version history** (Keep a Changelog; for PyPI / release notes) |
 | [RELEASING.md](RELEASING.md) | **Ship a version:** bump files, tag `vX.Y.Z`, PyPI + `ghcr.io` workflows |
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | **Contributing** — dev setup, `pytest` + coverage, release checklist |
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | **Contributing** — dev setup, `pytest` + coverage, release checklist; **maintainer delivery plan** (not a public product commitment) |
 
 <p align="center">
   <img src="images/mcp-testobarness-feature.png" alt="MCP Test Harness feature overview" width="85%" />
