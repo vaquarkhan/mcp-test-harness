@@ -16,6 +16,8 @@ import os
 import time
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
 
 from mcp_test_harness.config import HarnessConfig
 from mcp_test_harness.discovery import HarnessCase
@@ -29,6 +31,23 @@ logger = logging.getLogger(__name__)
 
 # Harness version -- used in SessionResults metadata
 _HARNESS_VERSION = "1.0.0"
+
+
+def _utc_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _build_environment(config: HarnessConfig) -> dict[str, str]:
+    import platform
+    import sys
+
+    return {
+        "python_version": sys.version.split()[0],
+        "platform": platform.platform(),
+        "cwd": os.getcwd(),
+        "server_command": config.server_command or "",
+        "transport": str(config.transport),
+    }
 
 
 async def _assert_mcp_compliance(
@@ -89,6 +108,7 @@ class HarnessScheduler:
             Aggregated results for the entire run.
         """
         start_time = time.monotonic()
+        run_started = _utc_iso()
         results: list[CaseResult] = []
         capabilities: dict = {}
         protocol_version = ""
@@ -106,7 +126,10 @@ class HarnessScheduler:
             server = await lifecycle.start(config)
             await _assert_mcp_compliance(config, server, worker_id=0)
             capabilities = server.capabilities
-            protocol_version = capabilities.get("protocolVersion", "")
+            protocol_version = (
+                ServerLifecycleManager.protocol_version_from_init(server.init_result)
+                or str(capabilities.get("protocolVersion") or "")
+            )
             lifecycle.start_monitor(server)
 
             executor = CaseExecutor(default_timeout=config.timeout)
@@ -124,6 +147,8 @@ class HarnessScheduler:
                         status=CaseStatus.ERROR,
                         duration_ms=0.0,
                         error=f"Server crashed: {exc}",
+                        file=Path(test_case.module_path).as_posix(),
+                        tags=list(test_case.markers.get("tags", [])),
                     )
                     results.append(result)
                     # Mark remaining tests as errored
@@ -136,6 +161,8 @@ class HarnessScheduler:
                                 status=CaseStatus.ERROR,
                                 duration_ms=0.0,
                                 error="Server crashed before this test could run",
+                                file=Path(remaining_tc.module_path).as_posix(),
+                                tags=list(remaining_tc.markers.get("tags", [])),
                             )
                         )
                     break
@@ -160,6 +187,8 @@ class HarnessScheduler:
                         status=CaseStatus.ERROR,
                         duration_ms=0.0,
                         error=f"Server startup failed: {exc}",
+                        file=Path(tc.module_path).as_posix(),
+                        tags=list(tc.markers.get("tags", [])),
                     )
                 )
         finally:
@@ -167,7 +196,16 @@ class HarnessScheduler:
                 await lifecycle.shutdown(server)
 
         total_duration_ms = (time.monotonic() - start_time) * 1000.0
-        return _aggregate_results(results, total_duration_ms, capabilities, protocol_version)
+        run_finished = _utc_iso()
+        return _aggregate_results(
+            results,
+            total_duration_ms,
+            capabilities,
+            protocol_version,
+            started_at=run_started,
+            finished_at=run_finished,
+            environment=_build_environment(config),
+        )
 
     async def run_parallel(
         self,
@@ -192,11 +230,21 @@ class HarnessScheduler:
             Aggregated results from all workers.
         """
         start_time = time.monotonic()
+        run_started = _utc_iso()
         worker_count = workers or os.cpu_count() or 1
 
         if not test_cases:
             total_duration_ms = (time.monotonic() - start_time) * 1000.0
-            return _aggregate_results([], total_duration_ms, {}, "")
+            now = _utc_iso()
+            return _aggregate_results(
+                [],
+                total_duration_ms,
+                {},
+                "",
+                started_at=now,
+                finished_at=now,
+                environment=_build_environment(config),
+            )
 
         # Group by module so per-module fixtures (e.g. mcp_server_session) stay
         # coherent within one worker, then round-robin whole modules.
@@ -243,7 +291,16 @@ class HarnessScheduler:
                 protocol_version = wr.protocol_version
 
         total_duration_ms = (time.monotonic() - start_time) * 1000.0
-        return _aggregate_results(all_results, total_duration_ms, capabilities, protocol_version)
+        run_finished = _utc_iso()
+        return _aggregate_results(
+            all_results,
+            total_duration_ms,
+            capabilities,
+            protocol_version,
+            started_at=run_started,
+            finished_at=run_finished,
+            environment=_build_environment(config),
+        )
 
     # ------------------------------------------------------------------
     # Internal: single worker
@@ -277,7 +334,10 @@ class HarnessScheduler:
             server = await lifecycle.start(config)
             await _assert_mcp_compliance(config, server, worker_id=worker_id)
             capabilities = server.capabilities
-            protocol_version = capabilities.get("protocolVersion", "")
+            protocol_version = (
+                ServerLifecycleManager.protocol_version_from_init(server.init_result)
+                or str(capabilities.get("protocolVersion") or "")
+            )
             lifecycle.start_monitor(server)
 
             executor = CaseExecutor(default_timeout=config.timeout)
@@ -300,6 +360,8 @@ class HarnessScheduler:
                         status=CaseStatus.ERROR,
                         duration_ms=0.0,
                         error=f"Server crashed: {exc}",
+                        file=Path(test_case.module_path).as_posix(),
+                        tags=list(test_case.markers.get("tags", [])),
                     )
                     results.append(result)
                     # Mark remaining tests in this worker as errored
@@ -312,6 +374,8 @@ class HarnessScheduler:
                                 status=CaseStatus.ERROR,
                                 duration_ms=0.0,
                                 error="Server crashed before this test could run",
+                                file=Path(remaining_tc.module_path).as_posix(),
+                                tags=list(remaining_tc.markers.get("tags", [])),
                             )
                         )
                     break
@@ -335,6 +399,8 @@ class HarnessScheduler:
                         status=CaseStatus.ERROR,
                         duration_ms=0.0,
                         error=f"Worker {worker_id} server startup failed: {exc}",
+                        file=Path(tc.module_path).as_posix(),
+                        tags=list(tc.markers.get("tags", [])),
                     )
                 )
         finally:
@@ -367,6 +433,10 @@ def _aggregate_results(
     total_duration_ms: float,
     capabilities: dict,
     protocol_version: str,
+    *,
+    started_at: str = "",
+    finished_at: str = "",
+    environment: dict[str, str] | None = None,
 ) -> SessionResults:
     """Build a ``SessionResults`` from a flat list of ``CaseResult``."""
     passed = sum(1 for r in results if r.status == CaseStatus.PASSED)
@@ -386,4 +456,7 @@ def _aggregate_results(
         errored=errored,
         skipped=skipped,
         timed_out=timed_out,
+        started_at=started_at,
+        finished_at=finished_at,
+        environment=dict(environment or {}),
     )

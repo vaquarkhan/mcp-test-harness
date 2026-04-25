@@ -10,6 +10,12 @@ pip install -e ".[dev]"
 # Optional: mcp-bastion extras are only needed for mcplint / version_gate
 ```
 
+## 30 scenario walkthroughs
+
+**[feature-demo/scenarios/README.md](feature-demo/scenarios/README.md)** — one small markdown file per scenario (discovery, each report type, each transport, Docker, and individual assertion types). The **[feature-demo](feature-demo/README.md)** folder also includes a **sample HTML** report. Use as a **checklist** or training path.
+
+Need runnable scenario code too? Use **[feature-demo/python-scenarios/README.md](feature-demo/python-scenarios/README.md)** for 30 corresponding `test_demo_*.py` files (one Python file per scenario).
+
 ## One example per core feature (checklist)
 
 Start here: **[FEATURES_INDEX.md](FEATURES_INDEX.md)** — maps each [README Core feature](../README.md#core-features) row to **one** primary example (markdown, YAML, or Python).
@@ -24,7 +30,7 @@ Start here: **[FEATURES_INDEX.md](FEATURES_INDEX.md)** — maps each [README Cor
 | **Parallel** | [example_parallel_workers.md](example_parallel_workers.md) · [sample_mcp_test.yaml](sample_mcp_test.yaml) |
 | **Watch mode** | [example_watch_mode.md](example_watch_mode.md) |
 | **Markers / skip** | [example_markers_skip.md](example_markers_skip.md) · [patterns_mcp_test.md](patterns_mcp_test.md) |
-| **Reports** | [example_report_formats.md](example_report_formats.md) · [mcp_test_report_junit.yaml](mcp_test_report_junit.yaml) · [mcp_test_report_json.yaml](mcp_test_report_json.yaml) · [mcp_test_report_html.yaml](mcp_test_report_html.yaml) |
+| **Reports** | [example_report_formats.md](example_report_formats.md) · [mcp_test_report_junit.yaml](mcp_test_report_junit.yaml) · [mcp_test_report_json.yaml](mcp_test_report_json.yaml) · [mcp_test_report_html.yaml](mcp_test_report_html.yaml) · sample [feature-demo/reports/sample_mcp_test_report.html](feature-demo/reports/sample_mcp_test_report.html) |
 | **Plugins** | [reference_plugin.py](reference_plugin.py) |
 | **Transports** | [example_transports.md](example_transports.md) · [mcp_test_transport_sse.example.yaml](mcp_test_transport_sse.example.yaml) · [mcp_test_transport_http.example.yaml](mcp_test_transport_http.example.yaml) |
 | **GitHub Action** | [example_github_actions.md](example_github_actions.md) |
@@ -32,6 +38,8 @@ Start here: **[FEATURES_INDEX.md](FEATURES_INDEX.md)** — maps each [README Cor
 | **PyInstaller binary** | [example_pyinstaller.md](example_pyinstaller.md) |
 | **`mcp-test init`** | [example_mcp_test_init.md](example_mcp_test_init.md) |
 | **CLI `--list`, `-k`, `-m`** | [example_cli_list_filters.md](example_cli_list_filters.md) |
+| **`mcp-test doctor`** | [example_doctor.md](example_doctor.md) |
+| **Enhanced reports** (HTML/JSON/JUnit details) | [example_enhanced_reports.md](example_enhanced_reports.md) |
 
 ## Runnable scripts
 
@@ -49,6 +57,9 @@ Start here: **[FEATURES_INDEX.md](FEATURES_INDEX.md)** — maps each [README Cor
 | [sample_mcp_test.yaml](sample_mcp_test.yaml) | Full sample (stdio, parallel, JUnit) |
 | [patterns_mcp_test.md](patterns_mcp_test.md) | Copy-paste: yaml, markers, perf, snapshots |
 | [reference_plugin.py](reference_plugin.py) | Complete plugin (assertion + fixture + reporter) — add under `plugins:` |
+| [example_doctor.md](example_doctor.md) | Diagnose startup/handshake/schema with no tests |
+| [example_enhanced_reports.md](example_enhanced_reports.md) | New report UX + metadata fields |
+| [feature-demo/example_feature_demo_quick_run.md](feature-demo/example_feature_demo_quick_run.md) | Fast path for all feature-demo assets |
 
 **Using a real server:** set `server.command` (or `mcp-test --server-command "…"`) and put tests under `tests/` — [QUICK_START.md](../docs/QUICK_START.md).
 

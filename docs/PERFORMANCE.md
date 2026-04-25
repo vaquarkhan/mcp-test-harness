@@ -2,6 +2,12 @@
 
 You can run **automation (functional) tests** and **performance / latency** checks in the **same** `test_*.py` files. The harness does not use a second framework — it extends the same async tests with a latency assertion and optional **marker** filtering.
 
+## Why this matters for MCP
+
+MCP performance testing should be protocol-aware. Generic load tools usually do not handle MCP-specific concerns by default (initialize/session flow, MCP response shape validation, and tool-oriented assertions in the same run). In practice, correctness and latency are coupled for agents: a correct answer that arrives too late can still fail the workflow.
+
+For product framing and roadmap, see [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md).
+
 ## 1. Single-call budget (regression: “this call must stay fast”)
 
 ```python

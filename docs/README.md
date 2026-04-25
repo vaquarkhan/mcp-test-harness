@@ -6,6 +6,8 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 
 **Companion project (runtime security):** [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) — prompt injection defense, PII redaction, rate limits, RBAC. MCP Test Harness focuses on **automated test execution**; Bastion on **operational protection**.
 
+**Product value proposition:** one MCP-aware tool for **functional**, **regression**, and **performance** testing in CI. Teams can fail a PR on correctness drift *or* latency regressions without splitting work across unrelated frameworks.
+
 ---
 
 ## Adoption paths (read in order)
@@ -18,7 +20,13 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Repo developer setup, test layout, examples index** | [DEVELOPER.md](DEVELOPER.md) |
 | **CI, JUnit, JSON, HTML — do I need to “publish” reports?** | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) |
 | **Performance / latency** (same tests as functional; `assert_latency`, `-m perf`) | [PERFORMANCE.md](PERFORMANCE.md) |
-| **Ecosystem** (Conformance, mcp-eval, MCPMark, testmcpy — vs this harness) | [COMPARISON.md](COMPARISON.md) |
+| **Performance strategy** (why perf belongs in the harness; scope + roadmap) | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) |
+| **Roadmap** (delivery phases and scope guardrails) | [ROADMAP.md](ROADMAP.md) |
+| **Security testing strategy** (prompt injection, payload checks, leak detection) | [SECURITY_TESTING.md](SECURITY_TESTING.md) |
+| **Contract + compatibility strategy** (drift protection, version/client matrix) | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) |
+| **Enterprise governance** (audit/policy/tenant guidance) | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) |
+| **Plugin registry** (integration catalog placeholder) | [PLUGIN_REGISTRY.md](PLUGIN_REGISTRY.md) |
+| **Ecosystem** (conformance/eval/benchmark categories vs this harness) | [COMPARISON.md](COMPARISON.md) |
 | **LLM-assisted test generation** (when it helps vs when to avoid) | [LLM_TEST_GENERATION.md](LLM_TEST_GENERATION.md) |
 | **Postman-style collections, environments, multi-step flows (vs Python today)** | [COLLECTIONS.md](COLLECTIONS.md) |
 | **Registries, PyPI, release promotion** (checklist — same style as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) | [DISCOVERY.md](DISCOVERY.md) |
@@ -43,8 +51,14 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [TUTORIAL.md](TUTORIAL.md) | Longer **walkthrough** for new users |
 | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) | **CI and reports:** exit codes, JUnit for Actions, when to upload/publish HTML |
 | [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), `marker(tags=[…])` + `mcp-test -m perf` |
+| [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) | **Performance product story:** why MCP perf must be protocol-aware, what is in-core vs out-of-scope, and the proposed production-grade roadmap |
+| [ROADMAP.md](ROADMAP.md) | **Planned delivery:** now/next/later priorities and scope guardrails |
+| [SECURITY_TESTING.md](SECURITY_TESTING.md) | **Security-first CI strategy:** payloads, auth checks, and leak scanning guidance |
+| [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) | **Compatibility strategy:** contract replay and protocol/client matrix direction |
+| [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) | **Governance:** audit/policy/tenant requirements, plus practical EU AI Act evidence mapping |
+| [PLUGIN_REGISTRY.md](PLUGIN_REGISTRY.md) | **Integrations:** proposed plugin catalog categories and listing template |
 | [COMPARISON.md](COMPARISON.md) | **Ecosystem map:** other MCP tools (conformance, evals, benchmarks) and how they fit with Harness + Bastion |
-| [LLM_TEST_GENERATION.md](LLM_TEST_GENERATION.md) | **LLMs:** draft tests with review is OK; auto-trusted CI is not; how this differs from mcp-eval / testmcpy |
+| [LLM_TEST_GENERATION.md](LLM_TEST_GENERATION.md) | **LLMs:** draft tests with review is OK; auto-trusted CI is not; how this differs from LLM-in-the-loop eval tools |
 | [COLLECTIONS.md](COLLECTIONS.md) | **Postman / Newman–style** flows: collections + environments, how to do it in **Python** today, **roadmap** for declarative collections; load testing pointers |
 | [DISCOVERY.md](DISCOVERY.md) | **Discovery / registries:** internal checklist for releases (PyPI, awesome lists, `server.json`, related tooling) |
 | [DOCKER.md](DOCKER.md) | **Container images** — build targets, [PyPI](https://pypi.org/project/mcp-test-harness/) vs **local build**, [GitHub Packages](https://github.com/vaquarkhan?tab=packages) & future **GHCR** |

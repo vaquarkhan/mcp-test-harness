@@ -335,6 +335,18 @@ class ServerLifecycleManager:
             logger.debug("Error in session __aexit__ (ignored)", exc_info=True)
 
     @staticmethod
+    def protocol_version_from_init(init_result: Any) -> str:
+        """Return MCP protocol version from ``initialize()`` result (SDK attribute names vary)."""
+        if init_result is None:
+            return ""
+        v = getattr(init_result, "protocolVersion", None)
+        if v is None:
+            v = getattr(init_result, "protocol_version", None)
+        if v is None:
+            return ""
+        return str(v)
+
+    @staticmethod
     def _extract_capabilities(init_result: Any) -> dict[str, Any]:
         """Extract a plain dict of capabilities from the handshake result."""
         if init_result is None:

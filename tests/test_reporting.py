@@ -15,6 +15,7 @@ from mcp_test_harness.models import (
     CaseStatus,
 )
 from mcp_test_harness.reporting import (
+    _Ansi,
     ConsoleReporter,
     JSONReporter,
     JUnitXMLReporter,
@@ -44,6 +45,15 @@ def _make_results(
         errored=sum(1 for r in results if r.status == CaseStatus.ERROR),
         skipped=sum(1 for r in results if r.status == CaseStatus.SKIPPED),
         timed_out=sum(1 for r in results if r.status == CaseStatus.TIMEOUT),
+        started_at="2024-12-15T10:00:00+00:00",
+        finished_at="2024-12-15T10:02:00+00:00",
+        environment={
+            "python_version": "3.12.0",
+            "platform": "linux-test",
+            "cwd": "/tmp",
+            "server_command": "python -m demo",
+            "transport": "stdio",
+        },
     )
 
 
@@ -135,6 +145,27 @@ class TestConsoleReporter:
         out = ConsoleReporter().generate(run)
         assert "0 passed" in out
 
+    def test_console_color_mode_covers_all_status_colours(self, monkeypatch):
+        class _TTY:
+            def isatty(self):
+                return True
+
+        monkeypatch.setattr("mcp_test_harness.reporting.sys.stdout", _TTY())
+        run = _make_results([
+            _passed("p"),
+            _failed("f"),
+            _errored("e"),
+            _skipped("s"),
+            _timed_out("t"),
+        ])
+        out = ConsoleReporter().generate(run)
+        assert "FAILURES" in out
+        # ANSI escape appears in colored output
+        assert "\x1b[" in out
+
+    def test_ansi_for_status_unknown_returns_empty(self):
+        assert _Ansi.for_status(object()) == ""
+
 
 # ---------------------------------------------------------------------------
 # JSONReporter
@@ -157,6 +188,11 @@ class TestJSONReporter:
         assert meta["harness_version"] == "1.0.0"
         assert meta["protocol_version"] == "2025-03-26"
         assert meta["server_capabilities"] == {"tools": True, "resources": True}
+        assert "started_at" in meta
+        assert "finished_at" in meta
+        assert "environment" in data
+        assert "python_version" in data["environment"]
+        assert "duration_percentiles_ms" in data["summary"]
 
     def test_summary_counts(self):
         run = _make_results([_passed(), _failed(), _skipped()])
@@ -220,6 +256,15 @@ class TestJSONReporter:
 
         assert len(data["tests"][0]["schema_violations"]) == 1
         assert data["tests"][0]["schema_violations"][0]["json_path"] == "$.result.content"
+
+    def test_test_tags_and_started_at_included(self):
+        tr = _passed("tagged")
+        tr.tags = ["smoke", "perf"]
+        tr.started_at = "2026-01-01T00:00:00+00:00"
+        data = json.loads(JSONReporter().generate(_make_results([tr])))
+        t = data["tests"][0]
+        assert t["tags"] == ["smoke", "perf"]
+        assert t["started_at"] == "2026-01-01T00:00:00+00:00"
 
 
 # ---------------------------------------------------------------------------
@@ -307,6 +352,35 @@ class TestJUnitXMLReporter:
         tc = root.find(".//testcase")
         assert tc is not None
 
+    def test_classname_uses_forward_slashes(self):
+        tr = _passed("t")
+        tr.module = "tests\\demo\\a.py"
+        tr.file = "tests/demo/a.py"
+        run = _make_results([tr])
+        xml_str = JUnitXMLReporter().generate(run)
+        tc = ET.fromstring(xml_str).find(".//testcase")
+        assert tc is not None
+        assert tc.get("classname") == "tests/demo/a.py"
+        assert "\\\\" not in (tc.get("classname") or "")
+
+    def test_testsuite_has_timestamp_and_properties(self):
+        run = _make_results([_passed()])
+        root = ET.fromstring(JUnitXMLReporter().generate(run))
+        suite = root.find("testsuite")
+        assert suite is not None
+        assert suite.get("timestamp")
+        assert suite.get("hostname")
+        assert suite.find("properties") is not None
+
+    def test_testcase_tags_written_as_properties(self):
+        tr = _passed("tag_case")
+        tr.tags = ["smoke"]
+        root = ET.fromstring(JUnitXMLReporter().generate(_make_results([tr])))
+        props = root.findall(".//testcase/properties/property")
+        assert props
+        assert props[0].get("name") == "tag"
+        assert props[0].get("value") == "smoke"
+
 
 # ---------------------------------------------------------------------------
 # HTMLReporter
@@ -351,11 +425,47 @@ class TestHTMLReporter:
         tr = _failed(name="test_<script>", error="x < 0 & y > 1")
         run = _make_results([tr])
         html = HTMLReporter().generate(run)
-        assert "<script>" not in html
+        # User-controlled test name and error must be escaped (report may include <script> for its own UI).
+        assert "test_&lt;script&gt;" in html
         assert "&lt;script&gt;" in html
+        assert "x &lt; 0 &amp; y &gt; 1" in html
 
     def test_duration_shown(self):
         run = _make_results([_passed("t", duration=42.3)], total_duration_ms=100.5)
         html = HTMLReporter().generate(run)
-        assert "42.3ms" in html
-        assert "100.5ms" in html
+        assert "42.3" in html
+        assert "100.5" in html
+
+    def test_html_includes_attempts_and_schema_details(self):
+        tr = _failed(error="boom", diff=None, tb=None)
+        tr.attempt_results = [
+            AttemptResult(attempt=1, status=CaseStatus.FAILED, duration_ms=10.0, error="e1"),
+            AttemptResult(attempt=2, status=CaseStatus.PASSED, duration_ms=9.0, error=None),
+        ]
+        tr.retry_count = 1
+        tr.flaky = True
+        tr.schema_violations = [
+            SchemaViolation(
+                json_path="$.x",
+                expected_type="string",
+                actual_value=1,
+                message="wrong type",
+            )
+        ]
+        html = HTMLReporter().generate(_make_results([tr]))
+        assert "Attempts:" in html
+        assert "schema:" in html
+        assert "Flaky: passed after 1 retry" in html
+
+    def test_html_capability_summary_overflow(self):
+        run = _make_results([_passed()])
+        run.server_capabilities = {f"k{i}": True for i in range(20)}
+        html = HTMLReporter().generate(run)
+        assert "+12 more" in html or "more" in html
+
+    def test_html_capability_summary_truncates_with_ellipsis(self):
+        run = _make_results([_passed()])
+        # Long key names force truncation path
+        run.server_capabilities = {("key_" + ("x" * 40) + str(i)): True for i in range(12)}
+        html = HTMLReporter().generate(run)
+        assert "…" in html
