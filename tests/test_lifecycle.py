@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from types import SimpleNamespace
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -572,6 +573,21 @@ class TestHelpers:
         transport = MagicMock(spec=[])
         result = ServerLifecycleManager._extract_process(transport)
         assert result is None
+
+    def test_protocol_version_from_init_none(self) -> None:
+        assert ServerLifecycleManager.protocol_version_from_init(None) == ""
+
+    def test_protocol_version_from_init_camel_case(self) -> None:
+        init = SimpleNamespace(protocolVersion="2025-06-18")
+        assert ServerLifecycleManager.protocol_version_from_init(init) == "2025-06-18"
+
+    def test_protocol_version_from_init_snake_case(self) -> None:
+        init = SimpleNamespace(protocol_version="2024-11-05")
+        assert ServerLifecycleManager.protocol_version_from_init(init) == "2024-11-05"
+
+    def test_protocol_version_from_init_no_version_attrs(self) -> None:
+        init = SimpleNamespace(other="x")
+        assert ServerLifecycleManager.protocol_version_from_init(init) == ""
 
     def test_force_kill_timeout_value(self) -> None:
         assert _FORCE_KILL_TIMEOUT == 10.0

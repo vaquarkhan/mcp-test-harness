@@ -13,12 +13,14 @@ import pytest
 import mcp_test_harness.assertions as assertions_mod
 from mcp_test_harness.assertions import (
     MCPAssertionError,
+    assert_authorization_boundary,
     assert_capabilities,
     assert_latency,
     assert_prompt,
     assert_resource_read,
     assert_snapshot,
     assert_tool_call,
+    assert_tool_denied,
 )
 
 
@@ -389,6 +391,10 @@ class FakeSessionExtended(FakeSession):
         return self._resource_list_result
 
     async def call_tool(self, name: str, arguments: dict[str, Any]) -> FakeToolResult:
+        if arguments.get("role") == "admin":
+            return FakeToolResult(content=[FakeContent(text="ok", isError=False)])
+        if arguments.get("role") == "guest":
+            return FakeToolResult(content=[FakeContent(text="forbidden", isError=True)])
         if self._call_tool_error is not None:
             raise self._call_tool_error
         return self._tool_result
@@ -670,3 +676,51 @@ class TestAssertInvalidTool:
         )
         with pytest.raises(MCPAssertionError, match="Expected tool.*to return an error"):
             asyncio.run(assert_invalid_tool(session, "actually_exists"))
+
+
+class TestAuthorizationAssertions:
+    def test_assert_tool_denied_passes(self) -> None:
+        session = FakeSessionExtended()
+        asyncio.run(
+            assert_tool_denied(
+                session,
+                "write_funds",
+                {"role": "guest", "amount": 10},
+                error_substring="forbidden",
+            )
+        )
+
+    def test_assert_tool_denied_fails_when_allowed(self) -> None:
+        session = FakeSessionExtended()
+        with pytest.raises(MCPAssertionError, match="Expected tool.*to return an error"):
+            asyncio.run(
+                assert_tool_denied(
+                    session,
+                    "write_funds",
+                    {"role": "admin", "amount": 10},
+                )
+            )
+
+    def test_assert_authorization_boundary_passes(self) -> None:
+        session = FakeSessionExtended()
+        asyncio.run(
+            assert_authorization_boundary(
+                session,
+                "write_funds",
+                allowed_arguments={"role": "admin", "amount": 10},
+                denied_arguments={"role": "guest", "amount": 10},
+                denied_error_substring="forbidden",
+            )
+        )
+
+    def test_assert_authorization_boundary_fails_when_denied_is_allowed(self) -> None:
+        session = FakeSessionExtended()
+        with pytest.raises(MCPAssertionError, match="Expected tool.*to return an error"):
+            asyncio.run(
+                assert_authorization_boundary(
+                    session,
+                    "write_funds",
+                    allowed_arguments={"role": "admin", "amount": 10},
+                    denied_arguments={"role": "admin", "amount": 10},
+                )
+            )

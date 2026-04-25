@@ -63,6 +63,12 @@ class CaseResult:
     attempt_results: list[AttemptResult] = field(default_factory=list)
     flaky: bool = False
     schema_violations: list[SchemaViolation] = field(default_factory=list)
+    #: Normalized path with forward slashes (for reports and CI); if empty, use ``module``.
+    file: str = ""
+    #: Tag strings from ``@marker(tags=[...])``.
+    tags: list[str] = field(default_factory=list)
+    #: Wall-clock test start (ISO 8601 UTC), when known.
+    started_at: str | None = None
 
 
 @dataclass
@@ -79,6 +85,11 @@ class SessionResults:
     errored: int = 0
     skipped: int = 0
     timed_out: int = 0
+    #: Run wall-clock bounds (ISO 8601 UTC), when known.
+    started_at: str = ""
+    finished_at: str = ""
+    #: Host / process context for debugging (Python version, cwd, server command, …).
+    environment: dict[str, str] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------

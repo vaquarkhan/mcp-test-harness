@@ -28,7 +28,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mcp-test",
         description="MCP Test Harness -- a pytest-style testing framework for MCP servers.",
-        epilog="Tip: run `mcp-test init` in your project to scaffold a starter test file and mcp-test.yaml.",
+        epilog=(
+            "Tip: run `mcp-test init` in your project to scaffold tests; "
+            "`mcp-test doctor` checks server handshake and lists tools (no tests required)."
+        ),
     )
 
     parser.add_argument(
@@ -284,6 +287,10 @@ def main(argv: list[str] | None = None) -> int:
         from mcp_test_harness.scaffold import run_init
 
         return run_init(av[1:])
+    if av and av[0] == "doctor":
+        from mcp_test_harness.doctor import run_doctor
+
+        return run_doctor(av[1:])
     return asyncio.run(_async_main(av))
 
 

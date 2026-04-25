@@ -18,11 +18,23 @@ Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
 MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically-replacing manual validation through the MCP Inspector.
 
-> **Documentation:** structured **hub** and **adoption paths** Start there for [QUICK_START](docs/QUICK_START.md), the full [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, **[how we compare to other MCP tools](docs/COMPARISON.md)**, **[ecosystem / registry discovery (release checklist)](docs/DISCOVERY.md)**, and **[CHANGELOG](CHANGELOG.md)** / **[CONTRIBUTING](CONTRIBUTING.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
+> **Documentation:** structured **hub** and **adoption paths**. Start with [QUICK_START](docs/QUICK_START.md), then [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, **[performance strategy and product positioning](docs/PERFORMANCE_TESTING_STRATEGY.md)**, **[how we compare to other MCP tools](docs/COMPARISON.md)**, and **[ecosystem / registry discovery (release checklist)](docs/DISCOVERY.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
 > 
 **License:** the core project is under the [MIT License](LICENSE); see [NOTICE](NOTICE). [CITATION.cff](CITATION.cff) suggests how to cite the software in papers (optional, not a license condition). *(Optional packages under `packages/` may list their own terms in each package’s `pyproject.toml`.)*
 
 For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** that gap. For **spec conformance**, **LLM-in-the-loop** evals, and **model benchmarks**, other tools exist; see [docs/COMPARISON.md](docs/COMPARISON.md).
+
+## Why teams adopt this
+
+MCP Test Harness combines **three testing modes in one tool**:
+
+- **Functional:** protocol-aware assertions (`assert_tool_call`, `assert_resource_read`, schema validation)
+- **Regression:** snapshots and determinism checks (`assert_snapshot`, `assert_tool_idempotent`)
+- **Performance:** latency gates and SLO-style checks (`assert_latency` with p95/p99/mean/median, warmup)
+
+This combination means one MCP-aware workflow can validate both **answer quality** and **time-to-answer** in CI.
+
+MCP Test Harness also supports a practical **Responsible AI** posture by giving teams repeatable evidence that MCP behavior is safe, reliable, and governable: protocol/schema conformance checks reduce unexpected behavior, security-focused test packs catch common misuse patterns early, and rich run reports provide auditable artifacts for internal governance programs and external frameworks such as the EU AI Act.
 
 ## Documentation
 
@@ -33,14 +45,21 @@ For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** th
 | [docs/QUICK_START.md](docs/QUICK_START.md) | **Fastest path** - install, `mcp-test init`, run |
 | [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | **Canonical reference** - setup, config, stdio/parallel/validation, assertions, reporting |
 | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) | **CI, JUnit, JSON, HTML** - do you need to *publish* test reports? (usually: no) |
+| [docs/PERFORMANCE_TESTING_STRATEGY.md](docs/PERFORMANCE_TESTING_STRATEGY.md) | **Product pitch** - why MCP performance testing belongs in the harness; roadmap and scope |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | **Roadmap** - now/next/later delivery plan for security, perf, compatibility, and DX |
+| [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) | **Security testing** - MCP-aware security assertions and CI guidance |
+| [docs/CONTRACT_AND_COMPAT.md](docs/CONTRACT_AND_COMPAT.md) | **Contracts & compatibility** - drift protection and protocol/client matrix strategy |
+| [docs/ENTERPRISE_GOVERNANCE.md](docs/ENTERPRISE_GOVERNANCE.md) | **Enterprise** - audit/policy/tenant governance guidance (including EU AI Act evidence mapping notes) |
+| [docs/PLUGIN_REGISTRY.md](docs/PLUGIN_REGISTRY.md) | **Plugin registry** - extension catalog and integration categories |
 | [docs/TUTORIAL.md](docs/TUTORIAL.md) | Step-by-step tutorial |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture and product decisions |
 | [docs/IMPLEMENTATION_CHECKLIST.md](docs/IMPLEMENTATION_CHECKLIST.md) | Maintainer: features vs. code locations |
-| [docs/COMPARISON.md](docs/COMPARISON.md) | **Ecosystem** - Conformance, mcp-eval, MCPMark, testmcpy; when to use Harness + Bastion |
+| [docs/COMPARISON.md](docs/COMPARISON.md) | **Ecosystem** - where this harness fits alongside conformance/eval/benchmark categories |
 | [docs/LLM_TEST_GENERATION.md](docs/LLM_TEST_GENERATION.md) | **LLM + tests** - draft-with-review: good; **auto** trusted in CI: bad fit for this harness |
 | [docs/COLLECTIONS.md](docs/COLLECTIONS.md) | **Postman / Newman–style** multi-step flows, “environments”, and roadmap (declarative collections not in core yet) |
 | [docs/DISCOVERY.md](docs/DISCOVERY.md) | **Registries and promotion** - internal checklist (PyPI, [server.json](server.json), awesome lists) |
 | [docs/DOCKER.md](docs/DOCKER.md) | **Docker & OCI** - PyPI, **GHCR** / **GitHub Packages** links, build targets, `docker run` |
+| [docs/RELEASING.md](docs/RELEASING.md) | **Ship `v*`** - PyPI trusted publishing + GHCR images in one tag |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | **Mermaid** diagrams: CLI → scheduler → lifecycle → session → tests |
 | [docs/EDITORS.md](docs/EDITORS.md) | **Visual Studio Code & Cursor** - snippets, Mermaid preview, recommended extensions |
 | [docs/MARKDOWN_CONVENTIONS.md](docs/MARKDOWN_CONVENTIONS.md) | **Markdown** - `[!TIP]` / `**Feature**` callouts and fenced code for readable docs |
@@ -70,17 +89,8 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | **Docker** | [`Dockerfile`](Dockerfile) - OCI image with `mcp-test` (runtime) or `pytest` + dev extras via `--target dev` (see [Docker](#docker)) |
 | Standalone binary | Single binary via PyInstaller, no Python required on target |
 
-## Why MCP Test Harness (vs MCP Inspector)
-
-| | MCP Inspector | MCP Test Harness |
-|---|---|---|
-| Execution | Manual, browser-based clicking | Automated CLI, runs in CI |
-| CI/CD integration | Not possible | Native (exit codes, JUnit XML, GitHub Action) |
-| Regression detection | Manual re-testing | Snapshot testing, automated on every commit |
-| Schema validation | Manual visual check | Automatic on every response |
-| Parallel testing | No | Yes, with per-worker server isolation |
-| Reporting | Visual only | Console, JSON, JUnit XML |
-| Extensibility | None | Plugin system for custom rules |
+**Beginner demo packs by testing type:** [functional-testing](examples/feature-demo/functional-testing/README.md) · [regression-testing](examples/feature-demo/regression-testing/README.md) · [performance-testing](examples/feature-demo/performance-testing/README.md) (each includes runnable tests plus JSON/JUnit/HTML report config).  
+**Full scenario index:** [examples/feature-demo/README.md](examples/feature-demo/README.md)
 
 ## Ecosystem (Conformance, evals, benchmarks)
 
@@ -116,7 +126,7 @@ mcp-test --version
 
 **One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
 
-Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). **Pre-built** images on **GitHub Container Registry** (`ghcr.io`) are not guaranteed until a release workflow publishes them; see [docs/DOCKER.md](docs/DOCKER.md) for the canonical **image / package** links and how to find **GitHub Packages** for this org.
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). On each **`v*`** git tag, GitHub Actions also pushes **`ghcr.io/vaquarkhan/mcp-test-harness`** (`:latest`, `:X.Y.Z`, `:dev`, `:X.Y.Z-dev`). Pull the runtime image with `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. Full steps: [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
 
 | Build | Description |
 |-------|-------------|
@@ -179,6 +189,8 @@ mcp-test init --server-command "python -m your_package.mcp"
 ```
 
 Options: `mcp-test init --help` (custom `--dir`, `--filename`, `--no-config`, `--force`).
+
+**Check the server first (no tests):** `mcp-test doctor` uses the same `mcp-test.yaml` (or `--server-command`) to start the server, run the MCP handshake, print the protocol version, list tools / resources / prompts, and optionally run the same post-connect schema checks as a normal run. Exits `0` when healthy, `1` on startup or schema errors. See `mcp-test doctor --help`.
 
 **Editor snippets:** the repo includes [`.vscode/mcp-test-harness.code-snippets`](.vscode/mcp-test-harness.code-snippets) - in VS Code or Cursor, type prefixes like `mcp-assert-tool` or `mcp-test-async` in a `*.py` file to insert common patterns.
 
@@ -260,7 +272,7 @@ result = await assert_tool_call(mcp_server, "get_data", {})
 assert len(result.content) > 0
 ```
 
-Other helpers: `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, `assert_latency`, `assert_tool_call_validates_input` - see **Part 3b** in the [Developer Guide](docs/DEVELOPER_GUIDE.md).
+Other helpers: `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, `assert_latency`, `assert_tool_call_validates_input`, `assert_tool_denied`, `assert_authorization_boundary` - see **Part 3b** in the [Developer Guide](docs/DEVELOPER_GUIDE.md).
 
 ### assert_resource_read -- read a resource and check content/MIME type
 
@@ -717,6 +729,8 @@ MCP Test Harness provides framework-specific testing helpers. Each package auto-
 | `mcp-test-harness-deepseek` | DeepSeek AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-deepseek)](https://pypi.org/project/mcp-test-harness-deepseek/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-deepseek)](https://pypi.org/project/mcp-test-harness-deepseek/) |
 | `mcp-test-harness-together` | Together AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-together)](https://pypi.org/project/mcp-test-harness-together/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-together)](https://pypi.org/project/mcp-test-harness-together/) |
 | `mcp-test-harness-fireworks` | Fireworks AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-fireworks)](https://pypi.org/project/mcp-test-harness-fireworks/) | [![Downloads](https://img.shields.io/pypi/dm/mcp-test-harness-fireworks)](https://pypi.org/project/mcp-test-harness-fireworks/) |
+
+> **Note:** for optional security-oriented version checks in CI, install `mcp-test-harness[mcplint]` (or `mcplint`) to include `mcp-bastion-python` helpers such as `bastion_version()`.
 
 ## Related Projects
 

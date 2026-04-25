@@ -329,6 +329,12 @@ class TestMainSync:
         code = main(["--version"])
         assert code == 0
 
+    def test_main_dispatches_doctor_subcommand(self):
+        with patch("mcp_test_harness.doctor.run_doctor", return_value=7) as rd:
+            code = main(["doctor", "--no-schema"])
+        assert code == 7
+        rd.assert_called_once_with(["--no-schema"])
+
 
 # ---------------------------------------------------------------------------
 # --list flag

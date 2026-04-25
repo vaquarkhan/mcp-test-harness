@@ -36,6 +36,8 @@ The project targets **100%** line coverage on `src/mcp_test_harness` (see [pypro
 
 ## Releases
 
+See **[docs/RELEASING.md](docs/RELEASING.md)** for the full **PyPI + GHCR** checklist (trusted publishing, Actions permissions, `docker pull`).
+
 - Bump **`version`** in [pyproject.toml](pyproject.toml) and in [server.json](server.json) (and [CITATION.cff](CITATION.cff) if you track version there).
 - Add a new section to [CHANGELOG.md](CHANGELOG.md) with the new tag date and a concise **Added** / **Fixed** / **Changed** list.
-- GitHub: tag the commit (e.g. `v1.0.0`) and publish the wheel/sdist to PyPI per your project’s release workflow.
+- Push a **`vX.Y.Z`** tag on the release commit: [`.github/workflows/publish.yml`](.github/workflows/publish.yml) uploads to **PyPI**; [`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml) pushes **runtime** and **dev** images to **GHCR**.

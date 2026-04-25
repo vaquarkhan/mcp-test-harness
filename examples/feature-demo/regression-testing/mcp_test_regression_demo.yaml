@@ -1,0 +1,14 @@
+server:
+  command: "python -m your_server"
+
+tests:
+  roots:
+    - "examples/feature-demo/regression-testing"
+
+reports:
+  - format: json
+    output: "examples/feature-demo/regression-testing/reports/regression-demo.json"
+  - format: junit
+    output: "examples/feature-demo/regression-testing/reports/regression-demo.xml"
+  - format: html
+    output: "examples/feature-demo/regression-testing/reports/regression-demo.html"

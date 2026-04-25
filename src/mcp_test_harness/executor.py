@@ -15,6 +15,8 @@ import logging
 import time
 import traceback
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
 
 from mcp_test_harness.assertions import MCPAssertionError
 from mcp_test_harness.discovery import HarnessCase
@@ -75,6 +77,9 @@ class CaseExecutor:
                 status=CaseStatus.SKIPPED,
                 duration_ms=0.0,
                 error=reason or None,
+                file=Path(test_case.module_path).as_posix(),
+                tags=list(test_case.markers.get("tags", [])),
+                started_at=datetime.now(timezone.utc).isoformat(),
             )
 
         # Determine timeout: marker > CLI default
@@ -86,6 +91,7 @@ class CaseExecutor:
         # Inject the managed server so built-in fixtures can access it
         fixtures.set_injected("managed_server", server)
 
+        test_started_at = datetime.now(timezone.utc).isoformat()
         attempt_results: list[AttemptResult] = []
         total_start = time.monotonic()
         last_result: _AttemptOutcome | None = None
@@ -152,6 +158,9 @@ class CaseExecutor:
             retry_count=len(attempt_results) - 1,
             attempt_results=attempt_results,
             flaky=flaky,
+            file=Path(test_case.module_path).as_posix(),
+            tags=list(test_case.markers.get("tags", [])),
+            started_at=test_started_at,
         )
 
     # ------------------------------------------------------------------

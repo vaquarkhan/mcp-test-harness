@@ -1,5 +1,7 @@
 # Docker (OCI image with `mcp-test`)
 
+**Pre-built (GHCR)** after a **`v*`** release: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest` — see [../docs/RELEASING.md](../docs/RELEASING.md).
+
 **Build** (from repo root — same as [README #docker](../README.md#docker)):
 
 ```bash

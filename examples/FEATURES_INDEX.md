@@ -22,4 +22,10 @@ Use this as a **checklist** so every [README Core features](../README.md#core-fe
 | 13 | **Docker** | [example_docker.md](example_docker.md) |
 | 14 | **Standalone binary** | [example_pyinstaller.md](example_pyinstaller.md) |
 
-**Also useful (not a separate “core” row):** [example_mcp_test_init.md](example_mcp_test_init.md) (`mcp-test init`) · [example_cli_list_filters.md](example_cli_list_filters.md) (`--list`, `-k`, `-m`) · [validate_mcp_test_config.py](validate_mcp_test_config.py) · [version_gate.py](version_gate.py) · [basic_usage.py](basic_usage.py) (mcplint) · [COLLECTIONS.md](../docs/COLLECTIONS.md) (Postman-style flows)
+**30 scenarios (one markdown each):** [feature-demo/scenarios/README.md](feature-demo/scenarios/README.md) — under [feature-demo](feature-demo/README.md) with a sample HTML report; training-style index for discovery, reports, transports, Docker, and every major assertion style.
+
+**Three testing-type demo packs:** [feature-demo/functional-testing/README.md](feature-demo/functional-testing/README.md) · [feature-demo/regression-testing/README.md](feature-demo/regression-testing/README.md) · [feature-demo/performance-testing/README.md](feature-demo/performance-testing/README.md) — separate runnable examples and report configs for each core testing type.
+
+**Security and policy demo packs:** [feature-demo/responsible-ai/README.md](feature-demo/responsible-ai/README.md) · [feature-demo/usa-interest/README.md](feature-demo/usa-interest/README.md) — examples for authorization boundaries, confused-deputy checks, and governance-aligned reporting.
+
+**Also useful (not a separate “core” row):** [example_mcp_test_init.md](example_mcp_test_init.md) (`mcp-test init`) · [example_cli_list_filters.md](example_cli_list_filters.md) (`--list`, `-k`, `-m`) · [example_doctor.md](example_doctor.md) (`mcp-test doctor`) · [example_enhanced_reports.md](example_enhanced_reports.md) (HTML/JSON/JUnit enriched outputs) · [feature-demo/example_feature_demo_quick_run.md](feature-demo/example_feature_demo_quick_run.md) · [validate_mcp_test_config.py](validate_mcp_test_config.py) · [version_gate.py](version_gate.py) · [basic_usage.py](basic_usage.py) (mcplint) · [COLLECTIONS.md](../docs/COLLECTIONS.md) (Postman-style flows)

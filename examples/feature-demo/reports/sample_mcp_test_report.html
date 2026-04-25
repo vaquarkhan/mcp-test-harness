@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP Test Report</title>
+<style>
+:root {
+  --bg: #0f1419;
+  --panel: #1a1f2e;
+  --panel-2: #222838;
+  --border: #2d3848;
+  --text: #e8eaed;
+  --muted: #8b9aad;
+  --accent: #3b82f6;
+  --c-pass: #1abc7a;
+  --c-fail: #e74c3c;
+  --c-err: #f39c12;
+  --c-skip: #7f8c8d;
+  --c-to: #9b59b6;
+  --shadow: 0 4px 24px rgba(0,0,0,.45);
+  --radius: 10px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Ubuntu, sans-serif;
+  background: linear-gradient(165deg, #0c0f14 0%, #111827 50%, #0f1419 100%);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.45;
+}
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  padding: 0.9rem 1.15rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.25rem;
+}
+.brand { display: flex; flex-direction: column; gap: 0.2rem; }
+.brand h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.brand .sub { font-size: 0.8rem; color: var(--muted); }
+.meta { text-align: right; font-size: 0.78rem; color: var(--muted); }
+.quality {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 1.1rem;
+  border: 1px solid var(--border);
+}
+.quality.ok { background: rgba(26, 188, 122, 0.12); color: var(--c-pass); border-color: rgba(26, 188, 122, 0.35); }
+.quality.bad { background: rgba(231, 76, 60, 0.12); color: var(--c-fail); border-color: rgba(231, 76, 60, 0.35); }
+.quality.neutral { background: var(--panel-2); color: var(--muted); }
+.q-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.quality.ok .q-dot { background: var(--c-pass); box-shadow: 0 0 8px var(--c-pass); }
+.quality.bad .q-dot { background: var(--c-fail); box-shadow: 0 0 8px var(--c-fail); }
+.quality.neutral .q-dot { background: var(--muted); }
+.dashboard { display: grid; grid-template-columns: minmax(0,1fr) 200px; gap: 1.1rem; margin-bottom: 1.4rem; }
+@media (max-width: 800px) { .dashboard { grid-template-columns: 1fr; } .pie-box { max-width: 200px; margin: 0 auto; } }
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0,1fr));
+  gap: 0.65rem;
+}
+@media (max-width: 700px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+.metric {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.8rem;
+  min-height: 4.2rem;
+}
+.metric .k { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.25rem; }
+.metric .v { font-size: 1.5rem; font-weight: 700; font-feature-settings: "tnum"; }
+.m-pass .v { color: var(--c-pass); }
+.m-fail .v { color: var(--c-fail); }
+.m-err .v { color: var(--c-err); }
+.m-skip .v { color: var(--c-skip); }
+.m-to .v { color: var(--c-to); }
+.pie-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.pie-outer {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: conic-gradient(#1abc7a 0.000deg 180.000deg, #e74c3c 180.000deg 270.000deg, #7f8c8d 270.000deg 360.000deg);
+  box-shadow: inset 0 0 0 2px var(--bg);
+  position: relative;
+}
+.pie-inner {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 60px; height: 60px;
+  background: var(--panel);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: var(--muted); font-weight: 600;
+  border: 1px solid var(--border);
+}
+.pie-legend { font-size: 0.72rem; color: var(--muted); text-align: center; }
+.ctx {
+  display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem;
+  font-size: 0.8rem; color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.2rem;
+}
+.ctx strong { color: var(--text); font-weight: 600; }
+.table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); }
+table.results { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+table.results th {
+  position: sticky; top: 0; z-index: 1;
+  text-align: left; padding: 0.7rem 0.8rem; background: var(--panel-2);
+  color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border);
+}
+table.results td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+table.results tr:last-child td { border-bottom: none; }
+table.results tbody tr:hover { background: rgba(59, 130, 246, 0.06); }
+td.name { font-weight: 500; color: #cbd5e1; }
+td.module { color: var(--muted); font-size: 0.8rem; max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td.num { text-align: right; font-feature-settings: "tnum"; color: var(--muted); white-space: nowrap; }
+.badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; }
+.badge.b-pass { background: rgba(26, 188, 122, 0.2); color: var(--c-pass); }
+.badge.b-fail { background: rgba(231, 76, 60, 0.2); color: var(--c-fail); }
+.badge.b-error { background: rgba(243, 156, 18, 0.2); color: var(--c-err); }
+.badge.b-timeout { background: rgba(155, 89, 182, 0.2); color: var(--c-to); }
+.badge.b-skip { background: rgba(127, 140, 141, 0.25); color: #b0b8bb; }
+td.detail pre { margin: 0; white-space: pre-wrap; word-break: break-word; color: #94a3b8; font-size: 0.8rem; max-height: 12rem; overflow: auto; }
+footer { margin-top: 1.5rem; font-size: 0.75rem; color: var(--muted); text-align: center; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.print-note { display: none; }
+@media print {
+  body { background: #fff; color: #111; }
+  .wrap { max-width: none; }
+  .topbar, .quality, .pie-box, .ctx { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <h1>MCP Test Report</h1>
+      <div class="sub">MCP Test Harness &mdash; execution summary (HTML)</div>
+    </div>
+    <div class="meta">
+      Harness <strong>1.0.0</strong>
+      <br>Protocol 2025-03-26
+      <br>Generated 2026-04-25 02:47:13 UTC
+    </div>
+  </div>
+
+  <div class="quality bad">
+    <span class="q-dot" aria-hidden="true"></span>
+    <span>QUALITY GATE: FAILED</span>
+  </div>
+
+  <div class="dashboard">
+    <div>
+      <div class="metrics">
+        <div class="metric m-pass"><div class="k">Passed</div><div class="v">2</div></div>
+        <div class="metric m-fail"><div class="k">Failed</div><div class="v">1</div></div>
+        <div class="metric m-err"><div class="k">Errors</div><div class="v">0</div></div>
+        <div class="metric m-skip"><div class="k">Skipped</div><div class="v">1</div></div>
+        <div class="metric m-to"><div class="k">Timeouts</div><div class="v">0</div></div>
+      </div>
+    </div>
+    <div class="pie-box">
+      <div class="pie-outer" role="img" aria-label="Outcome mix">
+        <div class="pie-inner">1842.6 ms</div>
+      </div>
+      <div class="pie-legend">Total time &middot; mix by outcome</div>
+    </div>
+  </div>
+
+  <div class="ctx">
+    <span><strong>Total run</strong> 1842.6 ms</span>
+    <span><strong>Cases</strong> 4</span>
+    <span title="tools, resources, logging"><strong>Server caps (preview)</strong> tools, resources, logging</span>
+  </div>
+
+  <h2 style="font-size:1rem;margin:0 0 .6rem;color:var(--muted);font-weight:600;">Test results</h2>
+  <div class="table-wrap">
+    <table class="results">
+      <thead>
+        <tr>
+          <th>Test</th>
+          <th>Module</th>
+          <th>Status</th>
+          <th>Duration</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr class="row-pass"><td class="name">test_echo_tool</td><td class="module" title="tests/test_server.py">tests/test_server.py</td><td><span class="badge b-pass">PASS</span></td><td class="num">12.4 ms</td><td class="detail"><pre>—</pre></td></tr>
+<tr class="row-pass"><td class="name">test_tool_schema_matches</td><td class="module" title="tests/test_server.py">tests/test_server.py</td><td><span class="badge b-pass">PASS</span></td><td class="num">8.1 ms</td><td class="detail"><pre>—</pre></td></tr>
+<tr class="row-fail"><td class="name">test_bad_snapshot</td><td class="module" title="tests/test_regression.py">tests/test_regression.py</td><td><span class="badge b-fail">FAIL</span></td><td class="num">25.0 ms</td><td class="detail"><pre>Snapshot mismatch for tool &#x27;list&#x27;
+--- expected
++++ actual
+- {&#x27;count&#x27;: 1}
++ {&#x27;count&#x27;: 2}</pre></td></tr>
+<tr class="row-skip"><td class="name">test_optional_prompt</td><td class="module" title="tests/test_prompts.py">tests/test_prompts.py</td><td><span class="badge b-skip">SKIP</span></td><td class="num">0.0 ms</td><td class="detail"><pre>server has no prompts capability</pre></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    Self-contained report &mdash; no external assets. <span class="print-note">Print-friendly layout enabled.</span>
+  </footer>
+</div>
+</body>
+</html>
