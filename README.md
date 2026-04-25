@@ -11,8 +11,9 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)]()
+[![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
 
-
+**Release 1.1.0** — install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`1.1.0`** (runtime, `mcp-test` entrypoint), **`dev`** and **`1.1.0-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan)
 
@@ -30,7 +31,7 @@ MCP Test Harness combines **three testing modes in one tool**:
 
 - **Functional:** protocol-aware assertions (`assert_tool_call`, `assert_resource_read`, schema validation)
 - **Regression:** snapshots and determinism checks (`assert_snapshot`, `assert_tool_idempotent`)
-- **Performance:** latency gates and SLO-style checks (`assert_latency` with p95/p99/mean/median, warmup)
+- **Performance:** latency gates and SLO-style checks (`assert_latency` with p95/p99/mean/median, warmup) plus concurrent load / RPS with `assert_throughput`
 
 This combination means one MCP-aware workflow can validate both **answer quality** and **time-to-answer** in CI.
 
@@ -75,7 +76,7 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | Feature | Description |
 |---------|-------------|
 | Test discovery | Finds `test_*.py` files and `test_` functions automatically (pytest conventions); broken files log a warning with path and exception |
-| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (single-call or **p95/p99/mean** over N runs + **warmup**) - see [docs/PERFORMANCE.md](docs/PERFORMANCE.md) |
+| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (single-call or **p95/p99/mean** over N runs + **warmup**), **`assert_throughput`** (concurrent `call_tool` + optional RPS) - see [docs/PERFORMANCE.md](docs/PERFORMANCE.md) |
 | Fixture system | Built-in `mcp_server` / `mcp_server_session`, custom fixtures; **cycle detection** for dependency errors |
 | Schema validation | JSON-RPC envelope checks; with `schema_validation: true` (default), post-connect checks on `initialize`, `tools/list` (+ tool `inputSchema`), `resources` / `prompts` list shapes, and a best-effort `call_tool` probe to validate `content` item shapes |
 | Snapshot testing | Compare responses; `ignore_fields` and `mask_patterns` for unstable data |
@@ -86,7 +87,7 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | Plugin system | Extend with custom assertions, fixtures, reporters, and transport adapters |
 | Transport support | stdio, SSE, streamable HTTP -- test local and remote servers |
 | GitHub Action | One-line CI integration with artifact upload |
-| **Docker** | [`Dockerfile`](Dockerfile) - OCI image with `mcp-test` (runtime) or `pytest` + dev extras via `--target dev` (see [Docker](#docker)) |
+| **Docker** | Pre-built on **`ghcr.io/vaquarkhan/mcp-test-harness`** (`:latest` / version tags + `:dev`); local [`Dockerfile`](Dockerfile) with `mcp-test` (runtime) or `pytest` + dev extras via `--target dev` (see [Docker](#docker)) |
 | Standalone binary | Single binary via PyInstaller, no Python required on target |
 
 **Beginner demo packs by testing type:** [functional-testing](examples/feature-demo/functional-testing/README.md) · [regression-testing](examples/feature-demo/regression-testing/README.md) · [performance-testing](examples/feature-demo/performance-testing/README.md) (each includes runnable tests plus JSON/JUnit/HTML report config).  
@@ -98,11 +99,15 @@ MCP Test Harness is **deterministic** (your tests call the protocol directly; no
 
 ## Installation
 
-Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
+**Current stable version:** **1.1.0** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
 
 ```bash
 pip install mcp-test-harness
+# pin, if you need a fixed version:
+# pip install mcp-test-harness==1.1.0
 ```
+
+**Same release as a container (GHCR, no local Python):** `docker pull ghcr.io/vaquarkhan/mcp-test-harness:1.1.0` or `:latest` — see the [image](#docker) section for `docker run` and dev tags.
 
 **Optional** [mcplint](src/mcplint/) / MCP-Bastion pin helpers (transitive set can be **large**; same as a full Bastion install):
 
@@ -126,7 +131,7 @@ mcp-test --version
 
 **One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
 
-Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). On each **`v*`** git tag, GitHub Actions also pushes **`ghcr.io/vaquarkhan/mcp-test-harness`** (`:latest`, `:X.Y.Z`, `:dev`, `:X.Y.Z-dev`). Pull the runtime image with `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. Full steps: [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). Each **`v*`** git tag triggers CI that pushes **`ghcr.io/vaquarkhan/mcp-test-harness`**: e.g. **`:1.1.0`**, **`:latest`**, **`:1.1.0-dev`**, **`:dev`**. Quick pull: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. [All versions (GHCR)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
 
 | Build | Description |
 |-------|-------------|
