@@ -22,6 +22,7 @@ Need separate demos by test type? Use:
 - **[feature-demo/performance-testing/README.md](feature-demo/performance-testing/README.md)**
 - **[feature-demo/responsible-ai/README.md](feature-demo/responsible-ai/README.md)**
 - **[feature-demo/usa-interest/README.md](feature-demo/usa-interest/README.md)**
+- **[feature-demo/eu-ai-act/README.md](feature-demo/eu-ai-act/README.md)**
 
 ## One example per core feature (checklist)
 

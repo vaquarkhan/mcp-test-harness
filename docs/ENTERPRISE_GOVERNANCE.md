@@ -47,6 +47,15 @@ For teams building AI-enabled products in the EU (or selling into the EU), MCP T
 4. Link artifacts to release records and change logs.
 5. Periodically review coverage gaps (for example, advertised tools not yet tested).
 
+### EU AI Act starter demo (in this repo)
+
+For a runnable starting point, see:
+
+- `examples/feature-demo/eu-ai-act/test_eu_ai_act_demo.py`
+- `examples/feature-demo/eu-ai-act/mcp_test_eu_ai_act_demo.yaml`
+
+This demo focuses on authorization boundaries, deterministic behavior checks, and auditable report output patterns that teams commonly map into EU AI Act technical evidence workflows.
+
 ### Where you still need additional controls
 
 MCP Test Harness does **not** replace:
