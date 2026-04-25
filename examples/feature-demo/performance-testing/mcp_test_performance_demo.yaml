@@ -1,14 +1,10 @@
 server:
   command: "python -m your_server"
 
-tests:
-  roots:
+test:
+  dirs:
     - "examples/feature-demo/performance-testing"
 
-reports:
-  - format: json
-    output: "examples/feature-demo/performance-testing/reports/performance-demo.json"
-  - format: junit
-    output: "examples/feature-demo/performance-testing/reports/performance-demo.xml"
-  - format: html
-    output: "examples/feature-demo/performance-testing/reports/performance-demo.html"
+report:
+  format: html
+  output: "examples/feature-demo/performance-testing/reports/performance-demo.html"

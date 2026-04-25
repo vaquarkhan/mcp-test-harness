@@ -12,6 +12,7 @@ It also has three **separate test-type demo packs**:
 - `performance-testing/`
 - `responsible-ai/`
 - `usa-interest/`
+- `eu-ai-act/`
 
 ## Run all 30 Python scenarios
 
@@ -48,5 +49,6 @@ mcp-test -c examples/feature-demo/regression-testing/mcp_test_regression_demo.ya
 mcp-test -c examples/feature-demo/performance-testing/mcp_test_performance_demo.yaml
 mcp-test -c examples/feature-demo/responsible-ai/mcp_test_responsible_ai_demo.yaml
 mcp-test -c examples/feature-demo/usa-interest/mcp_test_usa_interest_demo.yaml
+mcp-test -c examples/feature-demo/eu-ai-act/mcp_test_eu_ai_act_demo.yaml
 ```
 

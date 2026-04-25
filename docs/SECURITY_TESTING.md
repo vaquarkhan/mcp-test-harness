@@ -28,6 +28,14 @@ The harness now includes security-oriented assertion helpers for authorization t
 
 These helpers are designed for per-operation checks that reduce "confused deputy" risk in MCP integrations.
 
+## EU AI Act-aligned demo
+
+Use `examples/feature-demo/eu-ai-act/` for a practical starter pack that combines:
+
+- authorization boundary checks
+- deterministic output checks
+- report artifact generation for governance evidence flows
+
 ## Integration model
 
 - Keep core assertions deterministic and cheap.

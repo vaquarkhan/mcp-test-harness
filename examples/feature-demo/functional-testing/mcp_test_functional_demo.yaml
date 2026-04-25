@@ -3,14 +3,10 @@ server:
 
 schema_validation: true
 
-tests:
-  roots:
+test:
+  dirs:
     - "examples/feature-demo/functional-testing"
 
-reports:
-  - format: json
-    output: "examples/feature-demo/functional-testing/reports/functional-demo.json"
-  - format: junit
-    output: "examples/feature-demo/functional-testing/reports/functional-demo.xml"
-  - format: html
-    output: "examples/feature-demo/functional-testing/reports/functional-demo.html"
+report:
+  format: html
+  output: "examples/feature-demo/functional-testing/reports/functional-demo.html"

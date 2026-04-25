@@ -9,6 +9,7 @@
 | **Performance demo pack** | [performance-testing/README.md](performance-testing/README.md) |
 | **Responsible AI demo pack** | [responsible-ai/README.md](responsible-ai/README.md) |
 | **USA interest demo pack** | [usa-interest/README.md](usa-interest/README.md) |
+| **EU AI Act demo pack** | [eu-ai-act/README.md](eu-ai-act/README.md) |
 | **30 scenarios** (one markdown each) | [scenarios/README.md](scenarios/README.md) |
 | **30 runnable Python test demos** (one `.py` each) | [python-scenarios/README.md](python-scenarios/README.md) |
 | **Quick-run guide** (doctor + reports + perf tags) | [example_feature_demo_quick_run.md](example_feature_demo_quick_run.md) |

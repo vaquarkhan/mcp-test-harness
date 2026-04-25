@@ -8,7 +8,7 @@ async def test_performance_latency_p95(mcp_server):
         "echo",
         {"text": "perf-check"},
         max_ms=250,
-        percentile="p95",
+        aggregate="p95",
         runs=20,
         warmup=3,
     )
@@ -21,7 +21,7 @@ async def test_performance_latency_p99(mcp_server):
         "echo",
         {"text": "perf-check"},
         max_ms=400,
-        percentile="p99",
+        aggregate="p99",
         runs=30,
         warmup=5,
     )
