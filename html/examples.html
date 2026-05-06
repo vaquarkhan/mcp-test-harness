@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examples &amp; Tutorial - MCP Test Harness</title>
+<meta name="description" content="Step-by-step tutorial and runnable examples for MCP Test Harness. Functional, regression, performance testing demos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
+      <span class="font-bold text-lg">MCP Test Harness</span>
+      <span class="badge badge-primary text-xs">v1.1.0</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="compare.html" class="nav-link">Compare</a>
+      <a href="examples.html" class="nav-link active">Examples</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness" class="nav-link">GitHub</a>
+      <a href="https://pypi.org/project/mcp-test-harness/" class="btn-outline text-sm py-2 px-4">pip install</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<section class="hero-gradient pt-32 pb-20 text-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <span class="badge badge-live mb-4">30+ RUNNABLE DEMOS</span>
+    <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-4">Examples &amp; Tutorial</h1>
+    <p class="text-xl text-slate-300 max-w-3xl">
+      From zero to passing tests in 5 minutes. Every example is copy-pasteable and runnable.
+    </p>
+    <div class="grid md:grid-cols-4 gap-4 mt-8">
+      <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+        <div class="text-2xl font-bold">5 min</div>
+        <div class="text-sm text-slate-400">First test passing</div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+        <div class="text-2xl font-bold">30+</div>
+        <div class="text-sm text-slate-400">Python scenario demos</div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+        <div class="text-2xl font-bold">6</div>
+        <div class="text-sm text-slate-400">Demo packs by domain</div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+        <div class="text-2xl font-bold">3</div>
+        <div class="text-sm text-slate-400">Report formats</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK START TUTORIAL -->
+<section class="py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-6">
+    <span class="section-kicker">Tutorial</span>
+    <h2 class="text-4xl font-bold mb-8">Zero to first test in 3 steps</h2>
+
+    <!-- Step 1 -->
+    <div class="mb-12">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center">1</div>
+        <h3 class="text-2xl font-bold">Install</h3>
+      </div>
+<pre><code>pip install mcp-test-harness</code></pre>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="mb-12">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center">2</div>
+        <h3 class="text-2xl font-bold">Scaffold</h3>
+      </div>
+<pre><code># Creates tests/test_mcp_server_example.py + mcp-test.yaml
+mcp-test init --server-command "python my_server.py"
+
+# Or check your server health first (no tests):
+mcp-test doctor</code></pre>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="mb-12">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center">3</div>
+        <h3 class="text-2xl font-bold">Run</h3>
+      </div>
+<pre><code>mcp-test
+
+# Output:
+#   [PASS] test_server_has_tools (45.2ms)
+#   [PASS] test_echo_tool (120.8ms)
+#
+# 2 passed, 0 failed, 0 errored, 0 skipped
+# Total time: 312.5ms</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLES BY TESTING MODE -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-5xl mx-auto px-6">
+    <span class="section-kicker">Code Examples</span>
+    <h2 class="text-4xl font-bold mb-8">One example per testing mode</h2>
+
+    <!-- Functional -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="badge badge-primary">FUNCTIONAL</div>
+        <h3 class="text-xl font-bold">Protocol-aware assertions</h3>
+      </div>
+<pre><code>from mcp_test_harness import (
+    assert_tool_call, assert_capabilities,
+    assert_resource_read, assert_tool_schema,
+)
+
+async def test_capabilities(mcp_server):
+    """Server advertises tools and resources."""
+    await assert_capabilities(mcp_server, {"tools": {}, "resources": {}})
+
+async def test_echo(mcp_server):
+    """Call echo tool, validate response."""
+    result = await assert_tool_call(
+        mcp_server, "echo", {"message": "hello"},
+        expected=[{"text": "hello", "isError": False}]
+    )
+
+async def test_schema(mcp_server):
+    """Tool input schema is valid JSON Schema."""
+    await assert_tool_schema(mcp_server, "echo", {
+        "type": "object",
+        "properties": {"message": {"type": "string"}},
+        "required": ["message"]
+    })
+
+async def test_config_resource(mcp_server):
+    """Read a resource and check MIME type."""
+    await assert_resource_read(
+        mcp_server, "file:///config.json",
+        expected_mime_type="application/json"
+    )</code></pre>
+    </div>
+
+    <!-- Regression -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="badge badge-primary">REGRESSION</div>
+        <h3 class="text-xl font-bold">Snapshots and determinism</h3>
+      </div>
+<pre><code>from pathlib import Path
+from mcp_test_harness import assert_snapshot, assert_tool_idempotent
+
+async def test_stable_output(mcp_server):
+    """Response matches stored snapshot."""
+    result = await mcp_server.call_tool("generate_report", {})
+    await assert_snapshot(result, "report_output", test_file=Path(__file__))
+
+async def test_masked_snapshot(mcp_server):
+    """Snapshot with volatile fields masked."""
+    result = await mcp_server.call_tool("with_ids", {})
+    await assert_snapshot(
+        result, "noisy",
+        test_file=Path(__file__),
+        ignore_fields=["requestId", "timestamp"],
+        mask_patterns=[r"req_[a-f0-9]+"],
+    )
+
+async def test_idempotent(mcp_server):
+    """Same input always produces same output."""
+    await assert_tool_idempotent(
+        mcp_server, "calculate", {"expr": "2+2"}, iterations=5
+    )</code></pre>
+    </div>
+
+    <!-- Performance -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="badge badge-primary">PERFORMANCE</div>
+        <h3 class="text-xl font-bold">Latency gates and load testing</h3>
+      </div>
+<pre><code>from mcp_test_harness import assert_latency, assert_throughput, marker
+
+@marker(tags=["perf"])
+async def test_echo_p95(mcp_server):
+    """Echo responds under 200ms at p95."""
+    await assert_latency(
+        mcp_server, "echo", {"message": "hi"},
+        p95_ms=200, iterations=20, warmup=3
+    )
+
+@marker(tags=["perf"])
+async def test_echo_p99(mcp_server):
+    """Echo responds under 500ms at p99."""
+    await assert_latency(
+        mcp_server, "echo", {"message": "hi"},
+        p99_ms=500, iterations=50, warmup=5
+    )
+
+@marker(tags=["perf", "load"])
+async def test_throughput(mcp_server):
+    """Sustain 10 RPS with p95 under 300ms."""
+    await assert_throughput(
+        mcp_server, "echo", {"message": "load"},
+        target_rps=10, duration_s=10, p95_ms=300
+    )</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- CONFIG EXAMPLE -->
+<section class="py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-6">
+    <span class="section-kicker">Configuration</span>
+    <h2 class="text-4xl font-bold mb-8">mcp-test.yaml reference</h2>
+
+<pre><code># mcp-test.yaml - full configuration example
+server:
+  command: python my_server.py
+  transport: stdio                    # stdio | sse | http
+  transport_options:
+    # headers:
+    #   Authorization: "Bearer token"
+
+test:
+  dirs: [tests/]
+  timeout: 30                         # per-test timeout (seconds)
+  parallel: false
+  workers: 4
+
+report:
+  format: junit                       # json | junit | html
+  output: reports/results.xml
+
+schema_validation: true               # validate JSON-RPC responses
+plugins: []                           # custom plugin modules</code></pre>
+  </div>
+</section>
+
+<!-- CI EXAMPLES -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-5xl mx-auto px-6">
+    <span class="section-kicker">CI Integration</span>
+    <h2 class="text-4xl font-bold mb-8">GitHub Actions in 10 lines</h2>
+
+<pre><code># .github/workflows/mcp-tests.yml
+name: MCP Server Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install mcp-test-harness
+      - run: mcp-test --report-format junit --report-output results.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: results.xml</code></pre>
+
+    <div class="mt-8 grid md:grid-cols-3 gap-4">
+      <div class="feature-card">
+        <div class="font-bold mb-1">JUnit XML</div>
+        <div class="text-sm text-slate-600">GitHub Actions, Jenkins, GitLab CI all parse JUnit natively.</div>
+      </div>
+      <div class="feature-card">
+        <div class="font-bold mb-1">JSON report</div>
+        <div class="text-sm text-slate-600">Full metadata: server capabilities, retry history, schema violations.</div>
+      </div>
+      <div class="feature-card">
+        <div class="font-bold mb-1">HTML report</div>
+        <div class="text-sm text-slate-600">Visual dashboard with pass/fail, timing, and assertion details.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO PACKS -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <span class="section-kicker">Demo Packs</span>
+      <h2 class="text-4xl font-bold mb-4">Runnable examples by domain</h2>
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto">Each pack includes tests, YAML config, and report output. Clone and run.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/functional-testing" class="feature-card hover:border-indigo-400 block">
+        <div class="badge badge-primary mb-3">FUNCTIONAL</div>
+        <h3 class="font-bold mb-2">Functional Testing Pack</h3>
+        <p class="text-sm text-slate-600">assert_tool_call, assert_capabilities, assert_resource_read, schema validation. The basics.</p>
+      </a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/regression-testing" class="feature-card hover:border-emerald-400 block">
+        <div class="badge mb-3">REGRESSION</div>
+        <h3 class="font-bold mb-2">Regression Testing Pack</h3>
+        <p class="text-sm text-slate-600">Snapshots, idempotency, ignore_fields, mask_patterns. Catch silent changes.</p>
+      </a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/performance-testing" class="feature-card hover:border-purple-400 block">
+        <div class="badge badge-warn mb-3">PERFORMANCE</div>
+        <h3 class="font-bold mb-2">Performance Testing Pack</h3>
+        <p class="text-sm text-slate-600">assert_latency p95/p99, warmup, assert_throughput, SLO gates.</p>
+      </a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/eu-ai-act" class="feature-card hover:border-rose-400 block">
+        <div class="badge badge-warn mb-3">GOVERNANCE</div>
+        <h3 class="font-bold mb-2">EU AI Act Demo</h3>
+        <p class="text-sm text-slate-600">Governance evidence, audit artifacts, compliance-oriented test patterns.</p>
+      </a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/responsible-ai" class="feature-card hover:border-amber-400 block">
+        <div class="badge mb-3">RESPONSIBLE AI</div>
+        <h3 class="font-bold mb-2">Responsible AI Pack</h3>
+        <p class="text-sm text-slate-600">Safety checks, boundary testing, repeatable evidence for governance programs.</p>
+      </a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/python-scenarios" class="feature-card hover:border-cyan-400 block">
+        <div class="badge badge-primary mb-3">30 SCENARIOS</div>
+        <h3 class="font-bold mb-2">Python Scenario Index</h3>
+        <p class="text-sm text-slate-600">One .py file per assertion/feature. Copy the one you need.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ASSERTION REFERENCE -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <span class="section-kicker">Reference</span>
+      <h2 class="text-4xl font-bold mb-4">All built-in assertions</h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="benchmark-table text-sm">
+        <thead>
+          <tr>
+            <th>Assertion</th>
+            <th>Mode</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="font-mono font-semibold">assert_tool_call</td><td>Functional</td><td>Invoke a tool, validate response content</td></tr>
+          <tr><td class="font-mono font-semibold">assert_resource_read</td><td>Functional</td><td>Read a resource, check content and MIME type</td></tr>
+          <tr><td class="font-mono font-semibold">assert_prompt</td><td>Functional</td><td>Get a prompt, validate messages</td></tr>
+          <tr><td class="font-mono font-semibold">assert_capabilities</td><td>Functional</td><td>Verify server capabilities object</td></tr>
+          <tr><td class="font-mono font-semibold">assert_tool_schema</td><td>Functional</td><td>Validate tool inputSchema against expected</td></tr>
+          <tr><td class="font-mono font-semibold">assert_protocol_version</td><td>Functional</td><td>Check MCP protocol version string</td></tr>
+          <tr><td class="font-mono font-semibold">assert_tool_call_validates_input</td><td>Functional</td><td>Verify args validated against inputSchema</td></tr>
+          <tr><td class="font-mono font-semibold">assert_tool_denied</td><td>Security</td><td>Verify tool rejects unauthorized calls</td></tr>
+          <tr><td class="font-mono font-semibold">assert_authorization_boundary</td><td>Security</td><td>Test RBAC boundaries</td></tr>
+          <tr><td class="font-mono font-semibold">assert_snapshot</td><td>Regression</td><td>Compare response to stored snapshot</td></tr>
+          <tr><td class="font-mono font-semibold">assert_tool_idempotent</td><td>Regression</td><td>Same input produces same output N times</td></tr>
+          <tr><td class="font-mono font-semibold">assert_latency</td><td>Performance</td><td>p95/p99/mean/median over N iterations + warmup</td></tr>
+          <tr><td class="font-mono font-semibold">assert_throughput</td><td>Performance</td><td>Concurrent load, target RPS, latency gate</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 text-white">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold mb-6">Ready to try it?</h2>
+    <p class="text-xl text-indigo-100 mb-8">pip install, init, run. Under 5 minutes.</p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/QUICK_START.md" class="btn-ghost">Quick Start Guide</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/DEVELOPER_GUIDE.md" class="btn-ghost">Full Developer Guide</a>
+      <a href="https://pypi.org/project/mcp-test-harness/" class="bg-white text-indigo-700 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition">
+        pip install mcp-test-harness
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-slate-900 text-slate-400 py-12">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
+          <span class="font-bold text-lg text-white">MCP Test Harness</span>
+        </div>
+        <p class="text-sm">MIT licensed. Built for MCP server developers.</p>
+      </div>
+      <div class="flex gap-8 text-sm">
+        <a href="https://github.com/vaquarkhan/mcp-test-harness" class="hover:text-white">GitHub</a>
+        <a href="https://pypi.org/project/mcp-test-harness/" class="hover:text-white">PyPI</a>
+        <a href="index.html" class="hover:text-white">Home</a>
+        <a href="compare.html" class="hover:text-white">Compare</a>
+      </div>
+    </div>
+    <div class="mt-8 pt-8 border-t border-slate-800 text-xs text-center">
+      MCP Test Harness v1.1.0 · MIT License · Author: Vaquar Khan
+    </div>
+  </div>
+</footer>
+</body>
+</html>

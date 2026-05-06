@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare - MCP Test Harness vs Alternatives</title>
+<meta name="description" content="MCP Test Harness compared with MCP Inspector, manual testing, and other approaches. Feature matrix, capabilities, and why it matters.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MCP Test Harness">
+<meta property="og:title" content="MCP Test Harness vs the MCP testing landscape">
+<meta property="og:description" content="Feature matrix, capability comparison, and why code-first MCP testing matters.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
+      <span class="font-bold text-lg">MCP Test Harness</span>
+      <span class="badge badge-primary text-xs">v1.1.0</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="compare.html" class="nav-link active">Compare</a>
+      <a href="examples.html" class="nav-link">Examples</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness" class="nav-link">GitHub</a>
+      <a href="https://pypi.org/project/mcp-test-harness/" class="btn-outline text-sm py-2 px-4">pip install</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<section class="hero-gradient pt-32 pb-20 text-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <span class="section-kicker text-indigo-300">MCP Testing Landscape</span>
+    <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-4 mt-2">Why MCP Test Harness</h1>
+    <p class="text-xl text-slate-300 max-w-3xl">
+      The MCP ecosystem has exploration tools, conformance suites, and eval frameworks. MCP Test Harness fills the gap: <strong class="text-white">CI-native, code-first, deterministic test automation</strong> for MCP servers.
+    </p>
+  </div>
+</section>
+
+<!-- POSITIONING -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-12">
+      <span class="section-kicker">Where it fits</span>
+      <h2 class="text-4xl font-bold mb-4">Different tools for different jobs</h2>
+      <p class="text-lg text-slate-600 max-w-3xl">
+        MCP Inspector is for exploration. Conformance suites verify spec compliance. Eval frameworks benchmark LLM behavior. MCP Test Harness is for <strong>automated, repeatable, CI-native testing</strong> of your MCP server's tools, resources, and prompts.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6 mb-12">
+      <div class="feature-card">
+        <div class="badge badge-primary mb-3">THIS TOOL</div>
+        <h3 class="font-bold mb-2">MCP Test Harness</h3>
+        <p class="text-sm text-slate-600">CI-native functional, regression, and performance testing. Code-first. Deterministic. No LLM required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="badge mb-3">EXPLORATION</div>
+        <h3 class="font-bold mb-2">MCP Inspector</h3>
+        <p class="text-sm text-slate-600">Interactive GUI for exploring MCP servers. Great for development. Not automatable in CI.</p>
+      </div>
+      <div class="feature-card">
+        <div class="badge mb-3">CONFORMANCE</div>
+        <h3 class="font-bold mb-2">Spec suites</h3>
+        <p class="text-sm text-slate-600">Verify protocol compliance against the MCP specification. Complementary to functional testing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="badge mb-3">EVAL</div>
+        <h3 class="font-bold mb-2">LLM eval frameworks</h3>
+        <p class="text-sm text-slate-600">Benchmark model behavior with LLM-in-the-loop. Different problem space (non-deterministic).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITY MATRIX -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-12">
+      <span class="section-kicker">Capability Matrix</span>
+      <h2 class="text-4xl font-bold mb-4">Feature comparison across approaches</h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="benchmark-table text-sm">
+        <thead>
+          <tr>
+            <th class="sticky left-0 bg-slate-900">Capability</th>
+            <th class="text-center">MCP Test Harness</th>
+            <th class="text-center">MCP Inspector</th>
+            <th class="text-center">pytest (manual)</th>
+            <th class="text-center">Postman/Newman</th>
+            <th class="text-center">Custom scripts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-semibold">MCP protocol-aware assertions</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center">visual only</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">manual</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Auto test discovery (pytest conventions)</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Snapshot / regression testing</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">plugin</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Performance / latency gates (p95/p99)</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">basic</td>
+            <td class="text-center">manual</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Throughput / RPS testing</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">manual</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Server lifecycle management</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">manual</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">MCP handshake + session injection</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">manual</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Parallel execution</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Watch mode</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">plugin</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">JUnit XML / JSON reports</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">GitHub Action (one-line CI)</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">manual</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Docker / OCI image</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Plugin / extension system</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center">limited</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Multi-transport (stdio/SSE/HTTP)</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">HTTP only</td>
+            <td class="text-center">manual</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Security assertions (auth boundary)</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Schema validation (JSON-RPC + MCP)</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center">partial</td>
+            <td class="text-center text-slate-400">—</td>
+            <td class="text-center">manual</td>
+            <td class="text-center text-slate-400">—</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Deterministic (no LLM needed)</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+            <td class="text-center text-xl">✅</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">License</td>
+            <td class="text-center"><span class="badge" style="background:rgba(16,185,129,0.15);color:#059669">MIT</span></td>
+            <td class="text-center"><span class="badge" style="background:rgba(16,185,129,0.15);color:#059669">MIT</span></td>
+            <td class="text-center"><span class="badge" style="background:rgba(16,185,129,0.15);color:#059669">MIT</span></td>
+            <td class="text-center"><span class="badge" style="background:rgba(245,158,11,0.15);color:#b45309">Freemium</span></td>
+            <td class="text-center">varies</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- RADAR CHART -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-12 text-center">
+      <span class="section-kicker">Capability Profile</span>
+      <h2 class="text-4xl font-bold mb-4">Visual comparison</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="chart-container tall">
+        <canvas id="featureRadarChart"></canvas>
+      </div>
+
+      <div class="space-y-4">
+        <div class="metric-card">
+          <div class="font-semibold mb-1">✅ Protocol-aware assertions</div>
+          <div class="text-sm text-slate-600">12+ built-in assertions that understand MCP protocol semantics. Not generic HTTP checks.</div>
+        </div>
+        <div class="metric-card">
+          <div class="font-semibold mb-1">✅ Regression detection</div>
+          <div class="text-sm text-slate-600">Snapshot testing with field masking. Idempotency checks. Catch silent changes before they ship.</div>
+        </div>
+        <div class="metric-card">
+          <div class="font-semibold mb-1">✅ Performance gates</div>
+          <div class="text-sm text-slate-600">p95/p99/mean/median latency assertions. Throughput testing with concurrent load. SLO enforcement in CI.</div>
+        </div>
+        <div class="metric-card">
+          <div class="font-semibold mb-1">✅ CI-native</div>
+          <div class="text-sm text-slate-600">JUnit XML, JSON reports, GitHub Action, Docker images. Designed for pipelines from day one.</div>
+        </div>
+        <div class="metric-card">
+          <div class="font-semibold mb-1">✅ Zero LLM dependency</div>
+          <div class="text-sm text-slate-600">Deterministic tests. No model calls, no flaky AI outputs, no API costs. Your tests pass or fail the same way every time.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY TEAMS PICK THIS -->
+<section class="py-20 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 text-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold mb-4">Why teams pick MCP Test Harness</h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div>
+        <div class="w-12 h-12 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center mb-4 text-2xl">🚀</div>
+        <h3 class="text-xl font-bold mb-2">Speed to value</h3>
+        <p class="text-indigo-100">pip install, mcp-test init, run. First test passes in under 5 minutes. No boilerplate, no configuration ceremony.</p>
+      </div>
+      <div>
+        <div class="w-12 h-12 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center mb-4 text-2xl">🔁</div>
+        <h3 class="text-xl font-bold mb-2">Repeatability</h3>
+        <p class="text-indigo-100">Deterministic tests that pass or fail the same way every time. No LLM variance, no flaky model outputs, no API rate limits.</p>
+      </div>
+      <div>
+        <div class="w-12 h-12 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center mb-4 text-2xl">📊</div>
+        <h3 class="text-xl font-bold mb-2">Full coverage</h3>
+        <p class="text-indigo-100">Functional + regression + performance in one tool. One workflow validates both correctness and latency on every push.</p>
+      </div>
+      <div>
+        <div class="w-12 h-12 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center mb-4 text-2xl">🏗️</div>
+        <h3 class="text-xl font-bold mb-2">Familiar patterns</h3>
+        <p class="text-indigo-100">pytest conventions. async/await. Fixtures with setup/teardown. If you know Python testing, you already know this tool.</p>
+      </div>
+      <div>
+        <div class="w-12 h-12 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center mb-4 text-2xl">🔐</div>
+        <h3 class="text-xl font-bold mb-2">Security-aware</h3>
+        <p class="text-indigo-100">Authorization boundary assertions. Pairs with MCP-Bastion for runtime defense. Test and protect in one workflow.</p>
+      </div>
+      <div>
+        <div class="w-12 h-12 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center mb-4 text-2xl">🆓</div>
+        <h3 class="text-xl font-bold mb-2">MIT open source</h3>
+        <p class="text-indigo-100">Forever free. No vendor lock-in. No per-seat licensing. Use in any commercial product without restriction.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <span class="section-kicker">Use Cases</span>
+      <h2 class="text-4xl font-bold mb-4">Who benefits most</h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="feature-card">
+        <div class="badge badge-primary mb-3">MCP SERVER AUTHORS</div>
+        <h3 class="font-bold mb-2">Ship with confidence</h3>
+        <p class="text-sm text-slate-600">Test every tool, resource, and prompt before release. Catch regressions in CI. Validate schema compliance automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="badge badge-primary mb-3">PLATFORM TEAMS</div>
+        <h3 class="font-bold mb-2">Enforce quality gates</h3>
+        <p class="text-sm text-slate-600">Latency SLOs in CI. Security boundary checks. Governance artifacts for compliance programs. Standardize MCP testing across teams.</p>
+      </div>
+      <div class="feature-card">
+        <div class="badge badge-primary mb-3">AI ENGINEERING</div>
+        <h3 class="font-bold mb-2">Validate tool behavior</h3>
+        <p class="text-sm text-slate-600">Ensure MCP tools return correct results before connecting them to agents. Deterministic validation without LLM costs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<section class="py-20 bg-slate-50">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <span class="section-kicker">Ecosystem</span>
+      <h2 class="text-4xl font-bold mb-4">Works with your stack</h2>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6">
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">🐍</div>
+        <h3 class="font-bold">Python 3.11+</h3>
+        <p class="text-xs text-slate-600 mt-2">Any Python MCP server</p>
+      </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">🐙</div>
+        <h3 class="font-bold">GitHub Actions</h3>
+        <p class="text-xs text-slate-600 mt-2">One-line CI integration</p>
+      </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">🐳</div>
+        <h3 class="font-bold">Docker / GHCR</h3>
+        <p class="text-xs text-slate-600 mt-2">Pre-built container images</p>
+      </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">🔧</div>
+        <h3 class="font-bold">Jenkins / GitLab</h3>
+        <p class="text-xs text-slate-600 mt-2">JUnit XML reports</p>
+      </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">🛡️</div>
+        <h3 class="font-bold">MCP-Bastion</h3>
+        <p class="text-xs text-slate-600 mt-2">Security middleware companion</p>
+      </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">📡</div>
+        <h3 class="font-bold">stdio / SSE / HTTP</h3>
+        <p class="text-xs text-slate-600 mt-2">All MCP transports</p>
+      </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">🧩</div>
+        <h3 class="font-bold">Plugin system</h3>
+        <p class="text-xs text-slate-600 mt-2">Custom assertions + reporters</p>
+      </div>
+      <div class="feature-card text-center">
+        <div class="feature-icon mx-auto">📦</div>
+        <h3 class="font-bold">PyInstaller</h3>
+        <p class="text-xs text-slate-600 mt-2">Standalone binary distribution</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 bg-white">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold mb-6">Ready to automate MCP testing?</h2>
+    <p class="text-lg text-slate-600 mb-8">Install, scaffold, run. Under 5 minutes to your first passing test.</p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="https://pypi.org/project/mcp-test-harness/" class="btn-primary">
+        pip install mcp-test-harness
+      </a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/QUICK_START.md" class="btn-outline">Quick Start Guide</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness" class="btn-outline">View on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-slate-900 text-slate-400 py-12">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
+          <span class="font-bold text-lg text-white">MCP Test Harness</span>
+        </div>
+        <p class="text-sm">MIT licensed. Built for MCP server developers.</p>
+      </div>
+      <div class="flex gap-8 text-sm">
+        <a href="https://github.com/vaquarkhan/mcp-test-harness" class="hover:text-white">GitHub</a>
+        <a href="https://pypi.org/project/mcp-test-harness/" class="hover:text-white">PyPI</a>
+        <a href="index.html" class="hover:text-white">Home</a>
+        <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/QUICK_START.md" class="hover:text-white">Quick Start</a>
+      </div>
+    </div>
+    <div class="mt-8 pt-8 border-t border-slate-800 text-xs text-center">
+      MCP Test Harness v1.1.0 · MIT License · Author: Vaquar Khan
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="assets/charts.js"></script>
+</body>
+</html>
