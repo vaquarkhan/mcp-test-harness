@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vaquarkhan.github.io/mcp-test-harness/sitemap.xml
