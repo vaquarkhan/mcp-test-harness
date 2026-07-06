@@ -42,8 +42,7 @@ from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_c
 
 logger = logging.getLogger(__name__)
 
-# Harness version -- used in SessionResults metadata
-_HARNESS_VERSION = "1.1.0"
+from mcp_test_harness import __version__ as _HARNESS_VERSION
 
 _FAIL_FAST_SKIP = "Not run (--fail-fast) after an earlier failure."
 

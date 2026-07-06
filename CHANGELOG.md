@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-07-06
+
+### Changed
+
+- **Major release (semver 2.0.0):** bundles v1.2 platform QA (coverage map, unified portal, SARIF, security payloads, baselines) and v1.3 diagnostics (MCP trace, chaos, `mcp-test generate`), e2e dogfood, and 100% coverage CI gate.
+- **All 18 PyPI artifacts** aligned at **2.0.0**: `mcp-test-harness` plus 17 optional `mcp-test-harness-*` provider packs under `packages/`.
+- **Docker / GHCR** images tagged **`2.0.0`**, **`2.0.0-dev`**, **`latest`**, and **`dev`** on `v2.0.0` git tag.
+- **`SessionResults.harness_version`** now tracks `mcp_test_harness.__version__` (no hardcoded scheduler string).
+
+### Added
+
+- **Bulk optional-package publish** on `v*` tags via [`.github/workflows/publish.yml`](.github/workflows/publish.yml) matrix job.
+
 ## [1.3.0] - 2026-07-05
 
 ### Added

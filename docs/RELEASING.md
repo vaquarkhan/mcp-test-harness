@@ -22,7 +22,7 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
 
 ## Release checklist (each version)
 
-1. **Version** — bump in [pyproject.toml](../pyproject.toml), [server.json](../server.json), [CITATION.cff](../CITATION.cff) (if you track version there), and any **optional** `packages/mcp-test-harness-*` that ship with the same tag.
+1. **Version** — bump in [pyproject.toml](../pyproject.toml), all **`packages/mcp-test-harness-*`** `pyproject.toml` + `__init__.py` files (18 artifacts total), [server.json](../server.json), [CITATION.cff](../CITATION.cff) (if you track version there), [html/](../html/) site badges, and [README.md](../README.md).
 2. **Changelog** — add a dated section in [CHANGELOG.md](../CHANGELOG.md) for `X.Y.Z`.
 3. **Commit** — merge to `main` (or your release branch).
 4. **Tag and push** (from the commit you want to release):
@@ -32,14 +32,14 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
    git push origin v1.0.1
    ```
 
-5. **Watch Actions** — [Actions](https://github.com/vaquarkhan/mcp-test-harness/actions): `publish` (PyPI) and `docker-publish` (GHCR) should both succeed.
+5. **Watch Actions** — [Actions](https://github.com/vaquarkhan/mcp-test-harness/actions): `publish` (main + **all 17 optional** wheels via matrix), `docker-publish` (GHCR `:X.Y.Z`, `:latest`, `:X.Y.Z-dev`, `:dev`) should succeed.
 
-## Docker tags after a `v1.0.1` push
+## Docker tags after a `v2.0.0` push
 
 | Image | Tags (examples) |
 |-------|-----------------|
-| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:1.0.1`, `:latest` |
-| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:1.0.1-dev`, `:dev` |
+| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:2.0.0`, `:latest` |
+| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:2.0.0-dev`, `:dev` |
 
 ```bash
 docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest

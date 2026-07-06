@@ -1,3 +1,3 @@
 """MCP Test Harness helpers for Mistral AI testing."""
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
