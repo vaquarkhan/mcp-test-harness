@@ -21,6 +21,9 @@ Use this as a **checklist** so every [README Core features](../README.md#core-fe
 | 12 | **GitHub Action** | [example_github_actions.md](example_github_actions.md) |
 | 13 | **Docker** | [example_docker.md](example_docker.md) |
 | 14 | **Standalone binary** | [example_pyinstaller.md](example_pyinstaller.md) |
+| 15 | **MCP trace timeline** (v1.3) | [example_mcp_trace.md](example_mcp_trace.md) · [feature-demo/platform-qa/](feature-demo/platform-qa/README.md) |
+| 16 | **Chaos testing** (v1.3) | [example_chaos_testing.md](example_chaos_testing.md) |
+| 17 | **`mcp-test generate`** (v1.3) | [example_generate_scaffold.md](example_generate_scaffold.md) |
 
 **30 scenarios (one markdown each):** [feature-demo/scenarios/README.md](feature-demo/scenarios/README.md) — under [feature-demo](feature-demo/README.md) with a sample HTML report; training-style index for discovery, reports, transports, Docker, and every major assertion style.
 
@@ -30,4 +33,4 @@ Use this as a **checklist** so every [README Core features](../README.md#core-fe
 
 **Regulatory evidence demo pack:** [feature-demo/eu-ai-act/README.md](feature-demo/eu-ai-act/README.md) — examples for robustness, traceability, and report artifacts aligned to EU AI Act documentation workflows.
 
-**Also useful (not a separate “core” row):** [example_mcp_test_init.md](example_mcp_test_init.md) (`mcp-test init`) · [example_cli_list_filters.md](example_cli_list_filters.md) (`--list`, `-k`, `-m`) · [example_doctor.md](example_doctor.md) (`mcp-test doctor`) · [example_enhanced_reports.md](example_enhanced_reports.md) (HTML/JSON/JUnit enriched outputs) · [feature-demo/example_feature_demo_quick_run.md](feature-demo/example_feature_demo_quick_run.md) · [validate_mcp_test_config.py](validate_mcp_test_config.py) · [version_gate.py](version_gate.py) · [basic_usage.py](basic_usage.py) (mcplint) · [COLLECTIONS.md](../docs/COLLECTIONS.md) (Postman-style flows)
+**Also useful (not a separate “core” row):** [example_mcp_test_init.md](example_mcp_test_init.md) (`mcp-test init`) · [example_cli_list_filters.md](example_cli_list_filters.md) (`--list`, `-k`, `-m`) · [example_doctor.md](example_doctor.md) (`mcp-test doctor`) · [example_enhanced_reports.md](example_enhanced_reports.md) (HTML/JSON/JUnit enriched outputs) · [example_mcp_trace.md](example_mcp_trace.md) · [example_chaos_testing.md](example_chaos_testing.md) · [example_generate_scaffold.md](example_generate_scaffold.md) · [feature-demo/example_feature_demo_quick_run.md](feature-demo/example_feature_demo_quick_run.md) · [validate_mcp_test_config.py](validate_mcp_test_config.py) · [version_gate.py](version_gate.py) · [basic_usage.py](basic_usage.py) (mcplint) · [COLLECTIONS.md](../docs/COLLECTIONS.md) (Postman-style flows)

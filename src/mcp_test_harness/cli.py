@@ -30,6 +30,7 @@ def _build_parser() -> argparse.ArgumentParser:
         description="MCP Test Harness -- a pytest-style testing framework for MCP servers.",
         epilog=(
             "Tip: run `mcp-test init` in your project to scaffold tests; "
+            "`mcp-test generate` drafts tests from tools/list; "
             "`mcp-test doctor` checks server handshake and lists tools (no tests required)."
         ),
     )
@@ -394,6 +395,10 @@ def main(argv: list[str] | None = None) -> int:
         from mcp_test_harness.doctor import run_doctor
 
         return run_doctor(av[1:])
+    if av and av[0] == "generate":
+        from mcp_test_harness.generate import run_generate
+
+        return run_generate(av[1:])
     return asyncio.run(_async_main(av))
 
 

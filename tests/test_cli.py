@@ -150,7 +150,7 @@ class TestAsyncMainVersion:
         assert code == 0
         captured = capsys.readouterr()
         assert "mcp-test" in captured.out
-        assert "1.2.0" in captured.out
+        assert "1.3.0" in captured.out
 
 
 # ---------------------------------------------------------------------------
@@ -427,6 +427,12 @@ class TestMainSync:
             code = main(["doctor", "--no-schema"])
         assert code == 7
         rd.assert_called_once_with(["--no-schema"])
+
+    def test_main_dispatches_generate_subcommand(self):
+        with patch("mcp_test_harness.generate.run_generate", return_value=0) as rg:
+            code = main(["generate", "--server-command", "x"])
+        assert code == 0
+        rg.assert_called_once_with(["--server-command", "x"])
 
 
 # ---------------------------------------------------------------------------

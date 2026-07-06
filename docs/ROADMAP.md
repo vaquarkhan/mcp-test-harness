@@ -16,7 +16,7 @@ This roadmap groups planned capabilities into practical delivery phases while pr
 ## Next (major value unlock)
 
 1. ~~Security baseline assertions~~ — **shipped:** `security_payloads.py`, auth boundaries, unified portal, SARIF export, OWASP rule IDs in JSON/SARIF.
-2. MCP trace capture per test and timeline rendering in HTML.
+2. ~~MCP trace capture per test and timeline rendering in HTML~~ — **shipped (v1.3):** `trace.py`, `mcp_trace` in JSON/HTML timelines.
 3. ~~Tool/resource coverage map~~ — **shipped:** `coverage.py` in JSON/HTML reports.
 4. ~~Throughput + baseline-based performance regression gates~~ — **shipped:** `assert_throughput` (`max_p99_ms`, `max_error_rate`), `assert_latency_within_baseline`.
 
@@ -60,7 +60,7 @@ Strategic bets that turn the harness from a test library into the **pre-producti
 
 - **Now:** SLO-oriented perf (`assert_latency`, `assert_throughput`), HTML report polish, demos.
 - **Next:** unified run summary in HTML/JSON, security payload packs, coverage map, baseline perf gates, first resiliency assertions.
-- **Later:** ~~GitHub PR commentary~~ **shipped (v1.2):** composite action `pr-comment` input; signed audit exports, contract replay, full resiliency/chaos scenarios.
+- **Later:** ~~GitHub PR commentary~~ **shipped (v1.2):** composite action `pr-comment` input; **protocol-aware chaos** **shipped (v1.3):** `chaos.py`; **offline test generate** **shipped (v1.3):** `mcp-test generate`; signed audit exports, contract replay, full resiliency/chaos scenarios.
 
 Companion tools stay complementary: [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) for runtime defense; external load generators for extreme scale; LLM eval frameworks for non-deterministic agent quality (see [COMPARISON.md](COMPARISON.md)).
 

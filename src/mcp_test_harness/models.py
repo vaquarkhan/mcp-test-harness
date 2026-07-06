@@ -69,6 +69,8 @@ class CaseResult:
     tags: list[str] = field(default_factory=list)
     #: Wall-clock test start (ISO 8601 UTC), when known.
     started_at: str | None = None
+    #: JSON-RPC trace events captured during the test (diagnostics / HTML timeline).
+    mcp_trace: dict[str, Any] | None = None
 
 
 @dataclass

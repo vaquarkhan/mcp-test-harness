@@ -23,6 +23,7 @@ Need separate demos by test type? Use:
 - **[feature-demo/responsible-ai/README.md](feature-demo/responsible-ai/README.md)**
 - **[feature-demo/usa-interest/README.md](feature-demo/usa-interest/README.md)**
 - **[feature-demo/eu-ai-act/README.md](feature-demo/eu-ai-act/README.md)**
+- **[feature-demo/platform-qa/README.md](feature-demo/platform-qa/README.md)** — v1.3 trace, chaos, and `mcp-test generate`
 
 ## One example per core feature (checklist)
 
@@ -48,6 +49,9 @@ Start here: **[FEATURES_INDEX.md](FEATURES_INDEX.md)** — maps each [README Cor
 | **CLI `--list`, `-k`, `-m`** | [example_cli_list_filters.md](example_cli_list_filters.md) |
 | **`mcp-test doctor`** | [example_doctor.md](example_doctor.md) |
 | **Enhanced reports** (HTML/JSON/JUnit details) | [example_enhanced_reports.md](example_enhanced_reports.md) |
+| **MCP trace timeline** (v1.3) | [example_mcp_trace.md](example_mcp_trace.md) · [feature-demo/platform-qa/](feature-demo/platform-qa/README.md) |
+| **Chaos testing** (v1.3) | [example_chaos_testing.md](example_chaos_testing.md) · [feature-demo/platform-qa/test_platform_qa_demo.py](feature-demo/platform-qa/test_platform_qa_demo.py) |
+| **`mcp-test generate`** (v1.3) | [example_generate_scaffold.md](example_generate_scaffold.md) · [sample_mcp_generated.example.py](feature-demo/platform-qa/sample_mcp_generated.example.py) |
 
 ## Runnable scripts
 
