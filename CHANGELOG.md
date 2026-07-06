@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-05
+
+### Added
+
+- **MCP trace capture:** per-test JSON-RPC event log (`mcp_trace`) with stdio pollution hints; interactive timeline in HTML reports.
+- **Protocol-aware chaos:** `@marker(tags=["chaos"], chaos_faults=[...])` — delay, 503, truncate, schema drift on `call_tool`.
+- **`mcp-test generate`:** offline schema-driven test scaffolding from live `tools/list` (+ optional `--drift-report`).
+- **E2E dogfood:** `tests/test_harness_dogfood_e2e.py` runs the real `mcp-test` CLI against bundled FastMCP fixtures; CI enforces `coverage report --fail-under=100` on every PR and uploads coverage HTML + dogfood smoke report on `main`.
+- **Docs/images:** [`docs/images/dogfood-e2e.svg`](docs/images/dogfood-e2e.svg); README and [DEVELOPER.md](docs/DEVELOPER.md) dogfood sections.
+- **Developer examples (v1.3):** [example_mcp_trace.md](examples/example_mcp_trace.md), [example_chaos_testing.md](examples/example_chaos_testing.md), [example_generate_scaffold.md](examples/example_generate_scaffold.md), [platform-qa demo pack](examples/feature-demo/platform-qa/README.md).
+
+### Fixed
+
+- **GitHub Pages:** deploy only `html/` (with `.nojekyll`) instead of the entire repository; fixes failed `pages-build-deployment` runs.
+
 ## [1.2.0] - 2026-07-05
 
 ### Added

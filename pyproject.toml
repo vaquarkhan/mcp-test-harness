@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness"
-version = "1.2.0"
+version = "1.3.0"
 description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -46,6 +46,7 @@ dev = [
   "pytest-asyncio>=0.21.0",
   "jsonschema>=4.0.0",
   "pyinstaller>=6.0.0",
+  "coverage>=7.0.0",
 ]
 
 [project.urls]
@@ -81,6 +82,10 @@ include = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 pythonpath = ["src"]
+addopts = "--ignore=tests/fixtures/harness_self_test"
+markers = [
+  "e2e: end-to-end dogfood tests (subprocess mcp-test CLI against real MCP server)",
+]
 
 # 100% line gate on the harness package.
 [tool.coverage.run]

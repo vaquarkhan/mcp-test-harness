@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 320" role="img" aria-label="Harness dogfood: pytest runs mcp-test CLI against bundled MCP server fixtures">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+  <rect width="920" height="320" rx="16" fill="url(#bg)"/>
+  <text x="460" y="36" text-anchor="middle" fill="#f8fafc" font-family="Segoe UI, system-ui, sans-serif" font-size="20" font-weight="700">We test the test harness  end-to-end dogfood</text>
+  <text x="460" y="58" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="13">689+ pytest cases · 100% line coverage · real stdio MCP subprocess</text>
+
+  <rect x="40" y="90" width="170" height="90" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+  <text x="125" y="122" text-anchor="middle" fill="#dcfce7" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">pytest + coverage</text>
+  <text x="125" y="144" text-anchor="middle" fill="#bbf7d0" font-family="Segoe UI, system-ui, sans-serif" font-size="11">tests/test_harness_dogfood_e2e.py</text>
+  <text x="125" y="162" text-anchor="middle" fill="#86efac" font-family="Segoe UI, system-ui, sans-serif" font-size="11">fail-under=100 gate</text>
+
+  <rect x="260" y="90" width="170" height="90" rx="10" fill="#1e3a5f" stroke="#38bdf8" stroke-width="2"/>
+  <text x="345" y="122" text-anchor="middle" fill="#e0f2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">mcp-test CLI</text>
+  <text x="345" y="144" text-anchor="middle" fill="#bae6fd" font-family="Segoe UI, system-ui, sans-serif" font-size="11">discovery · scheduler</text>
+  <text x="345" y="162" text-anchor="middle" fill="#7dd3fc" font-family="Segoe UI, system-ui, sans-serif" font-size="11">executor · reports</text>
+
+  <rect x="480" y="90" width="170" height="90" rx="10" fill="#312e81" stroke="#818cf8" stroke-width="2"/>
+  <text x="565" y="122" text-anchor="middle" fill="#e0e7ff" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">FastMCP server</text>
+  <text x="565" y="144" text-anchor="middle" fill="#c7d2fe" font-family="Segoe UI, system-ui, sans-serif" font-size="11">tests/fixtures/</text>
+  <text x="565" y="162" text-anchor="middle" fill="#a5b4fc" font-family="Segoe UI, system-ui, sans-serif" font-size="11">minimal_mcp_server.py</text>
+
+  <rect x="700" y="90" width="180" height="90" rx="10" fill="#422006" stroke="#fbbf24" stroke-width="2"/>
+  <text x="790" y="122" text-anchor="middle" fill="#fef3c7" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">Self-tests</text>
+  <text x="790" y="144" text-anchor="middle" fill="#fde68a" font-family="Segoe UI, system-ui, sans-serif" font-size="11">harness_self_test/</text>
+  <text x="790" y="162" text-anchor="middle" fill="#fcd34d" font-family="Segoe UI, system-ui, sans-serif" font-size="11">assert_tool_call echo</text>
+
+  <line x1="210" y1="135" x2="258" y2="135" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="430" y1="135" x2="478" y2="135" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="650" y1="135" x2="698" y2="135" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="120" y="220" width="680" height="72" rx="10" fill="#0b1220" stroke="#334155" stroke-width="1"/>
+  <text x="460" y="248" text-anchor="middle" fill="#cbd5e1" font-family="Segoe UI, system-ui, sans-serif" font-size="13">CI (validate.yml): coverage run + report --fail-under=100 on every PR</text>
+  <text x="460" y="270" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="12">main branch also runs mcp-test smoke ’ HTML artifact · GitHub Pages deploys html/ only</text>
+</svg>

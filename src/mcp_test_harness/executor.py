@@ -14,7 +14,7 @@ import inspect
 import logging
 import time
 import traceback
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -89,7 +89,14 @@ class CaseExecutor:
         max_retries: int = test_case.markers.get("retry", 0)
 
         # Inject the managed server so built-in fixtures can access it
-        fixtures.set_injected("managed_server", server)
+        from mcp_test_harness.chaos import wrap_session_for_test
+
+        wrapped_session, trace_recorder = wrap_session_for_test(
+            server.session,
+            markers=test_case.markers,
+        )
+        test_server = replace(server, session=wrapped_session)
+        fixtures.set_injected("managed_server", test_server)
 
         test_started_at = datetime.now(timezone.utc).isoformat()
         attempt_results: list[AttemptResult] = []
@@ -161,6 +168,7 @@ class CaseExecutor:
             file=Path(test_case.module_path).as_posix(),
             tags=list(test_case.markers.get("tags", [])),
             started_at=test_started_at,
+            mcp_trace=trace_recorder.to_dict() if trace_recorder.events else None,
         )
 
     # ------------------------------------------------------------------

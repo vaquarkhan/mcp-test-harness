@@ -107,3 +107,51 @@ plugins:
 ```
 
 For a full reference implementation, see [reference_plugin.py](reference_plugin.py) in this folder.
+
+---
+
+## 6) MCP trace in reports (v1.3)
+
+No extra test code — use HTML or JSON output:
+
+```yaml
+report:
+  format: html
+  output: reports/mcp-test.html
+```
+
+Each test in the report includes `mcp_trace` with ordered MCP calls. See [example_mcp_trace.md](example_mcp_trace.md).
+
+---
+
+## 7) Chaos faults on a test (v1.3)
+
+```python
+from mcp_test_harness import marker
+from mcp_test_harness.chaos import ChaosFaultError
+
+@marker(tags=["chaos"], chaos_faults=["delay_ms:100"])
+async def test_slow_tool(mcp_server):
+    await mcp_server.call_tool("echo", {"text": "hi"})
+
+@marker(tags=["chaos"], chaos_faults=["503"])
+async def test_simulated_outage(mcp_server):
+    try:
+        await mcp_server.call_tool("echo", {"text": "x"})
+    except ChaosFaultError:
+        pass  # expected simulated 503
+```
+
+Run chaos-only: `mcp-test -m chaos`. Full reference: [example_chaos_testing.md](example_chaos_testing.md).
+
+---
+
+## 8) Generate tests from tools/list (v1.3)
+
+```bash
+mcp-test doctor
+mcp-test generate --server-command "python -m your_server" --force
+# Review tests/test_mcp_generated.py before merging
+```
+
+Drift check without overwrite: `mcp-test generate --drift-report reports/drift.json`. See [example_generate_scaffold.md](example_generate_scaffold.md).

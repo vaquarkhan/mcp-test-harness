@@ -1,0 +1,12 @@
+server:
+  command: "python -m your_server"
+
+schema_validation: true
+
+test:
+  dirs:
+    - "examples/feature-demo/platform-qa"
+
+report:
+  format: html
+  output: "examples/feature-demo/platform-qa/reports/platform-qa-demo.html"

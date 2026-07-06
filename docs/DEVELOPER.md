@@ -26,16 +26,34 @@ cd mcp-test-harness
 pip install -e ".[dev]"
 # Windows: set PYTHONPATH=src
 # macOS / Linux: export PYTHONPATH=src
-python -m pytest tests/ -q --cov=src/mcp_test_harness --cov-fail-under=100
+coverage run -m pytest tests/ --ignore=tests/test_workspace.py -q
+coverage report --fail-under=100
 ```
 
-The coverage fail-under (see [pyproject.toml](../pyproject.toml) `[tool.coverage.*]`) applies to the **core harness** package. Vendored I/O in `stdio_mcp.py` is listed under `omit` for the gate but is still exercised in integration tests.
+The coverage fail-under (see [pyproject.toml](../pyproject.toml) `[tool.coverage.*]`) applies to the **core harness** package at **100%** line coverage, including subprocess I/O paths exercised by integration and dogfood tests.
+
+## End-to-end dogfood
+
+The harness validates itself with real CLI subprocess runs — not only mocks:
+
+| Path | Role |
+|------|------|
+| [`tests/fixtures/minimal_mcp_server.py`](../tests/fixtures/minimal_mcp_server.py) | FastMCP echo server (stdio) |
+| [`tests/fixtures/harness_self_test/`](../tests/fixtures/harness_self_test/) | Harness-style tests consumed by `mcp-test` |
+| [`tests/test_harness_dogfood_e2e.py`](../tests/test_harness_dogfood_e2e.py) | pytest e2e: CLI → server → JSON/HTML reports + `doctor` |
+
+`tests/fixtures/harness_self_test/` is **ignored by pytest** (`addopts` in pyproject) so only `mcp-test` discovers those cases. Run dogfood only:
+
+```bash
+python -m pytest tests/test_harness_dogfood_e2e.py -m e2e -v
+```
+
+CI (`validate.yml`) runs `coverage run` + `--fail-under=100` on every PR and a **`mcp-test` smoke** on `main` that uploads an HTML report artifact.
 
 ## stdio_mcp and the coverage gate
 
-- **`fail_under = 100`** (line coverage) applies to `src/mcp_test_harness` **except** [`stdio_mcp.py`](../src/mcp_test_harness/stdio_mcp.py), which is **listed under `omit`** in `[tool.coverage.*]`.
-- **Why:** that module is **subprocess and stdio I/O**-heavy. Hitting every branch in CI would require elaborate synthetic mocks; maintainers **chose** to keep the 100% bar on the rest of the framework while still **running** `stdio_mcp` through **integration** tests (e.g. `test_stdio_mcp*`) and real stdio use.
-- This is a **documented, intentional** trade-off. It is **not** a bug, and it does not mean the project is "half production-ready"—only that the **line gate** is scoped to a consistent subset. Everything else in `mcp_test_harness` (under the current `omit` list) is expected to pass the gate for production-grade releases.
+- **`fail_under = 100`** (line coverage) applies to all of `src/mcp_test_harness`, including [`stdio_mcp.py`](../src/mcp_test_harness/stdio_mcp.py).
+- Subprocess/stdio branches are covered via **integration tests** (`test_stdio_mcp*`), **transport** tests, and **e2e dogfood** — the same paths production `mcp-test` uses.
 
 ## Package layout (short map)
 

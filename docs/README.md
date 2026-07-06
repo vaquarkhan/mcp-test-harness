@@ -49,7 +49,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 |----------|------------|
 | [QUICK_START.md](QUICK_START.md) | **Time-to-value:** install, `mcp-test init`, run tests |
 | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) | **Canonical reference** — config, stdio/SSE/HTTP, assertions, fixtures, schema, reporting, plugins |
-| [DEVELOPER.md](DEVELOPER.md) | **This repository:** clone, pytest + coverage, module map, link to [examples/](../examples/README.md) |
+| [DEVELOPER.md](DEVELOPER.md) | **This repository:** clone, pytest + coverage, **e2e dogfood**, module map, link to [examples/](../examples/README.md) |
 | [../examples/feature-demo/README.md](../examples/feature-demo/README.md) | **Feature demo packs:** separate folders for functional, regression, and performance examples with report configs |
 | [TUTORIAL.md](TUTORIAL.md) | Longer **walkthrough** for new users |
 | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) | **CI and reports:** exit codes, JUnit for Actions, when to upload/publish HTML |

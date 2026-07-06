@@ -129,6 +129,43 @@ def _unified_portal_html(results: SessionResults) -> str:
     )
 
 
+def _trace_timeline_html(tr: CaseResult) -> str:
+    """Render MCP JSON-RPC trace as a compact timeline block."""
+    trace = tr.mcp_trace
+    if not trace or not trace.get("events"):
+        return ""
+    rows: list[str] = []
+    for ev in trace["events"]:
+        direction = ev.get("direction", "?")
+        method = ev.get("method", "?")
+        t_ms = ev.get("t_ms", 0)
+        nbytes = ev.get("bytes", 0)
+        cls = f"trace-{direction}"
+        poll = ' <span class="pollution">stdio pollution?</span>' if ev.get("stdio_pollution") else ""
+        payload = ev.get("payload")
+        preview = _html_escape(str(payload)[:500]) if payload is not None else ""
+        rows.append(
+            f'<div class="trace-row {cls}">'
+            f'<span class="trace-t">{t_ms}ms</span>'
+            f'<span class="trace-dir">{_html_escape(direction)}</span>'
+            f'<span class="trace-method">{_html_escape(method)}</span>'
+            f'<span class="trace-bytes">{nbytes} B</span>{poll}'
+            f'<pre class="trace-payload">{preview}</pre></div>'
+        )
+    pollution = trace.get("stdio_pollution") or []
+    pol_html = ""
+    if pollution:
+        pol_html = (
+            '<p class="pollution-head">Possible stdio pollution:</p><ul>'
+            + "".join(f"<li><code>{_html_escape(p)}</code></li>" for p in pollution)
+            + "</ul>"
+        )
+    return (
+        f'<div class="trace-block"><h4>MCP trace ({trace.get("event_count", len(trace["events"]))} events)</h4>'
+        f"{pol_html}{''.join(rows)}</div>"
+    )
+
+
 class HTMLReporter:
     """Generate a self-contained HTML test report."""
 
@@ -301,6 +338,15 @@ body {{
 .portal-na .portal-score {{ color: var(--muted); }}
 .portal-cov {{ font-size: 0.8rem; color: #94a3b8; margin: 0.75rem 0 0.25rem; }}
 .portal-gaps {{ margin: 0.35rem 0 0; padding-left: 1.2rem; font-size: 0.75rem; color: #94a3b8; }}
+.trace-block{{margin-top:.5rem;border:1px solid var(--border);border-radius:6px;padding:.5rem;background:var(--bg)}}
+.trace-row{{display:grid;grid-template-columns:4rem 4.5rem 1fr 3rem;gap:.35rem .5rem;align-items:start;padding:.25rem 0;border-bottom:1px solid var(--border);font-size:.78rem}}
+.trace-row:last-child{{border-bottom:none}}
+.trace-payload{{grid-column:1/-1;margin:.2rem 0 0;font-size:.72rem;max-height:8rem;overflow:auto;white-space:pre-wrap}}
+.trace-request .trace-dir{{color:#5dade2}}
+.trace-response .trace-dir{{color:#1abc7a}}
+.trace-error .trace-dir{{color:#e74c3c}}
+.pollution,.pollution-head{{color:#e67e22}}
+.pollution-head{{font-size:.75rem;margin:.25rem 0}}
 .file-block {{ margin-bottom: 0.6rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }}
 .file-sum {{
   font-weight: 600; font-size: 0.88rem; padding: 0.55rem 0.8rem; cursor: pointer; list-style: none;
@@ -417,15 +463,17 @@ a {{ color: var(--accent); text-decoration: none; }}
 </html>"""
 
     def _one_row(self, tr: CaseResult) -> str:
-        detail = self._failure_detail(tr)
-        want_detail = bool(detail.strip() and detail.strip() != "—")
+        text_detail = self._failure_detail_text(tr)
+        trace_html = _trace_timeline_html(tr)
+        want_detail = bool(text_detail.strip() or trace_html)
         if tr.status == CaseStatus.PASSED and not want_detail:
             inner = '<span class="muted">—</span>'
         else:
             open_attr = " open" if tr.status != CaseStatus.PASSED else ""
+            pre = f'<pre>{_html_escape(text_detail)}</pre>' if text_detail.strip() else ""
             inner = (
                 f'<details class="row-detail"{open_attr}><summary class="row-dsum">Details</summary>'
-                f'<pre>{_html_escape(detail)}</pre></details>'
+                f'{pre}{trace_html}</details>'
             )
         tags_html = (
             " ".join(f'<span class="tagchip">{_html_escape(tg)}</span>' for tg in tr.tags) or "—"
@@ -442,7 +490,7 @@ a {{ color: var(--accent); text-decoration: none; }}
             f'<td class="detail">{inner}</td></tr>'
         )
 
-    def _failure_detail(self, tr: CaseResult) -> str:
+    def _failure_detail_text(self, tr: CaseResult) -> str:
         parts: list[str] = []
         if tr.error:
             parts.append(tr.error)
@@ -462,7 +510,12 @@ a {{ color: var(--accent); text-decoration: none; }}
                 parts.append(f"  #{a.attempt} {a.status.value} {a.duration_ms:.1f}ms {e}")
         if tr.flaky and tr.retry_count:
             parts.append(f"Flaky: passed after {tr.retry_count} retry(ies).")
-        return "\n".join(parts) if parts else "—"
+        return "\n".join(parts)
+
+    def _failure_detail(self, tr: CaseResult) -> str:
+        """Plain-text detail block (legacy / tests)."""
+        text = self._failure_detail_text(tr)
+        return text if text else "—"
 
 
 def _summarize_caps(caps: object, limit: int = 100) -> str:

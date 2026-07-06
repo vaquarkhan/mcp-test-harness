@@ -29,10 +29,11 @@ Thanks for helping improve **MCP Test Harness**.
 ```bash
 pip install -e ".[dev]"
 set PYTHONPATH=src   # Windows; on POSIX: export PYTHONPATH=src
-python -m pytest tests/ -q --cov=src/mcp_test_harness --cov-fail-under=100
+coverage run -m pytest tests/ --ignore=tests/test_workspace.py -q
+coverage report --fail-under=100
 ```
 
-The project targets **100%** line coverage on `src/mcp_test_harness` (see [pyproject.toml](pyproject.toml) `[tool.coverage.*]`). **[`stdio_mcp.py`](src/mcp_test_harness/stdio_mcp.py) is excluded from that gate** on purpose: vendored I/O and error branches are covered by **integration** tests and runtime use, not a second layer of line-by-line synthetic mocks. See [docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate](docs/DEVELOPER.md#stdio_mcp-and-the-coverage-gate) for the rationale.
+The project enforces **100%** line coverage on `src/mcp_test_harness` (see [pyproject.toml](pyproject.toml) `[tool.coverage.*]`). **E2E dogfood** tests in [`tests/test_harness_dogfood_e2e.py`](tests/test_harness_dogfood_e2e.py) run the real `mcp-test` CLI against [`tests/fixtures/minimal_mcp_server.py`](tests/fixtures/minimal_mcp_server.py) — a test harness should prove itself in CI, not only with mocks. See [docs/DEVELOPER.md#end-to-end-dogfood](docs/DEVELOPER.md#end-to-end-dogfood).
 
 ## Releases
 

@@ -347,6 +347,8 @@ def _test_result_to_dict(tr: CaseResult) -> dict[str, Any]:
         ]
     if tr.flaky:
         d["flaky"] = True
+    if tr.mcp_trace:
+        d["mcp_trace"] = tr.mcp_trace
     if tr.schema_violations:
         d["schema_violations"] = [
             {
