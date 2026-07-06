@@ -41,6 +41,31 @@ class MCPAssertionError(AssertionError):
         super().__init__(full)
 
 
+def _result_is_error(result: Any) -> bool:
+    """True when CallToolResult or any content item signals an MCP tool error."""
+    if getattr(result, "isError", False) or (
+        isinstance(result, dict) and result.get("isError")
+    ):
+        return True
+    for item in getattr(result, "content", None) or []:
+        if getattr(item, "isError", False) or (
+            isinstance(item, dict) and item.get("isError", False)
+        ):
+            return True
+    return False
+
+
+def _result_error_text(result: Any) -> str:
+    """Best-effort error message from a failed tool result."""
+    for item in getattr(result, "content", None) or []:
+        text = getattr(item, "text", None) or (
+            item.get("text") if isinstance(item, dict) else None
+        )
+        if text:
+            return str(text)
+    return str(result)
+
+
 _MCP_HARNESS_LIST_TOOLS = "_mcp_harness_list_tools_result"
 # Do not store cache on the session object (``__slots__`` / Pydantic sessions reject extra attrs).
 _list_tools_result_cache: weakref.WeakKeyDictionary[Any, Any] = weakref.WeakKeyDictionary()
@@ -235,22 +260,14 @@ async def assert_tool_call(
     result = await session.call_tool(tool_name, arguments)
     record_tool_call(session, tool_name)
 
-    # The MCP SDK result has a `.content` list.  If any content item
-    # carries ``isError`` we surface the server error.
-    content_items = getattr(result, "content", None) or []
-    for item in content_items:
-        is_error = getattr(item, "isError", False) or (
-            isinstance(item, dict) and item.get("isError", False)
+    # MCP spec: isError on CallToolResult; some SDKs also set it on content items.
+    if _result_is_error(result):
+        raise MCPAssertionError(
+            f"Tool '{tool_name}' returned an error: {_result_error_text(result)}",
         )
-        if is_error:
-            text = getattr(item, "text", None) or (
-                item.get("text") if isinstance(item, dict) else str(item)
-            )
-            raise MCPAssertionError(
-                f"Tool '{tool_name}' returned an error: {text}",
-            )
 
     if expected is not None:
+        content_items = getattr(result, "content", None) or []
         actual = _serialize(content_items)
         expected_ser = _serialize(expected)
         if actual != expected_ser:
@@ -604,23 +621,15 @@ async def assert_tool_rejects(
             )
         return
 
-    # Check for isError in content items
-    content_items = getattr(result, "content", None) or []
-    for item in content_items:
-        is_error = getattr(item, "isError", False) or (
-            isinstance(item, dict) and item.get("isError", False)
-        )
-        if is_error:
-            if error_substring is not None:
-                text = getattr(item, "text", None) or (
-                    item.get("text") if isinstance(item, dict) else str(item)
+    if _result_is_error(result):
+        if error_substring is not None:
+            text = _result_error_text(result)
+            if error_substring not in text:
+                raise MCPAssertionError(
+                    f"Tool '{tool_name}' returned error, but message does "
+                    f"not contain '{error_substring}': {text}"
                 )
-                if error_substring not in (text or ""):
-                    raise MCPAssertionError(
-                        f"Tool '{tool_name}' returned error, but message does "
-                        f"not contain '{error_substring}': {text}"
-                    )
-            return
+        return
 
     raise MCPAssertionError(
         f"Expected tool '{tool_name}' to return an error, but it succeeded"
@@ -919,12 +928,7 @@ async def assert_throughput(
     lock = asyncio.Lock()
 
     def _call_failed(result: Any) -> bool:
-        for item in getattr(result, "content", None) or []:
-            if getattr(item, "isError", False) or (
-                isinstance(item, dict) and item.get("isError")
-            ):
-                return True
-        return False
+        return _result_is_error(result)
 
     async def _bounded() -> None:
         nonlocal error_count

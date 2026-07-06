@@ -4,16 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from mcp_test_harness.assertions import MCPAssertionError
+from mcp_test_harness.assertions import MCPAssertionError, _result_is_error
 
 
 def _content_is_error(result: Any) -> bool:
-    for item in getattr(result, "content", None) or []:
-        if getattr(item, "isError", False) or (
-            isinstance(item, dict) and item.get("isError")
-        ):
-            return True
-    return False
+    return _result_is_error(result)
 
 
 async def assert_degrades_gracefully(
