@@ -38,7 +38,7 @@ _KNOWN_TOP_KEYS = frozenset(
 
 _KNOWN_SERVER_KEYS = frozenset({"command", "transport", "transport_options"})
 _KNOWN_TEST_KEYS = frozenset({"dirs", "timeout", "parallel", "workers"})
-_KNOWN_REPORT_KEYS = frozenset({"format", "output"})
+_KNOWN_REPORT_KEYS = frozenset({"format", "output", "sarif_output", "pr_summary_output"})
 
 
 # ---------------------------------------------------------------------------
@@ -70,6 +70,8 @@ class HarnessConfig:
     test_dirs: list[str] = field(default_factory=lambda: ["tests/"])
     report_format: ReportFormat | None = None
     report_output: str | None = None
+    sarif_output: str | None = None
+    pr_summary_output: str | None = None
     plugins: list[str] = field(default_factory=list)
     parallel: bool = False
     workers: int | None = None
@@ -212,6 +214,10 @@ def _flatten_config(raw: dict[str, Any]) -> dict[str, Any]:
             result["report_format"] = report["format"]
         if "output" in report:
             result["report_output"] = report["output"]
+        if "sarif_output" in report:
+            result["sarif_output"] = report["sarif_output"]
+        if "pr_summary_output" in report:
+            result["pr_summary_output"] = report["pr_summary_output"]
 
     # -- top-level scalars / lists --
     if "schema_validation" in raw:
@@ -242,6 +248,8 @@ _CLI_MAP: dict[str, str] = {
     "workers": "workers",
     "report_format": "report_format",
     "report_output": "report_output",
+    "sarif_output": "sarif_output",
+    "pr_summary_output": "pr_summary_output",
     "update_snapshots": "update_snapshots",
     "filter_name": "filter_name",
     "filter_marker": "filter_marker",
@@ -322,7 +330,7 @@ def load_config(cli_args: Namespace) -> HarnessConfig:
 # ---------------------------------------------------------------------------
 
 _VALID_TRANSPORTS = {"stdio", "sse", "http"}
-_VALID_REPORT_FORMATS = {"json", "junit", "html"}
+_VALID_REPORT_FORMATS = {"json", "junit", "html", "sarif"}
 
 
 def _find_yaml_line(text: str, key: str) -> int | None:

@@ -86,6 +86,49 @@ def _search_blob(tr: CaseResult) -> str:
     return " ".join(parts).lower()
 
 
+def _unified_portal_html(results: SessionResults) -> str:
+    """HTML block for functional / perf / security / resiliency scores + coverage."""
+    us = results.unified_summary
+    if not us:
+        return ""
+    cats = us.get("categories", {})
+    labels = (
+        ("functional", "Functional"),
+        ("performance", "Performance"),
+        ("security", "Security"),
+        ("resiliency", "Resiliency"),
+    )
+    cards: list[str] = []
+    for key, label in labels:
+        c = cats.get(key, {})
+        score = c.get("score_pct")
+        status = c.get("status", "n/a")
+        total = c.get("total", 0)
+        score_txt = f"{score}%" if score is not None else "—"
+        cls = "portal-pass" if status == "pass" else ("portal-fail" if status == "fail" else "portal-na")
+        cards.append(
+            f'<div class="portal-card {cls}"><div class="portal-label">{_html_escape(label)}</div>'
+            f'<div class="portal-score">{_html_escape(score_txt)}</div>'
+            f'<div class="portal-sub">{total} test(s) · {_html_escape(status)}</div></div>'
+        )
+    cov_line = ""
+    if us.get("coverage_headline"):
+        cov_line = f'<p class="portal-cov">{_html_escape(str(us["coverage_headline"]))}</p>'
+    gaps = (results.coverage or {}).get("gaps", {})
+    gap_bits: list[str] = []
+    for tool in gaps.get("untested_tools", [])[:6]:
+        gap_bits.append(f"<li>untested tool: <code>{_html_escape(tool)}</code></li>")
+    for tool in gaps.get("tools_missing_auth_tests", [])[:6]:
+        gap_bits.append(f"<li>missing auth test: <code>{_html_escape(tool)}</code></li>")
+    gaps_html = ""
+    if gap_bits:
+        gaps_html = f'<ul class="portal-gaps">{"".join(gap_bits)}</ul>'
+    return (
+        f'<section class="portal"><h2>Unified test portal</h2>'
+        f'<div class="portal-grid">{"".join(cards)}</div>{cov_line}{gaps_html}</section>'
+    )
+
+
 class HTMLReporter:
     """Generate a self-contained HTML test report."""
 
@@ -139,6 +182,8 @@ class HTMLReporter:
             )
 
         body_main = "\n".join(row_chunks) if row_chunks else "<p class=\"muted\">No test results.</p>"
+
+        portal_html = _unified_portal_html(results)
 
         badge_class = "exit-pass" if ok and total_cases else ("exit-fail" if not ok else "exit-neu")
 
@@ -243,6 +288,19 @@ body {{
 .env-list {{ margin: 0; padding-left: 1.1rem; }} .env-list code {{ font-size: 0.75rem; color: #a8c5e8; word-break: break-all; }}
 .pie-legend {{ font-size: 0.7rem; color: var(--muted); text-align: center; }}
 .muted {{ color: var(--muted); }}
+.portal {{ margin-bottom: 1.2rem; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }}
+.portal h2 {{ margin: 0 0 0.75rem; font-size: 0.95rem; color: #e2e8f0; }}
+.portal-grid {{ display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0.5rem; }}
+@media (max-width: 800px) {{ .portal-grid {{ grid-template-columns: repeat(2, 1fr); }} }}
+.portal-card {{ border-radius: 8px; padding: 0.65rem; border: 1px solid var(--border); background: var(--panel-2); }}
+.portal-label {{ font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }}
+.portal-score {{ font-size: 1.4rem; font-weight: 800; margin: 0.2rem 0; }}
+.portal-sub {{ font-size: 0.72rem; color: var(--muted); }}
+.portal-pass .portal-score {{ color: var(--c-pass); }}
+.portal-fail .portal-score {{ color: var(--c-fail); }}
+.portal-na .portal-score {{ color: var(--muted); }}
+.portal-cov {{ font-size: 0.8rem; color: #94a3b8; margin: 0.75rem 0 0.25rem; }}
+.portal-gaps {{ margin: 0.35rem 0 0; padding-left: 1.2rem; font-size: 0.75rem; color: #94a3b8; }}
 .file-block {{ margin-bottom: 0.6rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); }}
 .file-sum {{
   font-weight: 600; font-size: 0.88rem; padding: 0.55rem 0.8rem; cursor: pointer; list-style: none;
@@ -301,6 +359,7 @@ a {{ color: var(--accent); text-decoration: none; }}
   <div class="quality {"ok" if ok and total_cases else ("bad" if not ok else "neutral")}" role="status">
     <span>{_html_escape(gate)}</span>
   </div>
+  {portal_html}
   <div class="dashboard">
     <div>
       <div class="metrics">

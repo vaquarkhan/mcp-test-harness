@@ -188,7 +188,8 @@ class TestConfigLine301:
         ns = Namespace(
             server_command=None, transport=None, config=str(f),
             timeout=None, verbose=None, parallel=None, workers=None,
-            report_format=None, report_output=None, update_snapshots=None,
+            report_format=None, report_output=None, sarif_output=None,
+            pr_summary_output=None, update_snapshots=None,
             filter_name=None, filter_marker=None, test_path=None,
         )
         with pytest.raises(ValueError, match="Unsupported"):

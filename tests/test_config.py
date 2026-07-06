@@ -33,6 +33,8 @@ def _ns(**kwargs: object) -> Namespace:
         "workers": None,
         "report_format": None,
         "report_output": None,
+        "sarif_output": None,
+        "pr_summary_output": None,
         "update_snapshots": None,
         "filter_name": None,
         "filter_marker": None,

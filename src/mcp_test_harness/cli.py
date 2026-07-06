@@ -85,7 +85,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--report-format",
         dest="report_format",
         default=None,
-        choices=["json", "junit", "html"],
+        choices=["json", "junit", "html", "sarif"],
         help="Report output format",
     )
     parser.add_argument(
@@ -93,6 +93,18 @@ def _build_parser() -> argparse.ArgumentParser:
         dest="report_output",
         default=None,
         help="Path to write the report file",
+    )
+    parser.add_argument(
+        "--sarif-output",
+        dest="sarif_output",
+        default=None,
+        help="Path to write SARIF security findings (in addition to --report-format)",
+    )
+    parser.add_argument(
+        "--pr-summary-output",
+        dest="pr_summary_output",
+        default=None,
+        help="Path to write a markdown PR summary comment",
     )
     parser.add_argument(
         "--update-snapshots",
@@ -182,7 +194,9 @@ async def _run_harness(
         write_last_failed_keys,
     )
     from mcp_test_harness.plugins import PluginRegistry
+    from mcp_test_harness.pr_summary import generate_pr_summary
     from mcp_test_harness.reporting import JSONReporter, JUnitXMLReporter
+    from mcp_test_harness.sarif_reporter import SARIFReporter
     from mcp_test_harness.scheduler import HarnessScheduler
 
     registry = PluginRegistry()
@@ -243,11 +257,28 @@ async def _run_harness(
         report_text = JUnitXMLReporter().generate(results)
     elif config.report_format == "html":
         report_text = HTMLReporter().generate(results)
+    elif config.report_format == "sarif":
+        report_text = SARIFReporter().generate(results)
     if report_text is not None and config.report_output:
         output_path = Path(config.report_output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(report_text, encoding="utf-8")
         logger.info("Report written to %s", output_path)
+
+    sarif_path = config.sarif_output
+    if sarif_path and config.report_format != "sarif":
+        sarif_text = SARIFReporter().generate(results)
+        sp = Path(sarif_path)
+        sp.parent.mkdir(parents=True, exist_ok=True)
+        sp.write_text(sarif_text, encoding="utf-8")
+        logger.info("SARIF report written to %s", sp)
+
+    if config.pr_summary_output:
+        summary_text = generate_pr_summary(results)
+        pp = Path(config.pr_summary_output)
+        pp.parent.mkdir(parents=True, exist_ok=True)
+        pp.write_text(summary_text, encoding="utf-8")
+        logger.info("PR summary written to %s", pp)
     if not list_only:
         write_last_failed_keys(keys_from_session_results(results))
 

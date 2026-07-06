@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-05
+
+### Added
+
+- **Platform QA (v1.2):** `coverage.py`, `security_payloads.py`, `resiliency.py`, `baselines.py`, `unified_report.py` — coverage map, security payload packs, resiliency assertions, baseline perf gates, unified portal in JSON/HTML.
+- **`assert_throughput` SLO params:** `max_p99_ms` and `max_error_rate` alongside `min_rps`.
+- **SARIF export:** `--report-format sarif` or `--sarif-output` for GitHub Code Scanning; OWASP MCP rule metadata on security findings (`security_rules.py`).
+- **PR summary:** `--pr-summary-output` markdown; GitHub Action `pr-comment` input posts/updates PR comments.
+- **Docs:** [POSITIONING.md](docs/POSITIONING.md), updated [COMPARISON.md](docs/COMPARISON.md), [SECURITY_TESTING.md](docs/SECURITY_TESTING.md), README visuals.
+
 ## [1.1.0] - 2026-04-25
 
 ### Added
