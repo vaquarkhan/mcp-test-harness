@@ -70,6 +70,7 @@ class HarnessConfig:
     test_dirs: list[str] = field(default_factory=lambda: ["tests/"])
     report_format: ReportFormat | None = None
     report_output: str | None = None
+    pdf_output: str | None = None
     sarif_output: str | None = None
     pr_summary_output: str | None = None
     plugins: list[str] = field(default_factory=list)
@@ -248,6 +249,7 @@ _CLI_MAP: dict[str, str] = {
     "workers": "workers",
     "report_format": "report_format",
     "report_output": "report_output",
+    "pdf_output": "pdf_output",
     "sarif_output": "sarif_output",
     "pr_summary_output": "pr_summary_output",
     "update_snapshots": "update_snapshots",

@@ -434,6 +434,12 @@ class TestMainSync:
         assert code == 0
         rg.assert_called_once_with(["--server-command", "x"])
 
+    def test_main_dispatches_export_pdf_subcommand(self):
+        with patch("mcp_test_harness.pdf_export.run_export_pdf", return_value=0) as rep:
+            code = main(["export-pdf", "report.html", "-o", "out.pdf"])
+        assert code == 0
+        rep.assert_called_once_with(["report.html", "-o", "out.pdf"])
+
 
 # ---------------------------------------------------------------------------
 # --list flag
@@ -547,6 +553,6 @@ class TestReportFormatHTML:
 
         assert code == 0
         assert report_path.exists()
-        content = report_path.read_text()
+        content = report_path.read_text(encoding="utf-8")
         assert "<html" in content
         assert "MCP Test Report" in content

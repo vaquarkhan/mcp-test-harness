@@ -12,7 +12,8 @@
 <meta property="og:url" content="https://vaquarkhan.github.io/mcp-test-harness/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MCP Test Harness - pytest-style Testing for MCP Servers">
-<meta name="twitter:description" content="Functional + regression + performance testing for MCP servers in one tool.">
+<meta property="og:image" content="https://vaquarkhan.github.io/mcp-test-harness/assets/images/report-formats.png">
+<meta name="twitter:image" content="https://vaquarkhan.github.io/mcp-test-harness/assets/images/report-formats.png">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -22,6 +23,7 @@
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Linux, Windows, macOS",
   "softwareVersion": "2.0.0",
+  "image": "https://vaquarkhan.github.io/mcp-test-harness/assets/images/report-formats.png",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "url": "https://vaquarkhan.github.io/mcp-test-harness/",
   "downloadUrl": "https://pypi.org/project/mcp-test-harness/",
@@ -174,6 +176,35 @@
   </div>
 </section>
 
+<!-- REPORT OUTPUTS + LIVE DEMO -->
+<section class="py-20 bg-white border-t border-slate-100">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="section-kicker">Test Report Outputs</span>
+        <h2 class="text-4xl font-bold mb-4">One run. Console, JUnit, JSON, HTML — and PDF export</h2>
+        <p class="text-lg text-slate-600 mb-6">
+          Like JMeter HTML dashboards, the harness ships a rich self-contained HTML report with stat cards, charts, chaos/load panels, and security findings.
+          Export a shareable PDF summary with <strong>Save as PDF</strong> in the report or <code class="text-sm">mcp-test export-pdf report.html</code> in CI.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="reports/sample_mcp_test_report.html" class="btn-primary" target="_blank" rel="noopener noreferrer">
+            Open live sample report
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+          <a href="examples.html#reports" class="btn-ghost">Report format docs</a>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <a href="reports/sample_mcp_test_report.html" target="_blank" rel="noopener noreferrer" class="block rounded-2xl overflow-hidden shadow-xl border border-slate-200 hover:shadow-2xl transition-shadow">
+          <img src="assets/images/report-formats.png" alt="MCP Test Harness report outputs: Console, JUnit XML, JSON, and HTML dashboard" width="1200" height="675" loading="lazy" class="w-full h-auto">
+        </a>
+        <p class="text-xs text-slate-500 text-center">Click to open the interactive HTML dashboard sample</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- CODE EXAMPLE -->
 <section class="py-20 bg-white">
   <div class="max-w-7xl mx-auto px-6">
@@ -252,7 +283,7 @@ async def test_echo_latency(mcp_server):
       <div class="feature-card">
         <div class="feature-icon">📊</div>
         <h3 class="font-bold mb-2">Rich reports</h3>
-        <p class="text-sm text-slate-600">JUnit XML for GitHub Actions/Jenkins/GitLab. JSON with full metadata. HTML reports. Console summary always printed.</p>
+        <p class="text-sm text-slate-600">JUnit XML for CI. JSON with full metadata. Self-contained HTML dashboard with charts. PDF export via Save as PDF or <code>mcp-test export-pdf</code>.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🔌</div>

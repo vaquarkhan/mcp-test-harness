@@ -141,12 +141,13 @@ def test_trace_timeline_html() -> None:
         mcp_trace={
             "event_count": 1,
             "events": [{"t_ms": 1.0, "direction": "request", "method": "tools/call", "bytes": 10, "payload": {}}],
-            "stdio_pollution": [],
+            "stdio_pollution": ["stderr: warning line"],
         },
     )
     html = _trace_timeline_html(tr)
     assert "MCP trace" in html
     assert "tools/call" in html
+    assert "stdio pollution" in html.lower()
 
 
 def test_json_report_includes_mcp_trace() -> None:

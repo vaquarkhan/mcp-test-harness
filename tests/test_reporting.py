@@ -386,7 +386,16 @@ class TestJUnitXMLReporter:
 # HTMLReporter
 # ---------------------------------------------------------------------------
 
-from mcp_test_harness.html_reporter import HTMLReporter
+from mcp_test_harness.html_reporter import (
+    HTMLReporter,
+    _chaos_faults_from_tags,
+    _format_duration_ms,
+    _format_started_at,
+    _iso_epoch_ms,
+    _optional_bastion_version,
+    _run_epoch_bounds,
+    _slug_id,
+)
 
 
 class TestHTMLReporter:
@@ -434,7 +443,133 @@ class TestHTMLReporter:
         run = _make_results([_passed("t", duration=42.3)], total_duration_ms=100.5)
         html = HTMLReporter().generate(run)
         assert "42.3" in html
-        assert "100.5" in html
+        assert "100.5ms" in html
+
+    def test_html_dashboard_analytics(self):
+        slow = _failed("test_slow_fail", error="boom")
+        slow.duration_ms = 200.0
+        run = _make_results(
+            [
+                _passed("test_fast", duration=5.0),
+                _passed("test_medium", duration=50.0),
+                slow,
+            ],
+            total_duration_ms=2340.0,
+        )
+        html = HTMLReporter().generate(run)
+        assert "Test report outputs" in html
+        assert "pass rate" in html
+        assert "Run timeline" in html
+        assert "Top failing tests" in html
+        assert "Slowest tests" in html
+        assert "2.34s" in html
+        assert "test_slow_fail" in html
+        assert "Multiple formats. Maximum value." in html
+
+    def test_html_all_passed_no_failures_panel(self):
+        run = _make_results([_passed("only_one")])
+        html = HTMLReporter().generate(run)
+        assert "No failing tests" in html
+
+    def test_html_top_failures_truncation(self):
+        fails = [_failed(f"fail_{i}", error=f"err {i}") for i in range(8)]
+        html = HTMLReporter().generate(_make_results(fails))
+        assert "+2 more" in html
+
+    def test_format_duration_seconds(self):
+        assert _format_duration_ms(2500.0) == "2.50s"
+
+    def test_html_feature_panels_and_filters(self):
+        slow = _failed("test_slow_fail", error="boom")
+        slow.duration_ms = 200.0
+        slow.tags = ["security"]
+        slow.flaky = True
+        slow.retry_count = 1
+        slow.mcp_trace = {"event_count": 2, "events": [{"direction": "request"}], "stdio_pollution": []}
+        run = _make_results([_passed("ok", duration=5.0), slow], total_duration_ms=500.0)
+        run.coverage = {
+            "advertised": {"tools": ["echo", "search"], "resources": [], "prompts": []},
+            "tested": {"tools": ["echo"], "resources": [], "prompts": [], "auth_tools": []},
+            "gaps": {"untested_tools": ["search"], "untested_resources": [], "untested_prompts": [], "tools_missing_auth_tests": ["echo"]},
+            "summary": {"tools_tested": 1, "tools_advertised": 2, "tools_untested": 1, "tools_missing_auth": 1},
+        }
+        run.unified_summary = {"categories": {}, "coverage_headline": "1 tools tested"}
+        html = HTMLReporter().generate(run)
+        assert "Harness features in this run" in html
+        assert "MCP inventory coverage" in html
+        assert "Results by tag" in html
+        assert "Diagnostics" in html
+        assert 'data-status="passed"' in html
+        assert "filter-chip" in html
+        assert 'id="test-' in html
+
+    def test_html_platform_chaos_perf_bastion_panels(self):
+        chaos = _passed("test_chaos_delay", duration=50.0)
+        chaos.tags = ["chaos", "chaos:delay"]
+        perf = _failed("test_throughput_min_rps", error="Throughput 42.1 rps below minimum 50.0 rps")
+        perf.tags = ["perf", "throughput"]
+        sec = _failed("test_no_secret", error="matched secret pattern(s): aws_key")
+        sec.tags = ["security"]
+        run = _make_results([chaos, perf, sec], total_duration_ms=1200.0)
+        run.environment = {"bastion_paired": "demo pairing"}
+        html = HTMLReporter().generate(run)
+        assert "Chaos monkey" in html
+        assert "chaos:delay" in html or "delay" in html
+        assert "Load &amp; performance SLOs" in html
+        assert "P50" in html or "p50" in html.lower()
+        assert "MCP-Bastion pairing" in html
+        assert "Platform QA toolkit" in html
+        assert "mcp-bastion-python" in html
+
+    def test_chaos_faults_from_tags_branches(self):
+        assert _chaos_faults_from_tags(["chaos"]) == ["delay"]
+        assert _chaos_faults_from_tags(["chaos:503"]) == ["503"]
+        assert _chaos_faults_from_tags(["schema-drift"]) == ["schema_drift"]
+        assert "503" in _chaos_faults_from_tags(["503"])
+
+    def test_optional_bastion_version_from_env(self):
+        assert _optional_bastion_version({"bastion_version": "9.9.9"}) == "9.9.9"
+
+    def test_optional_bastion_version_import_failure(self, monkeypatch):
+        def _boom(_name: str) -> str:
+            raise RuntimeError("no bastion")
+
+        import importlib.metadata
+
+        monkeypatch.setattr(importlib.metadata, "version", _boom)
+        assert _optional_bastion_version({}) is None
+
+    def test_html_empty_server_capabilities(self):
+        run = _make_results([_passed()])
+        run.server_capabilities = {}
+        html = HTMLReporter().generate(run)
+        assert "Capabilities</strong> —" in html or "Capabilities</strong> —" in html
+
+    def test_perf_panel_latency_slo_hint(self):
+        lat = _failed("test_latency_p95", error="p95 latency 120ms exceeds budget 100ms")
+        lat.tags = ["perf"]
+        html = HTMLReporter().generate(_make_results([lat], total_duration_ms=200.0))
+        assert "slo-hint" in html
+        assert "p95 latency" in html
+
+    def test_slug_id(self):
+        assert _slug_id("test_foo_bar") == "test-foo-bar"
+
+    def test_html_coverage_chip_overflow(self):
+        tools = [f"tool_{i}" for i in range(15)]
+        run = _make_results([_passed()])
+        run.coverage = {
+            "advertised": {"tools": tools, "resources": [], "prompts": []},
+            "tested": {"tools": tools[:2], "resources": [], "prompts": [], "auth_tools": []},
+            "gaps": {"untested_tools": tools[2:], "untested_resources": [], "untested_prompts": [], "tools_missing_auth_tests": []},
+            "summary": {},
+        }
+        html = HTMLReporter().generate(run)
+        assert "+3</span>" in html
+
+    def test_failure_detail_empty(self):
+        tr = _passed("clean")
+        assert HTMLReporter()._failure_detail(tr) == "—"
 
     def test_html_includes_attempts_and_schema_details(self):
         tr = _failed(error="boom", diff=None, tb=None)
@@ -469,3 +604,47 @@ class TestHTMLReporter:
         run.server_capabilities = {("key_" + ("x" * 40) + str(i)): True for i in range(12)}
         html = HTMLReporter().generate(run)
         assert "…" in html
+
+    def test_html_date_filter_controls(self):
+        run = _make_results([_passed()])
+        html = HTMLReporter().generate(run)
+        assert 'id="mcp-date-from"' in html
+        assert 'id="mcp-date-to"' in html
+        assert "mcp-date-clear" in html
+        assert "Run window:" in html
+
+    def test_html_started_column_with_timestamps(self):
+        tr = _passed("test_timed")
+        tr.started_at = "2024-12-15T10:01:30+00:00"
+        run = _make_results([tr])
+        html = HTMLReporter().generate(run)
+        assert "mcp-sort-started" in html
+        assert "2024-12-15 10:01:30 UTC" in html
+        assert "data-started-ms=" in html
+
+    def test_iso_epoch_ms_and_run_bounds(self):
+        assert _iso_epoch_ms("2024-12-15T10:00:00+00:00") is not None
+        assert _iso_epoch_ms("not-a-date") is None
+        run = _make_results([_passed()])
+        start, end = _run_epoch_bounds(run)
+        assert start is not None and end is not None and end >= start
+        assert _format_started_at("2024-12-15T10:01:30+00:00") == "2024-12-15 10:01:30 UTC"
+
+    def test_html_dashboard_extras(self):
+        run = _make_results([_passed(), _failed()])
+        html = HTMLReporter().generate(run)
+        assert "mcp-filter-summary" in html
+        assert "mcp-dur-min" in html
+        assert "mcp-export-csv" in html
+        assert "mcp-theme-toggle" in html
+        assert "data-theme" in html
+        assert "mcp-stat-grid" in html
+        assert "data-file=" in html
+        assert "startedCsvValue" in html
+        assert "\\ufeff" in html
+
+    def test_html_started_iso_attr_for_csv(self):
+        tr = _passed("test_timed")
+        tr.started_at = "2026-07-06T21:47:03.123456+00:00"
+        html = HTMLReporter().generate(_make_results([tr]))
+        assert 'data-started-iso="2026-07-06T21:47:03.123456+00:00"' in html

@@ -96,6 +96,15 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Path to write the report file",
     )
     parser.add_argument(
+        "--pdf-output",
+        dest="pdf_output",
+        default=None,
+        help=(
+            "When used with --report-format html, also export a PDF summary "
+            "(requires Chrome/Edge; or use Save as PDF in the HTML report)"
+        ),
+    )
+    parser.add_argument(
         "--sarif-output",
         dest="sarif_output",
         default=None,
@@ -265,6 +274,16 @@ async def _run_harness(
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(report_text, encoding="utf-8")
         logger.info("Report written to %s", output_path)
+        if config.report_format == "html" and config.pdf_output:
+            from mcp_test_harness.pdf_export import export_html_to_pdf
+
+            pdf_path = Path(config.pdf_output)
+            try:
+                export_html_to_pdf(output_path, pdf_path)
+                logger.info("PDF report written to %s", pdf_path)
+            except (OSError, RuntimeError) as exc:
+                logger.warning("PDF export skipped: %s", exc)
+                print(f"Warning: PDF export failed: {exc}", file=sys.stderr)
 
     sarif_path = config.sarif_output
     if sarif_path and config.report_format != "sarif":
@@ -399,6 +418,10 @@ def main(argv: list[str] | None = None) -> int:
         from mcp_test_harness.generate import run_generate
 
         return run_generate(av[1:])
+    if av and av[0] == "export-pdf":
+        from mcp_test_harness.pdf_export import run_export_pdf
+
+        return run_export_pdf(av[1:])
     return asyncio.run(_async_main(av))
 
 

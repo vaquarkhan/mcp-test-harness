@@ -53,8 +53,8 @@
         <div class="text-sm text-slate-400">Demo packs by domain</div>
       </div>
       <div class="bg-white/5 border border-white/10 rounded-xl p-4">
-        <div class="text-2xl font-bold">3</div>
-        <div class="text-sm text-slate-400">Report formats</div>
+        <div class="text-2xl font-bold">4+</div>
+        <div class="text-sm text-slate-400">Report formats + PDF</div>
       </div>
     </div>
   </div>
@@ -246,7 +246,7 @@ plugins: []                           # custom plugin modules</code></pre>
 </section>
 
 <!-- CI EXAMPLES -->
-<section class="py-20 bg-slate-50">
+<section id="reports" class="py-20 bg-slate-50">
   <div class="max-w-5xl mx-auto px-6">
     <span class="section-kicker">CI Integration</span>
     <h2 class="text-4xl font-bold mb-8">GitHub Actions in 10 lines</h2>
@@ -271,7 +271,7 @@ jobs:
           name: test-results
           path: results.xml</code></pre>
 
-    <div class="mt-8 grid md:grid-cols-3 gap-4">
+    <div class="mt-8 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="feature-card">
         <div class="font-bold mb-1">JUnit XML</div>
         <div class="text-sm text-slate-600">GitHub Actions, Jenkins, GitLab CI all parse JUnit natively.</div>
@@ -281,9 +281,31 @@ jobs:
         <div class="text-sm text-slate-600">Full metadata: server capabilities, retry history, schema violations.</div>
       </div>
       <div class="feature-card">
-        <div class="font-bold mb-1">HTML report</div>
-        <div class="text-sm text-slate-600">Visual dashboard with pass/fail, timing, and assertion details.</div>
+        <div class="font-bold mb-1">HTML dashboard</div>
+        <div class="text-sm text-slate-600">Self-contained visual report with charts, chaos/load panels, and security findings.</div>
       </div>
+      <div class="feature-card">
+        <div class="font-bold mb-1">PDF export</div>
+        <div class="text-sm text-slate-600">JMeter-style summary: <code>Save as PDF</code> in the HTML report or <code>mcp-test export-pdf</code>.</div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-white">
+      <a href="reports/sample_mcp_test_report.html" target="_blank" rel="noopener noreferrer" class="block">
+        <img src="assets/images/report-formats.png" alt="MCP Test Harness report outputs infographic" width="1200" height="675" loading="lazy" class="w-full h-auto">
+      </a>
+      <div class="p-4 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
+        <p class="text-sm text-slate-600">Interactive sample with 21 tests — chaos monkey, load SLO, MCP-Bastion security pairing.</p>
+        <a href="reports/sample_mcp_test_report.html" target="_blank" rel="noopener noreferrer" class="btn-primary text-sm py-2 px-4">Open sample report</a>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h3 class="text-xl font-bold mb-3">HTML + PDF in one command</h3>
+<pre><code>mcp-test --report-format html --report-output reports/run.html --pdf-output reports/run.pdf
+
+# Or convert an existing HTML report:
+mcp-test export-pdf reports/run.html -o reports/run.pdf</code></pre>
     </div>
   </div>
 </section>

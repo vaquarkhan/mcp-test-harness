@@ -209,7 +209,7 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | Parallel execution | Multiple workers; **tests from the same file stay on one worker** so per-module fixtures remain correct |
 | Watch mode | `mcp-test --watch` re-runs when test `*.py` files change (configurable poll interval; debounce coalesces rapid saves) |
 | Markers | `@marker(timeout=60, retry=3, tags=["smoke"])` and `@skip(reason="...")` |
-| Reports | Console summary, JUnit XML (GitHub Actions/Jenkins/GitLab), JSON/HTML with **MCP trace timelines**, **unified portal** / coverage map, **SARIF** for Code Scanning |
+| Reports | Console summary, JUnit XML (GitHub Actions/Jenkins/GitLab), JSON/HTML with **MCP trace timelines**, **unified portal** / coverage map, **SARIF** for Code Scanning, **HTML dashboard** with PDF/CSV export and live filters |
 | Plugin system | Extend with custom assertions, fixtures, reporters, and transport adapters |
 | Transport support | stdio, SSE, streamable HTTP -- test local and remote servers |
 | GitHub Action | One-line CI integration with artifact upload |
@@ -558,7 +558,18 @@ mcp-test --report-format junit --report-output results.xml
 
 # JSON with full metadata (server capabilities, retry history, schema violations)
 mcp-test --report-format json --report-output results.json
+
+# HTML dashboard (self-contained — charts, filters, PDF export)
+mcp-test --report-format html --report-output reports/run.html
+
+# Optional PDF summary (JMeter-style; requires Chrome/Edge)
+mcp-test --report-format html --report-output reports/run.html --pdf-output reports/run.pdf
+mcp-test export-pdf reports/run.html -o reports/run.pdf
 ```
+
+**HTML dashboard:** live stat cards, pass-rate donut, chaos/load/security panels, date & duration filters, light/dark theme, Export CSV of filtered rows, Save as PDF, keyboard shortcuts (`/` search, `Esc` clear, `t` theme, `?` help).
+
+**Live sample:** [sample HTML report](https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html)
 
 Console output is always printed:
 
@@ -761,8 +772,9 @@ mcp-test [TEST_PATH] [OPTIONS]
   -m MARKER                Filter by marker/tag
   --list                   List tests and exit
   --watch                  Re-run on test file changes (poll + debounce via env; not with --list)
-  --report-format FORMAT   json | junit | html
+  --report-format FORMAT   json | junit | html | sarif
   --report-output PATH     Report file path
+  --pdf-output PATH        Also export PDF when --report-format html (Chrome/Edge)
   --verbose                Full server communication logs
   --update-snapshots       Overwrite stored snapshots
   --version                Print version
