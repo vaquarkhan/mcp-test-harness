@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from mcp_test_harness.assertions import MCPAssertionError, assert_tool_call
+from mcp_test_harness.assertions import MCPAssertionError, _result_is_error, assert_tool_call
 
 # ---------------------------------------------------------------------------
 # Payload corpora
@@ -97,7 +97,9 @@ async def assert_injection_blocked(
         except Exception:
             continue
         content_items = _result_content_items(result)
-        is_error = any(_item_is_error(item) for item in content_items)
+        is_error = _result_is_error(result) or any(
+            _item_is_error(item) for item in content_items
+        )
         body = _tool_response_text(result)
         if not is_error and payload in body:
             failures.append(f"payload echoed in response: {payload[:60]!r}")

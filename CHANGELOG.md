@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-07-06
+
+### Fixed
+
+- **CallToolResult.isError:** assertions now read `isError` on the MCP result object (per spec and FastMCP), not only on content items. Fixes false passes in `assert_tool_call`, false failures in `assert_tool_rejects` / `assert_tool_denied`, and `assert_degrades_gracefully` misfires against spec-compliant servers.
+
 ## [2.0.0] - 2026-07-06
 
 ### Changed

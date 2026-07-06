@@ -8,6 +8,7 @@ import pytest
 
 from mcp_test_harness.assertions import MCPAssertionError
 from mcp_test_harness.security_payloads import (
+    _item_is_error,
     assert_injection_blocked,
     assert_no_secret_leak,
     scan_text_for_secrets,
@@ -83,3 +84,7 @@ async def test_no_secret_leak_fails() -> None:
     session.call_tool = bad_call  # type: ignore[method-assign]
     with pytest.raises(MCPAssertionError, match="secret pattern"):
         await assert_no_secret_leak(session, "x", {})
+
+
+def test_item_is_error_attr_on_content_object() -> None:
+    assert _item_is_error(Content(text="x", isError=True)) is True
