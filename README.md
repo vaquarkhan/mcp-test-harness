@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/testherness.png" alt="MCP Test Harness" width="100%" />
+  <img src="docs/images/hero-banner.png" alt="MCP Test Harness — pytest-style testing for MCP servers" width="100%" />
 </p>
 
 # MCP Test Harness
@@ -25,17 +25,99 @@ MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcont
 
 For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** that gap. For **spec conformance**, **LLM-in-the-loop** evals, and **model benchmarks**, other tools exist; see [docs/COMPARISON.md](docs/COMPARISON.md).
 
+---
+
+## Visual guide
+
+<p align="center">
+  <img src="docs/images/end-to-end-flow.png" alt="End-to-end flow: mcp-test CLI discovers tests, connects to your MCP server, runs assertions, and emits reports for local dev and CI" width="100%" />
+</p>
+
+<p align="center"><em>One command from your repo to a gated MCP test run — local or in CI.</em></p>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Developer journey**
+
+<p align="center">
+  <img src="docs/images/developer-journey.png" alt="Five-step developer journey: install, init, write tests, run locally, ship to GitHub Actions" width="100%" />
+</p>
+
+`pip install` → `mcp-test init` → write `test_*.py` → `mcp-test` → merge with confidence.
+
+</td>
+<td width="50%" valign="top">
+
+**Three testing modes**
+
+<p align="center">
+  <img src="docs/images/three-testing-modes.png" alt="Functional, regression, and performance testing pillars in one harness" width="100%" />
+</p>
+
+Functional correctness, snapshot regression, and SLO-style performance — not three separate tools.
+
+</td>
+</tr>
+</table>
+
+<p align="center">
+  <img src="docs/images/architecture-flow.svg" alt="Internal architecture: CLI, config, discovery, scheduler, lifecycle, transport, executor, assertions, and report outputs" width="100%" />
+</p>
+
+<p align="center"><em>Under the hood: config → discovery → scheduling → real MCP sessions → deterministic assertions → multi-format reports.</em></p>
+
+### All visual assets
+
+Every diagram lives in [`docs/images/`](docs/images/). Quick reference:
+
+| Image | What it shows |
+|-------|----------------|
+| [`hero-banner.png`](docs/images/hero-banner.png) | Project hero — pytest-style MCP testing |
+| [`end-to-end-flow.png`](docs/images/end-to-end-flow.png) | Full pipeline: CLI → server → assertions → reports |
+| [`developer-journey.png`](docs/images/developer-journey.png) | Install → init → write tests → run → CI |
+| [`three-testing-modes.png`](docs/images/three-testing-modes.png) | Functional, regression, and performance pillars |
+| [`architecture-flow.svg`](docs/images/architecture-flow.svg) | Internal modules and data path (vector) |
+| [`mcp-testobarness-feature.png`](docs/images/mcp-testobarness-feature.png) | Core feature map |
+| [`assertions-grid.png`](docs/images/assertions-grid.png) | Assertion library at a glance |
+| [`report-formats.png`](docs/images/report-formats.png) | Console, JUnit, JSON, and HTML outputs |
+| [`transport-options.png`](docs/images/transport-options.png) | stdio, SSE, and HTTP transports |
+| [`parallel-execution.png`](docs/images/parallel-execution.png) | Multi-worker scheduling and module grouping |
+| [`ci-pipeline.png`](docs/images/ci-pipeline.png) | GitHub Actions PR gate workflow |
+| [`docker-distribution.png`](docs/images/docker-distribution.png) | PyPI, GHCR container, and standalone binary |
+| [`ecosystem-map.png`](docs/images/ecosystem-map.png) | Position vs Inspector, conformance, evals, Bastion |
+| [`harness-bastion-pairing.png`](docs/images/harness-bastion-pairing.png) | Test in CI, secure in production |
+| [`testherness.png`](docs/images/testherness.png) | Quick-start overview |
+
+---
+
 ## Why teams adopt this
 
-MCP Test Harness combines **three testing modes in one tool**:
+<p align="center">
+  <img src="docs/images/testherness.png" alt="MCP Test Harness overview — automated discovery, assertions, and reporting for MCP servers" width="100%" />
+</p>
 
-- **Functional:** protocol-aware assertions (`assert_tool_call`, `assert_resource_read`, schema validation)
-- **Regression:** snapshots and determinism checks (`assert_snapshot`, `assert_tool_idempotent`)
-- **Performance:** latency gates and SLO-style checks (`assert_latency` with p95/p99/mean/median, warmup) plus concurrent load / RPS with `assert_throughput`
+MCP Test Harness is the **deterministic, CI-native gate** for MCP servers — one run proves correctness, speed, and security baselines without an LLM in the loop. Full positioning: **[docs/POSITIONING.md](docs/POSITIONING.md)**.
 
-This combination means one MCP-aware workflow can validate both **answer quality** and **time-to-answer** in CI.
+### Four differentiators
 
-MCP Test Harness also supports a practical **Responsible AI** posture by giving teams repeatable evidence that MCP behavior is safe, reliable, and governable: protocol/schema conformance checks reduce unexpected behavior, security-focused test packs catch common misuse patterns early, and rich run reports provide auditable artifacts for internal governance programs and external frameworks such as the EU AI Act.
+| # | Differentiator | What you get |
+|---|----------------|--------------|
+| **1** | **Tri-modal CI architecture** | Functional + regression + performance in one `mcp-test` run — `assert_latency` (p95/p99 + warmup), `assert_throughput` (`min_rps`, `max_p99_ms`, `max_error_rate`), `assert_tool_idempotent`, JSON **performance baselines** |
+| **2** | **Protocol-aware fixtures** | `mcp_server` / `mcp_server_session` — spawn, handshake, inject session, teardown; parallel module grouping |
+| **3** | **Code-first workflows** | Multi-step agent flows in async Python (anti-DSL); `@marker(tags=[...])` for smoke/security/perf |
+| **4** | **Unified portal** | One HTML/JSON artifact: category scores, **tool coverage map** (advertised vs tested vs missing auth), security/resiliency packs |
+
+### Three testing modes in one tool
+
+- **Functional:** `assert_tool_call`, `assert_resource_read`, schema validation
+- **Regression:** `assert_snapshot`, `assert_tool_idempotent`
+- **Performance:** `assert_latency`, `assert_throughput`, `assert_latency_within_baseline`
+
+Pair with **[mcp-shark](https://github.com/mcp-shark/mcp-shark)** for IDE config security and **[MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)** for runtime protection — see [docs/COMPARISON.md](docs/COMPARISON.md).
+
+MCP Test Harness supports **Responsible AI** and governance programs: schema contract checks, security payload packs (`@marker(tags=["security"])`), coverage gaps in reports, and EU AI Act demo packs.
 
 ## Documentation
 
@@ -46,8 +128,9 @@ MCP Test Harness also supports a practical **Responsible AI** posture by giving 
 | [docs/QUICK_START.md](docs/QUICK_START.md) | **Fastest path** - install, `mcp-test init`, run |
 | [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | **Canonical reference** - setup, config, stdio/parallel/validation, assertions, reporting |
 | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) | **CI, JUnit, JSON, HTML** - do you need to *publish* test reports? (usually: no) |
+| [docs/POSITIONING.md](docs/POSITIONING.md) | **Why we're different** - four differentiators, enterprise governance, mcp-shark pairing |
 | [docs/PERFORMANCE_TESTING_STRATEGY.md](docs/PERFORMANCE_TESTING_STRATEGY.md) | **Product pitch** - why MCP performance testing belongs in the harness; roadmap and scope |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | **Roadmap** - now/next/later delivery plan for security, perf, compatibility, and DX |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | **Roadmap** - now/next/later plan plus **prioritized value bets** (unified reports, security packs, resiliency, coverage map, SLO load testing) |
 | [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) | **Security testing** - MCP-aware security assertions and CI guidance |
 | [docs/CONTRACT_AND_COMPAT.md](docs/CONTRACT_AND_COMPAT.md) | **Contracts & compatibility** - drift protection and protocol/client matrix strategy |
 | [docs/ENTERPRISE_GOVERNANCE.md](docs/ENTERPRISE_GOVERNANCE.md) | **Enterprise** - audit/policy/tenant governance guidance (including EU AI Act evidence mapping notes) |
@@ -73,10 +156,14 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 
 ## Core Features
 
+<p align="center">
+  <img src="docs/images/mcp-testobarness-feature.png" alt="MCP Test Harness feature overview — discovery, assertions, fixtures, transports, parallel runs, reports, and CI integration" width="100%" />
+</p>
+
 | Feature | Description |
 |---------|-------------|
 | Test discovery | Finds `test_*.py` files and `test_` functions automatically (pytest conventions); broken files log a warning with path and exception |
-| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (single-call or **p95/p99/mean** over N runs + **warmup**), **`assert_throughput`** (concurrent `call_tool` + optional RPS) - see [docs/PERFORMANCE.md](docs/PERFORMANCE.md) |
+| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (p95/p99/mean + **warmup**), **`assert_throughput`** (concurrent load + **`min_rps`**, **`max_p99_ms`**, **`max_error_rate`**), **`assert_latency_within_baseline`**, **security payload packs** — see [docs/PERFORMANCE.md](docs/PERFORMANCE.md), [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
 | Fixture system | Built-in `mcp_server` / `mcp_server_session`, custom fixtures; **cycle detection** for dependency errors |
 | Schema validation | JSON-RPC envelope checks; with `schema_validation: true` (default), post-connect checks on `initialize`, `tools/list` (+ tool `inputSchema`), `resources` / `prompts` list shapes, and a best-effort `call_tool` probe to validate `content` item shapes |
 | Snapshot testing | Compare responses; `ignore_fields` and `mask_patterns` for unstable data |
@@ -95,9 +182,17 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 
 ## Ecosystem (Conformance, evals, benchmarks)
 
+<p align="center">
+  <img src="docs/images/ecosystem-map.png" alt="Ecosystem map: MCP Test Harness as the CI gatekeeper alongside Inspector, conformance suites, LLM evals, and MCP-Bastion security" width="100%" />
+</p>
+
 MCP Test Harness is **deterministic** (your tests call the protocol directly; no LLM required). The wider MCP space includes **protocol conformance** suites, **agent/LLM** evaluation frameworks, and **model** benchmarks. A concise map of tools, when to use each, and how they **complement** (not replace) the harness is in **[docs/COMPARISON.md](docs/COMPARISON.md)**.
 
 ## Installation
+
+<p align="center">
+  <img src="docs/images/docker-distribution.png" alt="Install via pip, pull the GHCR container image, or use the standalone binary — three ways to run mcp-test" width="100%" />
+</p>
 
 **Current stable version:** **1.1.0** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
 
@@ -128,6 +223,10 @@ mcp-test --version
 ```
 
 ### Docker
+
+<p align="center">
+  <img src="docs/images/docker-distribution.png" alt="Docker workflow: pull ghcr.io/vaquarkhan/mcp-test-harness, mount your project, run mcp-test inside the container" width="100%" />
+</p>
 
 **One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
 
@@ -178,6 +277,10 @@ docker run --rm -v "${PWD}:/work" -w /work mcp-test-harness:local
 > **Note:** The Docker image is optional; many teams use `pip install` in CI. Use the image when you need a **reproducible, Python-isolated** environment without a local venv, or a **portable** `mcp-test` in pipelines that standardize on containers.
 
 ## Quick Start
+
+<p align="center">
+  <img src="docs/images/developer-journey.png" alt="Quick start path: pip install, mcp-test init, write tests, run locally, gate in GitHub Actions" width="100%" />
+</p>
 
 ### 0. Scaffold a starter (optional)
 
@@ -255,6 +358,10 @@ report:
 Then just: `mcp-test`
 
 ## Assertion Reference
+
+<p align="center">
+  <img src="docs/images/assertions-grid.png" alt="Assertion library grid: tool calls, snapshots, latency, throughput, resources, prompts, capabilities, schema, auth boundaries, and more" width="100%" />
+</p>
 
 ### assert_tool_call -- invoke a tool and validate the response
 
@@ -398,6 +505,10 @@ mcp-test -k "*workflow*"    # glob patterns
 
 ## Reports
 
+<p align="center">
+  <img src="docs/images/report-formats.png" alt="Report formats: console summary, JUnit XML for CI, JSON with full metadata, and interactive HTML dashboard" width="100%" />
+</p>
+
 ```bash
 # JUnit XML for CI (GitHub Actions, Jenkins, GitLab)
 mcp-test --report-format junit --report-output results.xml
@@ -420,6 +531,10 @@ Total time: 200.0ms
 
 ## Parallel Execution
 
+<p align="center">
+  <img src="docs/images/parallel-execution.png" alt="Parallel workers each run their own MCP server; tests from the same file stay on one worker" width="100%" />
+</p>
+
 ```bash
 mcp-test --parallel              # use all CPU cores
 mcp-test --parallel --workers 4  # specify worker count
@@ -430,6 +545,10 @@ Each worker gets its own server instance. If one crashes, others continue.
 **Module grouping:** tests from the same file are always scheduled on the **same** worker, so per-module fixtures (`mcp_server_session`, etc.) stay valid. Do not rely on test order *across* different files in parallel mode.
 
 ## Transport Support
+
+<p align="center">
+  <img src="docs/images/transport-options.png" alt="Transport options: stdio for local servers, SSE and HTTP for remote MCP endpoints" width="100%" />
+</p>
 
 | Transport | Use case | Example |
 |-----------|----------|---------|
@@ -449,6 +568,10 @@ server:
 ```
 
 ## GitHub Action
+
+<p align="center">
+  <img src="docs/images/ci-pipeline.png" alt="CI pipeline: pull request triggers MCP tests, JUnit report uploaded, pass/fail gates merge" width="100%" />
+</p>
 
 ```yaml
 # .github/workflows/mcp-tests.yml
@@ -526,6 +649,10 @@ dist/mcp-test --version
 No Python required on the target machine. Cross-platform: Linux, macOS, Windows.
 
 ## Security Testing with MCP-Bastion
+
+<p align="center">
+  <img src="docs/images/harness-bastion-pairing.png" alt="Test with MCP Test Harness in CI, protect in production with MCP-Bastion runtime security middleware" width="100%" />
+</p>
 
 MCP Test Harness tests that your MCP server works correctly. For production security, pair it with [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) -- an active defense middleware that protects MCP servers at runtime.
 

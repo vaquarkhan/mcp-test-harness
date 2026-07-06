@@ -14,7 +14,7 @@ from typing import Any, Literal
 TransportType = Literal["stdio", "sse", "http"]
 """Supported MCP transport types."""
 
-ReportFormat = Literal["json", "junit", "html"]
+ReportFormat = Literal["json", "junit", "html", "sarif"]
 """Supported report output formats."""
 
 
@@ -90,6 +90,10 @@ class SessionResults:
     finished_at: str = ""
     #: Host / process context for debugging (Python version, cwd, server command, …).
     environment: dict[str, str] = field(default_factory=dict)
+    #: Tool/resource/prompt coverage map (advertised vs tested).
+    coverage: dict[str, Any] = field(default_factory=dict)
+    #: Unified functional / perf / security / resiliency scores.
+    unified_summary: dict[str, Any] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------

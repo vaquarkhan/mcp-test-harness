@@ -59,17 +59,58 @@ mcp-test -m perf --server-command "python my_server.py" tests/
 
 Run everything **except** a tag by discovering all tests and using two jobs, or split files (`tests/perf_*.py`) and point `mcp-test` at the right path. The CLI matches any tag listed in `markers["tags"]` for `-m` (see [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) markers section).
 
-## 4. Relationship to `assert_tool_idempotent`
+## 4. Concurrent load (`assert_throughput`)
+
+Gate **minimum RPS**, **p99 latency under load**, and **error rate** in one burst:
+
+```python
+@marker(tags=["perf"])
+async def test_reserve_under_load(mcp_server):
+    await assert_throughput(
+        mcp_server,
+        "reserve",
+        {"sku": "A1"},
+        concurrent=8,
+        total_calls=32,
+        min_rps=10.0,
+        max_p99_ms=500.0,
+        max_error_rate=0.02,
+        warmup=2,
+    )
+```
+
+| Parameter | Meaning |
+|-----------|---------|
+| `min_rps` | Fail if sustained requests/sec is below this |
+| `max_p99_ms` | Fail if p99 per-call latency (ms) in the burst exceeds this |
+| `max_error_rate` | Fail if fraction of exceptions or `isError` responses exceeds this (0.0–1.0) |
+
+## 5. Performance baselines
+
+Capture baselines in JSON and fail on drift:
+
+```python
+from mcp_test_harness import assert_latency_within_baseline, save_baseline
+
+# Once: save_baseline("perf-baseline.json", {"search_p99": 450.0})
+await assert_latency_within_baseline(
+    mcp_server, "search", {"q": "x"},
+    "perf-baseline.json", "search_p99",
+    max_regression_pct=15.0,
+)
+```
+
+## 6. Relationship to `assert_tool_idempotent`
 
 - **`assert_tool_idempotent`** checks **correctness** (same output across calls).
 - **`assert_latency`** checks **time** (under a budget, optionally with p95/mean).
 
 You can use both in one test if the tool is idempotent and you want speed + stability.
 
-## 5. What this is not
+## 7. What this is not
 
-- **Not** a load testing tool (no concurrent VUs) — for that, add JMeter, k6, or a dedicated load runner next to the harness.
-- **Not** a substitute for **production** APM; this is for **CI** and **regression** on a single test server process (per the harness’s normal execution model).
+- **Not** a datacenter-scale load generator — use k6/JMeter for cluster RPS; harness owns **MCP-aware SLO gates** on a test server process.
+- **Not** a substitute for **production** APM; this is for **CI** and **regression**.
 
 For **Postman-style multi-step “collection”** scenarios (chaining tool calls, environment-like config, roadmap for a declarative format), see [COLLECTIONS.md](COLLECTIONS.md).
 

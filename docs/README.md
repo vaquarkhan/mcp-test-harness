@@ -28,6 +28,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Enterprise governance** (audit/policy/tenant guidance) | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) |
 | **Plugin registry** (integration catalog placeholder) | [PLUGIN_REGISTRY.md](PLUGIN_REGISTRY.md) |
 | **Ecosystem** (conformance/eval/benchmark categories vs this harness) | [COMPARISON.md](COMPARISON.md) |
+| **Product positioning** (four differentiators, enterprise story) | [POSITIONING.md](POSITIONING.md) |
 | **LLM-assisted test generation** (when it helps vs when to avoid) | [LLM_TEST_GENERATION.md](LLM_TEST_GENERATION.md) |
 | **Postman-style collections, environments, multi-step flows (vs Python today)** | [COLLECTIONS.md](COLLECTIONS.md) |
 | **Registries, PyPI, release promotion** (checklist — same style as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) | [DISCOVERY.md](DISCOVERY.md) |
@@ -59,7 +60,8 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) | **Compatibility strategy:** contract replay and protocol/client matrix direction |
 | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) | **Governance:** audit/policy/tenant requirements, plus practical EU AI Act evidence mapping |
 | [PLUGIN_REGISTRY.md](PLUGIN_REGISTRY.md) | **Integrations:** proposed plugin catalog categories and listing template |
-| [COMPARISON.md](COMPARISON.md) | **Ecosystem map:** other MCP tools (conformance, evals, benchmarks) and how they fit with Harness + Bastion |
+| [COMPARISON.md](COMPARISON.md) | **Ecosystem map:** other MCP tools (conformance, evals, benchmarks, mcp-shark) and how they fit with Harness + Bastion |
+| [POSITIONING.md](POSITIONING.md) | **Product positioning:** four differentiators, governance, mcp-shark pairing |
 | [LLM_TEST_GENERATION.md](LLM_TEST_GENERATION.md) | **LLMs:** draft tests with review is OK; auto-trusted CI is not; how this differs from LLM-in-the-loop eval tools |
 | [COLLECTIONS.md](COLLECTIONS.md) | **Postman / Newman–style** flows: collections + environments, how to do it in **Python** today, **roadmap** for declarative collections; load testing pointers |
 | [DISCOVERY.md](DISCOVERY.md) | **Discovery / registries:** internal checklist for releases (PyPI, awesome lists, `server.json`, related tooling) |

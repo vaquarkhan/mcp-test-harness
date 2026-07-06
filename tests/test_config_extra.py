@@ -21,6 +21,7 @@ def _ns(**kwargs):
         "server_command": None, "transport": None, "config": None,
         "timeout": None, "verbose": None, "parallel": None,
         "workers": None, "report_format": None, "report_output": None,
+        "sarif_output": None, "pr_summary_output": None,
         "update_snapshots": None, "filter_name": None, "filter_marker": None,
         "test_path": None, "list": None, "watch": None,
     }
@@ -136,6 +137,23 @@ class TestLoadConfigExtraBranches:
         cfg = load_config(ns)
         assert cfg.validate_schema_each_parallel_worker is True
         assert cfg.schema_probe_call_tool is False
+
+    def test_yaml_report_sarif_and_pr_summary_paths(self, tmp_path: Path) -> None:
+        f = tmp_path / "mcp-test.yaml"
+        f.write_text(
+            "server:\n  command: x\n"
+            "report:\n"
+            "  format: sarif\n"
+            "  output: out.sarif\n"
+            "  sarif_output: extra.sarif\n"
+            "  pr_summary_output: pr.md\n"
+        )
+        ns = _ns(config=str(f))
+        cfg = load_config(ns)
+        assert cfg.report_format == "sarif"
+        assert cfg.report_output == "out.sarif"
+        assert cfg.sarif_output == "extra.sarif"
+        assert cfg.pr_summary_output == "pr.md"
 
     def test_non_dict_yaml_raises(self, tmp_path: Path):
         f = tmp_path / "mcp-test.yaml"

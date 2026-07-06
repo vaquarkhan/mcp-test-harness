@@ -416,6 +416,88 @@ async def test_async_main_junit_report_write(tmp_path: Path) -> None:
     assert rep.is_file() and len(rep.read_text(encoding="utf-8")) > 0
 
 
+@pytest.mark.asyncio
+async def test_async_main_sarif_and_pr_summary_write(tmp_path: Path) -> None:
+    from mcp_test_harness.discovery import HarnessModule
+    from mcp_test_harness.models import SessionResults, CaseResult, CaseStatus
+
+    sarif = tmp_path / "o.sarif"
+    pr = tmp_path / "pr.md"
+    d = str(tmp_path)
+    cfg = HarnessConfig(
+        server_command="echo a",
+        test_dirs=[d],
+        report_format="junit",
+        report_output=str(tmp_path / "o.xml"),
+        sarif_output=str(sarif),
+        pr_summary_output=str(pr),
+        schema_validation=False,
+    )
+    tc = _case("t", "m.py")
+    hmod = HarnessModule(path=Path("m.py"), test_cases=[tc])
+    ses = SessionResults(
+        test_results=[CaseResult("t", "m.py", CaseStatus.PASSED, 1.0)],
+        total_duration_ms=1.0,
+        server_capabilities={},
+        protocol_version="",
+        harness_version="1.2.0",
+        passed=1,
+    )
+    with (
+        patch("mcp_test_harness.cli.discover_tests", return_value=[hmod]),
+        patch("mcp_test_harness.scheduler.HarnessScheduler") as hs,
+        patch("mcp_test_harness.plugins.PluginRegistry") as prg,
+        patch("mcp_test_harness.cli.load_config", return_value=cfg),
+    ):
+        prg.return_value.discover_and_load = MagicMock()
+        prg.return_value.expose_assertions = MagicMock()
+        prg.return_value.apply_discovery_hooks = MagicMock(side_effect=lambda mods: mods)
+        hs.return_value.run_sequential = AsyncMock(return_value=ses)
+        code = await _async_main([d, "--server-command", "echo a"])
+    assert code == 0
+    assert sarif.is_file() and '"version": "2.1.0"' in sarif.read_text(encoding="utf-8")
+    assert pr.is_file() and "MCP Test Harness" in pr.read_text(encoding="utf-8")
+
+
+@pytest.mark.asyncio
+async def test_async_main_sarif_report_format_write(tmp_path: Path) -> None:
+    from mcp_test_harness.discovery import HarnessModule
+    from mcp_test_harness.models import SessionResults, CaseResult, CaseStatus
+
+    sarif = tmp_path / "only.sarif"
+    d = str(tmp_path)
+    cfg = HarnessConfig(
+        server_command="echo a",
+        test_dirs=[d],
+        report_format="sarif",
+        report_output=str(sarif),
+        schema_validation=False,
+    )
+    tc = _case("t", "m.py")
+    hmod = HarnessModule(path=Path("m.py"), test_cases=[tc])
+    ses = SessionResults(
+        test_results=[CaseResult("t", "m.py", CaseStatus.PASSED, 1.0)],
+        total_duration_ms=1.0,
+        server_capabilities={},
+        protocol_version="",
+        harness_version="1.2.0",
+        passed=1,
+    )
+    with (
+        patch("mcp_test_harness.cli.discover_tests", return_value=[hmod]),
+        patch("mcp_test_harness.scheduler.HarnessScheduler") as hs,
+        patch("mcp_test_harness.plugins.PluginRegistry") as prg,
+        patch("mcp_test_harness.cli.load_config", return_value=cfg),
+    ):
+        prg.return_value.discover_and_load = MagicMock()
+        prg.return_value.expose_assertions = MagicMock()
+        prg.return_value.apply_discovery_hooks = MagicMock(side_effect=lambda mods: mods)
+        hs.return_value.run_sequential = AsyncMock(return_value=ses)
+        code = await _async_main([d, "--server-command", "echo a"])
+    assert code == 0
+    assert sarif.is_file() and '"version": "2.1.0"' in sarif.read_text(encoding="utf-8")
+
+
 def test_cli_version_via_module_main() -> None:
     import subprocess
     import sys

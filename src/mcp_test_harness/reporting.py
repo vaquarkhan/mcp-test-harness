@@ -23,6 +23,7 @@ def xml_escape(text: str) -> str:
     return _xml_escape_base(text, {'"': "&quot;", "'": "&apos;"})
 
 from mcp_test_harness.models import SessionResults, CaseResult, CaseStatus
+from mcp_test_harness.security_rules import build_security_findings
 
 
 # ---------------------------------------------------------------------------
@@ -182,6 +183,13 @@ class JSONReporter:
             },
             "tests": [_test_result_to_dict(tr) for tr in results.test_results],
         }
+        if results.unified_summary:
+            report["unified_summary"] = results.unified_summary
+        if results.coverage:
+            report["coverage"] = results.coverage
+        findings = build_security_findings(results)
+        if findings:
+            report["security_findings"] = findings
         return json.dumps(report, indent=2, default=str)
 
 

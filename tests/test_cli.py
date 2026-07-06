@@ -72,7 +72,7 @@ class TestBuildParser:
 
     def test_report_format_choices(self):
         parser = _build_parser()
-        for fmt in ("json", "junit"):
+        for fmt in ("json", "junit", "sarif"):
             args = parser.parse_args(["--report-format", fmt])
             assert args.report_format == fmt
 
@@ -150,7 +150,7 @@ class TestAsyncMainVersion:
         assert code == 0
         captured = capsys.readouterr()
         assert "mcp-test" in captured.out
-        assert "1.1.0" in captured.out
+        assert "1.2.0" in captured.out
 
 
 # ---------------------------------------------------------------------------

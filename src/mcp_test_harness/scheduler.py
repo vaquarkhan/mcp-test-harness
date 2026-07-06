@@ -18,8 +18,15 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 from mcp_test_harness.config import HarnessConfig
+from mcp_test_harness.coverage import (
+    capture_advertised_inventory,
+    coverage_to_dict,
+    get_coverage,
+    merge_states,
+)
 from mcp_test_harness.discovery import HarnessCase
 from mcp_test_harness.executor import CaseExecutor
 from mcp_test_harness.fixtures import (
@@ -30,6 +37,7 @@ from mcp_test_harness.fixtures import (
 )
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager, StartupError
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
+from mcp_test_harness.unified_report import build_unified_summary
 from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_connect
 
 logger = logging.getLogger(__name__)
@@ -156,6 +164,7 @@ class HarnessScheduler:
         try:
             server = await lifecycle.start(config)
             await _assert_mcp_compliance(config, server, worker_id=0)
+            await capture_advertised_inventory(server.session)
             capabilities = server.capabilities
             protocol_version = (
                 ServerLifecycleManager.protocol_version_from_init(server.init_result)
@@ -245,6 +254,9 @@ class HarnessScheduler:
 
         total_duration_ms = (time.monotonic() - start_time) * 1000.0
         run_finished = _utc_iso()
+        cov_dict: dict[str, Any] = {}
+        if server is not None:
+            cov_dict = coverage_to_dict(get_coverage(server.session))
         return _aggregate_results(
             results,
             total_duration_ms,
@@ -253,6 +265,7 @@ class HarnessScheduler:
             started_at=run_started,
             finished_at=run_finished,
             environment=_build_environment(config),
+            coverage=cov_dict,
         )
 
     async def run_parallel(
@@ -336,6 +349,7 @@ class HarnessScheduler:
         all_results: list[CaseResult] = []
         capabilities: dict = {}
         protocol_version = ""
+        coverage_states: list[Any] = []
 
         for wr in worker_results:
             all_results.extend(wr.results)
@@ -343,6 +357,10 @@ class HarnessScheduler:
                 capabilities = wr.capabilities
             if wr.protocol_version:
                 protocol_version = wr.protocol_version
+            if wr.coverage_state is not None:
+                coverage_states.append(wr.coverage_state)
+
+        cov_dict = coverage_to_dict(merge_states(*coverage_states)) if coverage_states else {}
 
         total_duration_ms = (time.monotonic() - start_time) * 1000.0
         run_finished = _utc_iso()
@@ -354,6 +372,7 @@ class HarnessScheduler:
             started_at=run_started,
             finished_at=run_finished,
             environment=_build_environment(config),
+            coverage=cov_dict,
         )
 
     # ------------------------------------------------------------------
@@ -387,10 +406,12 @@ class HarnessScheduler:
 
         lifecycle = ServerLifecycleManager()
         server: ManagedServer | None = None
+        coverage_state: Any = None
 
         try:
             server = await lifecycle.start(config)
             await _assert_mcp_compliance(config, server, worker_id=worker_id)
+            await capture_advertised_inventory(server.session)
             capabilities = server.capabilities
             protocol_version = (
                 ServerLifecycleManager.protocol_version_from_init(server.init_result)
@@ -484,12 +505,14 @@ class HarnessScheduler:
                 )
         finally:
             if server is not None:
+                coverage_state = get_coverage(server.session)
                 await lifecycle.shutdown(server)
 
         return _WorkerResult(
             results=results,
             capabilities=capabilities,
             protocol_version=protocol_version,
+            coverage_state=coverage_state,
         )
 
 
@@ -505,6 +528,7 @@ class _WorkerResult:
     results: list[CaseResult]
     capabilities: dict
     protocol_version: str
+    coverage_state: Any = None
 
 
 def _aggregate_results(
@@ -516,6 +540,7 @@ def _aggregate_results(
     started_at: str = "",
     finished_at: str = "",
     environment: dict[str, str] | None = None,
+    coverage: dict[str, Any] | None = None,
 ) -> SessionResults:
     """Build a ``SessionResults`` from a flat list of ``CaseResult``."""
     passed = sum(1 for r in results if r.status == CaseStatus.PASSED)
@@ -524,7 +549,8 @@ def _aggregate_results(
     skipped = sum(1 for r in results if r.status == CaseStatus.SKIPPED)
     timed_out = sum(1 for r in results if r.status == CaseStatus.TIMEOUT)
 
-    return SessionResults(
+    cov = dict(coverage or {})
+    session = SessionResults(
         test_results=results,
         total_duration_ms=total_duration_ms,
         server_capabilities=capabilities,
@@ -538,4 +564,7 @@ def _aggregate_results(
         started_at=started_at,
         finished_at=finished_at,
         environment=dict(environment or {}),
+        coverage=cov,
     )
+    session.unified_summary = build_unified_summary(session, cov or None)
+    return session

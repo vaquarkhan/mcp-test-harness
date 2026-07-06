@@ -590,6 +590,20 @@ class _IndexedSleepSession:
         return FakeToolResult(content=[FakeContent(text="ok")])
 
 
+class _ErrorBurstSession:
+    """Every Nth call_tool returns isError=True."""
+
+    def __init__(self, every_nth_error: int) -> None:
+        self._n = every_nth_error
+        self._i = 0
+
+    async def call_tool(self, *args: object, **kwargs: object) -> FakeToolResult:
+        self._i += 1
+        if self._n > 0 and self._i % self._n == 0:
+            return FakeToolResult(content=[FakeContent(text="err", isError=True)])
+        return FakeToolResult(content=[FakeContent(text="ok")])
+
+
 _agg = assertions_mod._aggregate_latency_ms  # type: ignore[attr-defined]
 
 
@@ -694,6 +708,68 @@ class TestAssertThroughput:
         asyncio.run(
             assert_throughput(s, "t", {}, concurrent=1, total_calls=2, warmup=2)
         )
+
+    def test_max_p99_ms_pass(self) -> None:
+        s = _SleepSession(0.0)
+        asyncio.run(
+            assert_throughput(
+                s, "t", {}, concurrent=2, total_calls=4, max_p99_ms=100.0
+            )
+        )
+
+    def test_max_p99_ms_fail(self) -> None:
+        s = _SleepSession(50.0)
+        with pytest.raises(MCPAssertionError, match="p99 latency"):
+            asyncio.run(
+                assert_throughput(
+                    s, "t", {}, concurrent=2, total_calls=4, max_p99_ms=10.0
+                )
+            )
+
+    def test_max_error_rate_fail(self) -> None:
+        s = _ErrorBurstSession(every_nth_error=2)
+        with pytest.raises(MCPAssertionError, match="error rate"):
+            asyncio.run(
+                assert_throughput(
+                    s,
+                    "t",
+                    {},
+                    concurrent=2,
+                    total_calls=4,
+                    max_error_rate=0.0,
+                )
+            )
+
+    def test_max_error_rate_pass(self) -> None:
+        s = _SleepSession(0.0)
+        asyncio.run(
+            assert_throughput(
+                s, "t", {}, concurrent=2, total_calls=4, max_error_rate=0.1
+            )
+        )
+
+    def test_max_error_rate_counts_exceptions(self) -> None:
+        class _RaiseEvery:
+            def __init__(self) -> None:
+                self._i = 0
+
+            async def call_tool(self, *args: object, **kwargs: object) -> FakeToolResult:
+                self._i += 1
+                if self._i % 2 == 0:
+                    raise RuntimeError("boom")
+                return FakeToolResult(content=[FakeContent(text="ok")])
+
+        with pytest.raises(MCPAssertionError, match="error rate"):
+            asyncio.run(
+                assert_throughput(
+                    _RaiseEvery(),
+                    "t",
+                    {},
+                    concurrent=1,
+                    total_calls=4,
+                    max_error_rate=0.1,
+                )
+            )
 
 
 class TestAssertInvalidTool:

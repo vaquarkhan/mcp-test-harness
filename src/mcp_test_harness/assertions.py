@@ -19,6 +19,12 @@ from pathlib import Path
 from typing import Any, Literal
 
 from mcp_test_harness.snapshots import SnapshotManager
+from mcp_test_harness.coverage import (
+    record_auth_test,
+    record_prompt,
+    record_resource_read,
+    record_tool_call,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -227,6 +233,7 @@ async def assert_tool_call(
         await _validate_arguments_against_schema(session, tool_name, arguments)
 
     result = await session.call_tool(tool_name, arguments)
+    record_tool_call(session, tool_name)
 
     # The MCP SDK result has a `.content` list.  If any content item
     # carries ``isError`` we surface the server error.
@@ -321,6 +328,7 @@ async def assert_resource_read(
             diff=diff,
         )
 
+    record_resource_read(session, resource_uri)
     return result
 
 
@@ -372,6 +380,7 @@ async def assert_prompt(
                 diff=diff,
             )
 
+    record_prompt(session, prompt_name)
     return result
 
 
@@ -660,6 +669,7 @@ async def assert_tool_denied(
         arguments,
         error_substring=error_substring,
     )
+    record_auth_test(session, tool_name)
 
 
 async def assert_authorization_boundary(
@@ -683,6 +693,7 @@ async def assert_authorization_boundary(
         denied_arguments,
         error_substring=denied_error_substring,
     )
+    record_auth_test(session, tool_name)
 
 
 # ---------------------------------------------------------------------------
@@ -845,6 +856,7 @@ async def assert_latency(
     """
     for _ in range(warmup):
         await session.call_tool(tool_name, arguments)
+    record_tool_call(session, tool_name)
 
     timings: list[float] = []
     for _ in range(max(1, runs)):
@@ -868,12 +880,14 @@ async def assert_throughput(
     concurrent: int = 4,
     total_calls: int = 16,
     min_rps: float | None = None,
+    max_p99_ms: float | None = None,
+    max_error_rate: float | None = None,
     warmup: int = 0,
 ) -> None:
-    """Run concurrent ``call_tool`` invocations and optionally enforce a minimum RPS.
+    """Run concurrent ``call_tool`` invocations with optional SLO gates.
 
-    Complements :func:`assert_latency` (which targets single-request latency) with a
-    **load** check: many overlapping calls, bounded by a semaphore.
+    Complements :func:`assert_latency` (single-request latency) with a **load** check:
+    many overlapping calls, bounded by a semaphore.
 
     Parameters
     ----------
@@ -882,7 +896,13 @@ async def assert_throughput(
     total_calls
         Number of ``call_tool`` invocations in the measured window.
     min_rps
-        If set, the run fails when ``total_calls / wall_seconds`` is below this value.
+        If set, fail when ``total_calls / wall_seconds`` is below this value.
+    max_p99_ms
+        If set, fail when the **p99** per-call latency (ms) across the burst exceeds
+        this budget.
+    max_error_rate
+        If set, fail when the fraction of calls that raise or return ``isError``
+        exceeds this value (0.0–1.0, e.g. ``0.05`` = 5%).
     warmup
         Untimed ``call_tool`` calls before the measured burst (single-threaded).
     """
@@ -891,25 +911,63 @@ async def assert_throughput(
 
     for _ in range(warmup):
         await session.call_tool(tool_name, arguments)
+    record_tool_call(session, tool_name)
 
     sem = asyncio.Semaphore(c)
+    timings: list[float] = []
+    error_count = 0
+    lock = asyncio.Lock()
 
-    async def _one() -> None:
-        await session.call_tool(tool_name, arguments)
+    def _call_failed(result: Any) -> bool:
+        for item in getattr(result, "content", None) or []:
+            if getattr(item, "isError", False) or (
+                isinstance(item, dict) and item.get("isError")
+            ):
+                return True
+        return False
 
     async def _bounded() -> None:
+        nonlocal error_count
         async with sem:
-            await _one()
+            t0 = time.perf_counter()
+            failed = False
+            try:
+                result = await session.call_tool(tool_name, arguments)
+                failed = _call_failed(result)
+            except Exception:
+                failed = True
+            elapsed_ms = (time.perf_counter() - t0) * 1000.0
+            async with lock:
+                timings.append(elapsed_ms)
+                if failed:
+                    error_count += 1
 
-    t0 = time.perf_counter()
+    wall_t0 = time.perf_counter()
     await asyncio.gather(*[_bounded() for _ in range(n)])
-    elapsed = time.perf_counter() - t0
+    elapsed = time.perf_counter() - wall_t0
     rps = n / elapsed if elapsed > 0 else float("inf")
+
     if min_rps is not None and rps < float(min_rps):
         raise MCPAssertionError(
             f"Tool '{tool_name}' sustained ~{rps:.2f} req/s; "
             f"minimum {float(min_rps):.2f} req/s (concurrent={c}, n={n}, {elapsed*1000:.1f}ms wall)",
         )
+
+    if max_p99_ms is not None and timings:
+        p99 = _aggregate_latency_ms(timings, "p99")
+        if p99 > float(max_p99_ms):
+            raise MCPAssertionError(
+                f"Tool '{tool_name}' p99 latency {p99:.1f}ms exceeds budget "
+                f"{float(max_p99_ms):.1f}ms under load (concurrent={c}, n={n})",
+            )
+
+    if max_error_rate is not None and n > 0:
+        rate = error_count / n
+        if rate > float(max_error_rate):
+            raise MCPAssertionError(
+                f"Tool '{tool_name}' error rate {rate:.1%} exceeds maximum "
+                f"{float(max_error_rate):.1%} ({error_count}/{n} calls failed under load)",
+            )
 
 
 # ---------------------------------------------------------------------------
