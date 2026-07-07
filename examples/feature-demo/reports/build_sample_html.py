@@ -63,6 +63,26 @@ def _echo_trace() -> dict:
     }
 
 
+def _stamp_started_at(tests: list[CaseResult], run_start: str, run_end: str) -> None:
+    """Spread started_at across the run window for date-filter demos."""
+    from datetime import datetime, timezone
+
+    t0 = datetime.fromisoformat(run_start.replace("Z", "+00:00"))
+    t1 = datetime.fromisoformat(run_end.replace("Z", "+00:00"))
+    span_ms = max(int((t1 - t0).total_seconds() * 1000), 1)
+    n = len(tests)
+    for i, tr in enumerate(tests):
+        if tr.started_at:
+            continue
+        offset_ms = int(span_ms * i / max(n - 1, 1))
+        ts = t0.timestamp() * 1000 + offset_ms
+        tr.started_at = (
+            datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
+
+
 def _demo_results() -> SessionResults:
     tests: list[CaseResult] = [
         # --- tests/test_server.py (functional) ---
@@ -276,6 +296,10 @@ def _demo_results() -> SessionResults:
         ),
     ]
 
+    run_start = "2026-07-06T20:10:00.000Z"
+    run_end = "2026-07-06T20:10:02.340Z"
+    _stamp_started_at(tests, run_start, run_end)
+
     passed = sum(1 for t in tests if t.status == CaseStatus.PASSED)
     failed = sum(1 for t in tests if t.status == CaseStatus.FAILED)
     errored = sum(1 for t in tests if t.status == CaseStatus.ERROR)
@@ -309,8 +333,8 @@ def _demo_results() -> SessionResults:
         errored=errored,
         skipped=skipped,
         timed_out=timed_out,
-        started_at="2026-07-06T20:10:00.000Z",
-        finished_at="2026-07-06T20:10:02.340Z",
+        started_at=run_start,
+        finished_at=run_end,
         environment={
             "python_version": "3.12.4",
             "platform": "Windows-11-amd64",
@@ -336,6 +360,10 @@ def main() -> None:
         f"{results.skipped} skipped, {results.timed_out} timeout "
         f"({len(results.test_results)} tests)"
     )
+    print("Validate UI:")
+    print("  python -m http.server 8765 -d html/reports")
+    print("  open http://localhost:8765/sample_mcp_test_report.html")
+    print("  try: status chips · date From/To · duration min/max · Export CSV · Theme")
     try:
         from mcp_test_harness.pdf_export import capture_html_screenshot
 

@@ -634,6 +634,8 @@ class TestHTMLReporter:
         run = _make_results([_passed(), _failed()])
         html = HTMLReporter().generate(run)
         assert "mcp-filter-summary" in html
+        assert "formats-export-hint" in html
+        assert "fmt-console" in html
         assert "mcp-dur-min" in html
         assert "mcp-export-csv" in html
         assert "mcp-theme-toggle" in html
@@ -642,6 +644,15 @@ class TestHTMLReporter:
         assert "data-file=" in html
         assert "startedCsvValue" in html
         assert "\\ufeff" in html
+
+    def test_formats_strip_populated_from_run(self):
+        run = _make_results([_passed("test_alpha"), _failed("test_beta")])
+        html = HTMLReporter().generate(run)
+        assert "test_alpha" in html
+        assert "test_beta" in html
+        assert "fmt-card-expand" in html
+        assert "Click for full output" in html
+        assert 'href="#mcp-stat-grid"' in html
 
     def test_html_started_iso_attr_for_csv(self):
         tr = _passed("test_timed")
