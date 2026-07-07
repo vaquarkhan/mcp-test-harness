@@ -99,7 +99,7 @@ Every diagram lives in [`docs/images/`](docs/images/). Quick reference:
 | [`mcp-testobarness-feature.png`](docs/images/mcp-testobarness-feature.png) | Core feature map |
 | [`assertions-grid.png`](docs/images/assertions-grid.png) | Assertion library at a glance |
 | [`report-formats.png`](docs/images/report-formats.png) | Console, JUnit, JSON, and HTML format overview (infographic) |
-| [`html-dashboard.png`](docs/images/html-dashboard.png) | **Live HTML dashboard** — stat cards, charts, filters, PDF/CSV export |
+| [`html-dashboard.png`](docs/images/html-dashboard.png) | **Live HTML dashboard** — format previews (click to expand), stat cards, charts, filters, PDF/CSV export |
 | [`transport-options.png`](docs/images/transport-options.png) | stdio, SSE, and HTTP transports |
 | [`parallel-execution.png`](docs/images/parallel-execution.png) | Multi-worker scheduling and module grouping |
 | [`ci-pipeline.png`](docs/images/ci-pipeline.png) | GitHub Actions PR gate workflow |
@@ -550,7 +550,7 @@ mcp-test -k "*workflow*"    # glob patterns
 ## Reports
 
 <p align="center">
-  <img src="docs/images/html-dashboard.png" alt="MCP Test Harness HTML dashboard — stat cards, pass-rate donut, run timeline, top failures, chaos/load/security panels, date and duration filters, PDF and CSV export" width="100%" />
+  <img src="docs/images/html-dashboard.png" alt="MCP Test Harness HTML dashboard — expandable Console/JUnit/JSON previews, stat cards, pass-rate donut, chaos/load/security panels, date and duration filters, PDF and CSV export" width="100%" />
 </p>
 <p align="center"><em>Self-contained HTML report from a real sample run (21 tests). <a href="https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html">Open interactive sample</a>.</em></p>
 
@@ -573,7 +573,7 @@ mcp-test --report-format html --report-output reports/run.html --pdf-output repo
 mcp-test export-pdf reports/run.html -o reports/run.pdf
 ```
 
-**HTML dashboard:** live stat cards, pass-rate donut, chaos/load/security panels, date & duration filters, light/dark theme, Export CSV of filtered rows, Save as PDF, keyboard shortcuts (`/` search, `Esc` clear, `t` theme, `?` help).
+**HTML dashboard:** live format previews (click Console/JUnit/JSON to expand full output), stat cards, pass-rate donut, chaos/load/security panels, date & duration filters, light/dark theme, Export CSV of filtered rows, Save as PDF, keyboard shortcuts (`/` search, `Esc` clear, `t` theme, `?` help).
 
 **Live sample:** [sample HTML report](https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html)
 
