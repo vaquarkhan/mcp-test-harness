@@ -15,6 +15,7 @@ All notable changes to this project are documented in this file. The format is b
 - **`capture_html_screenshot()`** in `pdf_export.py`; `build_sample_html.py` regenerates README/Pages screenshots when a browser is available.
 - **GitHub Pages:** hosted [sample HTML report](https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html), product images, updated examples/index.
 - **Docs:** README Reports section uses live `html-dashboard.png` screenshot; `report-formats.png` retained as multi-format infographic.
+- **HTML report UI:** live Console/JUnit/JSON format previews from run data with click-to-expand cards in the “Test report outputs” strip.
 
 ### Fixed
 

@@ -327,7 +327,7 @@ def _demo_results() -> SessionResults:
             "prompts": {},
         },
         protocol_version="2025-03-26",
-        harness_version="2.0.1",
+        harness_version="2.0.2",
         passed=passed,
         failed=failed,
         errored=errored,
@@ -352,9 +352,15 @@ def _demo_results() -> SessionResults:
 def main() -> None:
     results = _demo_results()
     root = _repo_root()
-    out = root / "examples" / "feature-demo" / "reports" / "sample_mcp_test_report.html"
-    out.write_text(HTMLReporter().generate(results), encoding="utf-8")
-    print(f"Wrote {out}")
+    html = HTMLReporter().generate(results)
+    destinations = (
+        root / "examples" / "feature-demo" / "reports" / "sample_mcp_test_report.html",
+        root / "html" / "reports" / "sample_mcp_test_report.html",
+    )
+    for out in destinations:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(html, encoding="utf-8")
+        print(f"Wrote {out}")
     print(
         f"  {results.passed} passed, {results.failed} failed, {results.errored} errored, "
         f"{results.skipped} skipped, {results.timed_out} timeout "

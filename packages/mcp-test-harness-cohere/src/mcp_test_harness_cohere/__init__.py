@@ -1,3 +1,3 @@
 """MCP Test Harness helpers for Cohere testing."""
 
-__version__ = "2.0.1"
+__version__ = "2.0.2"
