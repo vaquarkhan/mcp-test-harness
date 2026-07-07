@@ -6,9 +6,12 @@ client-side script for filtering and sorting. No network requests.
 
 from __future__ import annotations
 
+import base64
 from collections import defaultdict
 from datetime import datetime
+from functools import lru_cache
 from html import escape as _html_escape
+from pathlib import Path
 
 from mcp_test_harness.models import CaseResult, CaseStatus, SessionResults
 from mcp_test_harness.reporting import _suite_duration_percentiles
@@ -216,6 +219,16 @@ def _print_stylesheet_css() -> str:
 """
 
 
+@lru_cache(maxsize=1)
+def _report_formats_infographic_data_uri() -> str | None:
+    """Inline base64 PNG for the marketing infographic (self-contained reports)."""
+    asset = Path(__file__).resolve().parent / "assets" / "report-formats.png"
+    if not asset.is_file():
+        return None
+    encoded = base64.standard_b64encode(asset.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
+
+
 def _formats_strip_html() -> str:
     """Showcase the four report formats (marketing-style strip)."""
     cards = (
@@ -259,10 +272,23 @@ def _formats_strip_html() -> str:
             f'<div class="fmt-sub">{_html_escape(sub)}</div>'
             f'<div class="fmt-preview"><code>{preview}</code></div></div>'
         )
+    infographic = _report_formats_infographic_data_uri()
+    infographic_html = ""
+    if infographic:
+        infographic_html = (
+            f'<figure class="formats-infographic">'
+            f'<img src="{infographic}" width="720" height="405" '
+            f'alt="Test report outputs: Console, JUnit XML, JSON, and HTML dashboard formats" '
+            f'loading="lazy" decoding="async">'
+            f'<figcaption class="formats-cap">Same run — four export formats. You are viewing the HTML dashboard.</figcaption>'
+            f"</figure>"
+        )
     return (
         f'<section class="formats-strip"><h2 class="section-title">Test report outputs</h2>'
         f'<p class="section-sub">One test run. Multiple formats. Complete visibility.</p>'
-        f'<div class="fmt-grid">{"".join(chunks)}</div></section>'
+        f'{infographic_html}'
+        f'<details class="fmt-details"><summary class="fmt-details-sum">Format previews (compact)</summary>'
+        f'<div class="fmt-grid">{"".join(chunks)}</div></details></section>'
     )
 
 
@@ -1088,7 +1114,21 @@ body {{
   margin-bottom: 1.25rem; padding: 1.1rem; background: var(--panel);
   border: 1px solid var(--border); border-radius: var(--radius);
 }}
-.fmt-grid {{ display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0.65rem; }}
+.formats-infographic {{ margin: 0 0 1rem; }}
+.formats-infographic img {{
+  width: 100%; height: auto; display: block; border-radius: 12px;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+}}
+.formats-cap {{ margin: 0.45rem 0 0; font-size: 0.72rem; color: var(--muted); text-align: center; }}
+.fmt-details {{ margin-top: 0.5rem; }}
+.fmt-details-sum {{
+  cursor: pointer; font-size: 0.78rem; color: #93c5fd; font-weight: 600;
+  list-style: none; user-select: none;
+}}
+.fmt-details-sum::-webkit-details-marker {{ display: none; }}
+.fmt-details[open] > .fmt-details-sum::before {{ content: "▾ "; }}
+.fmt-details:not([open]) > .fmt-details-sum::before {{ content: "▸ "; }}
+.fmt-grid {{ display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0.65rem; margin-top: 0.65rem; }}
 @media (max-width: 900px) {{ .fmt-grid {{ grid-template-columns: repeat(2, 1fr); }} }}
 @media (max-width: 520px) {{ .fmt-grid {{ grid-template-columns: 1fr; }} }}
 .fmt-card {{

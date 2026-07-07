@@ -634,6 +634,9 @@ class TestHTMLReporter:
         run = _make_results([_passed(), _failed()])
         html = HTMLReporter().generate(run)
         assert "mcp-filter-summary" in html
+        assert "formats-infographic" in html
+        assert "data:image/png;base64," in html
+        assert "fmt-details" in html
         assert "mcp-dur-min" in html
         assert "mcp-export-csv" in html
         assert "mcp-theme-toggle" in html
