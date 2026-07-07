@@ -650,8 +650,9 @@ class TestHTMLReporter:
         html = HTMLReporter().generate(run)
         assert "test_alpha" in html
         assert "test_beta" in html
-        assert "testsuite" in html.lower() or "testcase" in html.lower()
-        assert '"passed"' in html or '"summary"' in html
+        assert "fmt-card-expand" in html
+        assert "Click for full output" in html
+        assert 'href="#mcp-stat-grid"' in html
 
     def test_html_started_iso_attr_for_csv(self):
         tr = _passed("test_timed")

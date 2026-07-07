@@ -80,6 +80,28 @@ body {
   border-radius: 10px; padding: 0.75rem; border: 1px solid var(--border);
   background: var(--panel2); min-height: 8rem;
 }
+.fmt-card-link {
+  display: block; text-decoration: none; color: inherit; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.fmt-card-link:hover { border-color: #22c55e; box-shadow: 0 0 0 1px rgba(34,197,94,.25); }
+.fmt-card-expand { padding: 0; }
+.fmt-card-expand > summary.fmt-card-sum {
+  list-style: none; cursor: pointer; padding: 0.75rem; border-radius: 10px;
+}
+.fmt-card-expand > summary.fmt-card-sum::-webkit-details-marker { display: none; }
+.fmt-card-expand[open] > summary.fmt-card-sum { border-bottom: 1px solid var(--border); }
+.fmt-card-expand[open] { border-color: #3b82f6; }
+.fmt-expand-hint, .fmt-link-hint {
+  display: block; font-size: 0.62rem; color: #93c5fd; margin-top: 0.35rem; font-weight: 600;
+}
+.fmt-full {
+  padding: 0.5rem 0.75rem 0.75rem; max-height: 22rem; overflow: auto;
+}
+.fmt-full pre {
+  margin: 0; font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.6rem; line-height: 1.4; color: #a8c5e8; white-space: pre-wrap; word-break: break-word;
+}
 .fmt-head { font-weight: 700; font-size: 0.82rem; margin-bottom: 0.15rem; }
 .fmt-sub { font-size: 0.68rem; color: var(--muted); margin-bottom: 0.5rem; }
 .fmt-preview pre {
@@ -506,25 +528,802 @@ footer a:hover { text-decoration: underline; }
       <span>2026-07-06T20:10:00.000Z &rarr; 2026-07-06T20:10:02.340Z</span>
     </div>
   </header>
-  <section class="formats-strip"><h2 class="section-title">Test report outputs</h2><p class="section-sub">One test run. Multiple formats. Complete visibility.</p><div class="fmt-grid"><div class="fmt-card fmt-console"><div class="fmt-head">Console</div><div class="fmt-sub">Human-readable terminal output</div><div class="fmt-preview"><pre>  PASS  test_echo_tool_returns_message  (12.4ms)
+  <section class="formats-strip" id="mcp-formats-strip"><h2 class="section-title">Test report outputs</h2><p class="section-sub">One test run. Multiple formats. Complete visibility. <span class="muted">Click a card to expand full Console, JUnit, or JSON output.</span></p><div class="fmt-grid"><details class="fmt-card fmt-card-expand fmt-console"><summary class="fmt-card-sum"><span class="fmt-head">Console</span><span class="fmt-sub">Human-readable terminal output</span><span class="fmt-expand-hint">Click for full output</span><div class="fmt-preview"><pre>  PASS  test_echo_tool_returns_message  (12.4ms)
   PASS  test_tool_schema_matches_openapi  (48.2ms)
   PASS  test_list_tools_includes_echo  (6.8ms)
   FAIL  test_echo_rejects_empty_payload  (31.5ms)
       Tool &#x27;echo&#x27; response mismatch
       --- expected
-…</pre></div></div><div class="fmt-card fmt-junit"><div class="fmt-head">JUnit XML</div><div class="fmt-sub">CI/CD integration</div><div class="fmt-preview"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+…</pre></div></summary><div class="fmt-full"><pre>  PASS  test_echo_tool_returns_message  (12.4ms)
+  PASS  test_tool_schema_matches_openapi  (48.2ms)
+  PASS  test_list_tools_includes_echo  (6.8ms)
+  FAIL  test_echo_rejects_empty_payload  (31.5ms)
+      Tool &#x27;echo&#x27; response mismatch
+      --- expected
+      +++ actual
+      @@ -1,3 +1,3 @@
+       [{&quot;text&quot;: &quot;validation error&quot;, &quot;isError&quot;: true}]
+      +[{&quot;text&quot;: &quot;ok&quot;, &quot;isError&quot;: false}]
+  FAIL  test_report_snapshot_stable  (89.0ms)
+      Snapshot mismatch for &#x27;generate_report&#x27;
+      --- expected
+      +++ actual
+      - {&#x27;version&#x27;: &#x27;2.0.0&#x27;}
+      + {&#x27;version&#x27;: &#x27;2.0.1&#x27;}
+  PASS  test_tool_idempotent_calculate  (156.3ms)
+  PASS  test_injection_payloads_blocked  (420.7ms)
+  FAIL  test_no_secret_leak_in_logs  (55.1ms)
+      Tool &#x27;get_config&#x27; output matched secret pattern(s): aws_key
+  PASS  test_path_traversal_blocked  (210.4ms)
+  PASS  test_echo_latency_p95_under_slo  (1240.0ms)
+  FAIL  test_throughput_min_rps  (980.0ms)
+      Throughput 42.1 rps below minimum 50.0 rps (p99=312ms)
+  PASS  test_degrades_gracefully_on_bad_args  (72.0ms)
+  PASS  test_chaos_delay_tolerance  (145.0ms)
+  FAIL  test_chaos_503_unavailable  (88.0ms)
+      ChaosFaultError: simulated 503 Service Unavailable
+  PASS  test_chaos_schema_drift_probe  (62.0ms)
+  ERR  test_survives_server_restart  (18.0ms)
+      ConnectionResetError: MCP server process exited with code 1
+      Traceback (most recent call last):
+        File tests/test_resiliency.py, line 44
+          await assert_tool_call(...)
+  PASS  test_flaky_resource_read  (340.0ms)
+      [!] flaky (passed on retry)
+  FAIL  test_schema_probe_strict  (44.0ms)
+      Schema validation failed for tool &#x27;search&#x27;
+  SKIP  test_prompts_when_available  (0.0ms)
+  SKIP  test_optional_bedrock_pack  (0.0ms)
+  TIME  test_long_running_export  (30000.0ms)
+
+11 passed, 6 failed, 1 errored, 2 skipped
+Total time: 2340.0ms
+
+========================================
+FAILURES
+--------------------
+tests/test_server.py
+  test_echo_rejects_empty_payload — Tool &#x27;echo&#x27; response mismatch
+--- expected
++++ actual
+@@ -1,3 +1,3 @@
+ [{&quot;text&quot;: &quot;validation error&quot;, &quot;isError&quot;: true}]
++[{&quot;text&quot;: &quot;ok&quot;, &quot;isError&quot;: false}]
+--------------------
+tests/test_regression.py
+  test_report_snapshot_stable — Snapshot mismatch for &#x27;generate_report&#x27;
+--- expected
++++ actual
+- {&#x27;version&#x27;: &#x27;2.0.0&#x27;}
++ {&#x27;version&#x27;: &#x27;2.0.1&#x27;}
+--------------------
+tests/test_security.py
+  test_no_secret_leak_in_logs — Tool &#x27;get_config&#x27; output matched secret pattern(s): aws_key
+--------------------
+tests/test_performance.py
+  test_throughput_min_rps — Throughput 42.1 rps below minimum 50.0 rps (p99=312ms)
+--------------------
+tests/test_resiliency.py
+  test_chaos_503_unavailable — ChaosFaultError: simulated 503 Service Unavailable
+--------------------
+tests/test_resiliency.py
+  test_survives_server_restart — ConnectionResetError: MCP server process exited with code 1
+Traceback (most recent call last):
+  File tests/test_resiliency.py, line 44
+    await assert_tool_call(...)
+--------------------
+tests/test_schema.py
+  test_schema_probe_strict — Schema validation failed for tool &#x27;search&#x27;
+--------------------
+tests/test_performance.py
+  test_long_running_export — Test exceeded timeout of 30000ms</pre></div></details><details class="fmt-card fmt-card-expand fmt-junit"><summary class="fmt-card-sum"><span class="fmt-head">JUnit XML</span><span class="fmt-sub">CI/CD integration</span><span class="fmt-expand-hint">Click for full output</span><div class="fmt-preview"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;testsuites&gt;
   &lt;testsuite name=&quot;mcp-test&quot; tests=&quot;21&quot; failures=&quot;6&quot; errors=&quot;2&quot; skipped=&quot;2&quot; time=&quot;2.340&quot; timestamp=&quot;2026-07-06T20:10:02.340Z&quot; hostname=&quot;LAPTOP-UBC5B3VU&quot;&gt;
     &lt;properties&gt;
       &lt;property name=&quot;harness_version&quot; value=&quot;2.0.1&quot; /&gt;
-…</pre></div></div><div class="fmt-card fmt-json"><div class="fmt-head">JSON</div><div class="fmt-sub">Machine-readable data</div><div class="fmt-preview"><pre>{
+…</pre></div></summary><div class="fmt-full"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;testsuites&gt;
+  &lt;testsuite name=&quot;mcp-test&quot; tests=&quot;21&quot; failures=&quot;6&quot; errors=&quot;2&quot; skipped=&quot;2&quot; time=&quot;2.340&quot; timestamp=&quot;2026-07-06T20:10:02.340Z&quot; hostname=&quot;LAPTOP-UBC5B3VU&quot;&gt;
+    &lt;properties&gt;
+      &lt;property name=&quot;harness_version&quot; value=&quot;2.0.1&quot; /&gt;
+      &lt;property name=&quot;mcp_protocol_version&quot; value=&quot;2025-03-26&quot; /&gt;
+      &lt;property name=&quot;transport&quot; value=&quot;stdio&quot; /&gt;
+      &lt;property name=&quot;server_command&quot; value=&quot;python -m my_mcp_server --transport stdio&quot; /&gt;
+      &lt;property name=&quot;run_started_at&quot; value=&quot;2026-07-06T20:10:00.000Z&quot; /&gt;
+      &lt;property name=&quot;run_finished_at&quot; value=&quot;2026-07-06T20:10:02.340Z&quot; /&gt;
+    &lt;/properties&gt;
+    &lt;testcase name=&quot;test_echo_tool_returns_message&quot; classname=&quot;tests/test_server.py&quot; time=&quot;0.012&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;smoke&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;functional&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_tool_schema_matches_openapi&quot; classname=&quot;tests/test_server.py&quot; time=&quot;0.048&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;functional&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_list_tools_includes_echo&quot; classname=&quot;tests/test_server.py&quot; time=&quot;0.007&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;smoke&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_echo_rejects_empty_payload&quot; classname=&quot;tests/test_server.py&quot; time=&quot;0.032&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;functional&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;failure message=&quot;Tool &amp;apos;echo&amp;apos; response mismatch&quot;&gt;--- expected
++++ actual
+@@ -1,3 +1,3 @@
+ [{&amp;quot;text&amp;quot;: &amp;quot;validation error&amp;quot;, &amp;quot;isError&amp;quot;: true}]
++[{&amp;quot;text&amp;quot;: &amp;quot;ok&amp;quot;, &amp;quot;isError&amp;quot;: false}]&lt;/failure&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_report_snapshot_stable&quot; classname=&quot;tests/test_regression.py&quot; time=&quot;0.089&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;regression&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;snapshot&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;failure message=&quot;Snapshot mismatch for &amp;apos;generate_report&amp;apos;&quot;&gt;--- expected
++++ actual
+- {&amp;apos;version&amp;apos;: &amp;apos;2.0.0&amp;apos;}
++ {&amp;apos;version&amp;apos;: &amp;apos;2.0.1&amp;apos;}&lt;/failure&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_tool_idempotent_calculate&quot; classname=&quot;tests/test_regression.py&quot; time=&quot;0.156&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;regression&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_injection_payloads_blocked&quot; classname=&quot;tests/test_security.py&quot; time=&quot;0.421&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;security&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_no_secret_leak_in_logs&quot; classname=&quot;tests/test_security.py&quot; time=&quot;0.055&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;security&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;failure message=&quot;Tool &amp;apos;get_config&amp;apos; output matched secret pattern(s): aws_key&quot;&gt;&lt;/failure&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_path_traversal_blocked&quot; classname=&quot;tests/test_security.py&quot; time=&quot;0.210&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;security&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_echo_latency_p95_under_slo&quot; classname=&quot;tests/test_performance.py&quot; time=&quot;1.240&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;perf&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;latency&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_throughput_min_rps&quot; classname=&quot;tests/test_performance.py&quot; time=&quot;0.980&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;perf&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;throughput&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;failure message=&quot;Throughput 42.1 rps below minimum 50.0 rps (p99=312ms)&quot;&gt;&lt;/failure&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_degrades_gracefully_on_bad_args&quot; classname=&quot;tests/test_resiliency.py&quot; time=&quot;0.072&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;resiliency&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;chaos&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_chaos_delay_tolerance&quot; classname=&quot;tests/test_resiliency.py&quot; time=&quot;0.145&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;chaos&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;chaos:delay&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;resiliency&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_chaos_503_unavailable&quot; classname=&quot;tests/test_resiliency.py&quot; time=&quot;0.088&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;chaos&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;chaos:503&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;resiliency&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;failure message=&quot;ChaosFaultError: simulated 503 Service Unavailable&quot;&gt;&lt;/failure&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_chaos_schema_drift_probe&quot; classname=&quot;tests/test_resiliency.py&quot; time=&quot;0.062&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;chaos&quot; /&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;chaos:schema_drift&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_survives_server_restart&quot; classname=&quot;tests/test_resiliency.py&quot; time=&quot;0.018&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;resiliency&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;error message=&quot;ConnectionResetError: MCP server process exited with code 1&quot;&gt;Traceback (most recent call last):
+  File tests/test_resiliency.py, line 44
+    await assert_tool_call(...)&lt;/error&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_flaky_resource_read&quot; classname=&quot;tests/test_resiliency.py&quot; time=&quot;0.340&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;resiliency&quot; /&gt;
+      &lt;/properties&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_schema_probe_strict&quot; classname=&quot;tests/test_schema.py&quot; time=&quot;0.044&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;functional&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;failure message=&quot;Schema validation failed for tool &amp;apos;search&amp;apos;&quot;&gt;&lt;/failure&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_prompts_when_available&quot; classname=&quot;tests/test_prompts.py&quot; time=&quot;0.000&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;functional&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;skipped message=&quot;server has no prompts capability&quot; /&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_optional_bedrock_pack&quot; classname=&quot;tests/test_prompts.py&quot; time=&quot;0.000&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;integration&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;skipped message=&quot;optional extra mcp-test-harness-bedrock not installed&quot; /&gt;
+    &lt;/testcase&gt;
+    &lt;testcase name=&quot;test_long_running_export&quot; classname=&quot;tests/test_performance.py&quot; time=&quot;30.000&quot;&gt;
+      &lt;properties&gt;
+        &lt;property name=&quot;tag&quot; value=&quot;perf&quot; /&gt;
+      &lt;/properties&gt;
+      &lt;error message=&quot;Test exceeded timeout of 30000ms&quot;&gt;Test timed out&lt;/error&gt;
+    &lt;/testcase&gt;
+  &lt;/testsuite&gt;
+&lt;/testsuites&gt;</pre></div></details><details class="fmt-card fmt-card-expand fmt-json"><summary class="fmt-card-sum"><span class="fmt-head">JSON</span><span class="fmt-sub">Machine-readable data</span><span class="fmt-expand-hint">Click for full output</span><div class="fmt-preview"><pre>{
   &quot;metadata&quot;: {
     &quot;harness_version&quot;: &quot;2.0.1&quot;,
     &quot;protocol_version&quot;: &quot;2025-03-26&quot;,
     &quot;server_capabilities&quot;: {
-…</pre></div></div><div class="fmt-card fmt-html"><div class="fmt-head">HTML Dashboard</div><div class="fmt-sub">Rich visual reporting (this page)</div><div class="fmt-preview"><pre>PASS 11 · FAIL 8 · SKIP 2
+…</pre></div></summary><div class="fmt-full"><pre>{
+  &quot;metadata&quot;: {
+    &quot;harness_version&quot;: &quot;2.0.1&quot;,
+    &quot;protocol_version&quot;: &quot;2025-03-26&quot;,
+    &quot;server_capabilities&quot;: {
+      &quot;tools&quot;: {
+        &quot;listChanged&quot;: true
+      },
+      &quot;resources&quot;: {
+        &quot;subscribe&quot;: false
+      },
+      &quot;logging&quot;: {},
+      &quot;prompts&quot;: {}
+    },
+    &quot;started_at&quot;: &quot;2026-07-06T20:10:00.000Z&quot;,
+    &quot;finished_at&quot;: &quot;2026-07-06T20:10:02.340Z&quot;
+  },
+  &quot;environment&quot;: {
+    &quot;python_version&quot;: &quot;3.12.4&quot;,
+    &quot;platform&quot;: &quot;Windows-11-amd64&quot;,
+    &quot;cwd&quot;: &quot;C:/demo/mcp-server&quot;,
+    &quot;server_command&quot;: &quot;python -m my_mcp_server --transport stdio&quot;,
+    &quot;transport&quot;: &quot;stdio&quot;,
+    &quot;bastion_paired&quot;: &quot;CI verifies \u00b7 Bastion protects production&quot;,
+    &quot;report_generated_at&quot;: &quot;2026-07-07T05:28:48.533990+00:00&quot;
+  },
+  &quot;summary&quot;: {
+    &quot;total&quot;: 21,
+    &quot;passed&quot;: 11,
+    &quot;failed&quot;: 6,
+    &quot;errored&quot;: 1,
+    &quot;skipped&quot;: 2,
+    &quot;timed_out&quot;: 1,
+    &quot;total_duration_ms&quot;: 2340.0,
+    &quot;duration_percentiles_ms&quot;: {
+      &quot;p50_ms&quot;: 88.0,
+      &quot;p95_ms&quot;: 30000.0,
+      &quot;p99_ms&quot;: 30000.0
+    }
+  },
+  &quot;tests&quot;: [
+    {
+      &quot;name&quot;: &quot;test_echo_tool_returns_message&quot;,
+      &quot;module&quot;: &quot;tests/test_server.py&quot;,
+      &quot;file&quot;: &quot;tests/test_server.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 12.4,
+      &quot;tags&quot;: [
+        &quot;smoke&quot;,
+        &quot;functional&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.120Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_tool_schema_matches_openapi&quot;,
+      &quot;module&quot;: &quot;tests/test_server.py&quot;,
+      &quot;file&quot;: &quot;tests/test_server.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 48.2,
+      &quot;tags&quot;: [
+        &quot;functional&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.117000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_list_tools_includes_echo&quot;,
+      &quot;module&quot;: &quot;tests/test_server.py&quot;,
+      &quot;file&quot;: &quot;tests/test_server.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 6.8,
+      &quot;tags&quot;: [
+        &quot;smoke&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.234000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_echo_rejects_empty_payload&quot;,
+      &quot;module&quot;: &quot;tests/test_server.py&quot;,
+      &quot;file&quot;: &quot;tests/test_server.py&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;duration_ms&quot;: 31.5,
+      &quot;tags&quot;: [
+        &quot;functional&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.351000Z&quot;,
+      &quot;error&quot;: &quot;Tool &#x27;echo&#x27; response mismatch&quot;,
+      &quot;assertion_diff&quot;: &quot;--- expected\n+++ actual\n@@ -1,3 +1,3 @@\n [{\&quot;text\&quot;: \&quot;validation error\&quot;, \&quot;isError\&quot;: true}]\n+[{\&quot;text\&quot;: \&quot;ok\&quot;, \&quot;isError\&quot;: false}]&quot;,
+      &quot;mcp_trace&quot;: {
+        &quot;event_count&quot;: 4,
+        &quot;stdio_pollution&quot;: [
+          &quot;WARN: deprecated config key in stderr&quot;
+        ],
+        &quot;events&quot;: [
+          {
+            &quot;t_ms&quot;: 0.8,
+            &quot;direction&quot;: &quot;request&quot;,
+            &quot;method&quot;: &quot;tools/call&quot;,
+            &quot;bytes&quot;: 84,
+            &quot;payload&quot;: {
+              &quot;name&quot;: &quot;echo&quot;,
+              &quot;arguments&quot;: {
+                &quot;message&quot;: &quot;ping&quot;
+              }
+            }
+          },
+          {
+            &quot;t_ms&quot;: 3.2,
+            &quot;direction&quot;: &quot;response&quot;,
+            &quot;method&quot;: &quot;tools/call&quot;,
+            &quot;bytes&quot;: 120,
+            &quot;payload&quot;: {
+              &quot;content&quot;: [
+                {
+                  &quot;type&quot;: &quot;text&quot;,
+                  &quot;text&quot;: &quot;ping&quot;
+                }
+              ]
+            }
+          },
+          {
+            &quot;t_ms&quot;: 4.1,
+            &quot;direction&quot;: &quot;request&quot;,
+            &quot;method&quot;: &quot;tools/call&quot;,
+            &quot;bytes&quot;: 92,
+            &quot;payload&quot;: {
+              &quot;name&quot;: &quot;echo&quot;,
+              &quot;arguments&quot;: {
+                &quot;message&quot;: &quot;&quot;
+              }
+            }
+          },
+          {
+            &quot;t_ms&quot;: 5.0,
+            &quot;direction&quot;: &quot;error&quot;,
+            &quot;method&quot;: &quot;tools/call&quot;,
+            &quot;bytes&quot;: 64,
+            &quot;payload&quot;: {
+              &quot;isError&quot;: true,
+              &quot;message&quot;: &quot;message must be non-empty&quot;
+            },
+            &quot;stdio_pollution&quot;: true
+          }
+        ]
+      }
+    },
+    {
+      &quot;name&quot;: &quot;test_report_snapshot_stable&quot;,
+      &quot;module&quot;: &quot;tests/test_regression.py&quot;,
+      &quot;file&quot;: &quot;tests/test_regression.py&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;duration_ms&quot;: 89.0,
+      &quot;tags&quot;: [
+        &quot;regression&quot;,
+        &quot;snapshot&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.468000Z&quot;,
+      &quot;error&quot;: &quot;Snapshot mismatch for &#x27;generate_report&#x27;&quot;,
+      &quot;assertion_diff&quot;: &quot;--- expected\n+++ actual\n- {&#x27;version&#x27;: &#x27;2.0.0&#x27;}\n+ {&#x27;version&#x27;: &#x27;2.0.1&#x27;}&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_tool_idempotent_calculate&quot;,
+      &quot;module&quot;: &quot;tests/test_regression.py&quot;,
+      &quot;file&quot;: &quot;tests/test_regression.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 156.3,
+      &quot;tags&quot;: [
+        &quot;regression&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.585000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_injection_payloads_blocked&quot;,
+      &quot;module&quot;: &quot;tests/test_security.py&quot;,
+      &quot;file&quot;: &quot;tests/test_security.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 420.7,
+      &quot;tags&quot;: [
+        &quot;security&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.702000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_no_secret_leak_in_logs&quot;,
+      &quot;module&quot;: &quot;tests/test_security.py&quot;,
+      &quot;file&quot;: &quot;tests/test_security.py&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;duration_ms&quot;: 55.1,
+      &quot;tags&quot;: [
+        &quot;security&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.819000Z&quot;,
+      &quot;error&quot;: &quot;Tool &#x27;get_config&#x27; output matched secret pattern(s): aws_key&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_path_traversal_blocked&quot;,
+      &quot;module&quot;: &quot;tests/test_security.py&quot;,
+      &quot;file&quot;: &quot;tests/test_security.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 210.4,
+      &quot;tags&quot;: [
+        &quot;security&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:00.936000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_echo_latency_p95_under_slo&quot;,
+      &quot;module&quot;: &quot;tests/test_performance.py&quot;,
+      &quot;file&quot;: &quot;tests/test_performance.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 1240.0,
+      &quot;tags&quot;: [
+        &quot;perf&quot;,
+        &quot;latency&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.053000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_throughput_min_rps&quot;,
+      &quot;module&quot;: &quot;tests/test_performance.py&quot;,
+      &quot;file&quot;: &quot;tests/test_performance.py&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;duration_ms&quot;: 980.0,
+      &quot;tags&quot;: [
+        &quot;perf&quot;,
+        &quot;throughput&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.170000Z&quot;,
+      &quot;error&quot;: &quot;Throughput 42.1 rps below minimum 50.0 rps (p99=312ms)&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_degrades_gracefully_on_bad_args&quot;,
+      &quot;module&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;file&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 72.0,
+      &quot;tags&quot;: [
+        &quot;resiliency&quot;,
+        &quot;chaos&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.287000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_chaos_delay_tolerance&quot;,
+      &quot;module&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;file&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 145.0,
+      &quot;tags&quot;: [
+        &quot;chaos&quot;,
+        &quot;chaos:delay&quot;,
+        &quot;resiliency&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.404000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_chaos_503_unavailable&quot;,
+      &quot;module&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;file&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;duration_ms&quot;: 88.0,
+      &quot;tags&quot;: [
+        &quot;chaos&quot;,
+        &quot;chaos:503&quot;,
+        &quot;resiliency&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.521000Z&quot;,
+      &quot;error&quot;: &quot;ChaosFaultError: simulated 503 Service Unavailable&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_chaos_schema_drift_probe&quot;,
+      &quot;module&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;file&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 62.0,
+      &quot;tags&quot;: [
+        &quot;chaos&quot;,
+        &quot;chaos:schema_drift&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.638000Z&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_survives_server_restart&quot;,
+      &quot;module&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;file&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;status&quot;: &quot;error&quot;,
+      &quot;duration_ms&quot;: 18.0,
+      &quot;tags&quot;: [
+        &quot;resiliency&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.755000Z&quot;,
+      &quot;error&quot;: &quot;ConnectionResetError: MCP server process exited with code 1&quot;,
+      &quot;traceback&quot;: &quot;Traceback (most recent call last):\n  File tests/test_resiliency.py, line 44\n    await assert_tool_call(...)&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_flaky_resource_read&quot;,
+      &quot;module&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;file&quot;: &quot;tests/test_resiliency.py&quot;,
+      &quot;status&quot;: &quot;passed&quot;,
+      &quot;duration_ms&quot;: 340.0,
+      &quot;tags&quot;: [
+        &quot;resiliency&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.872000Z&quot;,
+      &quot;retry_count&quot;: 2,
+      &quot;attempt_results&quot;: [
+        {
+          &quot;attempt&quot;: 1,
+          &quot;status&quot;: &quot;timeout&quot;,
+          &quot;duration_ms&quot;: 5000.0,
+          &quot;error&quot;: &quot;read_resource timed out&quot;
+        },
+        {
+          &quot;attempt&quot;: 2,
+          &quot;status&quot;: &quot;error&quot;,
+          &quot;duration_ms&quot;: 120.0,
+          &quot;error&quot;: &quot;503 from upstream&quot;
+        },
+        {
+          &quot;attempt&quot;: 3,
+          &quot;status&quot;: &quot;passed&quot;,
+          &quot;duration_ms&quot;: 88.0,
+          &quot;error&quot;: null
+        }
+      ],
+      &quot;flaky&quot;: true
+    },
+    {
+      &quot;name&quot;: &quot;test_schema_probe_strict&quot;,
+      &quot;module&quot;: &quot;tests/test_schema.py&quot;,
+      &quot;file&quot;: &quot;tests/test_schema.py&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;duration_ms&quot;: 44.0,
+      &quot;tags&quot;: [
+        &quot;functional&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:01.989000Z&quot;,
+      &quot;error&quot;: &quot;Schema validation failed for tool &#x27;search&#x27;&quot;,
+      &quot;schema_violations&quot;: [
+        {
+          &quot;json_path&quot;: &quot;$.arguments.limit&quot;,
+          &quot;expected_type&quot;: &quot;integer&quot;,
+          &quot;actual_value&quot;: &quot;ten&quot;,
+          &quot;message&quot;: &quot;limit must be an integer&quot;
+        }
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;test_prompts_when_available&quot;,
+      &quot;module&quot;: &quot;tests/test_prompts.py&quot;,
+      &quot;file&quot;: &quot;tests/test_prompts.py&quot;,
+      &quot;status&quot;: &quot;skipped&quot;,
+      &quot;duration_ms&quot;: 0.0,
+      &quot;tags&quot;: [
+        &quot;functional&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:02.106000Z&quot;,
+      &quot;error&quot;: &quot;server has no prompts capability&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_optional_bedrock_pack&quot;,
+      &quot;module&quot;: &quot;tests/test_prompts.py&quot;,
+      &quot;file&quot;: &quot;tests/test_prompts.py&quot;,
+      &quot;status&quot;: &quot;skipped&quot;,
+      &quot;duration_ms&quot;: 0.0,
+      &quot;tags&quot;: [
+        &quot;integration&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:02.223000Z&quot;,
+      &quot;error&quot;: &quot;optional extra mcp-test-harness-bedrock not installed&quot;
+    },
+    {
+      &quot;name&quot;: &quot;test_long_running_export&quot;,
+      &quot;module&quot;: &quot;tests/test_performance.py&quot;,
+      &quot;file&quot;: &quot;tests/test_performance.py&quot;,
+      &quot;status&quot;: &quot;timeout&quot;,
+      &quot;duration_ms&quot;: 30000.0,
+      &quot;tags&quot;: [
+        &quot;perf&quot;
+      ],
+      &quot;started_at&quot;: &quot;2026-07-06T20:10:02.340000Z&quot;,
+      &quot;error&quot;: &quot;Test exceeded timeout of 30000ms&quot;
+    }
+  ],
+  &quot;unified_summary&quot;: {
+    &quot;gate&quot;: &quot;fail&quot;,
+    &quot;overall&quot;: {
+      &quot;total&quot;: 21,
+      &quot;passed&quot;: 11,
+      &quot;failed&quot;: 8,
+      &quot;skipped&quot;: 2,
+      &quot;duration_ms&quot;: 2340.0
+    },
+    &quot;categories&quot;: {
+      &quot;functional&quot;: {
+        &quot;total&quot;: 9,
+        &quot;passed&quot;: 4,
+        &quot;failed&quot;: 3,
+        &quot;score_pct&quot;: 44.4,
+        &quot;status&quot;: &quot;fail&quot;
+      },
+      &quot;performance&quot;: {
+        &quot;total&quot;: 3,
+        &quot;passed&quot;: 1,
+        &quot;failed&quot;: 2,
+        &quot;score_pct&quot;: 33.3,
+        &quot;status&quot;: &quot;fail&quot;
+      },
+      &quot;security&quot;: {
+        &quot;total&quot;: 3,
+        &quot;passed&quot;: 2,
+        &quot;failed&quot;: 1,
+        &quot;score_pct&quot;: 66.7,
+        &quot;status&quot;: &quot;fail&quot;
+      },
+      &quot;resiliency&quot;: {
+        &quot;total&quot;: 6,
+        &quot;passed&quot;: 4,
+        &quot;failed&quot;: 2,
+        &quot;score_pct&quot;: 66.7,
+        &quot;status&quot;: &quot;fail&quot;
+      }
+    },
+    &quot;coverage&quot;: {
+      &quot;advertised&quot;: {
+        &quot;tools&quot;: [
+          &quot;calculate&quot;,
+          &quot;echo&quot;,
+          &quot;export_report&quot;,
+          &quot;get_config&quot;,
+          &quot;search&quot;
+        ],
+        &quot;resources&quot;: [
+          &quot;file:///config.json&quot;,
+          &quot;file:///health&quot;
+        ],
+        &quot;prompts&quot;: [
+          &quot;summarize&quot;
+        ]
+      },
+      &quot;tested&quot;: {
+        &quot;tools&quot;: [
+          &quot;calculate&quot;,
+          &quot;echo&quot;,
+          &quot;get_config&quot;,
+          &quot;search&quot;
+        ],
+        &quot;resources&quot;: [
+          &quot;file:///config.json&quot;
+        ],
+        &quot;prompts&quot;: [],
+        &quot;auth_tools&quot;: [
+          &quot;echo&quot;,
+          &quot;search&quot;
+        ]
+      },
+      &quot;gaps&quot;: {
+        &quot;untested_tools&quot;: [
+          &quot;export_report&quot;
+        ],
+        &quot;untested_resources&quot;: [
+          &quot;file:///health&quot;
+        ],
+        &quot;untested_prompts&quot;: [
+          &quot;summarize&quot;
+        ],
+        &quot;tools_missing_auth_tests&quot;: [
+          &quot;calculate&quot;,
+          &quot;get_config&quot;
+        ]
+      },
+      &quot;summary&quot;: {
+        &quot;tools_advertised&quot;: 5,
+        &quot;tools_tested&quot;: 4,
+        &quot;tools_untested&quot;: 1,
+        &quot;tools_missing_auth&quot;: 2
+      }
+    },
+    &quot;coverage_headline&quot;: &quot;4 tools tested, 1 untested, 2 missing auth tests&quot;
+  },
+  &quot;coverage&quot;: {
+    &quot;advertised&quot;: {
+      &quot;tools&quot;: [
+        &quot;calculate&quot;,
+        &quot;echo&quot;,
+        &quot;export_report&quot;,
+        &quot;get_config&quot;,
+        &quot;search&quot;
+      ],
+      &quot;resources&quot;: [
+        &quot;file:///config.json&quot;,
+        &quot;file:///health&quot;
+      ],
+      &quot;prompts&quot;: [
+        &quot;summarize&quot;
+      ]
+    },
+    &quot;tested&quot;: {
+      &quot;tools&quot;: [
+        &quot;calculate&quot;,
+        &quot;echo&quot;,
+        &quot;get_config&quot;,
+        &quot;search&quot;
+      ],
+      &quot;resources&quot;: [
+        &quot;file:///config.json&quot;
+      ],
+      &quot;prompts&quot;: [],
+      &quot;auth_tools&quot;: [
+        &quot;echo&quot;,
+        &quot;search&quot;
+      ]
+    },
+    &quot;gaps&quot;: {
+      &quot;untested_tools&quot;: [
+        &quot;export_report&quot;
+      ],
+      &quot;untested_resources&quot;: [
+        &quot;file:///health&quot;
+      ],
+      &quot;untested_prompts&quot;: [
+        &quot;summarize&quot;
+      ],
+      &quot;tools_missing_auth_tests&quot;: [
+        &quot;calculate&quot;,
+        &quot;get_config&quot;
+      ]
+    },
+    &quot;summary&quot;: {
+      &quot;tools_advertised&quot;: 5,
+      &quot;tools_tested&quot;: 4,
+      &quot;tools_untested&quot;: 1,
+      &quot;tools_missing_auth&quot;: 2
+    }
+  },
+  &quot;security_findings&quot;: [
+    {
+      &quot;test_name&quot;: &quot;test_no_secret_leak_in_logs&quot;,
+      &quot;file&quot;: &quot;tests/test_security.py&quot;,
+      &quot;status&quot;: &quot;failed&quot;,
+      &quot;message&quot;: &quot;Tool &#x27;get_config&#x27; output matched secret pattern(s): aws_key&quot;,
+      &quot;rule&quot;: {
+        &quot;id&quot;: &quot;mcp01-token-mismanagement&quot;,
+        &quot;name&quot;: &quot;Token Mismanagement &amp; Secret Exposure&quot;,
+        &quot;framework&quot;: &quot;OWASP-MCP&quot;,
+        &quot;owasp_id&quot;: &quot;MCP01&quot;,
+        &quot;severity&quot;: &quot;high&quot;
+      }
+    }
+  ]
+}</pre></div></details><a class="fmt-card fmt-card-link fmt-html" href="#mcp-stat-grid"><div class="fmt-head">HTML Dashboard <span class="fmt-link-hint">↓ view below</span></div><div class="fmt-sub">Rich visual reporting (this page)</div><div class="fmt-preview"><pre>PASS 11 · FAIL 8 · SKIP 2
 Pass rate 52% · 2.34s
-Filters · charts · PDF/CSV export</pre></div></div></div><p class="formats-export-hint">This run: <code>mcp-test --report-format html</code> · <code>--report-format junit</code> · <code>--report-format json</code> · <code>mcp-test export-pdf report.html</code></p></section>
+Click to jump to charts &amp; filters below</pre></div></a></div><p class="formats-export-hint">Export this run: <code>mcp-test --report-format html --report-output report.html</code> · <code>--report-format junit</code> · <code>--report-format json</code> · <code>mcp-test export-pdf report.html</code></p></section>
   <div class="quality bad" role="status"><span>QUALITY GATE: FAILED</span></div>
   <div class="stat-grid" id="mcp-stat-grid" data-total="21" data-pass="11" data-fail="6" data-error="1" data-skip="2" data-timeout="1"><div class="stat-card sc-pass"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div><div class="stat-body"><div class="stat-label">Passed</div><div class="stat-value" id="mcp-stat-pass">11</div></div></div><div class="stat-card sc-fail"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></div><div class="stat-body"><div class="stat-label">Failed</div><div class="stat-value" id="mcp-stat-fail">8</div></div></div><div class="stat-card sc-skip"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg></div><div class="stat-body"><div class="stat-label">Skipped</div><div class="stat-value" id="mcp-stat-skip">2</div></div></div><div class="stat-card sc-time"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="stat-body"><div class="stat-label">Duration</div><div class="stat-value">2.34s</div></div></div></div>
   <section class="analytics"><div class="analytics-card chart-card"><h3>Pass rate</h3><div class="donut-wrap"><div class="donut-outer" style="background:conic-gradient(#1abc7a 0.000deg 188.571deg, #e74c3c 188.571deg 291.429deg, #f39c12 291.429deg 308.571deg, #7f8c8d 308.571deg 342.857deg, #9b59b6 342.857deg 360.000deg)"><div class="donut-inner"><span class="donut-pct">52%</span><span class="donut-sub">pass rate</span></div></div><div class="pie-legend"><div class="leg-row"><span class="leg-dot" style="background:#1abc7a"></span><span class="leg-name">Passed</span><span class="leg-pct">52%</span><span class="leg-n">11</span></div><div class="leg-row"><span class="leg-dot" style="background:#e74c3c"></span><span class="leg-name">Failed</span><span class="leg-pct">29%</span><span class="leg-n">6</span></div><div class="leg-row"><span class="leg-dot" style="background:#f39c12"></span><span class="leg-name">Errors</span><span class="leg-pct">5%</span><span class="leg-n">1</span></div><div class="leg-row"><span class="leg-dot" style="background:#7f8c8d"></span><span class="leg-name">Skipped</span><span class="leg-pct">10%</span><span class="leg-n">2</span></div><div class="leg-row"><span class="leg-dot" style="background:#9b59b6"></span><span class="leg-name">Timeouts</span><span class="leg-pct">5%</span><span class="leg-n">1</span></div></div></div></div><div class="analytics-card"><h3>Run timeline</h3><p class="chart-hint">Cumulative pass rate across tests in execution order</p><svg class="timeline-svg" viewBox="0 0 320 120" role="img" aria-label="Cumulative pass rate across tests"><defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1abc7a" stop-opacity="0.35"/><stop offset="100%" stop-color="#1abc7a" stop-opacity="0"/></linearGradient></defs><polygon points="24,96 24.0,24.0 37.6,24.0 51.2,24.0 64.8,42.0 78.4,52.8 92.0,48.0 105.6,44.6 119.2,51.0 132.8,48.0 146.4,45.6 160.0,50.2 173.6,48.0 187.2,46.2 200.8,49.7 214.4,48.0 228.0,51.0 241.6,49.4 255.2,52.0 268.8,54.3 282.4,56.4 296.0,58.3 296,96" fill="url(#tg)"/><polyline points="24.0,24.0 37.6,24.0 51.2,24.0 64.8,42.0 78.4,52.8 92.0,48.0 105.6,44.6 119.2,51.0 132.8,48.0 146.4,45.6 160.0,50.2 173.6,48.0 187.2,46.2 200.8,49.7 214.4,48.0 228.0,51.0 241.6,49.4 255.2,52.0 268.8,54.3 282.4,56.4 296.0,58.3" fill="none" stroke="#1abc7a" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="analytics-card"><h3>Top failing tests</h3><ul class="fail-list"><li class="fail-item"><span class="fail-name">test_echo_rejects_empty_payload</span><span class="fail-badge b-fail">FAIL</span><div class="fail-msg">Tool &#x27;echo&#x27; response mismatch</div></li><li class="fail-item"><span class="fail-name">test_report_snapshot_stable</span><span class="fail-badge b-fail">FAIL</span><div class="fail-msg">Snapshot mismatch for &#x27;generate_report&#x27;</div></li><li class="fail-item"><span class="fail-name">test_no_secret_leak_in_logs</span><span class="fail-badge b-fail">FAIL</span><div class="fail-msg">Tool &#x27;get_config&#x27; output matched secret pattern(s): aws_key</div></li><li class="fail-item"><span class="fail-name">test_throughput_min_rps</span><span class="fail-badge b-fail">FAIL</span><div class="fail-msg">Throughput 42.1 rps below minimum 50.0 rps (p99=312ms)</div></li><li class="fail-item"><span class="fail-name">test_chaos_503_unavailable</span><span class="fail-badge b-fail">FAIL</span><div class="fail-msg">ChaosFaultError: simulated 503 Service Unavailable</div></li><li class="fail-item"><span class="fail-name">test_survives_server_restart</span><span class="fail-badge b-error">ERROR</span><div class="fail-msg">ConnectionResetError: MCP server process exited with code 1</div></li><li class="fail-more">+2 more</li></ul></div><div class="analytics-card"><h3>Slowest tests</h3><div class="dur-chart"><div class="dur-row"><div class="dur-label" title="test_long_running_export">test_long_running_export</div><div class="dur-track"><div class="dur-fill dur-timeout" style="width:100.0%"></div></div><div class="dur-ms">30000ms</div></div><div class="dur-row"><div class="dur-label" title="test_echo_latency_p95_under_slo">test_echo_latency_p95_under_slo</div><div class="dur-track"><div class="dur-fill dur-pass" style="width:4.1%"></div></div><div class="dur-ms">1240ms</div></div><div class="dur-row"><div class="dur-label" title="test_throughput_min_rps">test_throughput_min_rps</div><div class="dur-track"><div class="dur-fill dur-fail" style="width:3.3%"></div></div><div class="dur-ms">980ms</div></div><div class="dur-row"><div class="dur-label" title="test_injection_payloads_blocked">test_injection_payloads_blocked</div><div class="dur-track"><div class="dur-fill dur-pass" style="width:1.4%"></div></div><div class="dur-ms">421ms</div></div><div class="dur-row"><div class="dur-label" title="test_flaky_resource_read">test_flaky_resource_read</div><div class="dur-track"><div class="dur-fill dur-pass" style="width:1.1%"></div></div><div class="dur-ms">340ms</div></div><div class="dur-row"><div class="dur-label" title="test_path_traversal_blocked">test_path_traversal_blocked</div><div class="dur-track"><div class="dur-fill dur-pass" style="width:0.7%"></div></div><div class="dur-ms">210ms</div></div><div class="dur-row"><div class="dur-label" title="test_tool_idempotent_calculate">test_tool_idempotent_calculate</div><div class="dur-track"><div class="dur-fill dur-pass" style="width:0.5%"></div></div><div class="dur-ms">156ms</div></div><div class="dur-row"><div class="dur-label" title="test_chaos_delay_tolerance">test_chaos_delay_tolerance</div><div class="dur-track"><div class="dur-fill dur-pass" style="width:0.5%"></div></div><div class="dur-ms">145ms</div></div></div></div></section>

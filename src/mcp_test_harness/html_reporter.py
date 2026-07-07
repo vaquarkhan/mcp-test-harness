@@ -240,6 +240,10 @@ def _preview_lines(text: str, *, max_lines: int = 7) -> str:
     return _html_escape(body)
 
 
+def _full_preview(text: str) -> str:
+    return _html_escape(_strip_ansi(text))
+
+
 def _formats_strip_html(results: SessionResults) -> str:
     """Showcase the four report formats using data from this run."""
     p, f, e, sk, t = _outcome_tally(results)
@@ -259,30 +263,77 @@ def _formats_strip_html(results: SessionResults) -> str:
     html_preview = _html_escape(
         f"PASS {p} · FAIL {fail_total} · SKIP {sk}\n"
         f"Pass rate {pass_pct:.0f}% · {dur_s:.2f}s\n"
-        f"Filters · charts · PDF/CSV export"
+        f"Click to jump to charts & filters below"
     )
 
-    cards = (
-        ("Console", "Human-readable terminal output", console_preview, "fmt-console"),
-        ("JUnit XML", "CI/CD integration", junit_preview, "fmt-junit"),
-        ("JSON", "Machine-readable data", json_preview, "fmt-json"),
-        ("HTML Dashboard", "Rich visual reporting (this page)", html_preview, "fmt-html"),
-    )
+    cards: list[tuple[str, str, str, str, str, str | None]] = [
+        (
+            "Console",
+            "Human-readable terminal output",
+            console_preview,
+            _full_preview(console_raw),
+            "fmt-console",
+            None,
+        ),
+        (
+            "JUnit XML",
+            "CI/CD integration",
+            junit_preview,
+            _full_preview(junit_raw),
+            "fmt-junit",
+            None,
+        ),
+        (
+            "JSON",
+            "Machine-readable data",
+            json_preview,
+            _full_preview(json_raw),
+            "fmt-json",
+            None,
+        ),
+        (
+            "HTML Dashboard",
+            "Rich visual reporting (this page)",
+            html_preview,
+            _html_escape(
+                "Scroll to stat cards, charts, filters, and per-test results on this page."
+            ),
+            "fmt-html",
+            "#mcp-stat-grid",
+        ),
+    ]
     chunks: list[str] = []
-    for title, sub, preview, cls in cards:
-        chunks.append(
-            f'<div class="fmt-card {cls}"><div class="fmt-head">{_html_escape(title)}</div>'
-            f'<div class="fmt-sub">{_html_escape(sub)}</div>'
-            f'<div class="fmt-preview"><pre>{preview}</pre></div></div>'
-        )
+    for title, sub, preview, full_body, cls, jump_href in cards:
+        if jump_href:
+            chunks.append(
+                f'<a class="fmt-card fmt-card-link {cls}" href="{jump_href}">'
+                f'<div class="fmt-head">{_html_escape(title)} <span class="fmt-link-hint">↓ view below</span></div>'
+                f'<div class="fmt-sub">{_html_escape(sub)}</div>'
+                f'<div class="fmt-preview"><pre>{preview}</pre></div></a>'
+            )
+        else:
+            chunks.append(
+                f'<details class="fmt-card fmt-card-expand {cls}">'
+                f'<summary class="fmt-card-sum">'
+                f'<span class="fmt-head">{_html_escape(title)}</span>'
+                f'<span class="fmt-sub">{_html_escape(sub)}</span>'
+                f'<span class="fmt-expand-hint">Click for full output</span>'
+                f'<div class="fmt-preview"><pre>{preview}</pre></div>'
+                f"</summary>"
+                f'<div class="fmt-full"><pre>{full_body}</pre></div>'
+                f"</details>"
+            )
     export_hint = (
-        f'<p class="formats-export-hint">This run: <code>mcp-test --report-format html</code> '
+        f'<p class="formats-export-hint">Export this run: '
+        f'<code>mcp-test --report-format html --report-output report.html</code> '
         f'· <code>--report-format junit</code> · <code>--report-format json</code> '
         f'· <code>mcp-test export-pdf report.html</code></p>'
     )
     return (
-        f'<section class="formats-strip"><h2 class="section-title">Test report outputs</h2>'
-        f'<p class="section-sub">One test run. Multiple formats. Complete visibility.</p>'
+        f'<section class="formats-strip" id="mcp-formats-strip">'
+        f'<h2 class="section-title">Test report outputs</h2>'
+        f'<p class="section-sub">One test run. Multiple formats. Complete visibility. '
+        f'<span class="muted">Click a card to expand full Console, JUnit, or JSON output.</span></p>'
         f'<div class="fmt-grid">{"".join(chunks)}</div>{export_hint}</section>'
     )
 
@@ -1117,6 +1168,28 @@ body {{
 .fmt-card {{
   border-radius: 10px; padding: 0.75rem; border: 1px solid var(--border);
   background: var(--panel2); min-height: 8rem;
+}}
+.fmt-card-link {{
+  display: block; text-decoration: none; color: inherit; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}}
+.fmt-card-link:hover {{ border-color: #22c55e; box-shadow: 0 0 0 1px rgba(34,197,94,.25); }}
+.fmt-card-expand {{ padding: 0; }}
+.fmt-card-expand > summary.fmt-card-sum {{
+  list-style: none; cursor: pointer; padding: 0.75rem; border-radius: 10px;
+}}
+.fmt-card-expand > summary.fmt-card-sum::-webkit-details-marker {{ display: none; }}
+.fmt-card-expand[open] > summary.fmt-card-sum {{ border-bottom: 1px solid var(--border); }}
+.fmt-card-expand[open] {{ border-color: #3b82f6; }}
+.fmt-expand-hint, .fmt-link-hint {{
+  display: block; font-size: 0.62rem; color: #93c5fd; margin-top: 0.35rem; font-weight: 600;
+}}
+.fmt-full {{
+  padding: 0.5rem 0.75rem 0.75rem; max-height: 22rem; overflow: auto;
+}}
+.fmt-full pre {{
+  margin: 0; font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 0.6rem; line-height: 1.4; color: #a8c5e8; white-space: pre-wrap; word-break: break-word;
 }}
 .fmt-head {{ font-weight: 700; font-size: 0.82rem; margin-bottom: 0.15rem; }}
 .fmt-sub {{ font-size: 0.68rem; color: var(--muted); margin-bottom: 0.5rem; }}
