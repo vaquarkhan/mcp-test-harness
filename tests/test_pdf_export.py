@@ -11,6 +11,7 @@ from mcp_test_harness.html_reporter import GITHUB_REPO, PRODUCT_SITE, HTMLReport
 from mcp_test_harness.pdf_export import (
     _find_headless_browser,
     _html_file_uri,
+    capture_html_screenshot,
     export_html_to_pdf,
     run_export_pdf,
 )
@@ -81,6 +82,25 @@ class TestRunExportPdf:
         ):
             code = run_export_pdf([str(html)])
         assert code == 1
+
+
+class TestCaptureHtmlScreenshot:
+    def test_success_when_browser_captures(self, tmp_path: Path) -> None:
+        html = tmp_path / "r.html"
+        html.write_text("<html></html>", encoding="utf-8")
+        png = tmp_path / "out.png"
+
+        def fake_run(cmd, **kwargs):
+            png.write_bytes(b"\x89PNG")
+            return MagicMock(returncode=0, stdout="", stderr="")
+
+        with patch(
+            "mcp_test_harness.pdf_export._find_headless_browser",
+            return_value=("/usr/bin/chrome", []),
+        ):
+            with patch("mcp_test_harness.pdf_export.subprocess.run", side_effect=fake_run):
+                capture_html_screenshot(html, png)
+        assert png.is_file()
 
 
 class TestHtmlReporterBranding:

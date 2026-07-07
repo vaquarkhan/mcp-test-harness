@@ -327,7 +327,8 @@ def _demo_results() -> SessionResults:
 
 def main() -> None:
     results = _demo_results()
-    out = _repo_root() / "examples" / "feature-demo" / "reports" / "sample_mcp_test_report.html"
+    root = _repo_root()
+    out = root / "examples" / "feature-demo" / "reports" / "sample_mcp_test_report.html"
     out.write_text(HTMLReporter().generate(results), encoding="utf-8")
     print(f"Wrote {out}")
     print(
@@ -335,6 +336,17 @@ def main() -> None:
         f"{results.skipped} skipped, {results.timed_out} timeout "
         f"({len(results.test_results)} tests)"
     )
+    try:
+        from mcp_test_harness.pdf_export import capture_html_screenshot
+
+        for dest in (
+            root / "docs" / "images" / "html-dashboard.png",
+            root / "html" / "assets" / "images" / "html-dashboard.png",
+        ):
+            capture_html_screenshot(out, dest)
+            print(f"Wrote screenshot {dest}")
+    except (OSError, RuntimeError) as exc:
+        print(f"Screenshot skipped: {exc}")
 
 
 if __name__ == "__main__":

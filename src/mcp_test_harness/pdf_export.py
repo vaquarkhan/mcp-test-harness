@@ -101,6 +101,58 @@ def export_html_to_pdf(
         )
 
 
+def capture_html_screenshot(
+    html_path: Path,
+    png_path: Path,
+    *,
+    width: int = 1440,
+    height: int = 2200,
+    timeout_sec: float = 60.0,
+) -> None:
+    """Capture a PNG screenshot of an HTML report using headless Chrome/Edge."""
+    html_path = html_path.resolve()
+    if not html_path.is_file():
+        raise FileNotFoundError(f"HTML report not found: {html_path}")
+
+    png_path = png_path.resolve()
+    png_path.parent.mkdir(parents=True, exist_ok=True)
+
+    browser = _find_headless_browser()
+    if browser is None:
+        raise RuntimeError(
+            "No headless Chrome/Edge/Chromium found for screenshot capture."
+        )
+
+    exe, extra = browser
+    file_uri = _html_file_uri(html_path)
+    cmd = [
+        exe,
+        *extra,
+        "--headless=new",
+        "--disable-gpu",
+        "--hide-scrollbars",
+        f"--window-size={width},{height}",
+        f"--screenshot={png_path}",
+        file_uri,
+    ]
+    try:
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=timeout_sec,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(f"Screenshot timed out after {timeout_sec:g}s") from exc
+
+    if proc.returncode != 0 or not png_path.is_file():
+        err = (proc.stderr or proc.stdout or "").strip()
+        raise RuntimeError(
+            f"Headless screenshot failed (exit {proc.returncode}). {err}".strip()
+        )
+
+
 def run_export_pdf(argv: list[str]) -> int:
     """Entry point: ``mcp-test export-pdf REPORT.html [-o OUT.pdf]``."""
     parser = argparse.ArgumentParser(

@@ -98,7 +98,8 @@ Every diagram lives in [`docs/images/`](docs/images/). Quick reference:
 | [`architecture-flow.svg`](docs/images/architecture-flow.svg) | Internal modules and data path (vector) |
 | [`mcp-testobarness-feature.png`](docs/images/mcp-testobarness-feature.png) | Core feature map |
 | [`assertions-grid.png`](docs/images/assertions-grid.png) | Assertion library at a glance |
-| [`report-formats.png`](docs/images/report-formats.png) | Console, JUnit, JSON, and HTML outputs |
+| [`report-formats.png`](docs/images/report-formats.png) | Console, JUnit, JSON, and HTML format overview (infographic) |
+| [`html-dashboard.png`](docs/images/html-dashboard.png) | **Live HTML dashboard** — stat cards, charts, filters, PDF/CSV export |
 | [`transport-options.png`](docs/images/transport-options.png) | stdio, SSE, and HTTP transports |
 | [`parallel-execution.png`](docs/images/parallel-execution.png) | Multi-worker scheduling and module grouping |
 | [`ci-pipeline.png`](docs/images/ci-pipeline.png) | GitHub Actions PR gate workflow |
@@ -549,7 +550,12 @@ mcp-test -k "*workflow*"    # glob patterns
 ## Reports
 
 <p align="center">
-  <img src="docs/images/report-formats.png" alt="Report formats: console summary, JUnit XML for CI, JSON with full metadata, and interactive HTML dashboard" width="100%" />
+  <img src="docs/images/html-dashboard.png" alt="MCP Test Harness HTML dashboard — stat cards, pass-rate donut, run timeline, top failures, chaos/load/security panels, date and duration filters, PDF and CSV export" width="100%" />
+</p>
+<p align="center"><em>Self-contained HTML report from a real sample run (21 tests). <a href="https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html">Open interactive sample</a>.</em></p>
+
+<p align="center">
+  <img src="docs/images/report-formats.png" alt="Report formats overview: console summary, JUnit XML for CI, JSON with full metadata, and interactive HTML dashboard" width="100%" />
 </p>
 
 ```bash
