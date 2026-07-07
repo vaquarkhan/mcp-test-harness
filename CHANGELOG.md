@@ -4,6 +4,22 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-07-06
+
+### Added
+
+- **HTML dashboard v2:** self-contained report with product branding, stat cards, pass-rate donut, run timeline, top failures, slowest tests, platform QA panels (chaos monkey, load/SLO, MCP-Bastion security pairing), unified portal, coverage map, and tags matrix.
+- **Interactive filters:** status chips, search, date/time range, duration min/max, live “showing X of Y” summary with stat-card recalculation.
+- **Export & theme:** light/dark theme (persisted), **Save as PDF** (print CSS), **Export CSV** (UTF-8 BOM + ISO timestamps for Excel), keyboard shortcuts (`/`, `Esc`, `t`, `?`).
+- **`mcp-test export-pdf`** and **`--pdf-output`** for headless Chrome/Edge PDF summaries (JMeter-style).
+- **`capture_html_screenshot()`** in `pdf_export.py`; `build_sample_html.py` regenerates README/Pages screenshots when a browser is available.
+- **GitHub Pages:** hosted [sample HTML report](https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html), product images, updated examples/index.
+- **Docs:** README Reports section uses live `html-dashboard.png` screenshot; `report-formats.png` retained as multi-format infographic.
+
+### Fixed
+
+- **CSV export:** Excel `started` column no longer shows `â€"` junk — uses ISO `data-started-iso`, strips em-dash placeholders, writes UTF-8 BOM.
+
 ## [2.0.1] - 2026-07-06
 
 ### Fixed
