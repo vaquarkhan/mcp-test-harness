@@ -973,6 +973,39 @@ def _unified_portal_html(results: SessionResults) -> str:
     )
 
 
+def _experiments_scorecard_html(results: SessionResults) -> str:
+    """HTML panel for resiliency experiment scorecard."""
+    us = results.unified_summary or {}
+    scorecard = us.get("experiments")
+    if not scorecard or not scorecard.get("experiments"):
+        return ""
+    grade = scorecard.get("grade", "n/a")
+    score = scorecard.get("score_pct")
+    score_txt = f"{score}%" if score is not None else "—"
+    rows: list[str] = []
+    for entry in scorecard.get("experiments") or []:
+        status = entry.get("status", "?")
+        exp_id = entry.get("id", "")
+        title = entry.get("title", exp_id)
+        hypo = entry.get("hypothesis", "")
+        cls = "portal-pass" if status == "passed" else ("portal-fail" if status in ("failed", "aborted") else "portal-na")
+        cmd = f"mcp-test experiment run {exp_id}"
+        rows.append(
+            f'<tr class="{cls}"><td><code>{_html_escape(exp_id)}</code></td>'
+            f'<td>{_html_escape(title)}</td>'
+            f'<td>{_html_escape(status)}</td>'
+            f'<td class="exp-hypo">{_html_escape(hypo)}</td>'
+            f'<td><button type="button" class="copy-cmd" data-cmd="{_html_escape(cmd)}">Copy run</button></td></tr>'
+        )
+    return (
+        f'<section class="experiments-panel platform-panel"><h2 class="section-title">Resiliency experiments</h2>'
+        f'<p class="section-sub">Curated fault-injection templates — grade <strong>{_html_escape(str(grade))}</strong> '
+        f'({_html_escape(score_txt)}).</p>'
+        f'<table class="exp-table"><thead><tr><th>Id</th><th>Title</th><th>Status</th>'
+        f'<th>Hypothesis</th><th></th></tr></thead><tbody>{"".join(rows)}</tbody></table></section>'
+    )
+
+
 def _trace_timeline_html(tr: CaseResult) -> str:
     """Render MCP JSON-RPC trace as a compact timeline block."""
     trace = tr.mcp_trace
@@ -1069,6 +1102,7 @@ class HTMLReporter:
         body_main = "\n".join(row_chunks) if row_chunks else "<p class=\"muted\">No test results.</p>"
 
         portal_html = _unified_portal_html(results)
+        experiments_html = _experiments_scorecard_html(results)
         formats_html = _formats_strip_html(results)
         stat_cards = _summary_stat_cards(p, f, e, sk, t, results.total_duration_ms)
         analytics_html = _analytics_dashboard_html(results, pass_pct, pie_style)
@@ -1499,6 +1533,15 @@ footer {{ margin-top: 0.75rem; font-size: 0.72rem; color: var(--muted); text-ali
   background: rgba(168,85,247,.15); border: 1px solid rgba(168,85,247,.35); color: #d8b4fe;
 }}
 .chaos-faults {{ font-size: 0.72rem; color: #fbbf24; }}
+.experiments-panel {{ margin: 1rem 0; }}
+.exp-table {{ width: 100%; border-collapse: collapse; font-size: 0.8rem; }}
+.exp-table th, .exp-table td {{ padding: 0.45rem 0.55rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }}
+.exp-hypo {{ color: var(--muted); max-width: 28rem; }}
+.copy-cmd {{
+  padding: 0.25rem 0.5rem; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--panel2); color: var(--text); font-size: 0.72rem; cursor: pointer;
+}}
+.copy-cmd:hover {{ border-color: var(--accent); }}
 .pct-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; margin: 0.65rem 0; }}
 .pct-card {{
   text-align: center; padding: 0.65rem; border-radius: 10px;
@@ -1602,6 +1645,7 @@ footer a:hover {{ text-decoration: underline; }}
   {perf_html}
   {bastion_html}
   {portal_html}
+  {experiments_html}
   {coverage_html}
   {tags_html}
   {diagnostics_html}
@@ -1890,6 +1934,15 @@ footer a:hover {{ text-decoration: underline; }}
       }});
       h.setAttribute("data-dir", String(-dir));
       rows.forEach(function(r){{ tb.appendChild(r); }});
+    }});
+  }});
+  document.querySelectorAll("button.copy-cmd").forEach(function(btn){{
+    btn.addEventListener("click", function(){{
+      var cmd=btn.getAttribute("data-cmd")||"";
+      if(!cmd) return;
+      if(navigator.clipboard&&navigator.clipboard.writeText){{
+        navigator.clipboard.writeText(cmd).then(function(){{ btn.textContent="Copied"; }});
+      }}
     }});
   }});
 }})();

@@ -31,6 +31,7 @@ def _build_parser() -> argparse.ArgumentParser:
         epilog=(
             "Tip: run `mcp-test init` in your project to scaffold tests; "
             "`mcp-test generate` drafts tests from tools/list; "
+            "`mcp-test experiment list` shows resiliency experiment templates; "
             "`mcp-test doctor` checks server handshake and lists tools (no tests required)."
         ),
     )
@@ -422,6 +423,10 @@ def main(argv: list[str] | None = None) -> int:
         from mcp_test_harness.pdf_export import run_export_pdf
 
         return run_export_pdf(av[1:])
+    if av and av[0] == "experiment":
+        from mcp_test_harness.experiments.cli import run_experiment_main
+
+        return run_experiment_main(av[1:])
     return asyncio.run(_async_main(av))
 
 

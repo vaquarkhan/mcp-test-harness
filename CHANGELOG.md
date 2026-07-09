@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-07-09
+
+### Added
+
+- **Resiliency experiment catalog (RFC-005):** AWS FIS-style ready-to-run experiments with guardrails and a scorecard.
+- **`mcp-test experiment list`** — browse bundled templates (`latency-injection`, `crash-mid-call`, `reconnect-storm`, and more).
+- **`mcp-test experiment run <id>`** and **`mcp-test experiment run --suite core`** — compile catalog YAML to chaos/resiliency tests and run against your server.
+- **`mcp-test experiment scorecard`** — print resiliency grade from JSON report output.
+- **HTML report:** Resiliency experiments panel with hypothesis, pass/fail, grade, and copy-run buttons.
+- **Design doc:** [docs/design/RFC-005-resiliency-experiments.md](docs/design/RFC-005-resiliency-experiments.md).
+
+### Changed
+
+- **All 18 PyPI artifacts** aligned at **2.1.0**: `mcp-test-harness` plus 17 optional `mcp-test-harness-*` provider packs under `packages/`.
+
 ## [2.0.2] - 2026-07-06
 
 ### Added

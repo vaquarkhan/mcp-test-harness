@@ -1,0 +1,133 @@
+version: 1
+suites:
+  core:
+    description: Standard resiliency gate for CI and conformance
+    members:
+      - latency-injection
+      - partial-response
+      - graceful-degradation
+      - reconnect-storm
+      - crash-mid-call
+      - gateway-503
+      - schema-drift-handling
+  full:
+    description: Entire catalog including planned experiments
+    members: all
+
+experiments:
+  latency-injection:
+    title: Latency injection
+    status: ready
+    hypothesis: Server remains usable when gateway latency is injected on tool calls
+    fault:
+      type: chaos
+      chaos_faults: ["delay_ms:100"]
+    assertion: latency_survives
+    stop_condition:
+      abort_if: [hang, unhandled_exception, secret_leak]
+
+  partial-response:
+    title: Partial response
+    status: ready
+    hypothesis: Truncated tool payloads do not crash the client or poison the session
+    fault:
+      type: chaos
+      chaos_faults: ["truncate"]
+    assertion: partial_response_survives
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  graceful-degradation:
+    title: Graceful degradation
+    status: ready
+    hypothesis: Invalid tool input returns a structured error, not a transport failure
+    assertion: degrades_gracefully
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  reconnect-storm:
+    title: Reconnect storm
+    status: ready
+    hypothesis: Session recovers after a burst of failing tool calls
+    assertion: reconnects
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  crash-mid-call:
+    title: Crash mid-call (session burst)
+    status: ready
+    hypothesis: Valid calls succeed after repeated tool-level failures without poisoning the session
+    assertion: survives_crash
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  gateway-503:
+    title: Gateway 503
+    status: ready
+    hypothesis: Simulated 503 is surfaced as a clean client error, not an unhandled exception
+    fault:
+      type: chaos
+      chaos_faults: ["503"]
+    assertion: gateway_503
+    stop_condition:
+      abort_if: [secret_leak]
+
+  schema-drift-handling:
+    title: Schema drift handling
+    status: ready
+    hypothesis: Mutated JSON in tool text payloads is returned without breaking transport
+    fault:
+      type: chaos
+      chaos_faults: ["schema_drift"]
+    assertion: schema_drift_survives
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  malformed-jsonrpc-flood:
+    title: Malformed JSON-RPC flood
+    status: planned
+    hypothesis: Bad envelopes and IDs are rejected without crash or leak
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  oversized-context:
+    title: Oversized context
+    status: planned
+    hypothesis: Extreme payload sizes are bounded without OOM
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  tool-hang:
+    title: Tool hang
+    status: planned
+    hypothesis: A tool that never returns triggers client timeout, not an indefinite hang
+    stop_condition:
+      abort_if: [secret_leak, server_crash]
+
+  slow-loris:
+    title: Slow loris
+    status: planned
+    hypothesis: Mid-stream stalls end in timeout, not hang
+    stop_condition:
+      abort_if: [secret_leak, server_crash]
+
+  concurrent-overload:
+    title: Concurrent overload
+    status: planned
+    hypothesis: Throughput spikes yield backpressure, not collapse
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  out-of-order-ids:
+    title: Out-of-order / duplicate IDs
+    status: planned
+    hypothesis: Responses are correlated correctly under transport reordering
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]
+
+  capability-drift:
+    title: Capability drift
+    status: planned
+    hypothesis: Capability changes mid-session are handled safely
+    stop_condition:
+      abort_if: [unhandled_exception, secret_leak, server_crash]

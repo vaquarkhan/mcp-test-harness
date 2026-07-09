@@ -23,6 +23,7 @@ Everything below is **implemented, tested, and documented** in this repo (690+ t
 |------|---------|----------------|
 | **Diagnostics** | **MCP trace** — per-test JSON-RPC timeline in HTML/JSON reports; stdio pollution hints | [example_mcp_trace.md](examples/example_mcp_trace.md) |
 | **Resiliency** | **Chaos testing** — `@marker(tags=["chaos"], chaos_faults=[...])` (delay, 503, truncate, schema drift) | [example_chaos_testing.md](examples/example_chaos_testing.md) |
+| **Resiliency** | **Experiment catalog** — `mcp-test experiment run --suite core` with guardrails and scorecard (RFC-005) | [docs/design/RFC-005-resiliency-experiments.md](docs/design/RFC-005-resiliency-experiments.md) |
 | **Productivity** | **`mcp-test generate`** — draft tests from live `tools/list` + optional drift JSON | [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
 | **Platform QA (v1.2)** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** SLO params (`max_p99_ms`, `max_error_rate`) | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
 | **CI / security** | **SARIF** export, OWASP MCP rule metadata, **PR summary** markdown + GitHub Action `pr-comment` | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) |
