@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- **Seam / contract e2e suite:** [`tests/test_seam_e2e.py`](tests/test_seam_e2e.py) + rich fixture [`tests/fixtures/rich_mcp_server.py`](tests/fixtures/rich_mcp_server.py) - record round-trip (`ast.parse` + run), README `assert_capabilities({"tools": {}})` against a real server, coverage `tools_tested > 0`, init→run onboarding, redirected cp1252 `--help`. Documents the H/I/J class of boundary bugs that line coverage alone misses ([CONTRIBUTING.md](CONTRIBUTING.md)).
+
 ## [3.0.0] - 2026-07-10
 
 ### Changed

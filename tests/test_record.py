@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import asyncio
 import json
 from pathlib import Path
@@ -71,6 +72,8 @@ def test_render_recorded_module_and_duplicates() -> None:
     assert '@marker(tags=["smoke", "recorded"])' in src
     # BUG H: docstring must close with three quotes (valid Python)
     assert '"""Recorded happy-path for tool ``echo``."""' in src
+    # Seam rule: if we emit code, parse it (substring checks alone are insufficient)
+    ast.parse(src)
     compile(src, "<recorded>", "exec")
 
 

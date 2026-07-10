@@ -41,14 +41,17 @@ The harness validates itself with real CLI subprocess runs — not only mocks:
 | [`tests/fixtures/minimal_mcp_server.py`](../tests/fixtures/minimal_mcp_server.py) | FastMCP echo server (stdio) |
 | [`tests/fixtures/harness_self_test/`](../tests/fixtures/harness_self_test/) | Harness-style tests consumed by `mcp-test` |
 | [`tests/test_harness_dogfood_e2e.py`](../tests/test_harness_dogfood_e2e.py) | pytest e2e: CLI → server → JSON/HTML reports + `doctor` |
+| [`tests/fixtures/rich_mcp_server.py`](../tests/fixtures/rich_mcp_server.py) | Multi-tool + resource/prompt/error fixture for seam tests |
+| [`tests/fixtures/harness_seam_test/`](../tests/fixtures/harness_seam_test/) | README contracts + coverage-exercising cases for `mcp-test` |
+| [`tests/test_seam_e2e.py`](../tests/test_seam_e2e.py) | Seam e2e: record round-trip, capabilities contract, coverage>0, init→run, cp1252 help |
 
-`tests/fixtures/harness_self_test/` is **ignored by pytest** (`addopts` in pyproject) so only `mcp-test` discovers those cases. Run dogfood only:
+`tests/fixtures/harness_self_test/` and `harness_seam_test/` are **ignored by pytest** (`addopts` in pyproject) so only `mcp-test` discovers those cases. Run dogfood / seams:
 
 ```bash
-python -m pytest tests/test_harness_dogfood_e2e.py -m e2e -v
+python -m pytest tests/test_harness_dogfood_e2e.py tests/test_seam_e2e.py -m e2e -v
 ```
 
-CI (`validate.yml`) runs `coverage run` + `--fail-under=100` on every PR and a **`mcp-test` smoke** on `main` that uploads an HTML report artifact.
+**Why seams matter:** 100% line coverage proves lines ran; bugs like invalid `record` codegen, `assert_capabilities` doc drift, and empty coverage maps live at component boundaries. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## stdio_mcp and the coverage gate
 
