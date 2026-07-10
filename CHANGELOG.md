@@ -4,6 +4,20 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-07-10
+
+### Added
+
+- **Record to suite (RFC-001):** `mcp-test record` captures live tool calls (or `--from-json` cassette) into reviewable tests + `__snapshots__`.
+- **pre-commit hook:** `.pre-commit-hooks.yaml` (`mcp-test-try`) and [examples/pre-commit-config.yaml](examples/pre-commit-config.yaml).
+- Design doc: [docs/design/RFC-001-record-to-suite.md](docs/design/RFC-001-record-to-suite.md).
+- Marketplace listing documented; Action examples pin `@v2.4.0`.
+
+### Changed
+
+- **All 18 PyPI artifacts** aligned at **2.4.0**.
+- Tier 1 adoption items marked shipped in ROADMAP_GROWTH.
+
 ## [2.3.0] - 2026-07-09
 
 ### Added

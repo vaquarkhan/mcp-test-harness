@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness-bedrock"
-version = "2.3.0"
+version = "2.4.0"
 description = "AWS Bedrock agent testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-test-harness>=2.3.0",
+  "mcp-test-harness>=2.4.0",
 ]
 
 [project.urls]

@@ -16,17 +16,17 @@ turns “cool new MCP” blog posts into “paste this badge” moments. That is
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Conformance levels + badge (RFC-002) | **Shipped (code)** | Boot / Protocol / Covered / Secure / Resilient |
-| `mcp-test try` | **Shipped (code)** | Zero-config probe; optional `--suite core` |
-| `mcp-test conformance grade\|badge` | **Shipped (code)** | Report grading + README snippet |
-| GitHub Marketplace Action + level in PR | **Shipped (code)** | Root `action.yml` + outputs / PR comment; list on Marketplace after `v2.3.0` |
-| Record to suite (RFC-001) | Pending | Kill write-the-tests barrier |
-| pre-commit hook | Pending | Fast Level 0/1 before push |
+| Conformance levels + badge (RFC-002) | **Shipped** | Boot / Protocol / Covered / Secure / Resilient |
+| `mcp-test try` | **Shipped** | Zero-config probe; optional `--suite core` |
+| `mcp-test conformance grade\|badge` | **Shipped** | Report grading + README snippet |
+| GitHub Marketplace Action + level in PR | **Shipped** | [Marketplace listing](https://github.com/marketplace/actions/mcp-test-harness); pin `@v2.4.0`+ |
+| Record to suite (RFC-001) | **Shipped** | `mcp-test record` → tests + snapshots |
+| pre-commit hook | **Shipped** | `.pre-commit-hooks.yaml` + [examples/pre-commit-config.yaml](../examples/pre-commit-config.yaml) |
 
 ## Tier 2–5 (summary)
 
-Protocol depth (full revisioned suite, transport matrix, contract replay), security corpus feed (RFC-003), DX (trends, flakiness quarantine), enterprise (signed audits, OPA). See earlier backlog discussion; do **not** block downloads on these before Marketplace + badge are live.
+Protocol depth (full revisioned suite, transport matrix, contract replay), security corpus feed (RFC-003), DX (trends, flakiness quarantine), enterprise (signed audits, OPA). See earlier backlog discussion.
 
 ## Next release theme
 
-> **Conformance.** Badge + `try` + Action conformance outputs ship in **2.3.0**; complete GitHub Marketplace listing from the release UI after the tag.
+> **Adoption complete (Tier 1).** Record-to-suite + pre-commit ship in **2.4.0**. Next: public badge wall / transport matrix.

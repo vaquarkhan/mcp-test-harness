@@ -25,7 +25,8 @@ Everything below is **implemented, tested, and documented** in this repo (690+ t
 | **Resiliency** | **Chaos testing** — `@marker(tags=["chaos"], chaos_faults=[...])` (delay, 503, truncate, schema drift) | [example_chaos_testing.md](examples/example_chaos_testing.md) |
 | **Resiliency** | **Experiment catalog** — `mcp-test experiment run --suite core` with guardrails and scorecard (RFC-005) | [docs/design/RFC-005-resiliency-experiments.md](docs/design/RFC-005-resiliency-experiments.md) |
 | **Conformance** | **Levels + badge** — `mcp-test try` / `conformance badge` (RFC-002); README shields.io seal | [docs/design/RFC-002-conformance-levels.md](docs/design/RFC-002-conformance-levels.md) |
-| **Productivity** | **`mcp-test generate`** — draft tests from live `tools/list` + optional drift JSON | [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
+| **Productivity** | **`mcp-test record`** (RFC-001) + **`generate`** — live calls → suite + snapshots; schema drafts | [RFC-001](docs/design/RFC-001-record-to-suite.md) · [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
+| **Marketplace** | GitHub Action with conformance PR outputs | [Marketplace](https://github.com/marketplace/actions/mcp-test-harness) · [example_github_actions.md](examples/example_github_actions.md) |
 | **Platform QA (v1.2)** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** SLO params (`max_p99_ms`, `max_error_rate`) | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
 | **CI / security** | **SARIF** export, OWASP MCP rule metadata, **PR summary** markdown + GitHub Action `pr-comment` | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) |
 | **Self-test** | **E2E dogfood** — pytest spawns real `mcp-test` CLI against bundled FastMCP fixtures; **100% coverage** enforced on every PR | [We eat our own dogfood](#we-eat-our-own-dogfood) |
@@ -647,7 +648,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test MCP Server
         id: mcp
-        uses: vaquarkhan/mcp-test-harness@v2.3.0
+        uses: vaquarkhan/mcp-test-harness@v2.4.0
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
@@ -658,7 +659,7 @@ jobs:
 Zero-config probe (no suite yet):
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v2.3.0
+- uses: vaquarkhan/mcp-test-harness@v2.4.0
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -682,7 +683,7 @@ Zero-config probe (no suite yet):
 | `conformance-level` | RFC-002 level name (Boot … Resilient) |
 | `conformance-level-num` | Numeric level (-1 to 4) |
 
-Path form (same Action): `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v2.3.0` — see [examples/example_github_actions.md](examples/example_github_actions.md).
+Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v2.4.0` — see [examples/example_github_actions.md](examples/example_github_actions.md).
 
 ## Plugins
 

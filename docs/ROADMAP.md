@@ -56,13 +56,14 @@ Strategic bets that turn the harness from a test library into the **pre-producti
 | **4** | **Coverage map** — e.g. “12 tools advertised, 8 tested, 2 never called, 2 missing auth tests” | Huge DX win; closes the gap between `tools/list` and what CI actually exercises | **Shipped (v1.2):** `coverage.py` — auto-tracked per run, in JSON/HTML `coverage` + gaps |
 | **5** | **Load testing (SLO-oriented)** — `assert_throughput` + baselines, not a full load generator | Validates time-to-answer in the same MCP-aware tests as correctness; defer datacenter-scale RPS to k6/Locust integrations | **Shipped (v1.2):** `baselines.py` — `assert_latency_within_baseline`, `save_baseline` / `load_baseline` |
 | **6** | **Resiliency experiment catalog** — AWS FIS-style templates, stop conditions, scorecard | Turns chaos/resiliency primitives into click-and-go CI gates; feeds Resilient conformance level | **Shipped (v2.1):** `mcp-test experiment`, bundled `catalog.yaml`, RFC-005 |
-| **7** | **Conformance levels + `mcp-test try`** — badge seal and zero-config probe | Self-propagating adoption; README badge + PR gate language | **Shipped (unreleased):** RFC-002, `conformance.py`, `mcp-test try` / `conformance` |
+| **7** | **Conformance levels + `mcp-test try`** — badge seal and zero-config probe | Self-propagating adoption; README badge + PR gate language | **Shipped (v2.2+):** RFC-002, Marketplace Action |
+| **8** | **Record to suite + pre-commit** — live calls → tests; Boot/Protocol before push | Kills write-the-tests barrier; habit loop | **Shipped (v2.4):** RFC-001 `mcp-test record`, `.pre-commit-hooks.yaml` |
 
 ### How this maps to phases
 
 - **Now:** SLO-oriented perf (`assert_latency`, `assert_throughput`), HTML report polish, demos.
 - **Next:** unified run summary in HTML/JSON, security payload packs, coverage map, baseline perf gates, first resiliency assertions.
-- **Later:** ~~GitHub PR commentary~~ **shipped (v1.2):** composite action `pr-comment` input; **protocol-aware chaos** **shipped (v1.3):** `chaos.py`; **offline test generate** **shipped (v1.3):** `mcp-test generate`; **experiment catalog** **shipped (v2.1):** `mcp-test experiment`; signed audit exports, contract replay, transport-level fault templates.
+- **Later:** ~~GitHub PR commentary~~ **shipped (v1.2):** composite action `pr-comment` input; **protocol-aware chaos** **shipped (v1.3):** `chaos.py`; **offline test generate** **shipped (v1.3):** `mcp-test generate`; **experiment catalog** **shipped (v2.1):** `mcp-test experiment`; **record-to-suite** **shipped (v2.4):** `mcp-test record`; signed audit exports, contract replay, transport-level fault templates.
 
 Companion tools stay complementary: [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) for runtime defense; external load generators for extreme scale; LLM eval frameworks for non-deterministic agent quality (see [COMPARISON.md](COMPARISON.md)).
 

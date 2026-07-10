@@ -1,0 +1,18 @@
+# Example: use mcp-test-harness as a pre-commit hook
+#
+# In your MCP server repo:
+#   pip install pre-commit mcp-test-harness
+#   cp this file to .pre-commit-config.yaml (or merge the repo block)
+#   pre-commit install
+#
+# Ensure mcp-test.yaml (or pass args) points at your server command.
+
+repos:
+  - repo: https://github.com/vaquarkhan/mcp-test-harness
+    rev: v2.4.0
+    hooks:
+      - id: mcp-test-try
+        args: ["--server-command", "python -m my_server"]
+        # Optional: pin harness version via local install instead of repo hook:
+        # language: system
+        # entry: mcp-test try --server-command "python -m my_server"

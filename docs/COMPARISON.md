@@ -81,9 +81,20 @@ async def test_weather_tool(mcp_server):
     assert "temperature" in str(result)
 ```
 
-3. **CI + troubleshoot** — GitHub Actions runs `mcp-test` (or `uses: vaquarkhan/mcp-test-harness@v2.3.0`). On failure, use harness output for schema/assertion detail; reopen the Inspector locally when you need raw transport traffic.
+3. **CI + troubleshoot** — GitHub Actions runs `mcp-test` (or `uses: vaquarkhan/mcp-test-harness@v2.4.0`). On failure, use harness output for schema/assertion detail; reopen the Inspector locally when you need raw transport traffic.
 
 Also: `mcp-test try --server-command "..."` for a zero-config Boot/Protocol probe before you write a full suite.
+
+### Record to suite (RFC-001)
+
+After the Inspector smoke check, skip hand-writing the first tests:
+
+```bash
+mcp-test record --server-command "python my_server.py" --out tests/test_mcp_recorded.py
+mcp-test tests/test_mcp_recorded.py
+```
+
+Or feed a JSON cassette of `{tool, arguments}` pairs with `--from-json`. See [RFC-001](design/RFC-001-record-to-suite.md).
 
 ## mcp-shark pairing (recommended)
 
@@ -101,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: vaquarkhan/mcp-test-harness@v2.3.0
+      - uses: vaquarkhan/mcp-test-harness@v2.4.0
         with:
           server-command: "python -m my_server.mcp"
           test-directory: tests/
