@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from mcp_test_harness.assertions import MCPAssertionError, _result_is_error
+from mcp_test_harness.coverage import record_tool_call
 
 
 def _content_is_error(result: Any) -> bool:
@@ -18,6 +19,7 @@ async def assert_degrades_gracefully(
 ) -> None:
     """Invalid input must return an MCP tool error, not break the transport."""
     result = await session.call_tool(tool_name, bad_arguments)
+    record_tool_call(session, tool_name)
     if not _content_is_error(result):
         raise MCPAssertionError(
             f"Tool '{tool_name}' accepted bad arguments without isError response",
@@ -39,6 +41,7 @@ async def assert_reconnects(
             pass
     await session.list_tools()
     result = await session.call_tool(tool_name, valid_arguments)
+    record_tool_call(session, tool_name)
     if _content_is_error(result):
         raise MCPAssertionError(
             f"Tool '{tool_name}' still returns error after recovery probe",
@@ -66,7 +69,8 @@ async def assert_survives_crash(
         except Exception:
             pass
     result = await session.call_tool(tool_name, valid_arguments)
+    record_tool_call(session, tool_name)
     if _content_is_error(result):
         raise MCPAssertionError(
-            f"Tool '{tool_name}' unavailable after error burst — session may be poisoned",
+            f"Tool '{tool_name}' unavailable after error burst - session may be poisoned",
         )

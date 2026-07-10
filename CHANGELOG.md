@@ -12,6 +12,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Fixed
 
+- **Coverage completeness:** `assert_tool_rejects`, `assert_tool_idempotent`, resiliency helpers, and security payload assertions now call `record_tool_call` so tools exercised only through those paths appear in the coverage map.
+- **`mcp-test record` error tools:** MCP `isError` responses emit `assert_tool_rejects` tests (not false happy-paths); transport-only failures are still skipped.
 - **`mcp-test record` codegen (BUG H):** recorded test docstrings now close with three quotes (was `.""`, a SyntaxError that made recorded suites undiscoverable).
 - **`assert_capabilities` subset (BUG I):** empty/partial nested expected values mean "present" (e.g. `{"tools": {}}` matches FastMCP `{"tools": {"listChanged": false}}`), matching the docstring and README example.
 - **Coverage map / Covered level (BUG J):** coverage state is stored on the unwrapped ClientSession so per-test TracedSession/ChaosSession wrappers no longer leave `tested.tools` empty.

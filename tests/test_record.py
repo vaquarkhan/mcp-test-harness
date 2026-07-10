@@ -67,10 +67,31 @@ def test_render_recorded_module_and_duplicates() -> None:
     assert "test_recorded_echo" in src
     assert "test_recorded_echo_2" in src
     assert "assert_snapshot" in src
-    assert "test_recorded_fail" not in src
+    assert "test_recorded_fail" not in src  # transport-only failure skipped
     assert '@marker(tags=["smoke", "recorded"])' in src
     # BUG H: docstring must close with three quotes (valid Python)
     assert '"""Recorded happy-path for tool ``echo``."""' in src
+    compile(src, "<recorded>", "exec")
+
+
+def test_render_recorded_module_iserror_emits_rejects() -> None:
+    """MCP isError responses become assert_tool_rejects, not false happy-paths."""
+    src = render_recorded_module(
+        [
+            {
+                "tool": "boom",
+                "arguments": {},
+                "response": {"isError": True, "content": [{"type": "text", "text": "nope"}]},
+                "error": "MCP tool returned isError=true",
+            },
+            {"tool": "echo", "arguments": {"text": "hi"}, "response": {"ok": True}},
+        ]
+    )
+    assert "assert_tool_rejects" in src
+    assert "test_recorded_boom_rejects" in src
+    assert "test_recorded_echo" in src
+    assert "assert_tool_call" in src
+    assert "happy-path for tool ``boom``" not in src
     compile(src, "<recorded>", "exec")
 
 

@@ -15,7 +15,7 @@ from mcp_test_harness.generate import _tool_name, _tool_schema, example_argument
 from mcp_test_harness.snapshots import SnapshotManager
 
 _RECORDED_HEADER = '''"""
-Auto-recorded MCP tests — review and edit before merging.
+Auto-recorded MCP tests - review and edit before merging.
 
 Created by: mcp-test record (RFC-001)
 Run: mcp-test --config mcp-test.yaml
@@ -28,6 +28,7 @@ from pathlib import Path
 from mcp_test_harness import (
     assert_snapshot,
     assert_tool_call,
+    assert_tool_rejects,
     marker,
 )
 '''
@@ -35,6 +36,53 @@ from mcp_test_harness import (
 
 def _safe_ident(name: str) -> str:
     return "".join(c if c.isalnum() else "_" for c in name) or "tool"
+
+
+def _response_is_mcp_error(response: Any) -> bool:
+    """True when a serialized or live CallToolResult signals isError.
+
+    Uses identity checks (``is True``) so ``unittest.mock.MagicMock`` attributes
+    are not treated as errors.
+    """
+    if response is None:
+        return False
+    if getattr(response, "isError", None) is True:
+        return True
+    if isinstance(response, dict) and response.get("isError") is True:
+        return True
+    content = getattr(response, "content", None)
+    if content is None and isinstance(response, dict):
+        content = response.get("content")
+    if not isinstance(content, (list, tuple)):
+        return False
+    for item in content:
+        if getattr(item, "isError", None) is True:
+            return True
+        if isinstance(item, dict) and item.get("isError") is True:
+            return True
+    return False
+
+
+def _call_is_error(call: dict[str, Any]) -> bool:
+    """Transport failure or MCP tool error - not a happy-path success."""
+    if call.get("error"):
+        return True
+    return _response_is_mcp_error(call.get("response"))
+
+
+def _call_is_mcp_reject(call: dict[str, Any]) -> bool:
+    """True when the tool returned MCP isError (stable reject-path candidate)."""
+    return _response_is_mcp_error(call.get("response"))
+
+
+def _call_is_happy_path(call: dict[str, Any]) -> bool:
+    """Successful (or response-pending) call suitable for assert_tool_call."""
+    if _call_is_mcp_reject(call):
+        return False
+    # Transport-only failure (exception, no MCP isError body) - skip
+    if call.get("error") and not _response_is_mcp_error(call.get("response")):
+        return False
+    return True
 
 
 def _config_ns(args: argparse.Namespace) -> Namespace:
@@ -94,34 +142,53 @@ def load_cassette(path: Path) -> list[dict[str, Any]]:
 
 
 def render_recorded_module(calls: list[dict[str, Any]]) -> str:
-    """Render Python tests from recorded call dicts."""
+    """Render Python tests from recorded call dicts.
+
+    Successful calls become ``assert_tool_call`` + snapshot tests.
+    MCP ``isError`` responses become ``assert_tool_rejects`` tests.
+    Transport-only failures are skipped (not false happy-paths).
+    """
     lines: list[str] = [_RECORDED_HEADER.strip(), ""]
     seen: set[str] = set()
+    emitted = 0
     for call in calls:
-        if call.get("error"):
-            continue
         name = str(call["tool"])
         args = call.get("arguments") or {}
+        is_reject = _call_is_mcp_reject(call)
+        is_happy = _call_is_happy_path(call)
+        if not is_reject and not is_happy:
+            continue
         safe = _safe_ident(name)
-        snap = f"recorded_{safe}"
-        # Disambiguate duplicate tool names
         base = safe
         n = 2
         while safe in seen:
             safe = f"{base}_{n}"
-            snap = f"recorded_{safe}"
             n += 1
         seen.add(safe)
         args_repr = repr(args)
         lines.append("")
-        lines.append('@marker(tags=["smoke", "recorded"])')
-        lines.append(f"async def test_recorded_{safe}(mcp_server) -> None:")
-        lines.append(f'    """Recorded happy-path for tool ``{name}``."""')
-        lines.append(f"    result = await assert_tool_call(mcp_server, {name!r}, {args_repr})")
-        lines.append(
-            f"    await assert_snapshot(result, {snap!r}, test_file=Path(__file__))"
-        )
-    if not any("async def test_recorded_" in ln for ln in lines):
+        if is_reject:
+            lines.append('@marker(tags=["recorded", "negative"])')
+            lines.append(f"async def test_recorded_{safe}_rejects(mcp_server) -> None:")
+            lines.append(
+                f'    """Recorded error-path for tool ``{name}`` (MCP isError)."""'
+            )
+            lines.append(
+                f"    await assert_tool_rejects(mcp_server, {name!r}, {args_repr})"
+            )
+        else:
+            snap = f"recorded_{safe}"
+            lines.append('@marker(tags=["smoke", "recorded"])')
+            lines.append(f"async def test_recorded_{safe}(mcp_server) -> None:")
+            lines.append(f'    """Recorded happy-path for tool ``{name}``."""')
+            lines.append(
+                f"    result = await assert_tool_call(mcp_server, {name!r}, {args_repr})"
+            )
+            lines.append(
+                f"    await assert_snapshot(result, {snap!r}, test_file=Path(__file__))"
+            )
+        emitted += 1
+    if emitted == 0:
         lines.append("")
         lines.append('@marker(tags=["recorded"])')
         lines.append("async def test_recorded_no_calls(mcp_server) -> None:")
@@ -136,7 +203,7 @@ def write_snapshots_for_calls(out_path: Path, calls: list[dict[str, Any]]) -> in
     written = 0
     seen: set[str] = set()
     for call in calls:
-        if call.get("error") or "response" not in call:
+        if not _call_is_happy_path(call) or "response" not in call:
             continue
         name = str(call["tool"])
         safe = _safe_ident(name)
@@ -223,6 +290,13 @@ async def _record_live(config: Any, tool_filter: set[str] | None, max_tools: int
             try:
                 result = await server.session.call_tool(name, args)
                 entry["response"] = _serialize(result)
+                if _response_is_mcp_error(result):
+                    entry["error"] = "MCP tool returned isError=true"
+                    print(
+                        f"record: tool {name!r} returned isError "
+                        "(will emit assert_tool_rejects, not happy-path)",
+                        file=sys.stderr,
+                    )
             except Exception as exc:  # noqa: BLE001 — record failure per tool
                 entry["error"] = str(exc)
                 print(f"record: tool {name!r} failed: {exc}", file=sys.stderr)
@@ -255,6 +329,13 @@ async def _fill_missing_responses(
             try:
                 result = await server.session.call_tool(c["tool"], c["arguments"])
                 c["response"] = _serialize(result)
+                if _response_is_mcp_error(result):
+                    c["error"] = "MCP tool returned isError=true"
+                    print(
+                        f"record: tool {c['tool']!r} returned isError "
+                        "(will emit assert_tool_rejects, not happy-path)",
+                        file=sys.stderr,
+                    )
             except Exception as exc:  # noqa: BLE001 — record failure per tool
                 c["error"] = str(exc)
                 print(f"record: tool {c['tool']!r} failed: {exc}", file=sys.stderr)
@@ -310,7 +391,9 @@ async def run_record_async(argv: list[str] | None) -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     source = render_recorded_module(calls)
     out_path.write_text(source, encoding="utf-8")
-    print(f"Wrote {out_path} ({sum(1 for c in calls if not c.get('error'))} call(s))")
+    n_ok = sum(1 for c in calls if _call_is_happy_path(c))
+    n_rej = sum(1 for c in calls if _call_is_mcp_reject(c))
+    print(f"Wrote {out_path} ({n_ok} happy-path, {n_rej} reject-path call(s))")
 
     snap_count = 0
     if not args.no_snapshots:

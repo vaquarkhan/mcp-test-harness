@@ -9,6 +9,7 @@ import re
 from typing import Any
 
 from mcp_test_harness.assertions import MCPAssertionError, _result_is_error, assert_tool_call
+from mcp_test_harness.coverage import record_tool_call
 
 # ---------------------------------------------------------------------------
 # Payload corpora
@@ -103,6 +104,7 @@ async def assert_injection_blocked(
         body = _tool_response_text(result)
         if not is_error and payload in body:
             failures.append(f"payload echoed in response: {payload[:60]!r}")
+    record_tool_call(session, tool_name)
     if failures:
         raise MCPAssertionError(
             f"Tool '{tool_name}' did not block {len(failures)} injection payload(s):\n"
@@ -132,6 +134,7 @@ async def assert_path_traversal_blocked(
         body = _tool_response_text(result).lower()
         if any(m.lower() in body for m in sensitive_markers):
             failures.append(f"sensitive content for path {payload[:40]!r}")
+    record_tool_call(session, tool_name)
     if failures:
         raise MCPAssertionError(
             f"Tool '{tool_name}' path traversal check failed ({len(failures)} case(s)):\n"
