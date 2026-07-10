@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness-vertexai"
-version = "3.0.1"
+version = "3.0.2"
 description = "Google Vertex AI testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-test-harness>=3.0.1",
+  "mcp-test-harness>=3.0.2",
 ]
 
 [project.urls]

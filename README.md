@@ -13,7 +13,7 @@
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)](CONTRIBUTING.md#develop--test)
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
 
-**Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`3.0.1`** (runtime, `mcp-test` entrypoint), **`dev`** and **`3.0.1-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
+**Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`3.0.2`** (runtime, `mcp-test` entrypoint), **`dev`** and **`3.0.2-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan) · **License:** [MIT](LICENSE) ([NOTICE](NOTICE)) · **Cite:** [CITATION.cff](CITATION.cff)
 
@@ -79,19 +79,23 @@ MCP Test Harness is a pytest-style framework for MCP servers: the `mcp-test` CLI
 
 ---
 
-### Release 2.0+ - what shipped end-to-end
+### What ships end-to-end
 
-Everything below is **implemented, tested, and documented** in this repo (840+ tests, 100% lib coverage gate, e2e dogfood in CI).
+Everything below is **implemented, tested, and documented** in this repo (840+ tests, 100% lib coverage gate, e2e dogfood in CI). Version pins live only in [PyPI](https://pypi.org/project/mcp-test-harness/), [CHANGELOG.md](CHANGELOG.md), and install/Docker tags - not in this map.
 
 | Area | Feature | Where to start |
 |------|---------|----------------|
+| **CLI** | **`mcp-test`** - discover, run, filter (`-k` / `-m`), parallel, watch, reports; subcommands `init`, `try`, `record`, `generate`, `experiment`, `conformance` | [CLI Reference](#cli-reference) · [Quick Start](#quick-start) |
+| **Automation** | Scaffold (`init`), zero-config probe (`try`), live **`record`** / **`generate`**, `--watch` re-runs, config-driven CI gates | [Quick Start](#quick-start) · [Core Features](#core-features) |
+| **Docker** | OCI image on **GHCR** (`ghcr.io/vaquarkhan/mcp-test-harness`) - runtime + `:dev`; local [`Dockerfile`](Dockerfile) | [Docker](#docker) · [docs/DOCKER.md](docs/DOCKER.md) |
+| **Hooks** | **pre-commit** hook (`mcp-test-try`) + example config; plugin / discovery hooks for custom automation | [examples/pre-commit-config.yaml](examples/pre-commit-config.yaml) · [Plugins](#plugins) |
 | **Diagnostics** | **MCP trace** - per-test JSON-RPC timeline in HTML/JSON reports; stdio pollution hints | [example_mcp_trace.md](examples/example_mcp_trace.md) |
 | **Resiliency** | **Chaos testing** - `@marker(tags=["chaos"], chaos_faults=[...])` (delay, 503, truncate, schema drift) | [example_chaos_testing.md](examples/example_chaos_testing.md) |
 | **Resiliency** | **Experiment catalog** - `mcp-test experiment run --suite core` with guardrails and scorecard (RFC-005) | [docs/design/RFC-005-resiliency-experiments.md](docs/design/RFC-005-resiliency-experiments.md) |
 | **Conformance** | **Levels + badge** - `mcp-test try` / `conformance badge` (RFC-002); README shields.io seal | [docs/design/RFC-002-conformance-levels.md](docs/design/RFC-002-conformance-levels.md) |
 | **Productivity** | **`mcp-test record`** (RFC-001) + **`generate`** - live calls → suite + snapshots; schema drafts | [RFC-001](docs/design/RFC-001-record-to-suite.md) · [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
 | **Marketplace** | GitHub Action with conformance PR outputs | [Marketplace](https://github.com/marketplace/actions/mcp-test-harness) · [example_github_actions.md](examples/example_github_actions.md) |
-| **Platform QA (v1.2)** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** SLO params (`max_p99_ms`, `max_error_rate`) | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
+| **Platform QA** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** SLO params (`max_p99_ms`, `max_error_rate`) | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
 | **CI / security** | **SARIF** export, OWASP MCP rule metadata, **PR summary** markdown + GitHub Action `pr-comment` | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) |
 | **Self-test** | **E2E dogfood** - pytest spawns real `mcp-test` CLI against bundled FastMCP fixtures; **100% coverage** enforced on every PR | [We eat our own dogfood](#we-eat-our-own-dogfood) |
 | **Examples** | Runnable **platform-qa** demo pack (trace + chaos + generate) | [feature-demo/platform-qa](examples/feature-demo/platform-qa/README.md) |
@@ -273,9 +277,9 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | GitHub Action | One-line CI integration with artifact upload |
 | **Docker** | Pre-built on **`ghcr.io/vaquarkhan/mcp-test-harness`** (`:latest` / version tags + `:dev`); local [`Dockerfile`](Dockerfile) with `mcp-test` (runtime) or `pytest` + dev extras via `--target dev` (see [Docker](#docker)) |
 | Standalone binary | Single binary via PyInstaller, no Python required on target |
-| **MCP trace** (v1.3) | Per-test JSON-RPC event log + interactive HTML timeline - [example_mcp_trace.md](examples/example_mcp_trace.md) |
-| **Chaos testing** (v1.3) | `@marker(tags=["chaos"], chaos_faults=[...])` - delay, 503, truncate, schema drift - [example_chaos_testing.md](examples/example_chaos_testing.md) |
-| **`mcp-test generate`** (v1.3) | Draft tests from live `tools/list` + optional drift report - [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
+| **MCP trace** | Per-test JSON-RPC event log + interactive HTML timeline - [example_mcp_trace.md](examples/example_mcp_trace.md) |
+| **Chaos testing** | `@marker(tags=["chaos"], chaos_faults=[...])` - delay, 503, truncate, schema drift - [example_chaos_testing.md](examples/example_chaos_testing.md) |
+| **`mcp-test generate`** | Draft tests from live `tools/list` + optional drift report - [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
 
 **Beginner demo packs by testing type:** [functional-testing](examples/feature-demo/functional-testing/README.md) · [regression-testing](examples/feature-demo/regression-testing/README.md) · [performance-testing](examples/feature-demo/performance-testing/README.md) (each includes runnable tests plus JSON/JUnit/HTML report config).  
 **Platform QA (trace + chaos + generate):** [platform-qa](examples/feature-demo/platform-qa/README.md)  
@@ -295,15 +299,15 @@ MCP Test Harness is **deterministic** (your tests call the protocol directly; no
   <img src="docs/images/docker-distribution.png" alt="Install via pip, pull the GHCR container image, or use the standalone binary - three ways to run mcp-test" width="100%" />
 </p>
 
-**Current stable version:** **3.0.1** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
+**Current stable version:** **3.0.2** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
 
 ```bash
 pip install mcp-test-harness
 # pin, if you need a fixed version:
-# pip install mcp-test-harness==3.0.1
+# pip install mcp-test-harness==3.0.2
 ```
 
-**Same release as a container (GHCR, no local Python):** `docker pull ghcr.io/vaquarkhan/mcp-test-harness:3.0.1` or `:latest` - see the [image](#docker) section for `docker run` and dev tags.
+**Same release as a container (GHCR, no local Python):** `docker pull ghcr.io/vaquarkhan/mcp-test-harness:3.0.2` or `:latest` - see the [image](#docker) section for `docker run` and dev tags.
 
 **Optional** [mcplint](src/mcplint/) / MCP-Bastion pin helpers (transitive set can be **large**; same as a full Bastion install):
 
@@ -331,7 +335,7 @@ mcp-test --version
 
 **One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
 
-Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). Each **`v*`** git tag triggers CI that pushes **`ghcr.io/vaquarkhan/mcp-test-harness`**: e.g. **`:3.0.1`**, **`:latest`**, **`:3.0.1-dev`**, **`:dev`**. Quick pull: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. [All versions (GHCR)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). Each **`v*`** git tag triggers CI that pushes **`ghcr.io/vaquarkhan/mcp-test-harness`**: e.g. **`:3.0.2`**, **`:latest`**, **`:3.0.2-dev`**, **`:dev`**. Quick pull: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. [All versions (GHCR)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
 
 | Build | Description |
 |-------|-------------|
@@ -702,7 +706,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test MCP Server
         id: mcp
-        uses: vaquarkhan/mcp-test-harness@v3.0.1
+        uses: vaquarkhan/mcp-test-harness@v3.0.2
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
@@ -713,7 +717,7 @@ jobs:
 Zero-config probe (no suite yet):
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v3.0.1
+- uses: vaquarkhan/mcp-test-harness@v3.0.2
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -737,7 +741,7 @@ Zero-config probe (no suite yet):
 | `conformance-level` | RFC-002 level name (Boot … Resilient) |
 | `conformance-level-num` | Numeric level (-1 to 4) |
 
-Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v3.0.1` - see [examples/example_github_actions.md](examples/example_github_actions.md).
+Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v3.0.2` - see [examples/example_github_actions.md](examples/example_github_actions.md).
 
 ## Plugins
 

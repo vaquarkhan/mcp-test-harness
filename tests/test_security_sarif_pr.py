@@ -111,7 +111,7 @@ def test_sarif_reporter_structure() -> None:
         tags=["security"],
     )
     sarif = json.loads(SARIFReporter().generate(_session(tr)))
-    assert sarif["version"] == "3.0.1"
+    assert sarif["version"] == "3.0.2"
     run = sarif["runs"][0]
     assert run["tool"]["driver"]["name"] == "mcp-test-harness"
     assert len(run["results"]) == 1
