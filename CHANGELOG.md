@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-07-10
+
+### Changed
+
+- **README feature map:** renamed to **What ships end-to-end** (no release-number heading); added CLI, automation, Docker, and pre-commit/plugin hooks rows; dropped inline version labels from that map and Core Features.
+- **All 18 PyPI artifacts** aligned at **3.0.2**.
+- Marketplace Action and docs examples pin **`@v3.0.2`**.
+
 ## [3.0.1] - 2026-07-10
 
 ### Added

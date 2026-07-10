@@ -18,12 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: vaquarkhan/mcp-test-harness@v3.0.1
+      - uses: vaquarkhan/mcp-test-harness@v3.0.2
         id: mcp
         with:
           server-command: "python -m my_server"
           test-directory: "tests/"
-          harness-version: "latest"   # or pin e.g. "3.0.1"
+          harness-version: "latest"   # or pin e.g. "3.0.2"
           pr-comment: "true"
 
       - run: echo "Conformance ${{ steps.mcp.outputs.conformance-level }}"
@@ -38,7 +38,7 @@ jobs:
 **Zero-config conformance (dogfood a public server):**
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v3.0.1
+- uses: vaquarkhan/mcp-test-harness@v3.0.2
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -47,6 +47,6 @@ jobs:
 
 **Source of truth:** root [`action.yml`](../action.yml) (Marketplace / `owner/repo@tag`) and mirror [`.github/actions/mcp-test/action.yml`](../.github/actions/mcp-test/action.yml) (`owner/repo/.github/actions/mcp-test@tag`).
 
-**Marketplace:** listed at [github.com/marketplace/actions/mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Pin `@v3.0.1` (or `@main`).
+**Marketplace:** listed at [github.com/marketplace/actions/mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Pin `@v3.0.2` (or `@main`).
 
 **Related:** [CI_AND_REPORTS.md](../docs/CI_AND_REPORTS.md) · [RFC-002](../docs/design/RFC-002-conformance-levels.md) · [mcp_test_report_junit.yaml](mcp_test_report_junit.yaml)
