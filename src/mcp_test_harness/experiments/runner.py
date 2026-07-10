@@ -59,4 +59,7 @@ async def run_experiments(
     cov = results.coverage or None
     results.unified_summary = build_unified_summary(results, cov)
     results.unified_summary["experiments"] = scorecard
+    from mcp_test_harness.conformance import attach_conformance
+
+    attach_conformance(results)
     return results

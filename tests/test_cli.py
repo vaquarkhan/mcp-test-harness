@@ -150,7 +150,7 @@ class TestAsyncMainVersion:
         assert code == 0
         captured = capsys.readouterr()
         assert "mcp-test" in captured.out
-        assert "2.1.0" in captured.out
+        assert "2.2.0" in captured.out
 
 
 # ---------------------------------------------------------------------------

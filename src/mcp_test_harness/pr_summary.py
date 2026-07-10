@@ -17,6 +17,15 @@ def generate_pr_summary(results: SessionResults) -> str:
     ]
 
     us = results.unified_summary or {}
+    conf = us.get("conformance") or {}
+    if conf.get("name"):
+        badge = (conf.get("badge") or {}).get("markdown")
+        lines.append(f"**Conformance:** {conf.get('name')} (level {conf.get('level', '—')})")
+        if badge:
+            lines.append("")
+            lines.append(badge)
+        lines.append("")
+
     gate = us.get("gate", "n/a")
     lines.append(f"**Overall gate:** {_status_badge(gate)}")
     lines.append("")

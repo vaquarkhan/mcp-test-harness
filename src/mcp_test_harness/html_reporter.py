@@ -930,6 +930,44 @@ def _platform_toolkit_grid_html(results: SessionResults) -> str:
     )
 
 
+def _conformance_panel_html(results: SessionResults) -> str:
+    """HTML card for RFC-002 conformance level."""
+    us = results.unified_summary or {}
+    conf = us.get("conformance")
+    if not conf:
+        return ""
+    name = conf.get("name", "—")
+    level = conf.get("level", "—")
+    levels = conf.get("levels") or {}
+    pills = "".join(
+        f'<span class="conf-pill {"conf-yes" if levels.get(k) else "conf-no"}">{_html_escape(k)}</span>'
+        for k in ("boot", "protocol", "covered", "secure", "resilient")
+    )
+    reasons = conf.get("reasons") or []
+    reason_html = ""
+    if reasons:
+        reason_html = (
+            "<ul class=\"conf-reasons\">"
+            + "".join(f"<li>{_html_escape(r)}</li>" for r in reasons[:6])
+            + "</ul>"
+        )
+    badge_url = (conf.get("badge") or {}).get("url") or ""
+    badge_img = (
+        f'<img class="conf-badge" src="{_html_escape(badge_url)}" '
+        f'alt="mcp-test {_html_escape(str(name))}" />'
+        if badge_url
+        else ""
+    )
+    return (
+        f'<section class="conformance-panel platform-panel">'
+        f'<h2 class="section-title">Conformance</h2>'
+        f'<p class="section-sub">RFC-002 seal — <strong>{_html_escape(str(name))}</strong> '
+        f'(level {_html_escape(str(level))})</p>'
+        f'<div class="conf-row">{badge_img}<div class="conf-pills">{pills}</div></div>'
+        f"{reason_html}</section>"
+    )
+
+
 def _unified_portal_html(results: SessionResults) -> str:
     """HTML block for functional / perf / security / resiliency scores + coverage."""
     us = results.unified_summary
@@ -1103,6 +1141,7 @@ class HTMLReporter:
 
         portal_html = _unified_portal_html(results)
         experiments_html = _experiments_scorecard_html(results)
+        conformance_html = _conformance_panel_html(results)
         formats_html = _formats_strip_html(results)
         stat_cards = _summary_stat_cards(p, f, e, sk, t, results.total_duration_ms)
         analytics_html = _analytics_dashboard_html(results, pass_pct, pie_style)
@@ -1542,6 +1581,15 @@ footer {{ margin-top: 0.75rem; font-size: 0.72rem; color: var(--muted); text-ali
   background: var(--panel2); color: var(--text); font-size: 0.72rem; cursor: pointer;
 }}
 .copy-cmd:hover {{ border-color: var(--accent); }}
+.conf-row {{ display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem; margin: 0.6rem 0; }}
+.conf-pills {{ display: flex; flex-wrap: wrap; gap: 0.35rem; }}
+.conf-pill {{
+  font-size: 0.72rem; padding: 0.2rem 0.45rem; border-radius: 6px; border: 1px solid var(--border);
+}}
+.conf-yes {{ background: rgba(34,197,94,.15); color: #86efac; border-color: #22c55e; }}
+.conf-no {{ color: var(--muted); }}
+.conf-badge {{ height: 20px; }}
+.conf-reasons {{ color: var(--muted); font-size: 0.78rem; margin: 0.35rem 0 0 1rem; }}
 .pct-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; margin: 0.65rem 0; }}
 .pct-card {{
   text-align: center; padding: 0.65rem; border-radius: 10px;
@@ -1644,6 +1692,7 @@ footer a:hover {{ text-decoration: underline; }}
   {chaos_html}
   {perf_html}
   {bastion_html}
+  {conformance_html}
   {portal_html}
   {experiments_html}
   {coverage_html}

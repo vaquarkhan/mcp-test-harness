@@ -327,7 +327,7 @@ def _demo_results() -> SessionResults:
             "prompts": {},
         },
         protocol_version="2025-03-26",
-        harness_version="2.1.0",
+        harness_version="2.2.0",
         passed=passed,
         failed=failed,
         errored=errored,

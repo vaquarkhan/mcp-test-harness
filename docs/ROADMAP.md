@@ -56,6 +56,7 @@ Strategic bets that turn the harness from a test library into the **pre-producti
 | **4** | **Coverage map** — e.g. “12 tools advertised, 8 tested, 2 never called, 2 missing auth tests” | Huge DX win; closes the gap between `tools/list` and what CI actually exercises | **Shipped (v1.2):** `coverage.py` — auto-tracked per run, in JSON/HTML `coverage` + gaps |
 | **5** | **Load testing (SLO-oriented)** — `assert_throughput` + baselines, not a full load generator | Validates time-to-answer in the same MCP-aware tests as correctness; defer datacenter-scale RPS to k6/Locust integrations | **Shipped (v1.2):** `baselines.py` — `assert_latency_within_baseline`, `save_baseline` / `load_baseline` |
 | **6** | **Resiliency experiment catalog** — AWS FIS-style templates, stop conditions, scorecard | Turns chaos/resiliency primitives into click-and-go CI gates; feeds Resilient conformance level | **Shipped (v2.1):** `mcp-test experiment`, bundled `catalog.yaml`, RFC-005 |
+| **7** | **Conformance levels + `mcp-test try`** — badge seal and zero-config probe | Self-propagating adoption; README badge + PR gate language | **Shipped (unreleased):** RFC-002, `conformance.py`, `mcp-test try` / `conformance` |
 
 ### How this maps to phases
 

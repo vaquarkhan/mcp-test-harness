@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness-together"
-version = "2.1.0"
+version = "2.2.0"
 description = "Together AI testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-test-harness>=2.1.0",
+  "mcp-test-harness>=2.2.0",
 ]
 
 [project.urls]

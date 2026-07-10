@@ -37,6 +37,7 @@ from mcp_test_harness.fixtures import (
 )
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager, StartupError
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
+from mcp_test_harness.conformance import attach_conformance
 from mcp_test_harness.unified_report import build_unified_summary
 from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_connect
 
@@ -566,4 +567,5 @@ def _aggregate_results(
         coverage=cov,
     )
     session.unified_summary = build_unified_summary(session, cov or None)
+    attach_conformance(session)
     return session

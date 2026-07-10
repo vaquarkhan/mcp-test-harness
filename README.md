@@ -24,6 +24,7 @@ Everything below is **implemented, tested, and documented** in this repo (690+ t
 | **Diagnostics** | **MCP trace** — per-test JSON-RPC timeline in HTML/JSON reports; stdio pollution hints | [example_mcp_trace.md](examples/example_mcp_trace.md) |
 | **Resiliency** | **Chaos testing** — `@marker(tags=["chaos"], chaos_faults=[...])` (delay, 503, truncate, schema drift) | [example_chaos_testing.md](examples/example_chaos_testing.md) |
 | **Resiliency** | **Experiment catalog** — `mcp-test experiment run --suite core` with guardrails and scorecard (RFC-005) | [docs/design/RFC-005-resiliency-experiments.md](docs/design/RFC-005-resiliency-experiments.md) |
+| **Conformance** | **Levels + badge** — `mcp-test try` / `conformance badge` (RFC-002); README shields.io seal | [docs/design/RFC-002-conformance-levels.md](docs/design/RFC-002-conformance-levels.md) |
 | **Productivity** | **`mcp-test generate`** — draft tests from live `tools/list` + optional drift JSON | [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
 | **Platform QA (v1.2)** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** SLO params (`max_p99_ms`, `max_error_rate`) | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
 | **CI / security** | **SARIF** export, OWASP MCP rule metadata, **PR summary** markdown + GitHub Action `pr-comment` | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) |
@@ -645,11 +646,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Test MCP Server
-        uses: vaquarkhan/mcp-test-harness/.github/actions/mcp-test@main
+        id: mcp
+        uses: vaquarkhan/mcp-test-harness@v2.2.0
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
-          report-format: "junit"
+          pr-comment: "true"
+      - run: echo "Conformance ${{ steps.mcp.outputs.conformance-level }}"
+```
+
+Zero-config probe (no suite yet):
+
+```yaml
+- uses: vaquarkhan/mcp-test-harness@v2.2.0
+  with:
+    try-mode: "true"
+    server-command: "uvx awslabs.roda-mcp-server@latest"
 ```
 
 | Input | Default | Description |
@@ -658,8 +670,19 @@ jobs:
 | `transport` | `stdio` | stdio, sse, or http |
 | `test-directory` | `tests/` | Path to test files |
 | `config-file` | `""` | Path to config file |
-| `report-format` | `junit` | json or junit |
+| `report-format` | `json` | Always writes JSON for conformance extraction |
 | `harness-version` | `latest` | Version to install |
+| `pr-comment` | `false` | Post PR summary with conformance level |
+| `try-mode` | `false` | Run `mcp-test try` instead of a suite |
+| `try-suite` | `""` | Optional experiment suite when `try-mode` is true |
+
+| Output | Description |
+|--------|-------------|
+| `test-result` | `pass` or `fail` |
+| `conformance-level` | RFC-002 level name (Boot … Resilient) |
+| `conformance-level-num` | Numeric level (-1 to 4) |
+
+Path form (same Action): `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v2.2.0` — see [examples/example_github_actions.md](examples/example_github_actions.md).
 
 ## Plugins
 

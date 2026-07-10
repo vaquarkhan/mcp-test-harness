@@ -4,6 +4,26 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-07-09
+
+### Added
+
+- **Conformance levels + badge (RFC-002):** Boot to Protocol to Covered to Secure to Resilient scorecard on every run (`unified_summary.conformance`).
+- **`mcp-test try`** — zero-config conformance probe (handshake + schema); optional `--suite core` experiments.
+- **`mcp-test conformance grade|badge`** — grade a JSON report or print a README shields.io badge snippet.
+- HTML Conformance panel and PR summary conformance line.
+- GitHub Action outputs `conformance-level` / `conformance-level-num`; root `action.yml` for Marketplace (`owner/repo@tag`); `try-mode` / `pr-comment`.
+- Design docs: RFC-002, ROADMAP_GROWTH.md.
+- Showcase: grade public servers such as AWS RODA MCP (`uvx awslabs.roda-mcp-server@latest`).
+
+### Fixed
+
+- **Dogfood SVG:** repaired invalid characters in `docs/images/dogfood-e2e.svg` so the README diagram renders.
+
+### Changed
+
+- **All 18 PyPI artifacts** aligned at **2.2.0**.
+
 ## [2.1.0] - 2026-07-09
 
 ### Added
