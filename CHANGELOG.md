@@ -4,11 +4,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-07-10
+
 ### Changed
 
+- **Major release (semver 3.0.0):** production-hardening pass after 2.4.0 - onboarding, Windows, conformance integrity, coverage map, and record codegen.
+- **All 18 PyPI artifacts** aligned at **3.0.0**.
 - **README audience sections:** opening now leads with C-suite/directors, then architects/tech leads, then developers; remaining reference content unchanged.
-- **Docs freshness:** test-count badges and copy updated from stale **690+** to **835+** (current collected suite size).
-- **README / dogfood SVG:** replace em/en dashes with ASCII hyphens.
+- **Docs freshness:** test-count badges and copy updated to **835+** / current suite size; em/en dashes replaced with ASCII hyphens in README and dogfood SVG.
+- Marketplace Action and docs examples pin **`@v3.0.0`**.
 
 ### Fixed
 
@@ -18,15 +22,14 @@ All notable changes to this project are documented in this file. The format is b
 - **`assert_capabilities` subset (BUG I):** empty/partial nested expected values mean "present" (e.g. `{"tools": {}}` matches FastMCP `{"tools": {"listChanged": false}}`), matching the docstring and README example.
 - **Coverage map / Covered level (BUG J):** coverage state is stored on the unwrapped ClientSession so per-test TracedSession/ChaosSession wrappers no longer leave `tested.tools` empty.
 - **Empty discovery (BUG F):** `No tests discovered` now exits **5** (stderr), matching pytest's no-tests-collected gate so CI cannot green-pass a misconfigured `test.dirs`.
-- **Windows quoted `server.command` (BUG G):** `split_server_command` strips surrounding quotes after `shlex.split(posix=False)` so paths with spaces (e.g. `python "C:\\Program Files\\server.py"`) spawn correctly.
+- **Windows quoted `server.command` (BUG G):** `split_server_command` strips surrounding quotes after `shlex.split(posix=False)` so paths with spaces spawn correctly.
 - **`--report-output` without `--report-format`:** emit a stderr warning instead of a silent no-op.
 - **`experiment run` unknown id:** error message no longer double-quoted via `KeyError` `str()`.
-- **`mcp-test init` config:** scaffold now writes nested `test.dirs` (valid schema) instead of top-level `test_dirs`, which failed validation and broke the init → run quick-start path.
-- **`--sarif-output`:** always writes when set (previously skipped entirely when `--report-format sarif`, so `--report-format sarif --sarif-output out.sarif` with no `--report-output` wrote nothing).
-- **Windows console encoding:** configure UTF-8 stdout/stderr at CLI entry; ASCII-safe doctor/try/experiment/export-pdf help strings so `--help` and doctor no longer crash on cp1252.
-- **Conformance CLI (BUG D):** `--report` works with both `grade` and `badge` in either position (`grade --report X`, `--report X grade`, `badge --report X`).
-- **Conformance badge (BUG E):** `badge --report` uses the same graded level as `grade` (no longer defaults to advertising Covered).
-- **README:** version pins updated to **2.4.0** (were stale at 2.0.0).
+- **`mcp-test init` config:** scaffold now writes nested `test.dirs` (valid schema) instead of top-level `test_dirs`.
+- **`--sarif-output`:** always writes when set (previously skipped when `--report-format sarif`).
+- **Windows console encoding:** UTF-8 stdout/stderr at CLI entry; ASCII-safe help strings so `--help` / doctor no longer crash on cp1252.
+- **Conformance CLI (BUG D):** `--report` works with both `grade` and `badge` in either position.
+- **Conformance badge (BUG E):** `badge --report` uses the same graded level as `grade` (no unearned Covered seal).
 
 ## [2.4.0] - 2026-07-10
 

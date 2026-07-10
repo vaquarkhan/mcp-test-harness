@@ -1,3 +1,3 @@
 """MCP Test Harness helpers for OpenAI function calling testing."""
 
-__version__ = "2.4.0"
+__version__ = "3.0.0"
