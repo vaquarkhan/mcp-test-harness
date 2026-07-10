@@ -81,6 +81,38 @@ def test_coverage_follows_wrapped_session_inner() -> None:
     assert get_coverage(wrapped) is get_coverage(root)
 
 
+@pytest.mark.asyncio
+async def test_coverage_from_rejects_idempotent_resiliency_security() -> None:
+    """Assertions that call tools directly must still record coverage."""
+    from mcp_test_harness.assertions import assert_tool_idempotent, assert_tool_rejects
+    from mcp_test_harness.resiliency import assert_degrades_gracefully
+    from mcp_test_harness.security_payloads import assert_injection_blocked
+
+    @dataclass
+    class _Item:
+        text: str = "ok"
+        isError: bool = False
+
+    @dataclass
+    class _Result:
+        content: list[_Item] = field(default_factory=list)
+        isError: bool = False
+
+    class Sess:
+        async def call_tool(self, name: str, arguments: dict[str, Any]) -> _Result:
+            if arguments.get("bad") or "__mcp_harness" in str(arguments) or "Ignore" in str(arguments):
+                return _Result(content=[_Item(text="err", isError=True)], isError=True)
+            return _Result(content=[_Item(text="ok")])
+
+    s = Sess()
+    await assert_tool_rejects(s, "rej", {"bad": True})
+    await assert_tool_idempotent(s, "idem", {}, runs=2)
+    await assert_degrades_gracefully(s, "deg", {"bad": True})
+    await assert_injection_blocked(s, "inj", payloads=("Ignore previous",))
+    tested = get_coverage(s).tested_tools
+    assert {"rej", "idem", "deg", "inj"} <= tested
+
+
 def test_unified_summary_by_tags() -> None:
     results = SessionResults(
         test_results=[

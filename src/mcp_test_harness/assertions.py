@@ -637,6 +637,7 @@ async def assert_tool_rejects(
         result = await session.call_tool(tool_name, arguments)
     except Exception as exc:
         # The call raised -- that counts as rejection.
+        record_tool_call(session, tool_name)
         if error_substring is not None and error_substring not in str(exc):
             raise MCPAssertionError(
                 f"Tool '{tool_name}' raised, but message does not contain "
@@ -644,6 +645,7 @@ async def assert_tool_rejects(
             )
         return
 
+    record_tool_call(session, tool_name)
     if _result_is_error(result):
         if error_substring is not None:
             text = _result_error_text(result)
@@ -825,6 +827,7 @@ async def assert_tool_idempotent(
                 f"Tool '{tool_name}' returned differing results across calls",
                 diff=diff,
             )
+    record_tool_call(session, tool_name)
 
 
 # ---------------------------------------------------------------------------
