@@ -69,6 +69,9 @@ def test_render_recorded_module_and_duplicates() -> None:
     assert "assert_snapshot" in src
     assert "test_recorded_fail" not in src
     assert '@marker(tags=["smoke", "recorded"])' in src
+    # BUG H: docstring must close with three quotes (valid Python)
+    assert '"""Recorded happy-path for tool ``echo``."""' in src
+    compile(src, "<recorded>", "exec")
 
 
 def test_render_recorded_module_empty() -> None:

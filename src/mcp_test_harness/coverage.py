@@ -29,7 +29,31 @@ class CoverageState:
     auth_tested_tools: set[str] = field(default_factory=set)
 
 
+def _unwrap_session(session: Any) -> Any:
+    """Follow TracedSession / ChaosSession ``_inner`` to the real ClientSession.
+
+    Coverage must live on the underlying session: the executor injects a
+    per-test wrapper, but the scheduler reads coverage from ``server.session``.
+    """
+    cur = session
+    seen: set[int] = set()
+    while True:
+        ident = id(cur)
+        if ident in seen:
+            break
+        seen.add(ident)
+        try:
+            inner = object.__getattribute__(cur, "_inner")
+        except AttributeError:
+            break
+        if inner is None:
+            break
+        cur = inner
+    return cur
+
+
 def _ensure(session: Any) -> CoverageState:
+    session = _unwrap_session(session)
     d = getattr(session, "__dict__", None)
     if isinstance(d, dict) and _COVERAGE_ATTR in d:
         return d[_COVERAGE_ATTR]

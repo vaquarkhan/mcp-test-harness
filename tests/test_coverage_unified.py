@@ -65,6 +65,22 @@ def test_merge_states() -> None:
     assert merged.tested_tools == {"a", "b"}
 
 
+def test_coverage_follows_wrapped_session_inner() -> None:
+    """BUG J: record on TracedSession/ChaosSession must hit underlying session."""
+    from mcp_test_harness.chaos import ChaosConfig, ChaosSession
+    from mcp_test_harness.trace import TraceRecorder, TracedSession
+
+    root = FakeCovSession()
+    traced = TracedSession(root, TraceRecorder())
+    wrapped = ChaosSession(traced, ChaosConfig(faults=["delay"], delay_ms=0))
+
+    record_tool_call(wrapped, "echo")
+    d = coverage_to_dict(get_coverage(root))
+    assert "echo" in d["tested"]["tools"]
+    # Same state object whether read via wrapper or root
+    assert get_coverage(wrapped) is get_coverage(root)
+
+
 def test_unified_summary_by_tags() -> None:
     results = SessionResults(
         test_results=[

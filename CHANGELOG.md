@@ -12,6 +12,9 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Fixed
 
+- **`mcp-test record` codegen (BUG H):** recorded test docstrings now close with three quotes (was `.""`, a SyntaxError that made recorded suites undiscoverable).
+- **`assert_capabilities` subset (BUG I):** empty/partial nested expected values mean "present" (e.g. `{"tools": {}}` matches FastMCP `{"tools": {"listChanged": false}}`), matching the docstring and README example.
+- **Coverage map / Covered level (BUG J):** coverage state is stored on the unwrapped ClientSession so per-test TracedSession/ChaosSession wrappers no longer leave `tested.tools` empty.
 - **Empty discovery (BUG F):** `No tests discovered` now exits **5** (stderr), matching pytest's no-tests-collected gate so CI cannot green-pass a misconfigured `test.dirs`.
 - **Windows quoted `server.command` (BUG G):** `split_server_command` strips surrounding quotes after `shlex.split(posix=False)` so paths with spaces (e.g. `python "C:\\Program Files\\server.py"`) spawn correctly.
 - **`--report-output` without `--report-format`:** emit a stderr warning instead of a silent no-op.

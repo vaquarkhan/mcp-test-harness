@@ -258,6 +258,22 @@ class TestAssertCapabilities:
             assert_capabilities(session, {"tools": True})
         )
 
+    def test_empty_dict_means_present(self) -> None:
+        """BUG I: README example ``{"tools": {}}`` must match FastMCP listChanged."""
+        session = FakeSession(
+            capabilities={"tools": {"listChanged": False}, "resources": {"listChanged": False}}
+        )
+        asyncio.run(assert_capabilities(session, {"tools": {}}))
+        asyncio.run(assert_capabilities(session, {"tools": {}, "resources": {}}))
+
+    def test_nested_subset(self) -> None:
+        session = FakeSession(
+            capabilities={"tools": {"listChanged": True, "extra": 1}}
+        )
+        asyncio.run(
+            assert_capabilities(session, {"tools": {"listChanged": True}})
+        )
+
     def test_fail_missing_key(self) -> None:
         session = FakeSession(capabilities={"tools": True})
         with pytest.raises(MCPAssertionError, match="capabilities mismatch"):
