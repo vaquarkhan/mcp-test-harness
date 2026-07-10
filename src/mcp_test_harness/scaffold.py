@@ -17,8 +17,9 @@ _MCP_TEST_YAML = """# MCP Test Harness — edit server.command to point at your 
 server:
   command: __SERVER_COMMAND__
 
-test_dirs:
-  - tests
+test:
+  dirs:
+    - tests
 
 # Optional:
 # transport: stdio
