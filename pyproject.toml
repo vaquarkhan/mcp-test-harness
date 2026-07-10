@@ -82,7 +82,7 @@ include = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 pythonpath = ["src"]
-addopts = "--ignore=tests/fixtures/harness_self_test"
+addopts = "--ignore=tests/fixtures/harness_self_test --ignore=tests/fixtures/harness_seam_test"
 markers = [
   "e2e: end-to-end dogfood tests (subprocess mcp-test CLI against real MCP server)",
 ]

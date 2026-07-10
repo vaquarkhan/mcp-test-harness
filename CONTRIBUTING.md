@@ -35,6 +35,13 @@ coverage report --fail-under=100
 
 The project enforces **100%** line coverage on `src/mcp_test_harness` (see [pyproject.toml](pyproject.toml) `[tool.coverage.*]`). **E2E dogfood** tests in [`tests/test_harness_dogfood_e2e.py`](tests/test_harness_dogfood_e2e.py) run the real `mcp-test` CLI against [`tests/fixtures/minimal_mcp_server.py`](tests/fixtures/minimal_mcp_server.py) — a test harness should prove itself in CI, not only with mocks. See [docs/DEVELOPER.md#end-to-end-dogfood](docs/DEVELOPER.md#end-to-end-dogfood).
 
+**Seam / contract e2e (required for correctness):** line coverage proves lines ran; it does not prove boundaries. Prefer tests that:
+
+1. **Execute generated artifacts** — `ast.parse` + run `mcp-test record` / `generate` output against a real server (not substring-only checks).
+2. **Match documented contracts** — README/docstring examples against a real FastMCP server (e.g. `assert_capabilities(mcp_server, {"tools": {}})`).
+3. **Assert outcomes** — after tool calls, `coverage.tested.tools` is non-empty; init YAML passes `validate_config_file` and runs.
+4. **Use a rich fixture** — [`tests/fixtures/rich_mcp_server.py`](tests/fixtures/rich_mcp_server.py) (multiple tools, resource, prompt, error tool) via [`tests/test_seam_e2e.py`](tests/test_seam_e2e.py).
+
 **Browser note:** a few lines in `pdf_export.py` / HTML screenshot helpers only execute when headless Chrome or Edge is installed. GitHub Actions runners include a browser; a local `coverage report --fail-under=100` may show ~99% without one. Install Chrome/Edge, or run the same suite CI uses, before treating a local miss as a regression.
 
 ## Releases
