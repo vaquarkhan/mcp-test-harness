@@ -116,7 +116,7 @@ def render_recorded_module(calls: list[dict[str, Any]]) -> str:
         lines.append("")
         lines.append('@marker(tags=["smoke", "recorded"])')
         lines.append(f"async def test_recorded_{safe}(mcp_server) -> None:")
-        lines.append(f'    """Recorded happy-path for tool ``{name}``.""')
+        lines.append(f'    """Recorded happy-path for tool ``{name}``."""')
         lines.append(f"    result = await assert_tool_call(mcp_server, {name!r}, {args_repr})")
         lines.append(
             f"    await assert_snapshot(result, {snap!r}, test_file=Path(__file__))"

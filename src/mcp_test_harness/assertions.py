@@ -413,7 +413,10 @@ async def assert_capabilities(
     """Verify the server advertises the expected capabilities.
 
     The *expected* dict is checked as a **subset** of the actual server
-    capabilities -- extra keys on the server side are allowed.
+    capabilities -- extra keys on the server side are allowed. Nested dict
+    values are compared recursively the same way: an empty expected value
+    (``{}``) means "capability present" and matches any actual value
+    (e.g. ``{"tools": {}}`` matches ``{"tools": {"listChanged": false}}``).
 
     Parameters
     ----------
@@ -454,7 +457,7 @@ async def assert_capabilities(
     for key, value in expected.items():
         if key not in actual:
             missing[key] = value
-        elif _serialize(value) != _serialize(actual[key]):
+        elif not _capability_subset(_serialize(value), _serialize(actual[key])):
             missing[key] = {"expected": value, "actual": actual[key]}
 
     if missing:
@@ -463,6 +466,26 @@ async def assert_capabilities(
             "Server capabilities mismatch",
             diff=diff,
         )
+
+
+def _capability_subset(expected: Any, actual: Any) -> bool:
+    """True when *expected* is a recursive subset of *actual*.
+
+    An empty dict means "present" and matches any actual value. Non-dict
+    leaves require exact equality after serialization.
+    """
+    if isinstance(expected, dict):
+        if not expected:
+            return True
+        if not isinstance(actual, dict):
+            return False
+        for key, value in expected.items():
+            if key not in actual:
+                return False
+            if not _capability_subset(value, actual[key]):
+                return False
+        return True
+    return expected == actual
 
 
 # ---------------------------------------------------------------------------
