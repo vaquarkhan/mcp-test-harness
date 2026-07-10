@@ -287,13 +287,17 @@ async def _run_harness(
                 logger.warning("PDF export skipped: %s", exc)
                 print(f"Warning: PDF export failed: {exc}", file=sys.stderr)
 
+    # Always honor --sarif-output (even when --report-format sarif), unless it
+    # would duplicate the primary report_output path already written above.
     sarif_path = config.sarif_output
-    if sarif_path and config.report_format != "sarif":
-        sarif_text = SARIFReporter().generate(results)
+    if sarif_path:
+        primary = Path(config.report_output) if config.report_output else None
         sp = Path(sarif_path)
-        sp.parent.mkdir(parents=True, exist_ok=True)
-        sp.write_text(sarif_text, encoding="utf-8")
-        logger.info("SARIF report written to %s", sp)
+        if primary is None or sp.resolve() != primary.resolve():
+            sarif_text = SARIFReporter().generate(results)
+            sp.parent.mkdir(parents=True, exist_ok=True)
+            sp.write_text(sarif_text, encoding="utf-8")
+            logger.info("SARIF report written to %s", sp)
 
     if config.pr_summary_output:
         summary_text = generate_pr_summary(results)
