@@ -56,7 +56,7 @@ def _print_conformance(card: dict[str, Any]) -> None:
     print(f"Conformance: {name} (level {level})")
     levels = card.get("levels") or {}
     for key in ("boot", "protocol", "covered", "secure", "resilient"):
-        mark = "PASS" if levels.get(key) else "—"
+        mark = "PASS" if levels.get(key) else "-"
         print(f"  [{mark:4}] {key}")
     for reason in card.get("reasons") or []:
         print(f"  note: {reason}")
@@ -128,7 +128,7 @@ async def _try_async(args: argparse.Namespace) -> int:
 
         config = replace(config, schema_validation=False)
 
-    print("mcp-test try — zero-config conformance probe (RFC-002)")
+    print("mcp-test try -- zero-config conformance probe (RFC-002)")
     print(f"  Server: {config.server_command!r}")
     print(f"  Transport: {config.transport}")
     print()
@@ -157,7 +157,7 @@ async def _try_async(args: argparse.Namespace) -> int:
         except KeyError as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
-        print(f"Running experiment suite {args.suite!r} ({len(ids)} experiments)…")
+        print(f"Running experiment suite {args.suite!r} ({len(ids)} experiments)...")
         results = await run_experiments(config, ids, catalog=catalog)
         print(ConsoleReporter().generate(results))
         card = attach_conformance(results, boot=True, protocol=protocol and results.unified_summary.get("gate") != "n/a")
@@ -220,34 +220,65 @@ def _cmd_conformance(argv: list[str] | None) -> int:
         prog="mcp-test conformance",
         description="Grade conformance from a JSON report or print a README badge.",
     )
+    # Shared so both `grade --report X` and `badge --report X` work the same way.
+    p.add_argument(
+        "--report",
+        default=None,
+        help="Path to mcp-test JSON report (grade from file; badge uses report level when set)",
+    )
     sub = p.add_subparsers(dest="command")
 
     grade = sub.add_parser("grade", help="Grade a JSON report (default if --report given)")
-    grade.add_argument("--report", required=True, help="Path to mcp-test JSON report")
-
-    badge = sub.add_parser("badge", help="Print markdown badge for a level name")
-    badge.add_argument(
-        "--level",
-        default="Covered",
-        choices=list(LEVEL_NAMES.values()) + ["None"],
-        help="Level name (default: Covered)",
+    grade.add_argument(
+        "--report",
+        default=None,
+        dest="grade_report",
+        help="Path to mcp-test JSON report",
     )
 
-    # Allow: mcp-test conformance --report x.json
-    p.add_argument("--report", default=None, help="JSON report path (shortcut for grade)")
+    badge = sub.add_parser(
+        "badge",
+        help="Print markdown badge (from --report level, or --level name)",
+    )
+    badge.add_argument(
+        "--report",
+        default=None,
+        dest="badge_report",
+        help="JSON report path - badge uses the graded level from this report",
+    )
+    badge.add_argument(
+        "--level",
+        default=None,
+        choices=list(LEVEL_NAMES.values()) + ["None"],
+        help="Explicit level name (ignored when --report is set)",
+    )
 
     args = p.parse_args(argv)
 
+    def _resolve_report() -> str | None:
+        for attr in ("grade_report", "badge_report", "report"):
+            val = getattr(args, attr, None)
+            if val:
+                return str(val)
+        return None
+
     if args.command == "badge":
-        print(badge_markdown(args.level))
+        report_path = _resolve_report()
+        if report_path:
+            path = Path(report_path)
+            if not path.is_file():
+                print(f"Report not found: {path}", file=sys.stderr)
+                return 2
+            data = json.loads(path.read_text(encoding="utf-8"))
+            card = conformance_from_report(data)
+            print(badge_markdown(str(card.get("name") or "None")))
+            return 0
+        level = args.level or "Protocol"
+        print(badge_markdown(level))
         return 0
 
-    report_path = None
-    if args.command == "grade":
-        report_path = args.report
-    elif args.report:
-        report_path = args.report
-    else:
+    report_path = _resolve_report()
+    if not report_path:
         p.print_help()
         return 2
 

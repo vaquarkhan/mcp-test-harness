@@ -407,6 +407,9 @@ def main(argv: list[str] | None = None) -> int:
 
     Wraps the async core via ``asyncio.run()``.
     """
+    from mcp_test_harness.console_io import configure_stdio
+
+    configure_stdio()
     av = list(sys.argv[1:] if argv is None else argv)
     if av and av[0] == "init":
         from mcp_test_harness.scaffold import run_init

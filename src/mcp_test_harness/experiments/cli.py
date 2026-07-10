@@ -102,7 +102,7 @@ def _cmd_list(args: argparse.Namespace) -> int:
     if args.suite:
         suite = catalog.suites.get(args.suite)
         desc = suite.description if suite else ""
-        print(f"  Suite: {args.suite} — {desc}")
+        print(f"  Suite: {args.suite} - {desc}")
     print()
     for exp_id in ids:
         tmpl = catalog.experiments[exp_id]
@@ -119,7 +119,7 @@ def _cmd_list(args: argparse.Namespace) -> int:
 def _print_scorecard(scorecard: dict) -> None:
     grade = scorecard.get("grade", "n/a")
     score = scorecard.get("score_pct")
-    score_txt = f"{score}%" if score is not None else "—"
+    score_txt = f"{score}%" if score is not None else "-"
     print(f"Resiliency scorecard: grade {grade} ({score_txt})")
     print(
         f"  passed={scorecard.get('passed', 0)} "
@@ -131,7 +131,7 @@ def _print_scorecard(scorecard: dict) -> None:
     for entry in scorecard.get("experiments") or []:
         status = entry.get("status", "?")
         title = entry.get("title", entry.get("id", ""))
-        line = f"  [{status:7}] {entry.get('id', '')} — {title}"
+        line = f"  [{status:7}] {entry.get('id', '')} - {title}"
         print(line)
         if entry.get("abort_reason"):
             print(f"           guardrail: {entry['abort_reason']}")

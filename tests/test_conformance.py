@@ -161,6 +161,55 @@ def test_conformance_badge_cli(capsys) -> None:
     assert "Protocol" in capsys.readouterr().out
 
 
+def test_conformance_badge_from_report_matches_grade(tmp_path: Path, capsys) -> None:
+    """BUG E: badge --report must use the same level as grade (no over-claim)."""
+    report = tmp_path / "feat_core.json"
+    # Protocol-only: gate pass but no tools_tested -> not Covered
+    report.write_text(
+        json.dumps(
+            {
+                "unified_summary": {
+                    "gate": "pass",
+                    "overall": {"total": 1, "passed": 1, "failed": 0},
+                    "coverage": {"summary": {"tools_tested": 0}},
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert run_conformance(["grade", "--report", str(report)]) == 0
+    grade_out = capsys.readouterr().out
+    assert "Protocol" in grade_out
+    assert "Covered" not in grade_out.split("Conformance:")[1].splitlines()[0]
+
+    assert run_conformance(["badge", "--report", str(report)]) == 0
+    badge_out = capsys.readouterr().out
+    assert "Protocol" in badge_out
+    assert "Covered" not in badge_out
+
+    # Parent --report + badge subcommand
+    assert run_conformance(["--report", str(report), "badge"]) == 0
+    assert "Protocol" in capsys.readouterr().out
+
+    assert run_conformance(["badge", "--report", str(tmp_path / "missing.json")]) == 2
+
+
+def test_conformance_report_forms(tmp_path: Path, capsys) -> None:
+    """BUG D: grade and badge accept --report in consistent positions."""
+    report = tmp_path / "r.json"
+    results = _session(tools_tested=1)
+    attach_conformance(results)
+    from mcp_test_harness.reporting import JSONReporter
+
+    report.write_text(JSONReporter().generate(results), encoding="utf-8")
+    assert run_conformance(["grade", "--report", str(report)]) == 0
+    assert "Covered" in capsys.readouterr().out
+    assert run_conformance(["--report", str(report), "grade"]) == 0
+    assert "Covered" in capsys.readouterr().out
+    assert run_conformance(["badge", "--report", str(report)]) == 0
+    assert "Covered" in capsys.readouterr().out
+
+
 def test_conformance_grade_cli(tmp_path: Path, capsys) -> None:
     report = tmp_path / "r.json"
     results = _session(tools_tested=1)

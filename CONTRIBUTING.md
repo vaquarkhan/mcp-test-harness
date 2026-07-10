@@ -35,6 +35,8 @@ coverage report --fail-under=100
 
 The project enforces **100%** line coverage on `src/mcp_test_harness` (see [pyproject.toml](pyproject.toml) `[tool.coverage.*]`). **E2E dogfood** tests in [`tests/test_harness_dogfood_e2e.py`](tests/test_harness_dogfood_e2e.py) run the real `mcp-test` CLI against [`tests/fixtures/minimal_mcp_server.py`](tests/fixtures/minimal_mcp_server.py) — a test harness should prove itself in CI, not only with mocks. See [docs/DEVELOPER.md#end-to-end-dogfood](docs/DEVELOPER.md#end-to-end-dogfood).
 
+**Browser note:** a few lines in `pdf_export.py` / HTML screenshot helpers only execute when headless Chrome or Edge is installed. GitHub Actions runners include a browser; a local `coverage report --fail-under=100` may show ~99% without one. Install Chrome/Edge, or run the same suite CI uses, before treating a local miss as a regression.
+
 ## Releases
 
 See **[docs/RELEASING.md](docs/RELEASING.md)** for the full **PyPI + GHCR** checklist (trusted publishing, Actions permissions, `docker pull`).

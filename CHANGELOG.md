@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Fixed
+
+- **Windows console encoding:** configure UTF-8 stdout/stderr at CLI entry; ASCII-safe doctor/try/experiment/export-pdf help strings so `--help` and doctor no longer crash on cp1252.
+- **Conformance CLI (BUG D):** `--report` works with both `grade` and `badge` in either position (`grade --report X`, `--report X grade`, `badge --report X`).
+- **Conformance badge (BUG E):** `badge --report` uses the same graded level as `grade` (no longer defaults to advertising Covered).
+- **README:** version pins updated to **2.4.0** (were stale at 2.0.0).
+
 ## [2.4.0] - 2026-07-10
 
 ### Added
