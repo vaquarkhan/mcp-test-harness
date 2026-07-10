@@ -234,8 +234,10 @@ async def _run_harness(
             print("No tests matched --last-failed filter.", file=sys.stderr)
             return 0
     elif not all_cases:
-        print("No tests discovered.")
-        return 0
+        # Non-zero like pytest's "no tests collected" (exit 5) so CI cannot
+        # green-pass a misconfigured test.dirs / empty discovery.
+        print("No tests discovered.", file=sys.stderr)
+        return 5
     if list_only:
         by_mod: dict[Path, list] = {}
         for tc in all_cases:
@@ -261,6 +263,13 @@ async def _run_harness(
 
     console_reporter = ConsoleReporter()
     print(console_reporter.generate(results))
+
+    if config.report_output and not config.report_format:
+        print(
+            "Warning: --report-output is ignored without --report-format "
+            "(json|junit|html|sarif).",
+            file=sys.stderr,
+        )
 
     report_text: str | None = None
     if config.report_format == "json":

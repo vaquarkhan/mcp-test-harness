@@ -21,9 +21,7 @@ _SELF_TESTS = _REPO_ROOT / "tests" / "fixtures" / "harness_self_test"
 
 
 def _server_command() -> str:
-    if os.name == "nt":
-        # Windows shlex.split(posix=False) does not strip quotes; use bare paths.
-        return f"{sys.executable} {_SERVER}"
+    # Quoted paths are supported on Windows via split_server_command quote-stripping.
     return f"{shlex.quote(sys.executable)} {shlex.quote(str(_SERVER))}"
 
 

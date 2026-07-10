@@ -232,7 +232,7 @@ Workers are given **entire test modules** (all tests from the same `test_*.py` f
 
 ### Command parsing (`stdio`)
 
-The server command string is split with Python’s `shlex.split` (not plain `str.split`), so quoted arguments and spaces are handled like a shell. Example: `python -c "print(1)"` is parsed as one executable plus correct argv.
+The server command string is split with `split_server_command` (`shlex.split`, not plain `str.split`), so quoted arguments and spaces are handled like a shell. On Windows, surrounding quotes are stripped after a non-POSIX split so paths such as `python "C:\Program Files\server.py"` work. Example: `python -c "print(1)"` is parsed as one executable plus correct argv.
 
 ### Test discovery and broken files
 
@@ -1033,10 +1033,11 @@ Sensitive values matching `redact_patterns` are replaced with [REDACTED].
 
 ### Common failure patterns
 
-**"No tests discovered"**
+**"No tests discovered"** (exit code **5**)
 - Check file names match `test_*.py` or `*_test.py`
 - Check function names start with `test_`
 - Check the test directory path in config or CLI
+- Empty discovery fails the process (like pytest's no-tests-collected) so CI cannot pass with zero tests
 
 **"MCP initialize handshake timed out"**
 - Your server is not responding to the MCP protocol

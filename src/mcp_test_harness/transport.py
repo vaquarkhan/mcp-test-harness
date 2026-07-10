@@ -22,6 +22,28 @@ from mcp_test_harness.models import TransportType
 logger = logging.getLogger(__name__)
 
 
+def split_server_command(server_command: str) -> list[str]:
+    """Split a server command string into argv for stdio spawn.
+
+    Uses ``shlex.split`` with ``posix=False`` on Windows so backslashes in
+    paths are preserved. On Windows, ``posix=False`` also leaves surrounding
+    quote characters on tokens; strip those so paths with spaces work::
+
+        python "C:\\Program Files\\server.py"
+        -> ["python", "C:\\Program Files\\server.py"]
+    """
+    parts = shlex.split(server_command, posix=os.name != "nt")
+    if os.name == "nt":
+        cleaned: list[str] = []
+        for part in parts:
+            if len(part) >= 2 and part[0] == part[-1] and part[0] in "'\"":
+                cleaned.append(part[1:-1])
+            else:
+                cleaned.append(part)
+        return cleaned
+    return parts
+
+
 # ---------------------------------------------------------------------------
 # Protocol
 # ---------------------------------------------------------------------------
@@ -79,8 +101,7 @@ class StdioTransportAdapter:
     async def connect(self) -> tuple[Any, Any]:
         from mcp.client.stdio import StdioServerParameters
 
-        # POSIX=False on Windows preserves backslashes in paths; POSIX=True elsewhere
-        parts = shlex.split(self._server_command, posix=os.name != "nt")
+        parts = split_server_command(self._server_command)
         if not parts:
             raise ValueError("server_command is empty or contains no arguments")
         command = parts[0]

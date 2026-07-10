@@ -191,16 +191,17 @@ class TestAsyncMainConfigError:
 
 class TestAsyncMainNoTests:
     @pytest.mark.asyncio
-    async def test_no_tests_returns_0(self, tmp_path, capsys):
+    async def test_no_tests_returns_5(self, tmp_path, capsys):
+        """BUG F: empty discovery must not green-pass CI (pytest uses exit 5)."""
         empty_dir = tmp_path / "empty_tests"
         empty_dir.mkdir()
         code = await _async_main([
             "--server-command", "echo hi",
             str(empty_dir),
         ])
-        assert code == 0
+        assert code == 5
         captured = capsys.readouterr()
-        assert "No tests discovered" in captured.out
+        assert "No tests discovered" in captured.err
 
 
 # ---------------------------------------------------------------------------
@@ -411,6 +412,35 @@ class TestAsyncMainFullRun:
         content = report_path.read_text()
         assert "harness_version" in content
 
+    @pytest.mark.asyncio
+    async def test_report_output_without_format_warns(self, tmp_path, capsys):
+        test_file = tmp_path / "test_r.py"
+        test_file.write_text("async def test_r(): pass\n")
+        report_path = tmp_path / "orphan.json"
+
+        mock_results = SessionResults(
+            test_results=[],
+            total_duration_ms=50.0,
+            server_capabilities={},
+            protocol_version="",
+            harness_version="1.1.0",
+            passed=1, failed=0, errored=0, skipped=0, timed_out=0,
+        )
+
+        with patch("mcp_test_harness.scheduler.HarnessScheduler") as MockSched:
+            instance = MockSched.return_value
+            instance.run_sequential = AsyncMock(return_value=mock_results)
+
+            code = await _async_main([
+                "--server-command", "echo hi",
+                "--report-output", str(report_path),
+                str(tmp_path),
+            ])
+
+        assert code == 0
+        assert not report_path.exists()
+        assert "ignored without --report-format" in capsys.readouterr().err
+
 
 # ---------------------------------------------------------------------------
 # main() sync wrapper
@@ -477,7 +507,7 @@ class TestListFlag:
         assert "::" in captured.out
 
     @pytest.mark.asyncio
-    async def test_list_no_tests_returns_0(self, tmp_path, capsys):
+    async def test_list_no_tests_returns_5(self, tmp_path, capsys):
         empty_dir = tmp_path / "empty"
         empty_dir.mkdir()
 
@@ -487,9 +517,9 @@ class TestListFlag:
             str(empty_dir),
         ])
 
-        assert code == 0
+        assert code == 5
         captured = capsys.readouterr()
-        assert "No tests discovered" in captured.out
+        assert "No tests discovered" in captured.err
 
 
 # ---------------------------------------------------------------------------

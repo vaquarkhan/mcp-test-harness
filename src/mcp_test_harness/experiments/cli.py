@@ -163,7 +163,9 @@ async def _cmd_run_async(args: argparse.Namespace) -> int:
             catalog=catalog,
         )
     except (KeyError, ValueError) as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        # KeyError str() wraps the message in quotes; prefer the raw args.
+        msg = exc.args[0] if exc.args else str(exc)
+        print(f"Error: {msg}", file=sys.stderr)
         return 2
 
     if not args.server_command:
