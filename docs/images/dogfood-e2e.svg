@@ -10,7 +10,7 @@
     </marker>
   </defs>
   <rect width="920" height="320" rx="16" fill="url(#dogfoodBg)"/>
-  <text x="460" y="36" text-anchor="middle" fill="#f8fafc" font-family="Segoe UI, system-ui, sans-serif" font-size="20" font-weight="700">We test the test harness — end-to-end dogfood</text>
+  <text x="460" y="36" text-anchor="middle" fill="#f8fafc" font-family="Segoe UI, system-ui, sans-serif" font-size="20" font-weight="700">We test the test harness - end-to-end dogfood</text>
   <text x="460" y="58" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="13">835+ pytest cases · 100% line coverage · real stdio MCP subprocess</text>
 
   <rect x="40" y="90" width="170" height="90" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
@@ -39,5 +39,5 @@
 
   <rect x="120" y="220" width="680" height="72" rx="10" fill="#0b1220" stroke="#334155" stroke-width="1"/>
   <text x="460" y="248" text-anchor="middle" fill="#cbd5e1" font-family="Segoe UI, system-ui, sans-serif" font-size="13">CI (validate.yml): coverage run + report --fail-under=100 on every PR</text>
-  <text x="460" y="272" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="12">reports: HTML · JUnit · SARIF · JSON — same artifacts consumers get</text>
+  <text x="460" y="272" text-anchor="middle" fill="#64748b" font-family="Segoe UI, system-ui, sans-serif" font-size="12">reports: HTML · JUnit · SARIF · JSON - same artifacts consumers get</text>
 </svg>

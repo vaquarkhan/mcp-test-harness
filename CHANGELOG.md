@@ -8,6 +8,7 @@ All notable changes to this project are documented in this file. The format is b
 
 - **README audience sections:** opening now leads with C-suite/directors, then architects/tech leads, then developers; remaining reference content unchanged.
 - **Docs freshness:** test-count badges and copy updated from stale **690+** to **835+** (current collected suite size).
+- **README / dogfood SVG:** replace em/en dashes with ASCII hyphens.
 
 ### Fixed
 
