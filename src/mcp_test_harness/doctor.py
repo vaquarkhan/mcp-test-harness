@@ -64,15 +64,15 @@ async def _doctor_async(config: HarnessConfig) -> int:
         caps = server.capabilities
         cap_keys = sorted(str(k) for k in (caps or {}).keys())
 
-        print("mcp-test doctor — quick health check (no tests run)")
+        print("mcp-test doctor -- quick health check (no tests run)")
         print()
         print(f"  Transport:     {config.transport}")
         print(f"  Server command: {config.server_command!r}")
-        print(f"  Protocol:      {proto or '— (not reported by server)'}")
+        print(f"  Protocol:      {proto or '- (not reported by server)'}")
         print(
-            f"  Capabilities:  {', '.join(cap_keys[:12])}{'…' if len(cap_keys) > 12 else ''}"
+            f"  Capabilities:  {', '.join(cap_keys[:12])}{'...' if len(cap_keys) > 12 else ''}"
             if cap_keys
-            else "  Capabilities:  —"
+            else "  Capabilities:  -"
         )
 
         session = server.session
@@ -89,9 +89,9 @@ async def _doctor_async(config: HarnessConfig) -> int:
             print()
             print(f"  Tools ({n_tools}):")
             for t in tools[:20]:
-                print(f"    • {_tool_name(t)}")
+                print(f"    - {_tool_name(t)}")
             if n_tools > 20:
-                print(f"    … {n_tools - 20} more")
+                print(f"    ... {n_tools - 20} more")
         except Exception as exc:  # noqa: BLE001
             err_lines.append(f"list_tools: {exc}")
 
@@ -125,7 +125,7 @@ async def _doctor_async(config: HarnessConfig) -> int:
 
         if config.schema_validation:
             print()
-            print("  Schema validation (post-connect checks)…")
+            print("  Schema validation (post-connect checks)...")
             viol = await validate_mcp_server_after_connect(
                 server.session,
                 server.init_result,
@@ -133,11 +133,11 @@ async def _doctor_async(config: HarnessConfig) -> int:
                 schema_probe_call_tool=config.schema_probe_call_tool,
             )
             if viol:
-                print(f"  Schema: FAIL — {len(viol)} issue(s):")
+                print(f"  Schema: FAIL - {len(viol)} issue(s):")
                 for v in viol[:20]:
                     print(f"    - {v.message}")
                 if len(viol) > 20:
-                    print(f"    … and {len(viol) - 20} more")
+                    print(f"    ... and {len(viol) - 20} more")
                 code = 1
             else:
                 print("  Schema: OK")

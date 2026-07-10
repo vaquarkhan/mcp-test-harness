@@ -159,7 +159,7 @@ def run_export_pdf(argv: list[str]) -> int:
         prog="mcp-test export-pdf",
         description=(
             "Convert an MCP Test Harness HTML report to PDF using headless Chrome/Edge. "
-            "Similar to JMeter HTML dashboard → PDF summary export."
+            "Similar to JMeter HTML dashboard -> PDF summary export."
         ),
     )
     parser.add_argument(

@@ -407,6 +407,9 @@ def main(argv: list[str] | None = None) -> int:
 
     Wraps the async core via ``asyncio.run()``.
     """
+    from mcp_test_harness.console_io import configure_stdio
+
+    configure_stdio()
     av = list(sys.argv[1:] if argv is None else argv)
     if av and av[0] == "init":
         from mcp_test_harness.scaffold import run_init
@@ -420,6 +423,10 @@ def main(argv: list[str] | None = None) -> int:
         from mcp_test_harness.generate import run_generate
 
         return run_generate(av[1:])
+    if av and av[0] == "record":
+        from mcp_test_harness.record import run_record
+
+        return run_record(av[1:])
     if av and av[0] == "export-pdf":
         from mcp_test_harness.pdf_export import run_export_pdf
 

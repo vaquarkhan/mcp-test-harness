@@ -56,7 +56,10 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), `marker(tags=[…])` + `mcp-test -m perf` |
 | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) | **Performance product story:** why MCP perf must be protocol-aware, what is in-core vs out-of-scope, and the proposed production-grade roadmap |
 | [ROADMAP.md](ROADMAP.md) | **Planned delivery:** now/next/later priorities and scope guardrails |
-| [ROADMAP_GROWTH.md](ROADMAP_GROWTH.md) | **Adoption engine:** conformance badge, Marketplace, record-to-suite |
+| [ROADMAP_GROWTH.md](ROADMAP_GROWTH.md) | **Adoption engine:** conformance badge, Marketplace, record-to-suite, pre-commit |
+| [design/RFC-001-record-to-suite.md](design/RFC-001-record-to-suite.md) | **RFC-001:** `mcp-test record` live calls → tests + snapshots |
+| [design/RFC-002-conformance-levels.md](design/RFC-002-conformance-levels.md) | **RFC-002:** conformance levels + `mcp-test try` / badge |
+| [design/RFC-005-resiliency-experiments.md](design/RFC-005-resiliency-experiments.md) | **RFC-005:** resiliency experiment catalog |
 | [SECURITY_TESTING.md](SECURITY_TESTING.md) | **Security-first CI strategy:** payloads, auth checks, and leak scanning guidance |
 | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) | **Compatibility strategy:** contract replay and protocol/client matrix direction |
 | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) | **Governance:** audit/policy/tenant requirements, plus practical EU AI Act evidence mapping |

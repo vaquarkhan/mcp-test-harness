@@ -1,0 +1,18 @@
+- id: mcp-test-try
+  name: mcp-test try (Boot / Protocol)
+  description: >
+    Fast RFC-002 Boot/Protocol probe before push. Requires a reachable MCP
+    server via mcp-test.yaml or args: [--server-command, "python my_server.py"].
+  entry: mcp-test try
+  language: python
+  pass_filenames: false
+  always_run: true
+  stages: [pre-commit]
+- id: mcp-test-conformance
+  name: mcp-test conformance grade
+  description: Grade an existing JSON report (pass --report path via args).
+  entry: mcp-test conformance grade
+  language: python
+  pass_filenames: false
+  always_run: false
+  stages: [manual]
