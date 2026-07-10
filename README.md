@@ -647,7 +647,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test MCP Server
         id: mcp
-        uses: vaquarkhan/mcp-test-harness@v2.2.0
+        uses: vaquarkhan/mcp-test-harness@v2.3.0
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
@@ -658,7 +658,7 @@ jobs:
 Zero-config probe (no suite yet):
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v2.2.0
+- uses: vaquarkhan/mcp-test-harness@v2.3.0
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -682,7 +682,7 @@ Zero-config probe (no suite yet):
 | `conformance-level` | RFC-002 level name (Boot … Resilient) |
 | `conformance-level-num` | Numeric level (-1 to 4) |
 
-Path form (same Action): `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v2.2.0` — see [examples/example_github_actions.md](examples/example_github_actions.md).
+Path form (same Action): `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v2.3.0` — see [examples/example_github_actions.md](examples/example_github_actions.md).
 
 ## Plugins
 

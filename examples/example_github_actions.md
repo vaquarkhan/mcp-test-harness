@@ -18,12 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: vaquarkhan/mcp-test-harness@v2.2.0
+      - uses: vaquarkhan/mcp-test-harness@v2.3.0
         id: mcp
         with:
           server-command: "python -m my_server"
           test-directory: "tests/"
-          harness-version: "latest"   # or pin e.g. "2.2.0"
+          harness-version: "latest"   # or pin e.g. "2.3.0"
           pr-comment: "true"
 
       - run: echo "Conformance ${{ steps.mcp.outputs.conformance-level }}"
@@ -38,7 +38,7 @@ jobs:
 **Zero-config conformance (dogfood a public server):**
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v2.2.0
+- uses: vaquarkhan/mcp-test-harness@v2.3.0
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -47,6 +47,6 @@ jobs:
 
 **Source of truth:** root [`action.yml`](../action.yml) (Marketplace / `owner/repo@tag`) and mirror [`.github/actions/mcp-test/action.yml`](../.github/actions/mcp-test/action.yml) (`owner/repo/.github/actions/mcp-test@tag`).
 
-**Marketplace:** root `action.yml` has branding (`check-circle` / green). After tagging `v2.2.0`, publish the Action from the GitHub Release “Publish this Action to the GitHub Marketplace” flow (one-time listing). Until then, pin `@v2.2.0` or `@main` as above.
+**Marketplace:** root `action.yml` has branding (`check-circle` / green). After tagging `v2.3.0`, publish the Action from the GitHub Release “Publish this Action to the GitHub Marketplace” flow (one-time listing). Until then, pin `@v2.3.0` or `@main` as above.
 
 **Related:** [CI_AND_REPORTS.md](../docs/CI_AND_REPORTS.md) · [RFC-002](../docs/design/RFC-002-conformance-levels.md) · [mcp_test_report_junit.yaml](mcp_test_report_junit.yaml)

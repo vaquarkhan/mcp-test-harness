@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-07-09
+
+### Added
+
+- **Inspector pairing docs:** local sandbox (MCP Inspector) → graduate to harness tests → CI loop in [docs/COMPARISON.md](docs/COMPARISON.md).
+
+### Changed
+
+- Docs and Action examples pin **`@v2.3.0`** / `mcp-test-harness==2.3.0`.
+- **All 18 PyPI artifacts** aligned at **2.3.0**.
+
 ## [2.2.0] - 2026-07-09
 
 ### Added

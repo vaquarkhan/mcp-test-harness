@@ -50,6 +50,41 @@ flowchart TB
 | How does an **LLM agent** behave? | mcp-eval, testmcpy |
 | Is production **protected**? | MCP-Bastion |
 
+## MCP Inspector pairing (local sandbox → CI)
+
+[MCP Test Harness](https://github.com/vaquarkhan/mcp-test-harness) and the [Official MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) share the same protocol surface; they are a classic **local sandbox** vs **continuous integration** split, not competitors.
+
+### What the harness automates from the Inspector workflow
+
+| Inspector (manual) | Harness (automated) |
+|--------------------|---------------------|
+| Handshake & capability discovery (tools / resources / prompts) | Same JSON-RPC lifecycle in setup / `mcp-test try` / schema probes |
+| Mock LLM host UI to exercise server endpoints | Headless deterministic client session (`mcp_server` fixture) |
+| Connect via stdio / SSE / HTTP | Same transports via CLI flags or `mcp-test.yaml` |
+
+The harness exists so you stop re-clicking the Inspector for every regression: the payloads you typed once become assertions that run on every PR.
+
+### Recommended loop
+
+1. **Dev sandbox (Inspector)** — While writing a new tool, run the Inspector locally for smoke checks and ad-hoc JSON payloads.
+2. **Graduate to code (Harness)** — When the tool behaves, encode those inputs as deterministic tests:
+
+```python
+from mcp_test_harness.assertions import assert_tool_call
+
+async def test_weather_tool(mcp_server):
+    result = await assert_tool_call(
+        mcp_server,
+        "get_weather",
+        {"location": "Chicago"},
+    )
+    assert "temperature" in str(result)
+```
+
+3. **CI + troubleshoot** — GitHub Actions runs `mcp-test` (or `uses: vaquarkhan/mcp-test-harness@v2.3.0`). On failure, use harness output for schema/assertion detail; reopen the Inspector locally when you need raw transport traffic.
+
+Also: `mcp-test try --server-command "..."` for a zero-config Boot/Protocol probe before you write a full suite.
+
 ## mcp-shark pairing (recommended)
 
 [mcp-shark](https://github.com/mcp-shark/mcp-shark) scans **static IDE configs** (secrets, OWASP rules, toxic cross-server flows) and optionally captures **live JSON-RPC** via a local proxy. It does **not** replace server functional tests.
@@ -66,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: vaquarkhan/mcp-test-harness/.github/actions/mcp-test@main
+      - uses: vaquarkhan/mcp-test-harness@v2.3.0
         with:
           server-command: "python -m my_server.mcp"
           test-directory: tests/
