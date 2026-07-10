@@ -4,6 +4,20 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.3] - 2026-07-10
+
+### Added
+
+- **Browserless 100% coverage:** [`tests/test_browser_and_edge_coverage.py`](tests/test_browser_and_edge_coverage.py) mocks PDF/screenshot browser paths and covers `_capability_subset` / `_unwrap_session` / record `isError` edge branches so `--fail-under=100` passes without Chrome/Edge.
+- **CI coverage gate** on every PR (`validate` quick job) and on full main runs.
+- **Distribution smoke job:** GHCR `docker run … --version`, PyInstaller binary `--version`, sample provider shim imports, and composite GitHub Action `try-mode` against the minimal fixture.
+
+### Changed
+
+- CONTRIBUTING: removed environment-dependent browser caveat; gate is required on clean checkouts.
+- **All 18 PyPI artifacts** aligned at **3.0.3**.
+- Marketplace Action and docs examples pin **`@v3.0.3`**.
+
 ## [3.0.2] - 2026-07-10
 
 ### Changed
