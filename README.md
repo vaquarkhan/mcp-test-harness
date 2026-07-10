@@ -9,15 +9,79 @@
 [![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![CI](https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&label=CI)](https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-690%2B%20passing-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-835%2B%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)](CONTRIBUTING.md#develop--test)
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
 
 **Release 2.4.0** — install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`2.4.0`** (runtime, `mcp-test` entrypoint), **`dev`** and **`2.4.0-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
 
-### Release 2.0 — what shipped end-to-end
+Author: [Vaquar Khan](https://github.com/vaquarkhan) · **License:** [MIT](LICENSE) ([NOTICE](NOTICE)) · **Cite:** [CITATION.cff](CITATION.cff)
 
-Everything below is **implemented, tested, and documented** in this repo (690+ tests, 100% lib coverage gate, e2e dogfood in CI).
+---
+
+## For C-suite & directors
+
+**What it is:** a CI gate for [MCP](https://modelcontextprotocol.io/) servers — the connectors that let AI agents call tools, data, and APIs. Teams write deterministic tests once; every pull request proves the server still works before it ships.
+
+**Why it matters**
+
+| Business need | What the harness delivers |
+|---------------|---------------------------|
+| Ship AI features without silent breakage | Automated pass/fail on every PR — no manual Inspector click-through |
+| Audit & governance evidence | JUnit / SARIF / HTML reports, conformance badges, security payload packs |
+| Lower cost of quality | One tool for functional, regression, performance, and resiliency — not three vendors |
+| Trust the gate | **835+** self-tests, **100%** library coverage, and e2e dogfood in CI |
+
+**Not an LLM eval product.** It does not score model answers. It proves *your MCP server* is correct, fast enough, and hardened enough for production. Pair with runtime security ([MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) and IDE config scanning ([mcp-shark](https://github.com/mcp-shark/mcp-shark)). Positioning: [docs/POSITIONING.md](docs/POSITIONING.md) · comparison: [docs/COMPARISON.md](docs/COMPARISON.md).
+
+---
+
+## For architects & tech leads
+
+**Role in the stack:** deterministic, code-first test automation between local MCP Inspector exploration and production. Fits stdio / SSE / HTTP transports; plugs into GitHub Actions (Marketplace Action), JUnit consumers, and Code Scanning (SARIF).
+
+**Architecture (one run)**
+
+```text
+mcp-test CLI → config → discover test_*.py → schedule (optional parallel)
+  → real MCP session (lifecycle + transport) → assertions → reports
+```
+
+| Concern | Approach |
+|---------|----------|
+| Correctness | Protocol-aware fixtures (`mcp_server`), schema checks, snapshots |
+| Performance | `assert_latency` / `assert_throughput`, baselines, SLO params |
+| Security / resiliency | Payload packs, chaos faults, experiment catalog + scorecard (RFC-005) |
+| Conformance signal | Levels + README badge via `mcp-test try` / `conformance` (RFC-002) |
+| Adoption speed | `init`, `generate`, `record` (RFC-001) — live session → suite |
+| Extensibility | Plugins (assertions, fixtures, reporters, transports) |
+
+Deep dives: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/DECISIONS.md](docs/DECISIONS.md) · [docs/ENTERPRISE_GOVERNANCE.md](docs/ENTERPRISE_GOVERNANCE.md) · RFCs under [docs/design/](docs/design/).
+
+---
+
+## For developers
+
+**Fastest path**
+
+```bash
+pip install mcp-test-harness
+mcp-test init --server-command "python your_server.py"
+# edit tests/test_*.py — then:
+mcp-test --config mcp-test.yaml
+```
+
+Zero-config probe: `mcp-test try --server-command "…"`. CI: Marketplace Action [`mcp-test-harness`](https://github.com/marketplace/actions/mcp-test-harness). Docs hub: [docs/QUICK_START.md](docs/QUICK_START.md) → [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) → [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md).
+
+MCP Test Harness is a pytest-style framework for MCP servers: the `mcp-test` CLI discovers, runs, and reports tests automatically — replacing much of the manual validation you might do in the MCP Inspector. **Repository:** [github.com/vaquarkhan/mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness).
+
+> **Documentation:** [QUICK_START](docs/QUICK_START.md) · [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md) · [CI & reports](docs/CI_AND_REPORTS.md) · [performance](docs/PERFORMANCE.md) · [comparison](docs/COMPARISON.md) · [discovery checklist](docs/DISCOVERY.md). **Community:** Issues for bugs; PRs for docs and examples.
+
+---
+
+### Release 2.0+ — what shipped end-to-end
+
+Everything below is **implemented, tested, and documented** in this repo (835+ tests, 100% lib coverage gate, e2e dogfood in CI).
 
 | Area | Feature | Where to start |
 |------|---------|----------------|
@@ -34,16 +98,6 @@ Everything below is **implemented, tested, and documented** in this repo (690+ t
 | **Site** | **GitHub Pages** deploys `html/` only (marketing site at [vaquarkhan.github.io/mcp-test-harness](https://vaquarkhan.github.io/mcp-test-harness/)) | [html/index.html](html/index.html) |
 
 Full history: [CHANGELOG.md](CHANGELOG.md) · roadmap: [docs/ROADMAP.md](docs/ROADMAP.md).
-
-Author: [Vaquar Khan](https://github.com/vaquarkhan)
-
-MCP Test Harness is a pytest-style testing framework for [MCP](https://modelcontextprotocol.io/) servers. It provides the `mcp-test` CLI to discover, run, and report on tests automatically, replacing much of the manual validation you might do in the MCP Inspector. **Repository:** [github.com/vaquarkhan/mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness).
-
-> **Documentation:** structured **hub** and **adoption paths**. Start with [QUICK_START](docs/QUICK_START.md), then [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md), [CI & reports](docs/CI_AND_REPORTS.md), **[performance / latency tests](docs/PERFORMANCE.md)**, **[performance strategy and product positioning](docs/PERFORMANCE_TESTING_STRATEGY.md)**, **[how we compare to other MCP tools](docs/COMPARISON.md)**, and **[ecosystem / registry discovery (release checklist)](docs/DISCOVERY.md)**. **Community:** open an **Issue** for bugs, a **PR** for docs and examples.
-> 
-**License:** the core project is under the [MIT License](LICENSE); see [NOTICE](NOTICE). [CITATION.cff](CITATION.cff) suggests how to cite the software in papers (optional, not a license condition). *(Optional packages under `packages/` may list their own terms in each package’s `pyproject.toml`.)*
-
-For **CI-native, code-first** MCP test automation, MCP Test Harness **fills** that gap. For **spec conformance**, **LLM-in-the-loop** evals, and **model benchmarks**, other tools exist; see [docs/COMPARISON.md](docs/COMPARISON.md).
 
 ---
 
@@ -110,13 +164,13 @@ Every diagram lives in [`docs/images/`](docs/images/). Quick reference:
 | [`ecosystem-map.png`](docs/images/ecosystem-map.png) | Position vs Inspector, conformance, evals, Bastion |
 | [`harness-bastion-pairing.png`](docs/images/harness-bastion-pairing.png) | Test in CI, secure in production |
 | [`testherness.png`](docs/images/testherness.png) | Quick-start overview |
-| [`dogfood-e2e.svg`](docs/images/dogfood-e2e.svg) | **Dogfood:** pytest runs `mcp-test` against bundled MCP fixtures (690+ tests, 100% lib coverage) |
+| [`dogfood-e2e.svg`](docs/images/dogfood-e2e.svg) | **Dogfood:** pytest runs `mcp-test` against bundled MCP fixtures (835+ tests, 100% lib coverage) |
 
 ---
 
 ## We eat our own dogfood
 
-A test harness should prove itself. This repo runs **690+ pytest cases** with a **100% line coverage gate** on `src/mcp_test_harness`, plus **end-to-end dogfood** tests that spawn the real `mcp-test` CLI against a bundled FastMCP server:
+A test harness should prove itself. This repo runs **835+ pytest cases** with a **100% line coverage gate** on `src/mcp_test_harness`, plus **end-to-end dogfood** tests that spawn the real `mcp-test` CLI against a bundled FastMCP server:
 
 <p align="center">
   <img src="docs/images/dogfood-e2e.svg" alt="Dogfood flow: pytest and coverage gate invoke mcp-test CLI against minimal FastMCP server and self-tests" width="100%" />
@@ -881,7 +935,7 @@ mcp-test-harness/
 +-- scripts/
 |   +-- verify_upstream.py
 |   +-- build_binary.py
-+-- tests/                          # 690+ tests; 100% line gate + e2e dogfood (see [docs/DEVELOPER.md](docs/DEVELOPER.md#end-to-end-dogfood))
++-- tests/                          # 835+ tests; 100% line gate + e2e dogfood (see [docs/DEVELOPER.md](docs/DEVELOPER.md#end-to-end-dogfood))
 +-- docs/
 |   +-- README.md                   # documentation hub
 |   +-- index.md                    # short landing (e.g. GitHub Pages)

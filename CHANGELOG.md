@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Changed
+
+- **README audience sections:** opening now leads with C-suite/directors, then architects/tech leads, then developers; remaining reference content unchanged.
+- **Docs freshness:** test-count badges and copy updated from stale **690+** to **835+** (current collected suite size).
+
 ### Fixed
 
 - **Empty discovery (BUG F):** `No tests discovered` now exits **5** (stderr), matching pytest's no-tests-collected gate so CI cannot green-pass a misconfigured `test.dirs`.

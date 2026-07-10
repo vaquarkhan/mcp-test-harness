@@ -11,7 +11,7 @@
   </defs>
   <rect width="920" height="320" rx="16" fill="url(#dogfoodBg)"/>
   <text x="460" y="36" text-anchor="middle" fill="#f8fafc" font-family="Segoe UI, system-ui, sans-serif" font-size="20" font-weight="700">We test the test harness — end-to-end dogfood</text>
-  <text x="460" y="58" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="13">690+ pytest cases · 100% line coverage · real stdio MCP subprocess</text>
+  <text x="460" y="58" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, system-ui, sans-serif" font-size="13">835+ pytest cases · 100% line coverage · real stdio MCP subprocess</text>
 
   <rect x="40" y="90" width="170" height="90" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
   <text x="125" y="122" text-anchor="middle" fill="#dcfce7" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="600">pytest + coverage</text>
