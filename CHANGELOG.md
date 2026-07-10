@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Fixed
+
+- **GitHub Action:** correct `actions/github-script@v8.0.0` commit pin (typo broke `dist-smoke` CI).
+
 ## [3.0.3] - 2026-07-10
 
 ### Added

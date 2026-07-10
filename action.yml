@@ -157,7 +157,7 @@ runs:
 
     - name: Post PR summary comment
       if: always() && inputs.pr-comment == 'true' && github.event_name == 'pull_request'
-      uses: actions/github-script@ed597411d8f924073f0dfc12c67d847b6c090e5a  # v8.0.0
+      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8.0.0
       with:
         script: |
           const fs = require('fs');
