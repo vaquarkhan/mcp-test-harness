@@ -918,7 +918,7 @@ If imports resolve to a different installed copy of the package, run from the re
 |---------|-----|
 | `mcp-test: command not found` | Run `pip install -e ".[dev]"` |
 | Tests hang | Check `--timeout`; server may not respond to MCP handshake |
-| `No tests discovered` | Files must match `test_*.py` or `*_test.py`; functions must start with `test_`. Check logs: a **warning** is emitted if a test file fails to import |
+| `No tests discovered` (exit **5**) | Files must match `test_*.py` or `*_test.py`; functions must start with `test_`. Check `test.dirs` / CLI path. A **warning** is emitted if a test file fails to import. Empty discovery is a CI failure (not a green pass). |
 | Snapshot mismatch | Run `mcp-test --update-snapshots` after intentional changes |
 | Server crashes during tests | Check server logs; harness marks remaining tests as errored |
 | Config file not found | Harness looks for `mcp-test.yaml` / `mcp-test.toml` in cwd, or use `--config` |

@@ -6,6 +6,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Fixed
 
+- **Empty discovery (BUG F):** `No tests discovered` now exits **5** (stderr), matching pytest's no-tests-collected gate so CI cannot green-pass a misconfigured `test.dirs`.
+- **Windows quoted `server.command` (BUG G):** `split_server_command` strips surrounding quotes after `shlex.split(posix=False)` so paths with spaces (e.g. `python "C:\\Program Files\\server.py"`) spawn correctly.
+- **`--report-output` without `--report-format`:** emit a stderr warning instead of a silent no-op.
+- **`experiment run` unknown id:** error message no longer double-quoted via `KeyError` `str()`.
 - **`mcp-test init` config:** scaffold now writes nested `test.dirs` (valid schema) instead of top-level `test_dirs`, which failed validation and broke the init → run quick-start path.
 - **`--sarif-output`:** always writes when set (previously skipped entirely when `--report-format sarif`, so `--report-format sarif --sarif-output out.sarif` with no `--report-output` wrote nothing).
 - **Windows console encoding:** configure UTF-8 stdout/stderr at CLI entry; ASCII-safe doctor/try/experiment/export-pdf help strings so `--help` and doctor no longer crash on cp1252.

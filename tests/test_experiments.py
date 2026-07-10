@@ -353,6 +353,9 @@ def test_cli_list_and_scorecard(tmp_path: Path, capsys: pytest.CaptureFixture[st
 
 def test_cli_run_errors(capsys: pytest.CaptureFixture[str]) -> None:
     assert run_experiment_main(["run", "no-id"]) == 2
+    err = capsys.readouterr().err
+    assert "Unknown experiment: no-id" in err
+    assert "Error: 'Unknown" not in err  # no KeyError quote wrapping
     assert run_experiment_main(["run"]) == 2
 
 
