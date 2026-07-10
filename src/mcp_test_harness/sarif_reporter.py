@@ -1,4 +1,4 @@
-"""SARIF 2.4.0 export for security-tagged test failures (GitHub Code Scanning)."""
+"""SARIF 3.0.0 export for security-tagged test failures (GitHub Code Scanning)."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from mcp_test_harness import __version__
 from mcp_test_harness.models import CaseResult, CaseStatus, SessionResults
 from mcp_test_harness.security_rules import RULES, SecurityRule, infer_rule_for_case
 
-_SARIF_SCHEMA = "https://json.schemastore.org/sarif-2.4.0.json"
+_SARIF_SCHEMA = "https://json.schemastore.org/sarif-3.0.0.json"
 _SEVERITY_TO_LEVEL = {
     "critical": "error",
     "high": "error",
@@ -76,7 +76,7 @@ def _result_for_case(tr: CaseResult, rule_index: dict[str, int]) -> dict[str, An
 
 
 class SARIFReporter:
-    """Emit SARIF 2.4.0 for failed security-tagged tests."""
+    """Emit SARIF 3.0.0 for failed security-tagged tests."""
 
     def generate(self, results: SessionResults) -> str:
         failed_security = [
@@ -97,7 +97,7 @@ class SARIFReporter:
                 sarif_results.append(item)
 
         doc: dict[str, Any] = {
-            "version": "2.4.0",
+            "version": "3.0.0",
             "$schema": _SARIF_SCHEMA,
             "runs": [
                 {
