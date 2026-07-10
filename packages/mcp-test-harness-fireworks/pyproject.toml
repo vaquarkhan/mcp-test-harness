@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness-fireworks"
-version = "3.0.0"
+version = "3.0.1"
 description = "Fireworks AI testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-test-harness>=3.0.0",
+  "mcp-test-harness>=3.0.1",
 ]
 
 [project.urls]

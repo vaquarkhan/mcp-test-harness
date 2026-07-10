@@ -455,7 +455,7 @@ async def test_async_main_sarif_and_pr_summary_write(tmp_path: Path) -> None:
         hs.return_value.run_sequential = AsyncMock(return_value=ses)
         code = await _async_main([d, "--server-command", "echo a"])
     assert code == 0
-    assert sarif.is_file() and '"version": "3.0.0"' in sarif.read_text(encoding="utf-8")
+    assert sarif.is_file() and '"version": "3.0.1"' in sarif.read_text(encoding="utf-8")
     assert pr.is_file() and "MCP Test Harness" in pr.read_text(encoding="utf-8")
 
 
@@ -495,7 +495,7 @@ async def test_async_main_sarif_report_format_write(tmp_path: Path) -> None:
         hs.return_value.run_sequential = AsyncMock(return_value=ses)
         code = await _async_main([d, "--server-command", "echo a"])
     assert code == 0
-    assert sarif.is_file() and '"version": "3.0.0"' in sarif.read_text(encoding="utf-8")
+    assert sarif.is_file() and '"version": "3.0.1"' in sarif.read_text(encoding="utf-8")
 
 
 @pytest.mark.asyncio
@@ -544,7 +544,7 @@ async def test_async_main_sarif_output_with_report_format_sarif(tmp_path: Path) 
         hs.return_value.run_sequential = AsyncMock(return_value=ses)
         code = await _async_main([d, "--server-command", "echo a"])
     assert code == 1
-    assert via_flag.is_file() and '"version": "3.0.0"' in via_flag.read_text(encoding="utf-8")
+    assert via_flag.is_file() and '"version": "3.0.1"' in via_flag.read_text(encoding="utf-8")
 
 
 def test_cli_version_via_module_main() -> None:
