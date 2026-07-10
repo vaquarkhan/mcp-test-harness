@@ -4,9 +4,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.4] - 2026-07-10
+
 ### Fixed
 
-- **GitHub Action:** correct `actions/github-script@v8.0.0` commit pin (typo broke `dist-smoke` CI).
+- **GitHub Action:** correct `actions/github-script@v8.0.0` commit pin (typo broke `dist-smoke` CI). **Distribution smoke** now green on `main`.
+
+### Changed
+
+- **All 18 PyPI artifacts** aligned at **3.0.4**.
+- Marketplace Action and docs examples pin **`@v3.0.4`**.
 
 ## [3.0.3] - 2026-07-10
 
