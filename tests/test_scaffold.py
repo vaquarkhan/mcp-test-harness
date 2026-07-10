@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from mcp_test_harness.config import validate_config_file
 from mcp_test_harness.scaffold import run_init
 
 
@@ -31,6 +32,11 @@ def test_init_writes_test_and_config(tmp_path: Path) -> None:
     txt = y.read_text(encoding="utf-8")
     assert "server:" in txt
     assert "print(1)" in txt
+    # Nested test.dirs (not top-level test_dirs) — must pass validation
+    assert "test_dirs:" not in txt
+    assert "test:" in txt
+    assert "dirs:" in txt
+    assert validate_config_file(y) == []
 
 
 def test_init_refuse_overwrite(tmp_path: Path) -> None:
