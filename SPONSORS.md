@@ -1,6 +1,6 @@
 # Sponsors
 
-MCP Test Harness is **MIT licensed** and maintained in the open. Sponsorship and adoption support ongoing development: CI gates, conformance tooling, provider packages, docs, and the GitHub Pages site.
+MCP Test Harness is **MIT licensed** and maintained in the open. Sponsorship and adoption support ongoing development: CI gates, conformance tooling, provider packages, docs, and the product website.
 
 ## Why sponsor
 
@@ -36,7 +36,7 @@ These tiers are a starting point for organizations that want formal support. Con
 |------|------------------------|-------------|
 | **Bronze** | Any recurring or one-time support | Name in this file |
 | **Silver** | Priority issue triage for your team | Name + link in README sponsors section |
-| **Gold** | Roadmap input + logo placement | Logo on GitHub Pages + README |
+| **Gold** | Roadmap input + logo placement | Logo on website + README |
 
 ## Contact
 

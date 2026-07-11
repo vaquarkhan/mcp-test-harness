@@ -12,7 +12,7 @@
 [![Tests](https://img.shields.io/badge/tests-840%2B%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)](CONTRIBUTING.md#develop--test)
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-site-6366f1)](https://vaquarkhan.github.io/mcp-test-harness/)
+[![Website](https://img.shields.io/badge/website-6366f1)](https://vaquarkhan.github.io/mcp-test-harness/)
 
 **Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`3.0.6`** (runtime, `mcp-test` entrypoint), **`dev`** and **`3.0.6-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
 
@@ -100,7 +100,7 @@ Everything below is **implemented, tested, and documented** in this repo (840+ t
 | **CI / security** | **SARIF** export, OWASP MCP rule metadata, **PR summary** markdown + GitHub Action `pr-comment` | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) |
 | **Self-test** | **E2E dogfood** - pytest spawns real `mcp-test` CLI against bundled FastMCP fixtures; **100% coverage** enforced on every PR | [We eat our own dogfood](#we-eat-our-own-dogfood) |
 | **Examples** | Runnable **platform-qa** demo pack (trace + chaos + generate) | [feature-demo/platform-qa](examples/feature-demo/platform-qa/README.md) |
-| **Site** | **GitHub Pages** deploys `html/` only (marketing site at [vaquarkhan.github.io/mcp-test-harness](https://vaquarkhan.github.io/mcp-test-harness/)) | [html/index.html](html/index.html) |
+| **Website** | Marketing site at [vaquarkhan.github.io/mcp-test-harness](https://vaquarkhan.github.io/mcp-test-harness/) (deploys `html/` via GitHub Actions) | [html/index.html](html/index.html) |
 
 Full history: [CHANGELOG.md](CHANGELOG.md) · roadmap: [docs/ROADMAP.md](docs/ROADMAP.md).
 

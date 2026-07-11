@@ -361,7 +361,7 @@ code {
   .chart-container { height: 320px; padding: 16px; }
 }
 
-/* Live PyPI stats bar (top of GitHub Pages) */
+/* Live stats bar (top of product website) */
 :root {
   --pypi-bar-height: 5.5rem;
   --site-nav-height: 4.25rem;

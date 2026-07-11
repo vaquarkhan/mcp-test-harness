@@ -1,7 +1,7 @@
-name: Deploy to GitHub Pages
+name: Deploy website
 
 # Requires repo Settings → Pages → Build and deployment → Source: GitHub Actions
-# (not "Deploy from branch"). Artifact root is the html/ folder.
+# Artifact root is the html/ folder (product website).
 
 on:
   push:
@@ -30,6 +30,6 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: 'html'
-      - name: Deploy to GitHub Pages
+      - name: Deploy website
         id: deployment
         uses: actions/deploy-pages@v4
