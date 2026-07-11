@@ -1,5 +1,8 @@
 name: Deploy to GitHub Pages
 
+# Requires repo Settings → Pages → Build and deployment → Source: GitHub Actions
+# (not "Deploy from branch"). Artifact root is the html/ folder.
+
 on:
   push:
     branches: [main]
