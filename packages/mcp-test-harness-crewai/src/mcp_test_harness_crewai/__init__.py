@@ -1,3 +1,3 @@
 """MCP Test Harness helpers for CrewAI agent testing."""
 
-__version__ = "3.0.4"
+__version__ = "3.0.5"
