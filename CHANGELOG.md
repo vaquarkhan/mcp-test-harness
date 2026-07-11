@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.6] - 2026-07-11
+
+### Fixed
+
+- **GitHub Pages PyPI stats bar:** deploy `html/` as site root via GitHub Actions; always-visible badge bar (version, total downloads, Python versions); nav offset below bar; legacy `/html/*` redirects.
+
+### Added
+
+- **SPONSORS.md** and **`.github/FUNDING.yml`** with sponsor links in README and CONTRIBUTING.
+
+### Changed
+
+- **All 18 PyPI artifacts** aligned at **3.0.6**.
+- Marketplace Action and docs examples pin **`@v3.0.6`**.
+
 ## [3.0.5] - 2026-07-11
 
 ### Added
