@@ -34,12 +34,12 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
 
 5. **Watch Actions** — [Actions](https://github.com/vaquarkhan/mcp-test-harness/actions): `publish` (main + **all 17 optional** wheels via matrix), `docker-publish` (GHCR `:X.Y.Z`, `:latest`, `:X.Y.Z-dev`, `:dev`) should succeed.
 
-## Docker tags after a `v*` push (example: `v3.0.5`)
+## Docker tags after a `v*` push (example: `v3.0.6`)
 
 | Image | Tags (examples) |
 |-------|-----------------|
-| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.5`, `:latest` |
-| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.5-dev`, `:dev` |
+| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.6`, `:latest` |
+| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.6-dev`, `:dev` |
 
 ```bash
 docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest
