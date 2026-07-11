@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.7] - 2026-07-11
+
+### Added
+
+- **Product website:** integrations page with live 18-package download widget, features deck (print-to-PDF), visual guide gallery, Record→Generate→Gate and shipped-features sections.
+- **README badge row** on website top bar and hero (PyPI, CI, tests, coverage, GHCR, Website).
+
+### Changed
+
+- User-facing copy uses **Website** instead of GitHub Pages; README adds Website badge.
+- **All 18 PyPI artifacts** aligned at **3.0.7**.
+- Marketplace Action and docs examples pin **`@v3.0.7`**.
+
 ## [3.0.6] - 2026-07-11
 
 ### Fixed

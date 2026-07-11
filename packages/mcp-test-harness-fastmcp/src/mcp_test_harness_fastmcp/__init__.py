@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "3.0.6"
+__version__ = "3.0.7"
 
 from mcp_test_harness_fastmcp.helpers import (
     assert_fastmcp_tool,
