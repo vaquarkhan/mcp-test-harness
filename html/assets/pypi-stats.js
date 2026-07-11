@@ -1,7 +1,7 @@
 /**
- * Live PyPI stats for GitHub Pages (pepy.tech total + rolling 30-day downloads).
- * The static pepy /month badge image is CDN-cached and often lags; this bar
- * fetches fresh JSON on each visit.
+ * Enhance the PyPI stats bar with live JSON (PyPI version + pepy totals).
+ * Badge images in the HTML render immediately; JS updates the detail line when
+ * fetch succeeds (pepy API may block CORS - badges still show ~10k total).
  */
 (function () {
   const PACKAGE = document.body.dataset.pypiPackage || 'mcp-test-harness';
@@ -12,7 +12,7 @@
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
     if (n >= 10_000) return `${Math.round(n / 1000)}k`;
     if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k`;
-    return String(n);
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   function sumLastDays(downloads, days) {
@@ -31,21 +31,16 @@
     return total;
   }
 
-  function stat(label, value, href) {
-    const el = document.createElement(href ? 'a' : 'span');
-    el.className = 'pypi-stat';
-    if (href) {
-      el.href = href;
-      el.target = '_blank';
-      el.rel = 'noopener noreferrer';
-    }
-    el.innerHTML = `<span class="pypi-stat-label">${label}</span><span class="pypi-stat-value">${value}</span>`;
-    return el;
+  function bustBadgeImages() {
+    document.querySelectorAll('#pypi-stats-bar img[data-pepy-total]').forEach((img) => {
+      const base = img.getAttribute('src')?.split('?')[0];
+      if (base) img.src = `${base}?ts=${Date.now()}`;
+    });
   }
 
   async function load() {
-    const inner = document.querySelector('#pypi-stats-bar .pypi-stats-inner');
-    if (!inner) return;
+    const detail = document.getElementById('pypi-stats-live-detail');
+    if (!detail) return;
 
     try {
       const [pypiRes, pepyRes] = await Promise.all([
@@ -59,22 +54,12 @@
       const version = pypi.info?.version || '?';
       const total = Number(pepy.total_downloads) || 0;
       const month = sumLastDays(pepy.downloads, 30);
-
-      inner.replaceChildren();
-      inner.appendChild(stat('PyPI version', `v${version}`, `https://pypi.org/project/${PACKAGE}/`));
-      inner.appendChild(stat('Total downloads', fmt(total), `https://pepy.tech/project/${PACKAGE}`));
-      if (month != null) {
-        inner.appendChild(stat('Last 30 days', fmt(month), `https://pepy.tech/project/${PACKAGE}`));
-      }
-      inner.appendChild(stat('Install', 'pip install mcp-test-harness', `https://pypi.org/project/${PACKAGE}/`));
-
-      const live = document.createElement('span');
-      live.className = 'pypi-stat-live';
-      live.textContent = 'Live from PyPI';
-      inner.appendChild(live);
+      const parts = [`Live: v${version}`, `${fmt(total)} total downloads`];
+      if (month != null) parts.push(`${fmt(month)} last 30 days`);
+      detail.textContent = parts.join(' · ');
+      bustBadgeImages();
     } catch {
-      inner.innerHTML =
-        '<span class="pypi-stat-fallback">PyPI: <a href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener">mcp-test-harness</a> · stats refresh on next visit</span>';
+      detail.textContent = 'Badge totals from pepy/PyPI · live JSON blocked in browser (badges still update on CDN)';
     }
   }
 

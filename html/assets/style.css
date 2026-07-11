@@ -363,7 +363,8 @@ code {
 
 /* Live PyPI stats bar (top of GitHub Pages) */
 :root {
-  --pypi-bar-height: 2.25rem;
+  --pypi-bar-height: 3rem;
+  --site-nav-height: 4.25rem;
 }
 
 .pypi-stats-bar {
@@ -372,19 +373,51 @@ code {
   left: 0;
   right: 0;
   z-index: 60;
-  height: var(--pypi-bar-height);
-  background: linear-gradient(90deg, #1e1b4b 0%, #312e81 50%, #1e293b 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: var(--pypi-bar-height);
+  background: linear-gradient(90deg, #1e1b4b 0%, #312e81 45%, #0f172a 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   color: #e2e8f0;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.35);
 }
 
 .pypi-stats-inner {
-  height: var(--pypi-bar-height);
+  min-height: var(--pypi-bar-height);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
   font-size: 0.8125rem;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+.pypi-bar-label {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  color: #c7d2fe;
+  margin-right: 0.15rem;
+}
+
+.pypi-badge-link {
+  display: inline-flex;
+  line-height: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pypi-badge-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.pypi-badge {
+  display: block;
+  height: 22px;
+  width: auto;
 }
 
 .pypi-stat {
@@ -414,9 +447,9 @@ code {
 .pypi-stat-live {
   font-size: 0.6875rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #6ee7b7;
+  letter-spacing: 0.02em;
+  color: #a7f3d0;
+  white-space: nowrap;
 }
 
 .pypi-stat-live::before {
@@ -442,8 +475,10 @@ code {
   text-decoration: underline;
 }
 
-body.has-pypi-bar nav.fixed {
-  top: var(--pypi-bar-height);
+nav.site-nav {
+  top: var(--pypi-bar-height) !important;
+  left: 0;
+  right: 0;
 }
 
 body.has-pypi-bar .hero-gradient,
@@ -452,19 +487,22 @@ body.has-pypi-bar section.pt-32 {
 }
 
 @media (max-width: 768px) {
+  :root {
+    --pypi-bar-height: 3.5rem;
+  }
+
   .pypi-stats-inner {
-    gap: 0.65rem;
-    font-size: 0.75rem;
-    overflow-x: auto;
     justify-content: flex-start;
+    overflow-x: auto;
     scrollbar-width: none;
+    flex-wrap: nowrap;
   }
 
   .pypi-stats-inner::-webkit-scrollbar {
     display: none;
   }
 
-  .pypi-stat-live {
+  #pypi-stats-live-detail {
     display: none;
   }
 }

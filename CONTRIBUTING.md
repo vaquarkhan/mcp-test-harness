@@ -17,6 +17,7 @@ Thanks for helping improve **MCP Test Harness**.
 | **Architecture / trade-offs** | [docs/DECISIONS.md](docs/DECISIONS.md) |
 | **Optional citation (papers)** | [CITATION.cff](CITATION.cff) |
 | **License** | [LICENSE](LICENSE) · [NOTICE](NOTICE) |
+| **Sponsors** | [SPONSORS.md](SPONSORS.md) |
 
 ## How to contribute
 
