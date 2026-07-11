@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-label="MCP Test Harness internal architecture">
+  <defs>
+    <linearGradient id="archBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="archAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <filter id="archShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <marker id="archArrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="520" fill="url(#archBg)" rx="16"/>
+  <text x="600" y="44" text-anchor="middle" fill="#f8fafc" font-family="system-ui,sans-serif" font-size="22" font-weight="700">Internal architecture — config → discovery → execution → reports</text>
+  <!-- Row 1: CLI pipeline -->
+  <g filter="url(#archShadow)">
+    <rect x="40" y="80" width="130" height="56" rx="10" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+    <text x="105" y="114" text-anchor="middle" fill="#e0e7ff" font-family="system-ui,sans-serif" font-size="13" font-weight="600">mcp-test CLI</text>
+    <rect x="200" y="80" width="130" height="56" rx="10" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+    <text x="265" y="108" text-anchor="middle" fill="#e0e7ff" font-family="system-ui,sans-serif" font-size="12" font-weight="600">HarnessConfig</text>
+    <text x="265" y="124" text-anchor="middle" fill="#a5b4fc" font-family="system-ui,sans-serif" font-size="10">mcp-test.yaml</text>
+    <rect x="360" y="80" width="130" height="56" rx="10" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+    <text x="425" y="114" text-anchor="middle" fill="#e0e7ff" font-family="system-ui,sans-serif" font-size="12" font-weight="600">Discovery</text>
+    <rect x="520" y="80" width="150" height="56" rx="10" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+    <text x="595" y="108" text-anchor="middle" fill="#e0e7ff" font-family="system-ui,sans-serif" font-size="12" font-weight="600">Scheduler</text>
+    <text x="595" y="124" text-anchor="middle" fill="#a5b4fc" font-family="system-ui,sans-serif" font-size="10">sequential / parallel</text>
+    <rect x="700" y="80" width="130" height="56" rx="10" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+    <text x="765" y="114" text-anchor="middle" fill="#e0e7ff" font-family="system-ui,sans-serif" font-size="12" font-weight="600">Executor</text>
+    <rect x="860" y="80" width="130" height="56" rx="10" fill="#312e81" stroke="#6366f1" stroke-width="2"/>
+    <text x="925" y="114" text-anchor="middle" fill="#e0e7ff" font-family="system-ui,sans-serif" font-size="12" font-weight="600">Assertions</text>
+    <rect x="1020" y="80" width="140" height="56" rx="10" fill="#064e3b" stroke="#10b981" stroke-width="2"/>
+    <text x="1090" y="114" text-anchor="middle" fill="#d1fae5" font-family="system-ui,sans-serif" font-size="12" font-weight="600">Reports</text>
+  </g>
+  <!-- Arrows row 1 -->
+  <line x1="170" y1="108" x2="198" y2="108" stroke="#94a3b8" stroke-width="2" marker-end="url(#archArrow)"/>
+  <line x1="330" y1="108" x2="358" y2="108" stroke="#94a3b8" stroke-width="2" marker-end="url(#archArrow)"/>
+  <line x1="490" y1="108" x2="518" y2="108" stroke="#94a3b8" stroke-width="2" marker-end="url(#archArrow)"/>
+  <line x1="670" y1="108" x2="698" y2="108" stroke="#94a3b8" stroke-width="2" marker-end="url(#archArrow)"/>
+  <line x1="830" y1="108" x2="858" y2="108" stroke="#94a3b8" stroke-width="2" marker-end="url(#archArrow)"/>
+  <line x1="990" y1="108" x2="1018" y2="108" stroke="#94a3b8" stroke-width="2" marker-end="url(#archArrow)"/>
+  <!-- Row 2: Server lifecycle -->
+  <rect x="520" y="200" width="310" height="100" rx="12" fill="#1e293b" stroke="url(#archAccent)" stroke-width="2" filter="url(#archShadow)"/>
+  <text x="675" y="232" text-anchor="middle" fill="#f8fafc" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Server lifecycle + Transport</text>
+  <text x="675" y="256" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">start → handshake → inject fixtures → teardown</text>
+  <g font-family="system-ui,sans-serif" font-size="11" fill="#cbd5e1">
+    <rect x="540" y="270" width="80" height="22" rx="6" fill="#334155"/><text x="580" y="285" text-anchor="middle">stdio</text>
+    <rect x="635" y="270" width="80" height="22" rx="6" fill="#334155"/><text x="675" y="285" text-anchor="middle">SSE</text>
+    <rect x="730" y="270" width="80" height="22" rx="6" fill="#334155"/><text x="770" y="285" text-anchor="middle">HTTP</text>
+  </g>
+  <line x1="595" y1="136" x2="595" y2="198" stroke="#6366f1" stroke-width="2" marker-end="url(#archArrow)"/>
+  <!-- MCP Server -->
+  <rect x="200" y="220" width="200" height="72" rx="12" fill="#1e293b" stroke="#10b981" stroke-width="2" filter="url(#archShadow)"/>
+  <text x="300" y="252" text-anchor="middle" fill="#d1fae5" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Your MCP Server</text>
+  <text x="300" y="274" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">tools · resources · prompts</text>
+  <line x1="400" y1="256" x2="518" y2="256" stroke="#10b981" stroke-width="2" marker-end="url(#archArrow)"/>
+  <text x="459" y="246" text-anchor="middle" fill="#6ee7b7" font-family="system-ui,sans-serif" font-size="10">MCP session</text>
+  <!-- Test function -->
+  <rect x="860" y="220" width="200" height="72" rx="12" fill="#1e293b" stroke="#6366f1" stroke-width="2" filter="url(#archShadow)"/>
+  <text x="960" y="252" text-anchor="middle" fill="#e0e7ff" font-family="system-ui,sans-serif" font-size="14" font-weight="700">test_*.py</text>
+  <text x="960" y="274" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">fixtures + async tests</text>
+  <line x1="830" y1="256" x2="858" y2="256" stroke="#6366f1" stroke-width="2" marker-end="url(#archArrow)"/>
+  <!-- Report outputs -->
+  <g font-family="system-ui,sans-serif" font-size="11">
+    <rect x="80" y="380" width="120" height="44" rx="8" fill="#334155" stroke="#475569"/>
+    <text x="140" y="407" text-anchor="middle" fill="#f1f5f9">Console</text>
+    <rect x="230" y="380" width="120" height="44" rx="8" fill="#334155" stroke="#475569"/>
+    <text x="290" y="407" text-anchor="middle" fill="#f1f5f9">JUnit XML</text>
+    <rect x="380" y="380" width="120" height="44" rx="8" fill="#334155" stroke="#475569"/>
+    <text x="440" y="407" text-anchor="middle" fill="#f1f5f9">JSON</text>
+    <rect x="530" y="380" width="120" height="44" rx="8" fill="#334155" stroke="#475569"/>
+    <text x="590" y="407" text-anchor="middle" fill="#f1f5f9">HTML</text>
+    <rect x="680" y="380" width="200" height="44" rx="8" fill="#064e3b" stroke="#10b981"/>
+    <text x="780" y="407" text-anchor="middle" fill="#d1fae5" font-weight="600">GitHub Actions artifact</text>
+  </g>
+  <line x1="1090" y1="136" x2="1090" y2="360" stroke="#10b981" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="1090" y="360" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="10">feeds</text>
+  <line x1="1020" y1="402" x2="678" y2="402" stroke="#475569" stroke-width="1.5" marker-end="url(#archArrow)"/>
+  <text x="600" y="490" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="11">See docs/ARCHITECTURE.md for Mermaid source diagrams</text>
+</svg>

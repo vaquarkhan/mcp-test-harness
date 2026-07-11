@@ -363,7 +363,7 @@ code {
 
 /* Live PyPI stats bar (top of GitHub Pages) */
 :root {
-  --pypi-bar-height: 3.25rem;
+  --pypi-bar-height: 5.5rem;
   --site-nav-height: 4.25rem;
 }
 
@@ -390,6 +390,70 @@ code {
   font-size: 0.8125rem;
   padding-top: 0.35rem;
   padding-bottom: 0.35rem;
+}
+
+.pypi-stats-stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.pypi-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+}
+
+.pypi-badge-row-meta {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.35rem;
+}
+
+.readme-badges-hero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.55rem;
+  align-items: center;
+}
+
+.readme-badges-hero .pypi-badge-link {
+  line-height: 0;
+}
+
+.visual-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.visual-gallery-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.visual-gallery-item:hover {
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
+  transform: translateY(-2px);
+}
+
+.visual-gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.visual-gallery-caption {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  border-top: 1px solid #f1f5f9;
 }
 
 .pypi-bar-label {
@@ -712,7 +776,22 @@ body.has-pypi-bar section.pt-32 {
 
 @media (max-width: 768px) {
   :root {
-    --pypi-bar-height: 3.5rem;
+    --pypi-bar-height: 4.5rem;
+  }
+
+  .pypi-badge-row {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+
+  .pypi-badge-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pypi-badge-row-meta {
+    display: none;
   }
 
   .pypi-stats-inner {
