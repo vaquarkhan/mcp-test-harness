@@ -81,7 +81,7 @@ async def test_weather_tool(mcp_server):
     assert "temperature" in str(result)
 ```
 
-3. **CI + troubleshoot** — GitHub Actions runs `mcp-test` (or `uses: vaquarkhan/mcp-test-harness@v3.0.6`). On failure, use harness output for schema/assertion detail; reopen the Inspector locally when you need raw transport traffic.
+3. **CI + troubleshoot** — GitHub Actions runs `mcp-test` (or `uses: vaquarkhan/mcp-test-harness@v3.0.7`). On failure, use harness output for schema/assertion detail; reopen the Inspector locally when you need raw transport traffic.
 
 Also: `mcp-test try --server-command "..."` for a zero-config Boot/Protocol probe before you write a full suite.
 
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: vaquarkhan/mcp-test-harness@v3.0.6
+      - uses: vaquarkhan/mcp-test-harness@v3.0.7
         with:
           server-command: "python -m my_server.mcp"
           test-directory: tests/
