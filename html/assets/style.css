@@ -363,7 +363,7 @@ code {
 
 /* Live PyPI stats bar (top of GitHub Pages) */
 :root {
-  --pypi-bar-height: 3rem;
+  --pypi-bar-height: 3.25rem;
   --site-nav-height: 4.25rem;
 }
 
@@ -418,6 +418,230 @@ code {
   display: block;
   height: 22px;
   width: auto;
+}
+
+.pypi-bar-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #e0e7ff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.pypi-bar-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.pypi-bar-pill-active {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.45);
+  color: #a7f3d0;
+}
+
+.pypi-bar-pill-btn {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Package download widget (integrations page) */
+.pypi-widget-wrap {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+.pypi-widget-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.pypi-widget-table thead th {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.pypi-widget-row td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.pypi-widget-row:hover {
+  background: #f8fafc;
+}
+
+.pypi-widget-name a {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  color: #4f46e5;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pypi-widget-name a:hover {
+  color: #312e81;
+  text-decoration: underline;
+}
+
+.pypi-widget-label {
+  color: #475569;
+}
+
+.pypi-widget-cmd code {
+  font-size: 0.75rem;
+  background: #f1f5f9;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  color: #334155;
+}
+
+/* Features deck (print-friendly slides) */
+.deck-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.deck-slide {
+  margin-bottom: 2rem;
+  padding: 2.5rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+}
+
+.deck-slide-cover {
+  background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+  color: #fff;
+  border: none;
+}
+
+.deck-slide-dark {
+  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+  color: #fff;
+  border: none;
+}
+
+.deck-slide-cta {
+  background: linear-gradient(135deg, #6366f1 0%, #10b981 100%);
+  color: #fff;
+  border: none;
+}
+
+.deck-kicker {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6366f1;
+  margin-bottom: 0.5rem;
+}
+
+.deck-title {
+  font-size: 2.75rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.deck-h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+.deck-lead {
+  font-size: 1.25rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  max-width: 36rem;
+}
+
+.deck-body {
+  color: #475569;
+  line-height: 1.65;
+}
+
+.deck-slide-dark .deck-body,
+.deck-slide-cover .deck-body {
+  color: #cbd5e1;
+}
+
+.deck-bullets {
+  margin-top: 1.5rem;
+  list-style: disc;
+  padding-left: 1.25rem;
+  color: #e2e8f0;
+  line-height: 1.8;
+}
+
+.deck-card-dark {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+.deck-card-dark strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+
+.deck-code {
+  display: inline-block;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  background: rgba(0, 0, 0, 0.35);
+  color: #a7f3d0;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+}
+
+@media print {
+  .no-print,
+  nav.site-nav,
+  .pypi-stats-bar {
+    display: none !important;
+  }
+
+  body.features-deck-page {
+    background: #fff;
+  }
+
+  .deck-main {
+    padding-top: 0;
+    max-width: none;
+  }
+
+  .deck-slide {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none;
+    margin-bottom: 1rem;
+  }
 }
 
 .pypi-stat {

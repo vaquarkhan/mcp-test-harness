@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Features Deck - MCP Test Harness</title>
+<meta name="description" content="MCP Test Harness feature deck: pytest-style MCP testing, reports, CI, record-to-suite, chaos, conformance, and 18 PyPI packages.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 has-pypi-bar features-deck-page" data-pypi-package="mcp-test-harness">
+
+<div id="pypi-stats-bar" class="pypi-stats-bar no-print" role="complementary" aria-label="Live package stats and site links">
+  <div class="pypi-stats-inner max-w-7xl mx-auto px-4">
+    <span class="pypi-bar-label">Live</span>
+    <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer"><img class="pypi-badge" src="https://img.shields.io/pypi/v/mcp-test-harness?label=version&amp;color=indigo" alt="PyPI version" height="22" /></a>
+    <a class="pypi-badge-link" href="https://pepy.tech/project/mcp-test-harness" target="_blank" rel="noopener noreferrer"><img class="pypi-badge" data-pepy-total src="https://static.pepy.tech/badge/mcp-test-harness" alt="Downloads" height="22" /></a>
+    <a class="pypi-badge-link" href="https://github.com/vaquarkhan/mcp-test-harness" target="_blank" rel="noopener noreferrer"><img class="pypi-badge" src="https://img.shields.io/github/stars/vaquarkhan/mcp-test-harness?label=stars&amp;color=181717&amp;logo=github" alt="GitHub stars" height="22" /></a>
+    <a href="integrations.html" class="pypi-bar-pill">18 packages</a>
+    <button type="button" class="pypi-bar-pill pypi-bar-pill-btn" onclick="window.print()">Save as PDF</button>
+    <span class="pypi-stat-live" id="pypi-stats-live-detail">Loading…</span>
+  </div>
+</div>
+
+<nav class="fixed site-nav bg-white/80 backdrop-blur-md border-b border-slate-200 z-50 no-print">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
+      <span class="font-bold text-lg">MCP Test Harness</span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="integrations.html" class="nav-link">Integrations</a>
+      <button type="button" class="btn-outline text-sm py-2 px-4" onclick="window.print()">Print / PDF</button>
+    </div>
+  </div>
+</nav>
+
+<main class="deck-main pt-28 pb-16 no-print-nav-offset">
+  <section class="deck-slide deck-slide-cover">
+    <div class="deck-slide-inner">
+      <p class="deck-kicker">Features deck · v3.0.6</p>
+      <h1 class="deck-title">MCP Test Harness</h1>
+      <p class="deck-lead">The pytest-style testing framework for MCP servers — functional, regression, and performance in one CI-native tool.</p>
+      <ul class="deck-bullets">
+        <li>840+ tests · 100% library coverage gate</li>
+        <li>18 PyPI packages + GHCR Docker + GitHub Action</li>
+        <li>MIT licensed · no LLM required</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="deck-slide">
+    <div class="deck-slide-inner grid lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <p class="deck-kicker">The problem</p>
+        <h2 class="deck-h2">MCP Inspector doesn't belong in CI</h2>
+        <p class="deck-body">Exploration is manual. Production needs deterministic, repeatable, code-first tests on every push — with JUnit, SARIF, and HTML evidence.</p>
+      </div>
+      <img src="assets/images/end-to-end-flow.png" alt="End-to-end MCP test flow" class="rounded-xl shadow-lg border border-slate-200" loading="lazy">
+    </div>
+  </section>
+
+  <section class="deck-slide deck-slide-dark">
+    <div class="deck-slide-inner">
+      <p class="deck-kicker text-indigo-300">Three modes</p>
+      <h2 class="deck-h2 text-white">Functional · Regression · Performance</h2>
+      <div class="grid md:grid-cols-3 gap-6 mt-8">
+        <div class="deck-card-dark"><strong>Functional</strong><p>assert_tool_call, assert_capabilities, assert_tool_schema, protocol version gates</p></div>
+        <div class="deck-card-dark"><strong>Regression</strong><p>assert_snapshot, mask_patterns, assert_tool_idempotent — catch silent drift</p></div>
+        <div class="deck-card-dark"><strong>Performance</strong><p>assert_latency p95/p99, assert_throughput, SLO gates in CI</p></div>
+      </div>
+      <img src="assets/images/three-testing-modes.png" alt="Three testing modes" class="mt-8 rounded-xl mx-auto max-w-2xl" loading="lazy">
+    </div>
+  </section>
+
+  <section class="deck-slide">
+    <div class="deck-slide-inner">
+      <p class="deck-kicker">Productivity</p>
+      <h2 class="deck-h2">Record → Generate → Gate</h2>
+      <div class="grid md:grid-cols-3 gap-6 mt-6">
+        <div class="feature-card"><strong>Record</strong><p><code>mcp-test record</code> — live MCP calls become tests + snapshots (RFC-001)</p></div>
+        <div class="feature-card"><strong>Generate</strong><p><code>mcp-test generate</code> — scaffold suites from tool definitions</p></div>
+        <div class="feature-card"><strong>Gate</strong><p>pre-commit hook, GitHub Action, conformance badge, SARIF export</p></div>
+      </div>
+      <img src="assets/images/developer-journey.png" alt="Developer journey" class="mt-8 rounded-xl shadow border border-slate-200 mx-auto" loading="lazy">
+    </div>
+  </section>
+
+  <section class="deck-slide">
+    <div class="deck-slide-inner grid lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <p class="deck-kicker">Reports</p>
+        <h2 class="deck-h2">Console · JUnit · JSON · HTML · PDF</h2>
+        <p class="deck-body">Self-contained HTML dashboard with charts, chaos panels, MCP trace timeline, security findings, and PDF export via Save as PDF or <code>mcp-test export-pdf</code>.</p>
+        <a href="reports/sample_mcp_test_report.html" class="btn-primary mt-4 inline-flex" target="_blank" rel="noopener">Open sample report</a>
+      </div>
+      <img src="assets/images/html-dashboard.png" alt="HTML dashboard" class="rounded-xl shadow-lg border border-slate-200" loading="lazy">
+    </div>
+  </section>
+
+  <section class="deck-slide">
+    <div class="deck-slide-inner">
+      <p class="deck-kicker">Resiliency &amp; security</p>
+      <h2 class="deck-h2">Chaos · Experiments · SARIF · Bastion pairing</h2>
+      <div class="grid md:grid-cols-2 gap-6 mt-6">
+        <div class="feature-card"><strong>Chaos testing</strong><p>@marker chaos_faults — delay, 503, truncate, schema drift</p></div>
+        <div class="feature-card"><strong>Experiment catalog</strong><p><code>mcp-test experiment run --suite core</code> with scorecards</p></div>
+        <div class="feature-card"><strong>Security packs</strong><p>assert_tool_denied, authorization boundaries, OWASP MCP SARIF</p></div>
+        <div class="feature-card"><strong>MCP-Bastion</strong><p>Test defenses in CI; enforce at runtime in production</p></div>
+      </div>
+      <img src="assets/images/harness-bastion-pairing.png" alt="Harness and Bastion pairing" class="mt-8 rounded-xl mx-auto max-w-xl" loading="lazy">
+    </div>
+  </section>
+
+  <section class="deck-slide deck-slide-dark">
+    <div class="deck-slide-inner text-center">
+      <p class="deck-kicker text-indigo-300">Distribution</p>
+      <h2 class="deck-h2 text-white">18 PyPI wheels · Docker · Binary · Action</h2>
+      <p class="deck-body text-slate-300 max-w-2xl mx-auto">Core harness plus 17 framework shims. GHCR runtime and dev images. PyInstaller binary. Marketplace composite action with PR comments.</p>
+      <div class="flex flex-wrap justify-center gap-4 mt-8">
+        <code class="deck-code">pip install mcp-test-harness==3.0.6</code>
+        <code class="deck-code">docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest</code>
+      </div>
+      <a href="integrations.html" class="btn-primary mt-8 inline-flex">All 18 packages →</a>
+    </div>
+  </section>
+
+  <section class="deck-slide deck-slide-cta">
+    <div class="deck-slide-inner text-center">
+      <h2 class="deck-h2">Get started in 5 minutes</h2>
+      <p class="deck-body max-w-xl mx-auto"><code>pip install mcp-test-harness</code> → <code>mcp-test init</code> → write <code>test_*.py</code> → <code>mcp-test</code></p>
+      <div class="flex flex-wrap justify-center gap-4 mt-8">
+        <a href="examples.html" class="btn-primary">Tutorial &amp; examples</a>
+        <a href="https://github.com/vaquarkhan/mcp-test-harness" class="btn-ghost">GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/pypi-stats.js"></script>
+</body>
+</html>

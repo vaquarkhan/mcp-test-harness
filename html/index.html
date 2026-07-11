@@ -38,10 +38,10 @@
 </head>
 <body class="bg-slate-50 text-slate-900 has-pypi-bar" data-pypi-package="mcp-test-harness">
 
-<!-- PYPI LIVE STATS (badges visible immediately; JS refreshes detail line) -->
-<div id="pypi-stats-bar" class="pypi-stats-bar" role="complementary" aria-label="PyPI package statistics">
+<!-- SITE TOP BAR (MCP-Bastion-style live badges + quick links) -->
+<div id="pypi-stats-bar" class="pypi-stats-bar" role="complementary" aria-label="Live package stats and site links">
   <div class="pypi-stats-inner max-w-7xl mx-auto px-4">
-    <span class="pypi-bar-label">PyPI</span>
+    <span class="pypi-bar-label">Live</span>
     <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI package page">
       <img class="pypi-badge" src="https://img.shields.io/pypi/v/mcp-test-harness?label=version&amp;color=indigo" alt="PyPI version" height="22" loading="eager" />
     </a>
@@ -51,6 +51,14 @@
     <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="Supported Python versions">
       <img class="pypi-badge" src="https://img.shields.io/pypi/pyversions/mcp-test-harness" alt="Python versions" height="22" loading="eager" />
     </a>
+    <a class="pypi-badge-link" href="https://github.com/vaquarkhan/mcp-test-harness" target="_blank" rel="noopener noreferrer" title="GitHub stars">
+      <img class="pypi-badge" src="https://img.shields.io/github/stars/vaquarkhan/mcp-test-harness?label=stars&amp;color=181717&amp;logo=github" alt="GitHub stars" height="22" loading="eager" />
+    </a>
+    <a class="pypi-badge-link" href="https://github.com/sponsors/vaquarkhan" target="_blank" rel="noopener noreferrer" title="Sponsor on GitHub">
+      <img class="pypi-badge" src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=github" alt="Sponsor" height="22" loading="eager" />
+    </a>
+    <a href="features-deck.html" class="pypi-bar-pill">Features deck</a>
+    <a href="integrations.html" class="pypi-bar-pill">18 packages</a>
     <span class="pypi-stat-live" id="pypi-stats-live-detail">Loading live stats…</span>
   </div>
 </div>
@@ -67,6 +75,8 @@
       <a href="index.html" class="nav-link active">Home</a>
       <a href="compare.html" class="nav-link">Compare</a>
       <a href="examples.html" class="nav-link">Examples</a>
+      <a href="integrations.html" class="nav-link">Integrations</a>
+      <a href="features-deck.html" class="nav-link">Features deck</a>
       <a href="https://github.com/vaquarkhan/mcp-test-harness" class="nav-link">GitHub</a>
       <a href="https://pypi.org/project/mcp-test-harness/" class="btn-outline text-sm py-2 px-4">pip install</a>
     </div>
@@ -97,6 +107,8 @@
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.725-4.042-1.61-4.042-1.61C4.422 17.6 3.633 17.25 3.633 17.25c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
           Star on GitHub
         </a>
+        <a href="features-deck.html" class="btn-ghost">Features deck</a>
+        <a href="integrations.html" class="btn-ghost">18 packages</a>
       </div>
       <div class="flex items-center gap-6 text-sm text-slate-400">
         <div class="flex items-center gap-2">
@@ -115,6 +127,69 @@
           <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
           No LLM required
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECORD → GENERATE → GATE -->
+<section class="py-20 bg-slate-900 text-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <span class="section-kicker text-emerald-400">Productivity loop</span>
+      <h2 class="text-4xl font-bold mb-4">Record → Generate → Gate</h2>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">From live MCP traffic to CI gates — no manual test authoring bottleneck.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="feature-card bg-slate-800/50 border-slate-700 text-white">
+        <div class="badge badge-primary mb-3">RECORD</div>
+        <h3 class="text-xl font-bold mb-2">Live calls → suite</h3>
+        <p class="text-slate-400 text-sm"><code class="text-emerald-300">mcp-test record</code> captures real tool calls and writes tests + snapshots (RFC-001).</p>
+      </div>
+      <div class="feature-card bg-slate-800/50 border-slate-700 text-white">
+        <div class="badge badge-primary mb-3">GENERATE</div>
+        <h3 class="text-xl font-bold mb-2">Scaffold from tools</h3>
+        <p class="text-slate-400 text-sm"><code class="text-emerald-300">mcp-test generate</code> drafts test files from tool definitions and JSON cassettes.</p>
+      </div>
+      <div class="feature-card bg-slate-800/50 border-slate-700 text-white">
+        <div class="badge badge-primary mb-3">GATE</div>
+        <h3 class="text-xl font-bold mb-2">CI + pre-commit</h3>
+        <p class="text-slate-400 text-sm">GitHub Action, <code class="text-emerald-300">mcp-test-try</code> pre-commit hook, conformance badge, SARIF for security findings.</p>
+      </div>
+    </div>
+    <div class="mt-10 text-center">
+      <a href="examples.html" class="btn-primary">Record &amp; generate examples</a>
+      <a href="integrations.html" class="btn-ghost ml-2">Package download widget →</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT SHIPS END-TO-END -->
+<section id="shipped" class="py-20 bg-white border-t border-slate-100">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <span class="section-kicker">Shipped &amp; tested</span>
+      <h2 class="text-4xl font-bold mb-4">What ships end-to-end</h2>
+      <p class="text-lg text-slate-600 max-w-3xl mx-auto">840+ tests, 100% library coverage gate, e2e dogfood in CI. Everything below is implemented in this repo — not roadmap slides.</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
+      <div class="feature-card"><strong>CLI</strong><p class="text-slate-600 mt-1">init, try, record, generate, experiment, conformance, export-pdf, doctor</p></div>
+      <div class="feature-card"><strong>Reports</strong><p class="text-slate-600 mt-1">Console, JUnit, JSON, HTML dashboard, PDF export, MCP trace timeline</p></div>
+      <div class="feature-card"><strong>Chaos &amp; resiliency</strong><p class="text-slate-600 mt-1">@marker chaos_faults, experiment catalog, throughput SLO params</p></div>
+      <div class="feature-card"><strong>Security</strong><p class="text-slate-600 mt-1">SARIF export, OWASP MCP rules, authorization boundaries, Bastion pairing</p></div>
+      <div class="feature-card"><strong>Conformance</strong><p class="text-slate-600 mt-1">Levels + badge (RFC-002), shields.io seal in README</p></div>
+      <div class="feature-card"><strong>Automation</strong><p class="text-slate-600 mt-1">GitHub Marketplace Action, pre-commit hook, Docker GHCR, PyInstaller binary</p></div>
+      <div class="feature-card"><strong>18 PyPI packages</strong><p class="text-slate-600 mt-1">Core + 17 LLM/framework shims — live widget on <a href="integrations.html" class="text-indigo-600 underline">Integrations</a></p></div>
+      <div class="feature-card"><strong>Platform QA</strong><p class="text-slate-600 mt-1">Tool coverage map, unified portal in reports, performance baselines</p></div>
+      <div class="feature-card"><strong>Dogfood</strong><p class="text-slate-600 mt-1">pytest spawns real mcp-test CLI against bundled FastMCP fixtures</p></div>
+    </div>
+    <div class="mt-12 grid lg:grid-cols-2 gap-8 items-center">
+      <img src="assets/images/mcp-testobarness-feature.png" alt="MCP Test Harness feature map" class="rounded-2xl shadow-lg border border-slate-200 w-full" loading="lazy">
+      <div>
+        <h3 class="text-2xl font-bold mb-3">Visual product guide</h3>
+        <p class="text-slate-600 mb-4">Architecture, CI pipeline, ecosystem positioning, and assertion library — full deck with print-to-PDF.</p>
+        <a href="features-deck.html" class="btn-primary">Open features deck</a>
+        <a href="assets/images/ecosystem-map.png" class="btn-ghost ml-2" target="_blank" rel="noopener">Ecosystem map</a>
       </div>
     </div>
   </div>
@@ -431,6 +506,8 @@ async def test_echo_latency(mcp_server):
         <a href="https://pypi.org/project/mcp-test-harness/" class="hover:text-white">PyPI</a>
         <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/QUICK_START.md" class="hover:text-white">Quick Start</a>
         <a href="compare.html" class="hover:text-white">Compare</a>
+        <a href="integrations.html" class="hover:text-white">Integrations</a>
+        <a href="features-deck.html" class="hover:text-white">Features deck</a>
       </div>
     </div>
     <div class="mt-8 pt-8 border-t border-slate-800 text-xs text-center">
