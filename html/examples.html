@@ -11,7 +11,14 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 has-pypi-bar" data-pypi-package="mcp-test-harness">
+
+<!-- PYPI LIVE STATS -->
+<div id="pypi-stats-bar" class="pypi-stats-bar" role="complementary" aria-label="PyPI package statistics">
+  <div class="pypi-stats-inner max-w-7xl mx-auto px-6">
+    <span class="pypi-stats-loading">Loading PyPI stats…</span>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
@@ -19,7 +26,7 @@
     <a href="index.html" class="flex items-center gap-2">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
       <span class="font-bold text-lg">MCP Test Harness</span>
-      <span class="badge badge-primary text-xs">v3.0.4</span>
+      <span class="badge badge-primary text-xs">v3.0.5</span>
     </a>
     <div class="hidden md:flex items-center gap-8">
       <a href="index.html" class="nav-link">Home</a>
@@ -425,9 +432,10 @@ mcp-test export-pdf reports/run.html -o reports/run.pdf</code></pre>
       </div>
     </div>
     <div class="mt-8 pt-8 border-t border-slate-800 text-xs text-center">
-      MCP Test Harness v3.0.4 · MIT License · Author: Vaquar Khan
+      MCP Test Harness v3.0.5 · MIT License · Author: Vaquar Khan
     </div>
   </div>
 </footer>
+<script src="assets/pypi-stats.js"></script>
 </body>
 </html>

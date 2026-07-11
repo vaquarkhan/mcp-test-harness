@@ -22,7 +22,7 @@
   "description": "pytest-style testing framework for MCP servers. Functional, regression, and performance testing.",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Linux, Windows, macOS",
-  "softwareVersion": "3.0.4",
+  "softwareVersion": "3.0.5",
   "image": "https://vaquarkhan.github.io/mcp-test-harness/assets/images/report-formats.png",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "url": "https://vaquarkhan.github.io/mcp-test-harness/",
@@ -36,7 +36,14 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 has-pypi-bar" data-pypi-package="mcp-test-harness">
+
+<!-- PYPI LIVE STATS -->
+<div id="pypi-stats-bar" class="pypi-stats-bar" role="complementary" aria-label="PyPI package statistics">
+  <div class="pypi-stats-inner max-w-7xl mx-auto px-6">
+    <span class="pypi-stats-loading">Loading PyPI stats…</span>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
@@ -44,7 +51,7 @@
     <a href="index.html" class="flex items-center gap-2">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
       <span class="font-bold text-lg">MCP Test Harness</span>
-      <span class="badge badge-primary text-xs">v3.0.4</span>
+      <span class="badge badge-primary text-xs">v3.0.5</span>
     </a>
     <div class="hidden md:flex items-center gap-8">
       <a href="index.html" class="nav-link active">Home</a>
@@ -62,7 +69,7 @@
     <div class="max-w-4xl">
       <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-8">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        v3.0.4 on PyPI + GHCR container images
+        v3.0.5 on PyPI + GHCR container images
       </div>
       <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6">
         The <span class="gradient-text">pytest-style</span><br>
@@ -386,7 +393,7 @@ async def test_echo_latency(mcp_server):
       <div class="bg-white border border-slate-200 rounded-xl p-6">
         <div class="badge mb-3">Docker / GHCR</div>
         <div class="font-mono text-sm bg-slate-900 text-slate-100 rounded-lg p-4 mb-3">docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest</div>
-        <p class="text-sm text-slate-600">Pre-built runtime image. No local Python needed. Tags: latest, 3.0.4, dev.</p>
+        <p class="text-sm text-slate-600">Pre-built runtime image. No local Python needed. Tags: latest, 3.0.5, dev.</p>
       </div>
     </div>
     <div class="mt-8">
@@ -417,12 +424,13 @@ async def test_echo_latency(mcp_server):
       </div>
     </div>
     <div class="mt-8 pt-8 border-t border-slate-800 text-xs text-center">
-      MCP Test Harness v3.0.4 · MIT License · Author: Vaquar Khan
+      MCP Test Harness v3.0.5 · MIT License · Author: Vaquar Khan
     </div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="assets/charts.js"></script>
+<script src="assets/pypi-stats.js"></script>
 </body>
 </html>

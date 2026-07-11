@@ -360,3 +360,111 @@ code {
   .metric-value { font-size: 2rem; }
   .chart-container { height: 320px; padding: 16px; }
 }
+
+/* Live PyPI stats bar (top of GitHub Pages) */
+:root {
+  --pypi-bar-height: 2.25rem;
+}
+
+.pypi-stats-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: var(--pypi-bar-height);
+  background: linear-gradient(90deg, #1e1b4b 0%, #312e81 50%, #1e293b 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+}
+
+.pypi-stats-inner {
+  height: var(--pypi-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  font-size: 0.8125rem;
+}
+
+.pypi-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pypi-stat:hover {
+  color: #fff;
+}
+
+.pypi-stat-label {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.pypi-stat-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #f8fafc;
+}
+
+.pypi-stat-live {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6ee7b7;
+}
+
+.pypi-stat-live::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 0.35rem;
+  border-radius: 50%;
+  background: #34d399;
+  animation: pulse 2s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+.pypi-stats-loading,
+.pypi-stat-fallback {
+  color: #94a3b8;
+  font-size: 0.8125rem;
+}
+
+.pypi-stat-fallback a {
+  color: #c7d2fe;
+  text-decoration: underline;
+}
+
+body.has-pypi-bar nav.fixed {
+  top: var(--pypi-bar-height);
+}
+
+body.has-pypi-bar .hero-gradient,
+body.has-pypi-bar section.pt-32 {
+  padding-top: calc(8rem + var(--pypi-bar-height));
+}
+
+@media (max-width: 768px) {
+  .pypi-stats-inner {
+    gap: 0.65rem;
+    font-size: 0.75rem;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+  }
+
+  .pypi-stats-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pypi-stat-live {
+    display: none;
+  }
+}

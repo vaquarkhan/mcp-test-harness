@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.5] - 2026-07-11
+
+### Added
+
+- **GitHub Pages PyPI stats bar:** live widget on all site pages (`html/assets/pypi-stats.js`) - fetches pepy.tech total + rolling 30-day downloads and current PyPI version on each visit (fixes stale ~3k monthly badge vs ~10k total).
+
+### Changed
+
+- README and package table download badges use pepy **total** downloads (not CDN-stale `/month` image).
+- **All 18 PyPI artifacts** aligned at **3.0.5**.
+- Marketplace Action and docs examples pin **`@v3.0.5`**.
+
 ## [3.0.4] - 2026-07-10
 
 ### Fixed
