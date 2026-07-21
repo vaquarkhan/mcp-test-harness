@@ -74,6 +74,31 @@ mcp-test -m perf          # only @marker(tags including "perf")
 mcp-test -k echo        # name filter
 ```
 
+### Stateless Streamable HTTP (SEP-2575)
+
+```python
+from mcp_test_harness import assert_stateless_throughput, marker
+
+@marker(tags=["perf", "stateless"])
+async def test_http_under_load():
+    await assert_stateless_throughput(
+        target_url="http://localhost:8080/mcp",
+        tool_name="echo",
+        arguments={"message": "hi"},
+        duration_s=10,
+        concurrency=50,
+        min_rps=100.0,
+        max_p99_ms=200.0,
+        max_error_rate=1.0,
+    )
+```
+
+```bash
+mcp-test conformance stateless --url http://localhost:8080/mcp --generate-badge
+```
+
+See [example_stateless_throughput.md](example_stateless_throughput.md) and [TUTORIAL_STATELESS.md](../docs/TUTORIAL_STATELESS.md).
+
 ---
 
 ## 4) Snapshots and update mode

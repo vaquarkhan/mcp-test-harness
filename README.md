@@ -51,9 +51,9 @@ mcp-test CLI → config → discover test_*.py → schedule (optional parallel)
 | Concern | Approach |
 |---------|----------|
 | Correctness | Protocol-aware fixtures (`mcp_server`), schema checks, snapshots |
-| Performance | `assert_latency` / `assert_throughput`, baselines, SLO params |
+| Performance | `assert_latency` / `assert_throughput` / `assert_stateless_throughput`, baselines, SLO params |
 | Security / resiliency | Payload packs, chaos faults, experiment catalog + scorecard (RFC-005) |
-| Conformance signal | Levels + README badge via `mcp-test try` / `conformance` (RFC-002) |
+| Conformance signal | Levels + README badge via `mcp-test try` / `conformance` (RFC-002); **stateless** via `mcp-test conformance stateless` (RFC-006) |
 | Adoption speed | `init`, `generate`, `record` (RFC-001) - live session → suite |
 | Extensibility | Plugins (assertions, fixtures, reporters, transports) |
 
@@ -93,10 +93,10 @@ Everything below is **implemented, tested, and documented** in this repo (840+ t
 | **Diagnostics** | **MCP trace** - per-test JSON-RPC timeline in HTML/JSON reports; stdio pollution hints | [example_mcp_trace.md](examples/example_mcp_trace.md) |
 | **Resiliency** | **Chaos testing** - `@marker(tags=["chaos"], chaos_faults=[...])` (delay, 503, truncate, schema drift) | [example_chaos_testing.md](examples/example_chaos_testing.md) |
 | **Resiliency** | **Experiment catalog** - `mcp-test experiment run --suite core` with guardrails and scorecard (RFC-005) | [docs/design/RFC-005-resiliency-experiments.md](docs/design/RFC-005-resiliency-experiments.md) |
-| **Conformance** | **Levels + badge** - `mcp-test try` / `conformance badge` (RFC-002); README shields.io seal | [docs/design/RFC-002-conformance-levels.md](docs/design/RFC-002-conformance-levels.md) |
+| **Conformance** | **Levels + badge** - `mcp-test try` / `conformance badge` (RFC-002); **stateless SEP-2575** via `mcp-test conformance stateless` (RFC-006); README shields.io seal | [docs/design/RFC-002-conformance-levels.md](docs/design/RFC-002-conformance-levels.md) · [RFC-006](docs/design/RFC-006-stateless-mcp.md) |
 | **Productivity** | **`mcp-test record`** (RFC-001) + **`generate`** - live calls → suite + snapshots; schema drafts | [RFC-001](docs/design/RFC-001-record-to-suite.md) · [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
 | **Marketplace** | GitHub Action with conformance PR outputs | [Marketplace](https://github.com/marketplace/actions/mcp-test-harness) · [example_github_actions.md](examples/example_github_actions.md) |
-| **Platform QA** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** SLO params (`max_p99_ms`, `max_error_rate`) | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
+| **Platform QA** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** / **`assert_stateless_throughput`** SLO params | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) · [RFC-006](docs/design/RFC-006-stateless-mcp.md) |
 | **CI / security** | **SARIF** export, OWASP MCP rule metadata, **PR summary** markdown + GitHub Action `pr-comment` | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) |
 | **Self-test** | **E2E dogfood** - pytest spawns real `mcp-test` CLI against bundled FastMCP fixtures; **100% coverage** enforced on every PR | [We eat our own dogfood](#we-eat-our-own-dogfood) |
 | **Examples** | Runnable **platform-qa** demo pack (trace + chaos + generate) | [feature-demo/platform-qa](examples/feature-demo/platform-qa/README.md) |

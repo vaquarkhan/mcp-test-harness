@@ -85,6 +85,33 @@ async def test_reserve_under_load(mcp_server):
 | `max_p99_ms` | Fail if p99 per-call latency (ms) in the burst exceeds this |
 | `max_error_rate` | Fail if fraction of exceptions or `isError` responses exceeds this (0.0–1.0) |
 
+### 4.1 Stateless Streamable HTTP (`assert_stateless_throughput`)
+
+For **MCP 2026-07-28** stateless servers (no `initialize` handshake, no `Mcp-Session-Id`), load-test the raw HTTP endpoint with protocol-aware `_meta` injection and SEP-2243 routing headers:
+
+```python
+@marker(tags=["perf"])
+async def test_echo_under_agent_load():
+    await assert_stateless_throughput(
+        target_url="http://localhost:8080/mcp",
+        tool_name="echo",
+        arguments={"message": "hi"},
+        duration_s=15,
+        concurrency=250,
+        min_rps=1000,
+        max_p99_ms=50,
+        max_error_rate=0.1,
+    )
+```
+
+Certify adversarial SEP-2575 / SEP-2243 compliance separately:
+
+```bash
+mcp-test conformance stateless --url http://localhost:8080/mcp --generate-badge
+```
+
+See [design/RFC-006-stateless-mcp.md](design/RFC-006-stateless-mcp.md).
+
 ## 5. Performance baselines
 
 Capture baselines in JSON and fail on drift:

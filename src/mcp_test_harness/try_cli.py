@@ -253,7 +253,62 @@ def _cmd_conformance(argv: list[str] | None) -> int:
         help="Explicit level name (ignored when --report is set)",
     )
 
+    stateless = sub.add_parser(
+        "stateless",
+        help="SEP-2575 adversarial conformance (Streamable HTTP, no initialize handshake)",
+    )
+    stateless.add_argument(
+        "--url",
+        required=True,
+        help="MCP server HTTP endpoint (e.g. http://localhost:8080/mcp)",
+    )
+    stateless.add_argument(
+        "--protocol-version",
+        default="2026-07-28",
+        dest="protocol_version",
+        help="Expected MCP protocol version (default: 2026-07-28)",
+    )
+    stateless.add_argument(
+        "--generate-badge",
+        action="store_true",
+        help="Print README badge markdown on success",
+    )
+    stateless.add_argument("--verbose", action="store_true")
+
     args = p.parse_args(argv)
+
+    if args.command == "stateless":
+        from mcp_test_harness.stateless.conformance import (
+            StatelessConformanceGate,
+            stateless_badge_markdown,
+        )
+
+        if args.verbose:
+            logging.basicConfig(
+                level=logging.INFO,
+                format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            )
+        print(f"mcp-test conformance stateless — SEP-2575 / SEP-2243")
+        print(f"  URL: {args.url}")
+        print(f"  Protocol: {args.protocol_version}")
+        print()
+        gate = StatelessConformanceGate(
+            args.url,
+            protocol_version=args.protocol_version,
+        )
+        ok = gate.run_all()
+        for check in gate.results:
+            mark = "PASS" if check.passed else "FAIL"
+            print(f"  [{mark}] {check.test_name}: {check.details}")
+        print()
+        if ok:
+            print("SERVER CERTIFIED: 100% stateless conformance (SEP-2575 / SEP-2243)")
+            if args.generate_badge:
+                print("\nREADME badge:")
+                print(f"  {stateless_badge_markdown()}")
+            return 0
+        print("SERVER NON-COMPLIANT: fix header / schema enforcement (see failures above).", file=sys.stderr)
+        return 1
 
     def _resolve_report() -> str | None:
         for attr in ("grade_report", "badge_report", "report"):

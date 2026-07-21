@@ -32,18 +32,16 @@ This is the differentiator versus tools that only provide manual inspection, LLM
 - idempotency checks via `assert_tool_idempotent`
 - marker-driven filtering (`-m perf`)
 - shared session fixture (`mcp_server_session`) so startup overhead does not dominate every test
+- **Stateful** `assert_throughput` (session `call_tool` concurrency)
+- **Stateless** `assert_stateless_throughput` + `mcp-test conformance stateless` (SEP-2575; see [RFC-006](design/RFC-006-stateless-mcp.md))
 
 ## Production-grade roadmap (prioritized)
 
-### 1) Throughput assertion (highest impact)
+### 1) Throughput assertion — **shipped**
 
-Add `assert_throughput(...)` for concurrency-aware regression gates:
+Stateful: `assert_throughput(...)` — concurrent session tool calls with `min_rps`, `max_p99_ms`, `max_error_rate`.
 
-- `concurrency`
-- `duration_s`
-- `min_rps`
-- `max_p99_ms`
-- `max_error_rate`
+Stateless (2026-07-28): `assert_stateless_throughput(...)` — URL-direct duration × concurrency with the same SLO knobs ([PERFORMANCE.md](PERFORMANCE.md) §4.1).
 
 ### 2) Baseline + regression file
 

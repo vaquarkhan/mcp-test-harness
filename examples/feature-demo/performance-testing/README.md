@@ -19,3 +19,11 @@ Or with the sample config:
 ```bash
 mcp-test -c examples/feature-demo/performance-testing/mcp_test_performance_demo.yaml
 ```
+
+## Stateless Streamable HTTP (2026-07-28)
+
+For **no-handshake** HTTP load and SEP-2575 certification, see the sibling pack:
+
+- [../stateless-testing/README.md](../stateless-testing/README.md)
+- [assert_stateless_throughput example](../../example_stateless_throughput.md)
+- [TUTORIAL_STATELESS.md](../../../docs/TUTORIAL_STATELESS.md)

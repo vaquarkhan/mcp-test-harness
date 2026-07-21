@@ -24,10 +24,11 @@ Use this as a **checklist** so every [README Core features](../README.md#core-fe
 | 15 | **MCP trace timeline** (v1.3) | [example_mcp_trace.md](example_mcp_trace.md) · [feature-demo/platform-qa/](feature-demo/platform-qa/README.md) |
 | 16 | **Chaos testing** (v1.3) | [example_chaos_testing.md](example_chaos_testing.md) |
 | 17 | **`mcp-test generate`** (v1.3) | [example_generate_scaffold.md](example_generate_scaffold.md) |
+| 18 | **Stateless MCP** (SEP-2575 / RFC-006) | [example_stateless_conformance.md](example_stateless_conformance.md) · [example_stateless_throughput.md](example_stateless_throughput.md) · [feature-demo/stateless-testing/](feature-demo/stateless-testing/README.md) · [TUTORIAL_STATELESS.md](../docs/TUTORIAL_STATELESS.md) |
 
 **30 scenarios (one markdown each):** [feature-demo/scenarios/README.md](feature-demo/scenarios/README.md) — under [feature-demo](feature-demo/README.md) with a sample HTML report; training-style index for discovery, reports, transports, Docker, and every major assertion style.
 
-**Three testing-type demo packs:** [feature-demo/functional-testing/README.md](feature-demo/functional-testing/README.md) · [feature-demo/regression-testing/README.md](feature-demo/regression-testing/README.md) · [feature-demo/performance-testing/README.md](feature-demo/performance-testing/README.md) — separate runnable examples and report configs for each core testing type.
+**Three testing-type demo packs:** [feature-demo/functional-testing/README.md](feature-demo/functional-testing/README.md) · [feature-demo/regression-testing/README.md](feature-demo/regression-testing/README.md) · [feature-demo/performance-testing/README.md](feature-demo/performance-testing/README.md) · [feature-demo/stateless-testing/README.md](feature-demo/stateless-testing/README.md) — separate runnable examples for each core testing type.
 
 **Security and policy demo packs:** [feature-demo/responsible-ai/README.md](feature-demo/responsible-ai/README.md) · [feature-demo/usa-interest/README.md](feature-demo/usa-interest/README.md) — examples for authorization boundaries, confused-deputy checks, and governance-aligned reporting.
 

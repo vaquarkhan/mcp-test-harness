@@ -1000,6 +1000,57 @@ async def assert_throughput(
             )
 
 
+async def assert_stateless_throughput(
+    target_url: str,
+    tool_name: str,
+    arguments: dict[str, Any],
+    *,
+    duration_s: float = 10.0,
+    concurrency: int = 50,
+    min_rps: float | None = None,
+    max_p99_ms: float | None = None,
+    max_error_rate: float | None = None,
+    protocol_version: str | None = None,
+) -> None:
+    """Load-test a **stateless** Streamable HTTP endpoint (SEP-2575, no handshake).
+
+    Uses raw HTTP POST with ``_meta`` injection and SEP-2243 routing headers.
+    For **stateful** servers (stdio / session-based HTTP), use :func:`assert_throughput`
+    with an ``mcp_server`` fixture instead.
+
+    Parameters match :func:`assert_throughput` where applicable; *duration_s* replaces
+    fixed *total_calls* — workers fire requests for the full window.
+    """
+    from mcp_test_harness.stateless.constants import DEFAULT_STATELESS_VERSION
+    from mcp_test_harness.stateless.throughput import StatelessThroughputEngine
+
+    engine = StatelessThroughputEngine(target_url, concurrency=concurrency)
+    metrics = await engine.execute_load(
+        tool_name,
+        arguments,
+        duration_s,
+        protocol_version=protocol_version or DEFAULT_STATELESS_VERSION,
+    )
+
+    errors: list[str] = []
+    if min_rps is not None and metrics.rps < float(min_rps):
+        errors.append(
+            f"Throughput: required {float(min_rps):.2f} RPS, achieved {metrics.rps:.2f} RPS.",
+        )
+    if max_p99_ms is not None and metrics.p99_ms > float(max_p99_ms):
+        errors.append(
+            f"Latency p99: max {float(max_p99_ms):.1f}ms, observed {metrics.p99_ms:.2f}ms.",
+        )
+    if max_error_rate is not None and metrics.error_rate > float(max_error_rate):
+        errors.append(
+            f"Error rate: max {float(max_error_rate):.2f}%, observed {metrics.error_rate:.2f}%.",
+        )
+    if errors:
+        raise MCPAssertionError(
+            "Stateless throughput assertions failed:\n" + "\n".join(f"- {e}" for e in errors),
+        )
+
+
 # ---------------------------------------------------------------------------
 # assert_tool_call_validates_input
 # ---------------------------------------------------------------------------

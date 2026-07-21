@@ -124,7 +124,7 @@ jobs:
 
 **Collections** (declarative YAML flows) are roadmap — see [COLLECTIONS.md](COLLECTIONS.md). Today: **Python** multi-step tests.
 
-**Cluster-scale load** stays outside core; use k6/JMeter for extreme RPS. Harness owns **MCP-aware SLO gates** (`assert_latency`, `assert_throughput` with `min_rps`, `max_p99_ms`, `max_error_rate`).
+**Cluster-scale load** stays outside core; use k6/JMeter for extreme RPS. Harness owns **MCP-aware SLO gates** (`assert_latency`, session `assert_throughput`, and SEP-2575 `assert_stateless_throughput` with `min_rps`, `max_p99_ms`, `max_error_rate`). Stateless certification: `mcp-test conformance stateless` ([RFC-006](design/RFC-006-stateless-mcp.md)).
 
 ## LLM test generation
 

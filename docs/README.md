@@ -16,7 +16,8 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 |------|----------------|
 | **Fastest first run** (install, scaffold, one command) | [QUICK_START.md](QUICK_START.md) |
 | **See all three testing types in examples** (functional, regression, performance) | [../examples/feature-demo/README.md](../examples/feature-demo/README.md) |
-| **Step-by-step tutorial** | [TUTORIAL.md](TUTORIAL.md) |
+| **Step-by-step tutorial** (stateful) | [TUTORIAL.md](TUTORIAL.md) |
+| **Stateless MCP (SEP-2575)** | [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) · [design/RFC-006-stateless-mcp.md](design/RFC-006-stateless-mcp.md) |
 | **Everything else** (config, assertions, parallel, reports, plugins) | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) |
 | **Repo developer setup, test layout, examples index** | [DEVELOPER.md](DEVELOPER.md) |
 | **CI, JUnit, JSON, HTML — do I need to “publish” reports?** | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) |
@@ -51,15 +52,17 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) | **Canonical reference** — config, stdio/SSE/HTTP, assertions, fixtures, schema, reporting, plugins |
 | [DEVELOPER.md](DEVELOPER.md) | **This repository:** clone, pytest + coverage, **e2e dogfood**, module map, link to [examples/](../examples/README.md) |
 | [../examples/feature-demo/README.md](../examples/feature-demo/README.md) | **Feature demo packs:** separate folders for functional, regression, and performance examples with report configs |
-| [TUTORIAL.md](TUTORIAL.md) | Longer **walkthrough** for new users |
+| [TUTORIAL.md](TUTORIAL.md) | Longer **stateful** walkthrough for new users |
+| [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) | **Stateless** SEP-2575 conformance + hyperscale throughput tutorial |
 | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) | **CI and reports:** exit codes, JUnit for Actions, when to upload/publish HTML |
-| [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), `marker(tags=[…])` + `mcp-test -m perf` |
+| [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), stateful `assert_throughput`, stateless `assert_stateless_throughput` |
 | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) | **Performance product story:** why MCP perf must be protocol-aware, what is in-core vs out-of-scope, and the proposed production-grade roadmap |
 | [ROADMAP.md](ROADMAP.md) | **Planned delivery:** now/next/later priorities and scope guardrails |
 | [ROADMAP_GROWTH.md](ROADMAP_GROWTH.md) | **Adoption engine:** conformance badge, Marketplace, record-to-suite, pre-commit |
 | [design/RFC-001-record-to-suite.md](design/RFC-001-record-to-suite.md) | **RFC-001:** `mcp-test record` live calls → tests + snapshots |
 | [design/RFC-002-conformance-levels.md](design/RFC-002-conformance-levels.md) | **RFC-002:** conformance levels + `mcp-test try` / badge |
 | [design/RFC-005-resiliency-experiments.md](design/RFC-005-resiliency-experiments.md) | **RFC-005:** resiliency experiment catalog |
+| [design/RFC-006-stateless-mcp.md](design/RFC-006-stateless-mcp.md) | **RFC-006:** SEP-2575 stateless conformance + hyperscale throughput |
 | [SECURITY_TESTING.md](SECURITY_TESTING.md) | **Security-first CI strategy:** payloads, auth checks, and leak scanning guidance |
 | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) | **Compatibility strategy:** contract replay and protocol/client matrix direction |
 | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) | **Governance:** audit/policy/tenant requirements, plus practical EU AI Act evidence mapping |

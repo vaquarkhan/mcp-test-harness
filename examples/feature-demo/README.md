@@ -7,6 +7,7 @@
 | **Functional demo pack** | [functional-testing/README.md](functional-testing/README.md) |
 | **Regression demo pack** | [regression-testing/README.md](regression-testing/README.md) |
 | **Performance demo pack** | [performance-testing/README.md](performance-testing/README.md) |
+| **Stateless SEP-2575 demo pack** | [stateless-testing/README.md](stateless-testing/README.md) |
 | **Responsible AI demo pack** | [responsible-ai/README.md](responsible-ai/README.md) |
 | **USA interest demo pack** | [usa-interest/README.md](usa-interest/README.md) |
 | **EU AI Act demo pack** | [eu-ai-act/README.md](eu-ai-act/README.md) |
