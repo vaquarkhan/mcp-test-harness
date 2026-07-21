@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.8] - 2026-07-21
+
+### Added
+
+- **Stateless MCP (SEP-2575 / RFC-006):** dual-mode support alongside existing stateful flows — `mcp-test conformance stateless`, `assert_stateless_throughput`, adversarial header/schema gate, hyperscale URL-direct load (httpx, no new deps).
+- **Documentation:** [TUTORIAL_STATELESS.md](docs/TUTORIAL_STATELESS.md), RFC-006 design doc, examples + `feature-demo/stateless-testing/` demo pack.
+- **Visual:** [stateless-dual-mode.svg](docs/images/stateless-dual-mode.svg) — stateful vs stateless architecture diagram (docs + website).
+
+### Changed
+
+- **All 18 PyPI artifacts** aligned at **3.0.8**.
+- Marketplace Action and docs examples pin **`@v3.0.8`**.
+
 ## [3.0.7] - 2026-07-11
 
 ### Added

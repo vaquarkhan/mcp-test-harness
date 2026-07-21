@@ -445,6 +445,16 @@ For the full CLI reference and config file options, see the [README](../README.m
 
 ---
 
+## Stateless MCP (2026-07-28)
+
+If your server uses **Streamable HTTP without** the `initialize` handshake (SEP-2575), follow the dedicated tutorial instead:
+
+**[TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md)** — `mcp-test conformance stateless` + `assert_stateless_throughput`.
+
+Stateful paths in this document stay the default for stdio / session servers.
+
+---
+
 ## License
 
 Non-commercial use with mandatory attribution.

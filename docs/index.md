@@ -15,6 +15,8 @@
 | **Visual Studio Code & Cursor** | [EDITORS.md](EDITORS.md) |
 | **Markdown: highlight features** (GitHub alerts) | [MARKDOWN_CONVENTIONS.md](MARKDOWN_CONVENTIONS.md) |
 | **Fastest install + first run** | [QUICK_START.md](QUICK_START.md) |
+| **Stateful tutorial** | [TUTORIAL.md](TUTORIAL.md) |
+| **Stateless MCP tutorial (SEP-2575)** | [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) · [RFC-006](design/RFC-006-stateless-mcp.md) |
 | **Ecosystem, registries, promotion checklist** | [DISCOVERY.md](DISCOVERY.md) |
 | **How we compare to other MCP tools** | [COMPARISON.md](COMPARISON.md) |
 | **Product roadmap** | [ROADMAP.md](ROADMAP.md) |

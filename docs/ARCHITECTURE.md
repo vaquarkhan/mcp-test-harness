@@ -25,6 +25,31 @@ flowchart LR
 - **One server per sequential run**, or **one server per worker** in parallel (tests from the same file stay on one worker; see [DECISIONS.md](DECISIONS.md)).
 - **Schema checks** (optional) run right after connect via `scheduler` → [schema.py](../src/mcp_test_harness/schema.py).
 
+## Dual mode: stateful session vs stateless HTTP
+
+```mermaid
+flowchart TB
+  subgraph stateful [Stateful — existing]
+    LCM2[lifecycle.py initialize]
+    SES[MCP ClientSession]
+    AT1[assert_throughput session]
+    TRY[mcp-test try RFC-002]
+    LCM2 --> SES --> AT1
+    LCM2 --> TRY
+  end
+  subgraph stateless [Stateless — SEP-2575]
+    PAY[stateless/payloads.py _meta + headers]
+    CONF[conformance.py adversarial gate]
+    THR[throughput.py URL POST load]
+    CLI2[mcp-test conformance stateless]
+    PAY --> CONF
+    PAY --> THR
+    CONF --> CLI2
+  end
+```
+
+Stateless code lives under `src/mcp_test_harness/stateless/` and does **not** replace lifecycle/transport for stdio or session HTTP. See [RFC-006](design/RFC-006-stateless-mcp.md), [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md), and [`stateless-dual-mode.svg`](../images/stateless-dual-mode.svg).
+
 ## Data path (MCP)
 
 ```mermaid
@@ -50,6 +75,7 @@ sequenceDiagram
 | Config keys and CLI | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) |
 | Assert helpers and snapshots | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) |
 | Ecosystem (Inspector, conformance, evals) | [COMPARISON.md](COMPARISON.md) |
+| Stateless SEP-2575 | [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) · [RFC-006](design/RFC-006-stateless-mcp.md) |
 | Docker / OCI | [DOCKER.md](DOCKER.md) |
 | **Editors (VS Code, Cursor)** | [EDITORS.md](EDITORS.md) |
 

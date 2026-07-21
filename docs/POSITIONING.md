@@ -23,7 +23,8 @@ One `mcp-test` run can gate **correctness**, **behavioral regression**, and **pe
 | `assert_tool_call`, `assert_resource_read`, … | Functional correctness |
 | `assert_snapshot`, `assert_tool_idempotent` | Regression / determinism |
 | `assert_latency` | Single-call or aggregated p95/p99/mean/median with **warmup** |
-| `assert_throughput` | Concurrent load: **min_rps**, **max_p99_ms**, **max_error_rate** |
+| `assert_throughput` | Concurrent load (stateful session): **min_rps**, **max_p99_ms**, **max_error_rate** |
+| `assert_stateless_throughput` | Concurrent load (stateless HTTP, SEP-2575): duration × concurrency RPS / p99 / error % |
 | `assert_latency_within_baseline` | JSON baseline drift gates (like visual regression for latency) |
 
 In agentic systems, **slow is broken**: a correct tool that returns in ten seconds can still destroy multi-step agent loops. The harness treats latency as a functional requirement inside the same tests that check payloads.

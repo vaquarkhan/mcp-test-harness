@@ -45,7 +45,9 @@ This is the supported way to get **“Postman order of operations”** in CI wit
 ## Load, throughput, and “collection runner at scale”
 
 - **Single-session latency** and **p95**-style checks are covered by `assert_latency` and [PERFORMANCE.md](PERFORMANCE.md).
-- **Many virtual users, sustained RPS, or distributed load** is **out of core**; pair the harness (functional + regression) with **k6**, **JMeter**, **Gatling**, or a cloud load product. See the short note in [COMPARISON.md](COMPARISON.md#postman--or-jmeter-style-ideas-not-in-core-today) and [PERFORMANCE.md](PERFORMANCE.md).
+- **Session concurrent load** uses `assert_throughput` (stateful MCP SDK session).
+- **Stateless Streamable HTTP** (SEP-2575) uses `assert_stateless_throughput` and `mcp-test conformance stateless` — [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md).
+- **Many virtual users, sustained RPS, or distributed load** at datacenter scale is still **out of core**; pair with **k6**, **JMeter**, **Gatling**, or a cloud load product. See [COMPARISON.md](COMPARISON.md#postman--or-jmeter-style-ideas-not-in-core-today).
 
 ---
 

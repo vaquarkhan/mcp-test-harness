@@ -12,6 +12,7 @@ This page is for **people working in the mcp-test-harness repo** (patches, relea
 | **CI reports and JUnit in Actions** | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) |
 | **Postman-style collections, chained steps, environments (doc)** | [COLLECTIONS.md](COLLECTIONS.md) |
 | **Latency and `mcp-test -m perf`** | [PERFORMANCE.md](PERFORMANCE.md) |
+| **Stateless SEP-2575 suite** | [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) · [design/RFC-006-stateless-mcp.md](design/RFC-006-stateless-mcp.md) · `src/mcp_test_harness/stateless/` |
 | **Editor / snippets** | [EDITORS.md](EDITORS.md) |
 | **Docker and OCI** | [DOCKER.md](DOCKER.md) |
 | **Feature traceability (for maintainers)** | [IMPLEMENTATION_CHECKLIST.md](IMPLEMENTATION_CHECKLIST.md) |

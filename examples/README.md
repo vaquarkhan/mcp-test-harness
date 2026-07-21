@@ -20,6 +20,7 @@ Need separate demos by test type? Use:
 - **[feature-demo/functional-testing/README.md](feature-demo/functional-testing/README.md)**
 - **[feature-demo/regression-testing/README.md](feature-demo/regression-testing/README.md)**
 - **[feature-demo/performance-testing/README.md](feature-demo/performance-testing/README.md)**
+- **[feature-demo/stateless-testing/README.md](feature-demo/stateless-testing/README.md)** — SEP-2575 conformance + hyperscale throughput
 - **[feature-demo/responsible-ai/README.md](feature-demo/responsible-ai/README.md)**
 - **[feature-demo/usa-interest/README.md](feature-demo/usa-interest/README.md)**
 - **[feature-demo/eu-ai-act/README.md](feature-demo/eu-ai-act/README.md)**
@@ -52,6 +53,7 @@ Start here: **[FEATURES_INDEX.md](FEATURES_INDEX.md)** — maps each [README Cor
 | **MCP trace timeline** (v1.3) | [example_mcp_trace.md](example_mcp_trace.md) · [feature-demo/platform-qa/](feature-demo/platform-qa/README.md) |
 | **Chaos testing** (v1.3) | [example_chaos_testing.md](example_chaos_testing.md) · [feature-demo/platform-qa/test_platform_qa_demo.py](feature-demo/platform-qa/test_platform_qa_demo.py) |
 | **`mcp-test generate`** (v1.3) | [example_generate_scaffold.md](example_generate_scaffold.md) · [sample_mcp_generated.example.py](feature-demo/platform-qa/sample_mcp_generated.example.py) |
+| **Stateless SEP-2575** (2026-07-28) | [example_stateless_conformance.md](example_stateless_conformance.md) · [example_stateless_throughput.md](example_stateless_throughput.md) · [feature-demo/stateless-testing/](feature-demo/stateless-testing/README.md) · [TUTORIAL_STATELESS.md](../docs/TUTORIAL_STATELESS.md) |
 
 ## Runnable scripts
 

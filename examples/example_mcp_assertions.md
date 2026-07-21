@@ -19,4 +19,8 @@ All helpers below are exercised in **[assertions_async_demo.py](assertions_async
 | `assert_latency` | step 12 |
 | `assert_snapshot` | step 13 |
 
+**Session throughput / baselines** (not in the fake-session demo): `assert_throughput`, `assert_latency_within_baseline` — [PERFORMANCE.md](../docs/PERFORMANCE.md).
+
+**Stateless HTTP (SEP-2575)** (URL-direct; no session): `assert_stateless_throughput` — [example_stateless_throughput.md](example_stateless_throughput.md) · [TUTORIAL_STATELESS.md](../docs/TUTORIAL_STATELESS.md).
+
 **Deeper API notes:** [DEVELOPER_GUIDE.md – assertions](../docs/DEVELOPER_GUIDE.md) · latency & markers: [PERFORMANCE.md](../docs/PERFORMANCE.md)
