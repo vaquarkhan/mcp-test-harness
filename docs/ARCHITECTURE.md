@@ -48,7 +48,7 @@ flowchart TB
   end
 ```
 
-Stateless code lives under `src/mcp_test_harness/stateless/` and does **not** replace lifecycle/transport for stdio or session HTTP. See [RFC-006](design/RFC-006-stateless-mcp.md) and [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md).
+Stateless code lives under `src/mcp_test_harness/stateless/` and does **not** replace lifecycle/transport for stdio or session HTTP. See [RFC-006](design/RFC-006-stateless-mcp.md), [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md), and [`stateless-dual-mode.svg`](../images/stateless-dual-mode.svg).
 
 ## Data path (MCP)
 
