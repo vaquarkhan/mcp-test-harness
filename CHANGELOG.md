@@ -4,9 +4,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.9] - 2026-07-24
+
 ### Added
 
 - **CRA alignment (opt-in, non-breaking):** `.github/SECURITY.md` Article 14-oriented VDP; CycloneDX SBOM steps on `publish.yml` / `docker-publish.yml` (fail-safe artifacts); `CRATechnicalDocumentReporter` via `--cra-output` / `report.cra_output`; [docs/CRA_COMPLIANCE.md](docs/CRA_COMPLIANCE.md) + [cra-evidence-flow.svg](docs/images/cra-evidence-flow.svg).
+
+### Changed
+
+- **All 18 PyPI artifacts** aligned at **3.0.9**.
+- Marketplace Action and docs examples pin **`@v3.0.9`**.
 
 ## [3.0.8] - 2026-07-21
 
