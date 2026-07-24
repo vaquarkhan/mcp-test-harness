@@ -67,6 +67,20 @@ MCP Test Harness does **not** replace:
 
 Use this harness as one layer in a broader compliance program.
 
+## How this helps with the EU Cyber Resilience Act (CRA)
+
+Regulation **(EU) 2024/2847** emphasizes security-by-design, vulnerability handling, and supply-chain transparency. MCP Test Harness contributes **technical evidence**, not a legal conformity assessment:
+
+| CRA need | Harness support |
+|----------|-----------------|
+| Secure development / testing | Schema, security payload packs, SARIF with OWASP MCP rules |
+| Resilience evidence | Chaos markers + resiliency experiment catalog (RFC-005) |
+| Machine-readable artifacts | JSON / JUnit / HTML / SARIF / opt-in `--cra-output` matrix |
+| SBOM | CycloneDX `bom.json` on `v*` publish workflows (fail-safe artifact) |
+| Vulnerability disclosure | [`.github/SECURITY.md`](../.github/SECURITY.md) (Article 14-oriented VDP) |
+
+Full operator guide: [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md).
+
 ## Other common regulatory/compliance contexts
 
 The same test evidence approach is also useful for:

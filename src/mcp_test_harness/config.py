@@ -38,7 +38,9 @@ _KNOWN_TOP_KEYS = frozenset(
 
 _KNOWN_SERVER_KEYS = frozenset({"command", "transport", "transport_options"})
 _KNOWN_TEST_KEYS = frozenset({"dirs", "timeout", "parallel", "workers"})
-_KNOWN_REPORT_KEYS = frozenset({"format", "output", "sarif_output", "pr_summary_output"})
+_KNOWN_REPORT_KEYS = frozenset(
+    {"format", "output", "sarif_output", "pr_summary_output", "cra_output"},
+)
 
 
 # ---------------------------------------------------------------------------
@@ -72,6 +74,7 @@ class HarnessConfig:
     report_output: str | None = None
     pdf_output: str | None = None
     sarif_output: str | None = None
+    cra_output: str | None = None
     pr_summary_output: str | None = None
     plugins: list[str] = field(default_factory=list)
     parallel: bool = False
@@ -217,6 +220,8 @@ def _flatten_config(raw: dict[str, Any]) -> dict[str, Any]:
             result["report_output"] = report["output"]
         if "sarif_output" in report:
             result["sarif_output"] = report["sarif_output"]
+        if "cra_output" in report:
+            result["cra_output"] = report["cra_output"]
         if "pr_summary_output" in report:
             result["pr_summary_output"] = report["pr_summary_output"]
 
@@ -251,6 +256,7 @@ _CLI_MAP: dict[str, str] = {
     "report_output": "report_output",
     "pdf_output": "pdf_output",
     "sarif_output": "sarif_output",
+    "cra_output": "cra_output",
     "pr_summary_output": "pr_summary_output",
     "update_snapshots": "update_snapshots",
     "filter_name": "filter_name",
