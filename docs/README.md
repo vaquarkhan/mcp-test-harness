@@ -27,6 +27,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Security testing strategy** (prompt injection, payload checks, leak detection) | [SECURITY_TESTING.md](SECURITY_TESTING.md) |
 | **Contract + compatibility strategy** (drift protection, version/client matrix) | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) |
 | **Enterprise governance** (audit/policy/tenant guidance) | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) |
+| **CRA (EU Cyber Resilience Act) evidence packaging** | [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md) · [`.github/SECURITY.md`](../.github/SECURITY.md) |
 | **Plugin registry** (integration catalog placeholder) | [PLUGIN_REGISTRY.md](PLUGIN_REGISTRY.md) |
 | **Ecosystem** (conformance/eval/benchmark categories vs this harness) | [COMPARISON.md](COMPARISON.md) |
 | **Product positioning** (four differentiators, enterprise story) | [POSITIONING.md](POSITIONING.md) |
@@ -65,7 +66,8 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [design/RFC-006-stateless-mcp.md](design/RFC-006-stateless-mcp.md) | **RFC-006:** SEP-2575 stateless conformance + hyperscale throughput |
 | [SECURITY_TESTING.md](SECURITY_TESTING.md) | **Security-first CI strategy:** payloads, auth checks, and leak scanning guidance |
 | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) | **Compatibility strategy:** contract replay and protocol/client matrix direction |
-| [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) | **Governance:** audit/policy/tenant requirements, plus practical EU AI Act evidence mapping |
+| [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) | **Governance:** audit/policy/tenant requirements, EU AI Act + CRA evidence mapping |
+| [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md) | **CRA (EU 2024/2847):** SBOM, SECURITY.md VDP, opt-in `--cra-output` matrix |
 | [PLUGIN_REGISTRY.md](PLUGIN_REGISTRY.md) | **Integrations:** proposed plugin catalog categories and listing template |
 | [COMPARISON.md](COMPARISON.md) | **Ecosystem map:** other MCP tools (conformance, evals, benchmarks, mcp-shark) and how they fit with Harness + Bastion |
 | [POSITIONING.md](POSITIONING.md) | **Product positioning:** four differentiators, governance, mcp-shark pairing |

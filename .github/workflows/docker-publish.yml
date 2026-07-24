@@ -61,3 +61,25 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ steps.img.outputs.image }}:${{ steps.ver.outputs.version }}-dev
             ${{ env.REGISTRY }}/${{ steps.img.outputs.image }}:dev
+
+      - name: Set up Python for SBOM
+        continue-on-error: true
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
+      - name: Generate CycloneDX SBOM (project)
+        continue-on-error: true
+        run: |
+          pip install "cyclonedx-bom>=4"
+          pip install .
+          cyclonedx-py environment --pyproject pyproject.toml --of JSON -o bom-docker.json
+
+      - name: Upload SBOM artifact
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx-docker
+          path: bom-docker.json
+          if-no-files-found: warn

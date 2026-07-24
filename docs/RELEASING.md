@@ -33,6 +33,8 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
    ```
 
 5. **Watch Actions** — [Actions](https://github.com/vaquarkhan/mcp-test-harness/actions): `publish` (main + **all 17 optional** wheels via matrix), `docker-publish` (GHCR `:X.Y.Z`, `:latest`, `:X.Y.Z-dev`, `:dev`) should succeed.
+6. **SBOM** — confirm CycloneDX artifacts (`bom.json` / `bom-docker.json`) uploaded on the release workflows (fail-safe; see [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md)).
+7. **Security contact** — keep [`.github/SECURITY.md`](../.github/SECURITY.md) placeholders accurate for maintainers.
 
 ## Docker tags after a `v*` push (example: `v3.0.8`)
 

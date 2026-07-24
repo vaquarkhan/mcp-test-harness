@@ -38,6 +38,12 @@ mcp-test --report-format sarif --report-output mcp-security.sarif
 mcp-test --report-format junit --report-output report.xml --sarif-output mcp-security.sarif
 ```
 
+**CRA conformity matrix** (opt-in Annex I evidence packaging — see [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md)):
+
+```bash
+mcp-test --cra-output reports/cra_conformity_matrix.json -m security
+```
+
 **OWASP rule metadata** is attached to failed security tests in JSON (`security_findings[].rule`) and SARIF (`ruleId`, `properties.owasp_id`). Rule IDs align with mcp-shark packs (`mcp06-prompt-injection`, `path-traversal`, `mcp07-insufficient-auth`, etc.). Tag tests explicitly with `@marker(tags=["security", "mcp06"])`.
 
 **PR comments** — enable in the GitHub Action with `pr-comment: true` or write locally:

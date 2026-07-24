@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- **CRA alignment (opt-in, non-breaking):** `.github/SECURITY.md` Article 14-oriented VDP; CycloneDX SBOM steps on `publish.yml` / `docker-publish.yml` (fail-safe artifacts); `CRATechnicalDocumentReporter` via `--cra-output` / `report.cra_output`; [docs/CRA_COMPLIANCE.md](docs/CRA_COMPLIANCE.md) + [cra-evidence-flow.svg](docs/images/cra-evidence-flow.svg).
+
 ## [3.0.8] - 2026-07-21
 
 ### Added

@@ -23,5 +23,19 @@ jobs:
         run: pip install build
       - name: Build package
         run: python -m build
+      - name: Generate CycloneDX SBOM
+        continue-on-error: true
+        run: |
+          pip install "cyclonedx-bom>=4"
+          pip install .
+          cyclonedx-py environment --pyproject pyproject.toml --of JSON -o bom.json
+      - name: Upload SBOM artifact
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: bom.json
+          if-no-files-found: warn
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

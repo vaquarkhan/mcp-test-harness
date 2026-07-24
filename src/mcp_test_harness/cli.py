@@ -113,6 +113,15 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Path to write SARIF security findings (in addition to --report-format)",
     )
     parser.add_argument(
+        "--cra-output",
+        dest="cra_output",
+        default=None,
+        help=(
+            "Path to write CRA Annex I conformity matrix JSON (opt-in; "
+            "see docs/CRA_COMPLIANCE.md)"
+        ),
+    )
+    parser.add_argument(
         "--pr-summary-output",
         dest="pr_summary_output",
         default=None,
@@ -207,6 +216,7 @@ async def _run_harness(
     )
     from mcp_test_harness.plugins import PluginRegistry
     from mcp_test_harness.pr_summary import generate_pr_summary
+    from mcp_test_harness.cra_reporter import CRATechnicalDocumentReporter
     from mcp_test_harness.reporting import JSONReporter, JUnitXMLReporter
     from mcp_test_harness.sarif_reporter import SARIFReporter
     from mcp_test_harness.scheduler import HarnessScheduler
@@ -307,6 +317,14 @@ async def _run_harness(
             sp.parent.mkdir(parents=True, exist_ok=True)
             sp.write_text(sarif_text, encoding="utf-8")
             logger.info("SARIF report written to %s", sp)
+
+    cra_path = config.cra_output
+    if cra_path:
+        cra_text = CRATechnicalDocumentReporter().generate(results)
+        cp = Path(cra_path)
+        cp.parent.mkdir(parents=True, exist_ok=True)
+        cp.write_text(cra_text, encoding="utf-8")
+        logger.info("CRA conformity matrix written to %s", cp)
 
     if config.pr_summary_output:
         summary_text = generate_pr_summary(results)
