@@ -1,0 +1,18 @@
+"""MCP Test Harness helpers for OpenRouter testing."""
+
+from __future__ import annotations
+
+__version__ = "3.0.10"
+
+from mcp_test_harness_openrouter.helpers import (
+    assert_openrouter_tool,
+    mcp_tools_to_openrouter_functions,
+    create_openrouter_test_config,
+)
+
+__all__ = [
+    "__version__",
+    "assert_openrouter_tool",
+    "mcp_tools_to_openrouter_functions",
+    "create_openrouter_test_config",
+]

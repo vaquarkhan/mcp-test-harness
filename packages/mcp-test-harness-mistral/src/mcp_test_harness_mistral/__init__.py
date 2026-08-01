@@ -1,3 +1,18 @@
 """MCP Test Harness helpers for Mistral AI testing."""
 
-__version__ = "3.0.9"
+from __future__ import annotations
+
+__version__ = "3.0.10"
+
+from mcp_test_harness_mistral.helpers import (
+    assert_mistral_tool,
+    mcp_tools_to_mistral_functions,
+    create_mistral_test_config,
+)
+
+__all__ = [
+    "__version__",
+    "assert_mistral_tool",
+    "mcp_tools_to_mistral_functions",
+    "create_mistral_test_config",
+]

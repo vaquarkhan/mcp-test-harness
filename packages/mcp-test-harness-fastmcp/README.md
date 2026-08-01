@@ -1,6 +1,6 @@
 # mcp-test-harness-fastmcp
 
-FastMCP server testing helpers for [MCP Test Harness](https://github.com/vaquarkhan/mcp-test-harness).
+FastMCP servers testing helpers for [MCP Test Harness](https://github.com/vaquarkhan/mcp-test-harness).
 
 Author: Vaquar Khan -- https://github.com/vaquarkhan
 
@@ -23,6 +23,12 @@ async def test_echo(mcp_server):
 async def test_config(mcp_server):
     await assert_fastmcp_resource(mcp_server, "config://app", expected_text='{"debug": true}')
 ```
+
+## Helpers
+
+- Tool call assertion with optional text check
+- MCP tool → FastMCP schema converter
+- `mcp-test.yaml`-shaped config builder
 
 ## License
 

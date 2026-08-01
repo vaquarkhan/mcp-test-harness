@@ -1,0 +1,38 @@
+# mcp-test-harness-ollama
+
+Ollama local models testing helpers for [MCP Test Harness](https://github.com/vaquarkhan/mcp-test-harness).
+
+Author: Vaquar Khan -- https://github.com/vaquarkhan
+
+## Install
+
+```bash
+pip install mcp-test-harness-ollama
+```
+
+This automatically installs `mcp-test-harness` as a dependency.
+
+## Usage
+
+```python
+from mcp_test_harness_ollama import assert_ollama_tool, mcp_tools_to_ollama_functions, create_ollama_test_config
+
+async def test_tool(mcp_server):
+    await assert_ollama_tool(mcp_server, "my_tool", {}, expected_text="ok")
+
+def test_schema_bridge(mcp_tools):
+    # mcp_tools from list_tools — convert for Ollama SDKs
+    return mcp_tools_to_ollama_functions(mcp_tools)
+
+cfg = create_ollama_test_config("python server.py", timeout=45)
+```
+
+## Helpers
+
+- Tool call assertion with optional text check
+- MCP tool → Ollama schema converter
+- `mcp-test.yaml`-shaped config builder
+
+## License
+
+Non-commercial use only with mandatory attribution. See [LICENSE](https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE).
