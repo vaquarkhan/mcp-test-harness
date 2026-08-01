@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [3.0.10] - 2026-08-01
+
+### Added
+
+- **Real provider helpers** on all framework packages: tool assertion with optional text check, MCP→provider schema converters, and `mcp-test.yaml` config builders (FastMCP pattern).
+- **Five new PyPI packages:** `mcp-test-harness-ollama`, `-openrouter`, `-litellm`, `-xai`, `-autogen`.
+- `scripts/sync_provider_packages.py` to regenerate/align vendor packages.
+
+### Changed
+
+- **All 23 PyPI artifacts** aligned at **3.0.10** (core + 22 shims).
+- Marketplace Action and docs examples pin **`@v3.0.10`**.
+- Declare **`httpx`** as a core dependency (stateless gate / Quick CI).
+- Pin **`mcp>=1.0.0,<2`** until the harness is migrated to MCP Python SDK 2.x (`fastmcp` / client API moves).
+
 ## [3.0.9] - 2026-07-24
 
 ### Added

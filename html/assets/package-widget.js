@@ -1,5 +1,5 @@
 /**
- * Live PyPI version + download badges for all 18 harness packages.
+ * Live PyPI version + download badges for all 23 harness packages.
  * Used on integrations.html (MCP-Bastion-style download widget).
  */
 (function () {
@@ -15,6 +15,7 @@
     ['mcp-test-harness-llamaindex', 'LlamaIndex'],
     ['mcp-test-harness-crewai', 'CrewAI'],
     ['mcp-test-harness-fastmcp', 'FastMCP servers'],
+    ['mcp-test-harness-autogen', 'Microsoft AutoGen'],
     ['mcp-test-harness-groq', 'Groq'],
     ['mcp-test-harness-mistral', 'Mistral AI'],
     ['mcp-test-harness-cohere', 'Cohere'],
@@ -22,6 +23,10 @@
     ['mcp-test-harness-deepseek', 'DeepSeek AI'],
     ['mcp-test-harness-together', 'Together AI'],
     ['mcp-test-harness-fireworks', 'Fireworks AI'],
+    ['mcp-test-harness-ollama', 'Ollama'],
+    ['mcp-test-harness-openrouter', 'OpenRouter'],
+    ['mcp-test-harness-litellm', 'LiteLLM'],
+    ['mcp-test-harness-xai', 'xAI Grok'],
   ];
 
   function render() {

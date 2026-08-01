@@ -22,7 +22,7 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
 
 ## Release checklist (each version)
 
-1. **Version** — bump in [pyproject.toml](../pyproject.toml), all **`packages/mcp-test-harness-*`** `pyproject.toml` + `__init__.py` files (18 artifacts total), [server.json](../server.json), [CITATION.cff](../CITATION.cff) (if you track version there), [html/](../html/) site badges, and [README.md](../README.md).
+1. **Version** — bump in [pyproject.toml](../pyproject.toml), all **`packages/mcp-test-harness-*`** `pyproject.toml` + `__init__.py` files (23 artifacts total), [server.json](../server.json), [CITATION.cff](../CITATION.cff) (if you track version there), [html/](../html/) site badges, and [README.md](../README.md).
 2. **Changelog** — add a dated section in [CHANGELOG.md](../CHANGELOG.md) for `X.Y.Z`.
 3. **Commit** — merge to `main` (or your release branch).
 4. **Tag and push** (from the commit you want to release):
@@ -36,12 +36,12 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
 6. **SBOM** — confirm CycloneDX artifacts (`bom.json` / `bom-docker.json`) uploaded on the release workflows (fail-safe; see [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md)).
 7. **Security contact** — keep [`.github/SECURITY.md`](../.github/SECURITY.md) placeholders accurate for maintainers.
 
-## Docker tags after a `v*` push (example: `v3.0.9`)
+## Docker tags after a `v*` push (example: `v3.0.10`)
 
 | Image | Tags (examples) |
 |-------|-----------------|
-| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.9`, `:latest` |
-| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.9-dev`, `:dev` |
+| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.10`, `:latest` |
+| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.10-dev`, `:dev` |
 
 ```bash
 docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest

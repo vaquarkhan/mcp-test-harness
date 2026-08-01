@@ -1,3 +1,18 @@
-"""MCP Test Harness helpers for LlamaIndex tool testing."""
+"""MCP Test Harness helpers for LlamaIndex testing."""
 
-__version__ = "3.0.9"
+from __future__ import annotations
+
+__version__ = "3.0.10"
+
+from mcp_test_harness_llamaindex.helpers import (
+    assert_llamaindex_tool,
+    mcp_tools_to_llamaindex_tools,
+    create_llamaindex_test_config,
+)
+
+__all__ = [
+    "__version__",
+    "assert_llamaindex_tool",
+    "mcp_tools_to_llamaindex_tools",
+    "create_llamaindex_test_config",
+]

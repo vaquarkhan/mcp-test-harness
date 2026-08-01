@@ -1,8 +1,8 @@
-"""MCP Test Harness helpers for FastMCP servers."""
+"""MCP Test Harness helpers for FastMCP testing."""
 
 from __future__ import annotations
 
-__version__ = "3.0.9"
+__version__ = "3.0.10"
 
 from mcp_test_harness_fastmcp.helpers import (
     assert_fastmcp_tool,
