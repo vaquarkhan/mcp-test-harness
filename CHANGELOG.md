@@ -16,7 +16,8 @@ All notable changes to this project are documented in this file. The format is b
 
 - **All 23 PyPI artifacts** aligned at **3.0.10** (core + 22 shims).
 - Marketplace Action and docs examples pin **`@v3.0.10`**.
-- Declare **`httpx`** as a core dependency (stateless gate / Quick CI; MCP 2.x no longer pulls classic `httpx`).
+- Declare **`httpx`** as a core dependency (stateless gate / Quick CI).
+- Pin **`mcp>=1.0.0,<2`** until the harness is migrated to MCP Python SDK 2.x (`fastmcp` / client API moves).
 
 ## [3.0.9] - 2026-07-24
 
