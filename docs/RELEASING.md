@@ -36,12 +36,12 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
 6. **SBOM** — confirm CycloneDX artifacts (`bom.json` / `bom-docker.json`) uploaded on the release workflows (fail-safe; see [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md)).
 7. **Security contact** — keep [`.github/SECURITY.md`](../.github/SECURITY.md) placeholders accurate for maintainers.
 
-## Docker tags after a `v*` push (example: `v3.0.10`)
+## Docker tags after a `v*` push (example: `v4.0.0`)
 
 | Image | Tags (examples) |
 |-------|-----------------|
-| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.10`, `:latest` |
-| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:3.0.10-dev`, `:dev` |
+| **Runtime** (default `mcp-test` entrypoint) | `ghcr.io/vaquarkhan/mcp-test-harness:4.0.0`, `:latest` |
+| **Dev** (`pytest` / `[dev]` extras) | `ghcr.io/vaquarkhan/mcp-test-harness:4.0.0-dev`, `:dev` |
 
 ```bash
 docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest

@@ -2,7 +2,7 @@
 """Generate / refresh vendor packages under packages/ with real helpers.
 
 Run from repo root:
-  python scripts/sync_provider_packages.py --version 3.0.10
+  python scripts/sync_provider_packages.py --version 4.0.0
 """
 
 from __future__ import annotations

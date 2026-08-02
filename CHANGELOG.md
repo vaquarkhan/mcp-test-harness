@@ -4,6 +4,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-08-02
+
 ### Added
 
 - **Manifest / rug-pull gate** (`manifest_gate:` + `mcp-test manifest`): deterministic snapshot of the full MCP surface (tools/resources/prompts schemas + capabilities) that fails CI when the sanctioned baseline changes without `--update-snapshots` / `mcp-test manifest update`. Merge-time supply-chain control, not runtime detection.
@@ -14,6 +16,10 @@ All notable changes to this project are documented in this file. The format is b
 
 - **`mcp-test generate`:** docstring closers were truncated to `.""` (SyntaxError); now emit valid `"""`.
 - **`--update-snapshots`:** CLI flag is applied at runtime so corrupted/outdated `.snap` files are rewritten (was parsed into config but ignored).
+
+### Changed
+
+- **Major version 4.0.0** — CI quality gate + MCP surface integrity are first-class product surfaces; all **23** PyPI artifacts and Marketplace Action pins align at **4.0.0**.
 
 ## [3.0.10] - 2026-08-01
 

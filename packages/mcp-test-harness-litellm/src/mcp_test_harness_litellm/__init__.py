@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "3.0.10"
+__version__ = "4.0.0"
 
 from mcp_test_harness_litellm.helpers import (
     assert_litellm_tool,
