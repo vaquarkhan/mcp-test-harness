@@ -76,7 +76,7 @@ Zero-config probe: `mcp-test try --server-command "…"`. CI: Marketplace Action
 
 MCP Test Harness is a pytest-style framework for MCP servers: the `mcp-test` CLI discovers, runs, and reports tests automatically - replacing much of the manual validation you might do in the MCP Inspector. **Repository:** [github.com/vaquarkhan/mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness).
 
-> **Documentation:** [QUICK_START](docs/QUICK_START.md) · [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md) · [CI & reports](docs/CI_AND_REPORTS.md) · [performance](docs/PERFORMANCE.md) · [comparison](docs/COMPARISON.md) · [discovery checklist](docs/DISCOVERY.md). **Community:** Issues for bugs; PRs for docs and examples.
+> **Documentation:** [**Bible**](docs/BIBLE.md) ([published](https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html)) · [QUICK_START](docs/QUICK_START.md) · [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md) · [CI & reports](docs/CI_AND_REPORTS.md) · [performance](docs/PERFORMANCE.md) · [comparison](docs/COMPARISON.md) · [discovery checklist](docs/DISCOVERY.md). Companion runtime: [Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html). **Community:** Issues for bugs; PRs for docs and examples.
 
 ---
 
@@ -224,10 +224,12 @@ MCP Test Harness supports **Responsible AI** and governance programs: schema con
 
 ## Documentation
 
+**Bible (single handbook):** [docs/BIBLE.md](docs/BIBLE.md) · [published HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html) · companion [Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html)  
 **Hub (table of all guides + suggested reading order):** [docs/README.md](docs/README.md)
 
 | Document | Contents |
 |----------|----------|
+| [docs/BIBLE.md](docs/BIBLE.md) | **Documentation bible** - security-first rationale, CI scan report, feature map, end references |
 | [docs/QUICK_START.md](docs/QUICK_START.md) | **Fastest path** - install, `mcp-test init`, run |
 | [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | **Canonical reference** - setup, config, stdio/parallel/validation, assertions, reporting |
 | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) | **CI, JUnit, JSON, HTML** - do you need to *publish* test reports? (usually: no) |

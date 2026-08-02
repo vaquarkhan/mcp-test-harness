@@ -4,6 +4,7 @@
 
 | Start here | Link |
 |------------|------|
+| **Documentation bible** (single handbook — Bastion-style) | [BIBLE.md](BIBLE.md) · [published HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html) |
 | **Docs hub** (read first) | [README.md](README.md) |
 | **Changelog (releases, upgrades)** | [CHANGELOG.md](../CHANGELOG.md) |
 | **Contributing** | [CONTRIBUTING.md](../CONTRIBUTING.md) |

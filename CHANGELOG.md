@@ -7,6 +7,7 @@ All notable changes to this project are documented in this file. The format is b
 ### Added
 
 - **HTML scan report UI:** sticky scan TOC, quality-gate scorecard, full security findings table (severity/OWASP/framework/file + client severity filter), MCP contract-coverage % ring and coverage issue rows — still a self-contained CI artifact (no hosted dashboard).
+- **Documentation bible** (`docs/BIBLE.md` + `html/guide/bible.html`): Bastion-style handbook with security-first rationale, scan report map, feature map, and end references to the [MCP-Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
 
 ## [4.0.0] - 2026-08-02
 

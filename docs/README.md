@@ -1,6 +1,9 @@
 # MCP Test Harness — documentation hub
 
-This repository uses the same documentation **style** as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion): a central **hub** (this file), **adoption paths** (read in order), and deep-dive guides linked from one table.
+This repository uses the same documentation **style** as [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion): a central **hub** (this file), a **documentation bible**, **adoption paths** (read in order), and deep-dive guides linked from one table.
+
+**Documentation bible (start here for the full system):** [BIBLE.md](BIBLE.md) · published: https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html  
+**Companion runtime bible:** https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html
 
 **Community:** open a GitHub **Issue** for bugs or feature requests, a **Discussion** (if enabled) for integration questions, or a **PR** for docs and examples.
 
@@ -49,6 +52,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 
 | Document | What it is |
 |----------|------------|
+| [BIBLE.md](BIBLE.md) | **Documentation bible** — security-first handbook, scan report, feature map, Bastion end references |
 | [QUICK_START.md](QUICK_START.md) | **Time-to-value:** install, `mcp-test init`, run tests |
 | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) | **Canonical reference** — config, stdio/SSE/HTTP, assertions, fixtures, schema, reporting, plugins |
 | [DEVELOPER.md](DEVELOPER.md) | **This repository:** clone, pytest + coverage, **e2e dogfood**, module map, link to [examples/](../examples/README.md) |
