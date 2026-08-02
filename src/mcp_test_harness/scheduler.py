@@ -38,6 +38,8 @@ from mcp_test_harness.fixtures import (
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager, StartupError
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
 from mcp_test_harness.conformance import attach_conformance
+from mcp_test_harness.assertions import MCPAssertionError
+from mcp_test_harness.manifest_gate import run_configured_manifest_gate
 from mcp_test_harness.quality_gate import QualityGatePolicy, apply_quality_gate
 from mcp_test_harness.unified_report import build_unified_summary
 from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_connect
@@ -173,6 +175,28 @@ class HarnessScheduler:
             )
             lifecycle.start_monitor(server)
 
+            manifest_failed = False
+            try:
+                await run_configured_manifest_gate(
+                    server.session,
+                    getattr(config, "manifest_gate", None),
+                    capabilities=dict(capabilities or {}),
+                    protocol_version=protocol_version,
+                )
+            except MCPAssertionError as exc:
+                manifest_failed = True
+                results.append(
+                    CaseResult(
+                        name="manifest_gate",
+                        module="mcp_test_harness.manifest_gate",
+                        status=CaseStatus.FAILED,
+                        duration_ms=0.0,
+                        error=str(exc),
+                        file="mcp_test_harness/manifest_gate.py",
+                        tags=["security", "mcp04", "manifest"],
+                    )
+                )
+
             executor = CaseExecutor(default_timeout=config.timeout)
             fixtures = FixtureManager()
             register_builtin_fixtures(fixtures)
@@ -181,6 +205,20 @@ class HarnessScheduler:
                 plugin_registry.register_fixtures(fixtures)
 
             for i, test_case in enumerate(test_cases):
+                if manifest_failed and fail_fast:
+                    for remaining_tc in test_cases[i:]:
+                        results.append(
+                            CaseResult(
+                                name=remaining_tc.name,
+                                module=str(remaining_tc.module_path),
+                                status=CaseStatus.SKIPPED,
+                                duration_ms=0.0,
+                                error=_FAIL_FAST_SKIP,
+                                file=Path(remaining_tc.module_path).as_posix(),
+                                tags=list(remaining_tc.markers.get("tags", [])),
+                            )
+                        )
+                    break
                 try:
                     result = await executor.execute(test_case, server, fixtures)
                 except ServerCrashedError as exc:
@@ -422,6 +460,30 @@ class HarnessScheduler:
                 or str(capabilities.get("protocolVersion") or "")
             )
             lifecycle.start_monitor(server)
+
+            # Only worker 0 runs the manifest gate (avoid parallel baseline races).
+            if worker_id == 0:
+                try:
+                    await run_configured_manifest_gate(
+                        server.session,
+                        getattr(config, "manifest_gate", None),
+                        capabilities=dict(capabilities or {}),
+                        protocol_version=protocol_version,
+                    )
+                except MCPAssertionError as exc:
+                    results.append(
+                        CaseResult(
+                            name="manifest_gate",
+                            module="mcp_test_harness.manifest_gate",
+                            status=CaseStatus.FAILED,
+                            duration_ms=0.0,
+                            error=str(exc),
+                            file="mcp_test_harness/manifest_gate.py",
+                            tags=["security", "mcp04", "manifest"],
+                        )
+                    )
+                    if fail_stop is not None:
+                        fail_stop.set()
 
             executor = CaseExecutor(default_timeout=config.timeout)
             fixtures = FixtureManager()

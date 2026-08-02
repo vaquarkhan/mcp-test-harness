@@ -14,6 +14,7 @@ __all__ = [
     "assert_invalid_tool",
     "assert_latency",
     "assert_latency_within_baseline",
+    "assert_manifest_snapshot",
     "assert_no_secret_leak",
     "assert_path_traversal_blocked",
     "assert_prompt",
@@ -32,6 +33,7 @@ __all__ = [
     "assert_tool_list",
     "assert_tool_rejects",
     "assert_tool_schema",
+    "capture_server_manifest",
     "coverage_to_dict",
     "marker",
     "run_security_payload_pack",
@@ -63,6 +65,7 @@ from mcp_test_harness.assertions import (
 from mcp_test_harness.discovery import marker, skip
 from mcp_test_harness.baselines import assert_latency_within_baseline, save_baseline
 from mcp_test_harness.coverage import coverage_to_dict
+from mcp_test_harness.manifest_gate import assert_manifest_snapshot, capture_server_manifest
 from mcp_test_harness.resiliency import (
     assert_degrades_gracefully,
     assert_reconnects,

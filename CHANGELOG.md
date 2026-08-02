@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Added
 
+- **Manifest / rug-pull gate** (`manifest_gate:` + `mcp-test manifest`): deterministic snapshot of the full MCP surface (tools/resources/prompts schemas + capabilities) that fails CI when the sanctioned baseline changes without `--update-snapshots` / `mcp-test manifest update`. Merge-time supply-chain control, not runtime detection.
 - **Declarative quality gate** (`quality_gate:` in mcp-test.yaml): `require_security_tests`, `fail_on_severity`; emits `unified_summary.quality_gate` alongside SARIF/HTML and can fail CI when security tests were skipped.
 - **Expanded security rule catalogue** (OWASP-MCP, OWASP-LLM, agentic themes) in `security_rules.py` with `list_rules()` for report correlation.
 

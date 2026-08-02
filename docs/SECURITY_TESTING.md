@@ -41,6 +41,27 @@ quality_gate:
 
 JSON/HTML emit `unified_summary.quality_gate` (`status`, `reasons`, findings counts, catalogue size) alongside the legacy `gate` field and existing SARIF/HTML artifacts. Exit code is `1` when the quality gate fails (including “no security tests” when required).
 
+**Manifest / rug-pull gate** (opt-in supply-chain control at merge time):
+
+```yaml
+# mcp-test.yaml
+manifest_gate:
+  enabled: true
+  path: __snapshots__/mcp_manifest.snap   # optional; this is the default
+```
+
+On connect, the harness snapshots capabilities + tools/resources/prompts (names, descriptions, schemas) and fails the run if the live surface differs from the sanctioned baseline. Approve intentional changes with:
+
+```bash
+mcp-test --update-snapshots
+# or
+mcp-test manifest update
+mcp-test manifest check    # CI-friendly exit codes
+mcp-test manifest show     # print normalized JSON
+```
+
+Unlike runtime scanners (current state only), this gate enforces a **baseline** you version in-repo.
+
 **SARIF export** (GitHub Code Scanning):
 
 ```bash

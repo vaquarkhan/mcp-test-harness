@@ -539,6 +539,23 @@ async def test_noisy_output(mcp_server):
 
 First run creates the snapshot. Later runs compare against it. Update with `mcp-test --update-snapshots`.
 
+### Manifest rug-pull gate -- sanctioned MCP surface in CI
+
+Opt-in supply-chain control: snapshot the full tool/resource/prompt manifest and fail the PR if it changes without an approved update.
+
+```yaml
+# mcp-test.yaml
+manifest_gate:
+  enabled: true
+```
+
+```bash
+mcp-test manifest check    # exit 1 on rug-pull
+mcp-test manifest update   # rewrite baseline after intentional surface changes
+```
+
+See [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) and [docs/ROADMAP.md](docs/ROADMAP.md) (Moat).
+
 All assertions produce diff output on failure:
 
 ```

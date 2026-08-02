@@ -16,6 +16,7 @@ from typing import Any
 import yaml
 
 from mcp_test_harness.models import ReportFormat, TransportType
+from mcp_test_harness.manifest_gate import ManifestGatePolicy, parse_manifest_gate_policy
 from mcp_test_harness.quality_gate import QualityGatePolicy, parse_quality_gate_policy
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,7 @@ _KNOWN_TOP_KEYS = frozenset(
         "test",
         "report",
         "quality_gate",
+        "manifest_gate",
         "schema_validation",
         "validate_schema_each_parallel_worker",
         "schema_probe_call_tool",
@@ -38,6 +40,7 @@ _KNOWN_TOP_KEYS = frozenset(
     }
 )
 _KNOWN_QUALITY_GATE_KEYS = frozenset({"require_security_tests", "fail_on_severity"})
+_KNOWN_MANIFEST_GATE_KEYS = frozenset({"enabled", "path"})
 
 _KNOWN_SERVER_KEYS = frozenset({"command", "transport", "transport_options"})
 _KNOWN_TEST_KEYS = frozenset({"dirs", "timeout", "parallel", "workers"})
@@ -95,6 +98,8 @@ class HarnessConfig:
     schema_probe_call_tool: bool = True
     # Opt-in declarative quality gate (see ``quality_gate:`` in mcp-test.yaml).
     quality_gate: QualityGatePolicy = field(default_factory=QualityGatePolicy)
+    # Opt-in MCP surface rug-pull gate (see ``manifest_gate:``).
+    manifest_gate: ManifestGatePolicy = field(default_factory=ManifestGatePolicy)
 
 
 # ---------------------------------------------------------------------------
@@ -238,6 +243,12 @@ def _flatten_config(raw: dict[str, Any]) -> dict[str, Any]:
             result["quality_gate"] = parse_quality_gate_policy(qg)
         except ValueError as exc:
             raise ValueError(str(exc)) from exc
+
+    # -- manifest_gate section (deterministic supply-chain / rug-pull) --
+    mg = raw.get("manifest_gate", {})
+    if isinstance(mg, dict):
+        _warn_unknown_keys(mg, _KNOWN_MANIFEST_GATE_KEYS, "manifest_gate")
+        result["manifest_gate"] = parse_manifest_gate_policy(mg)
 
     # -- top-level scalars / lists --
     if "schema_validation" in raw:
@@ -515,6 +526,23 @@ def validate_config_file(path: Path) -> list[ConfigError]:
             except ValueError as exc:
                 line = _find_yaml_line(text, "fail_on_severity") if is_yaml else None
                 errors.append(ConfigError(str(exc), line=line))
+
+    # -- manifest_gate --
+    mg = raw.get("manifest_gate")
+    if mg is not None:
+        if not isinstance(mg, dict):
+            line = _find_yaml_line(text, "manifest_gate") if is_yaml else None
+            errors.append(ConfigError("'manifest_gate' must be a mapping", line=line))
+        else:
+            for key in mg:
+                if key not in _KNOWN_MANIFEST_GATE_KEYS:
+                    line = _find_yaml_line(text, key) if is_yaml else None
+                    errors.append(
+                        ConfigError(
+                            f"Unknown key in manifest_gate section: '{key}'",
+                            line=line,
+                        )
+                    )
 
     # -- schema_validation --
     sv = raw.get("schema_validation")

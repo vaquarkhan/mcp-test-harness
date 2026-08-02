@@ -33,7 +33,8 @@ def _build_parser() -> argparse.ArgumentParser:
             "`mcp-test generate` drafts tests from tools/list; "
             "`mcp-test experiment list` shows resiliency experiment templates; "
             "`mcp-test try` runs a zero-config conformance probe; "
-            "`mcp-test doctor` checks server handshake and lists tools (no tests required)."
+            "`mcp-test doctor` checks server handshake and lists tools (no tests required); "
+            "`mcp-test manifest` snapshots the MCP surface for rug-pull CI gates."
         ),
     )
 
@@ -503,6 +504,10 @@ def main(argv: list[str] | None = None) -> int:
         from mcp_test_harness.try_cli import run_conformance
 
         return run_conformance(av[1:])
+    if av and av[0] == "manifest":
+        from mcp_test_harness.manifest_gate import run_manifest
+
+        return run_manifest(av[1:])
     return asyncio.run(_async_main(av))
 
 
