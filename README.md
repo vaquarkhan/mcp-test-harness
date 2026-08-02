@@ -29,7 +29,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-handbook-0B5FFF?logo=readthedocs&logoColor=white)](https://vaquarkhan.github.io/mcp-test-harness/guide/)
 [![Examples](https://img.shields.io/badge/examples-demos-22C55E?logo=github)](https://vaquarkhan.github.io/mcp-test-harness/examples.html)
-[![Tests](https://img.shields.io/badge/tests-840%2B%20passing-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-1080%2B%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)](CONTRIBUTING.md#develop--test)
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
 [![Website](https://img.shields.io/badge/website-6366f1)](https://vaquarkhan.github.io/mcp-test-harness/)
@@ -63,7 +63,7 @@ Author: [Vaquar Khan](https://github.com/vaquarkhan) · **License:** [MIT](LICEN
 | Ship AI features without silent breakage | Automated pass/fail on every PR - no manual Inspector click-through |
 | Audit & governance evidence | JUnit / SARIF / HTML reports, conformance badges, security payload packs |
 | Lower cost of quality | One tool for functional, regression, performance, and resiliency - not three vendors |
-| Trust the gate | **840+** self-tests, **100%** library coverage, and e2e dogfood in CI |
+| Trust the gate | **1080+** self-tests, **100%** library coverage, and e2e dogfood in CI |
 
 **Not an LLM eval product.** It does not score model answers. It proves *your MCP server* is correct, fast enough, and hardened enough for production. Pair with runtime security ([MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) and IDE config scanning ([mcp-shark](https://github.com/mcp-shark/mcp-shark)). Positioning: [docs/POSITIONING.md](docs/POSITIONING.md) · comparison: [docs/COMPARISON.md](docs/COMPARISON.md).
 
@@ -114,7 +114,7 @@ MCP Test Harness is a pytest-style framework for MCP servers: the `mcp-test` CLI
 
 ### What ships end-to-end
 
-Everything below is **implemented, tested, and documented** in this repo (840+ tests, 100% lib coverage gate, e2e dogfood in CI). Version pins live only in [PyPI](https://pypi.org/project/mcp-test-harness/), [CHANGELOG.md](CHANGELOG.md), and install/Docker tags - not in this map.
+Everything below is **implemented, tested, and documented** in this repo (1080+ tests, 100% lib coverage gate, e2e dogfood in CI). Version pins live only in [PyPI](https://pypi.org/project/mcp-test-harness/), [CHANGELOG.md](CHANGELOG.md), and install/Docker tags - not in this map.
 
 | Area | Feature | Where to start |
 |------|---------|----------------|
@@ -202,13 +202,13 @@ Every diagram lives in [`docs/images/`](docs/images/). Quick reference:
 | [`ecosystem-map.png`](docs/images/ecosystem-map.png) | Position vs Inspector, conformance, evals, Bastion |
 | [`harness-bastion-pairing.png`](docs/images/harness-bastion-pairing.png) | Test in CI, secure in production |
 | [`testherness.png`](docs/images/testherness.png) | Quick-start overview |
-| [`dogfood-e2e.svg`](docs/images/dogfood-e2e.svg) | **Dogfood:** pytest runs `mcp-test` against bundled MCP fixtures (840+ tests, 100% lib coverage) |
+| [`dogfood-e2e.svg`](docs/images/dogfood-e2e.svg) | **Dogfood:** pytest runs `mcp-test` against bundled MCP fixtures (1080+ tests, 100% lib coverage) |
 
 ---
 
 ## We eat our own dogfood
 
-A test harness should prove itself. This repo runs **840+ pytest cases** with a **100% line coverage gate** on `src/mcp_test_harness`, plus **end-to-end dogfood** tests that spawn the real `mcp-test` CLI against a bundled FastMCP server:
+A test harness should prove itself. This repo runs **1080+ pytest cases** with a **100% line coverage gate** on `src/mcp_test_harness`, plus **end-to-end dogfood** tests that spawn the real `mcp-test` CLI against a bundled FastMCP server:
 
 <p align="center">
   <img src="docs/images/dogfood-e2e.svg" alt="Dogfood flow: pytest and coverage gate invoke mcp-test CLI against minimal FastMCP server and self-tests" width="100%" />
@@ -992,7 +992,7 @@ mcp-test-harness/
 +-- scripts/
 |   +-- verify_upstream.py
 |   +-- build_binary.py
-+-- tests/                          # 840+ tests; 100% line gate + e2e dogfood (see [docs/DEVELOPER.md](docs/DEVELOPER.md#end-to-end-dogfood))
++-- tests/                          # 1080+ tests; 100% line gate + e2e dogfood (see [docs/DEVELOPER.md](docs/DEVELOPER.md#end-to-end-dogfood))
 +-- docs/
 |   +-- README.md                   # documentation hub
 |   +-- index.md                    # short landing (e.g. GitHub Pages)

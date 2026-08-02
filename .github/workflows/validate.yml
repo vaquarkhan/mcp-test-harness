@@ -89,16 +89,15 @@ jobs:
           ./dist/mcp-test --version
 
       - name: Provider shim imports (sample of 22)
+        # Install from this checkout — PyPI may not have the bumped version yet (pre-tag / pre-publish).
         run: |
           pip install \
-            "mcp-test-harness-openai>=4.0.0" \
-            "mcp-test-harness-fastmcp>=4.0.0" \
-            "mcp-test-harness-langchain>=4.0.0"
+            ./packages/mcp-test-harness-openai \
+            ./packages/mcp-test-harness-fastmcp \
+            ./packages/mcp-test-harness-langchain
           python -c "import mcp_test_harness_openai, mcp_test_harness_fastmcp, mcp_test_harness_langchain; print('provider shims ok')"
 
-      - name: GitHub Action composite (try-mode against fixture)
-        uses: ./.github/actions/mcp-test
-        with:
-          try-mode: "true"
-          server-command: "python ${{ github.workspace }}/tests/fixtures/minimal_mcp_server.py"
-          harness-version: "4.0.0"
+      - name: Action-equivalent try-mode against fixture
+        # Same smoke as the composite Action, but use the editable checkout install — PyPI may not have 4.0.0 yet.
+        run: |
+          mcp-test try --server-command "python ${{ github.workspace }}/tests/fixtures/minimal_mcp_server.py"

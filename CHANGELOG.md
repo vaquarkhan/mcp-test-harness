@@ -8,6 +8,7 @@ All notable changes to this project are documented in this file. The format is b
 
 - **HTML scan report UI:** sticky scan TOC, quality-gate scorecard, full security findings table (severity/OWASP/framework/file + client severity filter), MCP contract-coverage % ring and coverage issue rows — still a self-contained CI artifact (no hosted dashboard).
 - **Documentation handbook** (`docs/HANDBOOK.md` + `html/guide/`): Bastion-style docs chrome (sidebar hub, handbook, getting started, security, reports) with security-first rationale, scan report map, feature map, and end references to the [MCP-Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html). README top nav / Go-to table mirrors Bastion pattern.
+- **Docs / CI hygiene:** marketing copy uses **1080+** tests (matches current suite); dist-smoke installs provider shims from checkout and runs try-mode against the editable install so CI is not blocked on unpublished PyPI `4.0.0`.
 
 ## [4.0.0] - 2026-08-02
 
