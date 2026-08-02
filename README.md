@@ -1,20 +1,52 @@
+﻿# MCP Test Harness
+
+<p align="center">
+  <a href="#mcp-test-harness"><strong>README</strong></a>
+  ·
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/guide/"><strong>Documentation</strong></a>
+  ·
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/examples.html"><strong>Examples</strong></a>
+  ·
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/features-deck.html"><strong>Features</strong></a>
+  ·
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/integrations.html"><strong>Integrations</strong></a>
+  ·
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html"><strong>Reports</strong></a>
+  ·
+  <a href="LICENSE"><strong>License</strong></a>
+  ·
+  <a href="SECURITY.md"><strong>Security</strong></a>
+</p>
+
 <p align="center">
   <img src="docs/images/hero-banner.png" alt="MCP Test Harness - pytest-style testing for MCP servers" width="100%" />
 </p>
 
-# MCP Test Harness
-
-[![PyPI version](https://img.shields.io/pypi/v/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
+[![PyPI version](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness/)
 [![PyPI downloads](https://static.pepy.tech/badge/mcp-test-harness)](https://pepy.tech/project/mcp-test-harness)
 [![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![CI](https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&label=CI)](https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-840%2B%20passing-brightgreen)]()
+[![Docs](https://img.shields.io/badge/docs-handbook-0B5FFF?logo=readthedocs&logoColor=white)](https://vaquarkhan.github.io/mcp-test-harness/guide/)
+[![Examples](https://img.shields.io/badge/examples-demos-22C55E?logo=github)](https://vaquarkhan.github.io/mcp-test-harness/examples.html)
+[![Tests](https://img.shields.io/badge/tests-1080%2B%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)](CONTRIBUTING.md#develop--test)
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
 [![Website](https://img.shields.io/badge/website-6366f1)](https://vaquarkhan.github.io/mcp-test-harness/)
 
-**Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`3.0.10`** (runtime, `mcp-test` entrypoint), **`dev`** and **`3.0.10-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
+**Current release: [4.0.0](https://pypi.org/project/mcp-test-harness/)** · Docker `4.0.0` · [CHANGELOG](CHANGELOG.md)
+
+| Go to | Link |
+|-------|------|
+| **Documentation handbook** | https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html |
+| **Docs hub** | https://vaquarkhan.github.io/mcp-test-harness/guide/ |
+| **Examples / demos** | https://vaquarkhan.github.io/mcp-test-harness/examples.html |
+| **Sample scan report** | https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html |
+| **Features deck** | https://vaquarkhan.github.io/mcp-test-harness/features-deck.html |
+| **Integrations** | https://vaquarkhan.github.io/mcp-test-harness/integrations.html |
+| **MCP-Bastion** (sister product — runtime security) | https://github.com/vaquarkhan/MCP-Bastion · [handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) |
+
+**Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`4.0.0`** (runtime, `mcp-test` entrypoint), **`dev`** and **`4.0.0-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan) · **License:** [MIT](LICENSE) ([NOTICE](NOTICE)) · **Cite:** [CITATION.cff](CITATION.cff) · **Sponsors:** [SPONSORS.md](SPONSORS.md)
 
@@ -31,7 +63,7 @@ Author: [Vaquar Khan](https://github.com/vaquarkhan) · **License:** [MIT](LICEN
 | Ship AI features without silent breakage | Automated pass/fail on every PR - no manual Inspector click-through |
 | Audit & governance evidence | JUnit / SARIF / HTML reports, conformance badges, security payload packs |
 | Lower cost of quality | One tool for functional, regression, performance, and resiliency - not three vendors |
-| Trust the gate | **840+** self-tests, **100%** library coverage, and e2e dogfood in CI |
+| Trust the gate | **1080+** self-tests, **100%** library coverage, and e2e dogfood in CI |
 
 **Not an LLM eval product.** It does not score model answers. It proves *your MCP server* is correct, fast enough, and hardened enough for production. Pair with runtime security ([MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)) and IDE config scanning ([mcp-shark](https://github.com/mcp-shark/mcp-shark)). Positioning: [docs/POSITIONING.md](docs/POSITIONING.md) · comparison: [docs/COMPARISON.md](docs/COMPARISON.md).
 
@@ -76,13 +108,13 @@ Zero-config probe: `mcp-test try --server-command "…"`. CI: Marketplace Action
 
 MCP Test Harness is a pytest-style framework for MCP servers: the `mcp-test` CLI discovers, runs, and reports tests automatically - replacing much of the manual validation you might do in the MCP Inspector. **Repository:** [github.com/vaquarkhan/mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness).
 
-> **Documentation:** [QUICK_START](docs/QUICK_START.md) · [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md) · [CI & reports](docs/CI_AND_REPORTS.md) · [performance](docs/PERFORMANCE.md) · [comparison](docs/COMPARISON.md) · [discovery checklist](docs/DISCOVERY.md). **Community:** Issues for bugs; PRs for docs and examples.
+> **Documentation:** [**Docs hub**](https://vaquarkhan.github.io/mcp-test-harness/guide/) · [**Handbook**](docs/HANDBOOK.md) ([published](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html)) · [QUICK_START](docs/QUICK_START.md) · [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md) · [CI & reports](docs/CI_AND_REPORTS.md) · [performance](docs/PERFORMANCE.md) · [comparison](docs/COMPARISON.md) · [discovery checklist](docs/DISCOVERY.md). Companion runtime: [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html). **Community:** Issues for bugs; PRs for docs and examples.
 
 ---
 
 ### What ships end-to-end
 
-Everything below is **implemented, tested, and documented** in this repo (840+ tests, 100% lib coverage gate, e2e dogfood in CI). Version pins live only in [PyPI](https://pypi.org/project/mcp-test-harness/), [CHANGELOG.md](CHANGELOG.md), and install/Docker tags - not in this map.
+Everything below is **implemented, tested, and documented** in this repo (1080+ tests, 100% lib coverage gate, e2e dogfood in CI). Version pins live only in [PyPI](https://pypi.org/project/mcp-test-harness/), [CHANGELOG.md](CHANGELOG.md), and install/Docker tags - not in this map.
 
 | Area | Feature | Where to start |
 |------|---------|----------------|
@@ -170,13 +202,13 @@ Every diagram lives in [`docs/images/`](docs/images/). Quick reference:
 | [`ecosystem-map.png`](docs/images/ecosystem-map.png) | Position vs Inspector, conformance, evals, Bastion |
 | [`harness-bastion-pairing.png`](docs/images/harness-bastion-pairing.png) | Test in CI, secure in production |
 | [`testherness.png`](docs/images/testherness.png) | Quick-start overview |
-| [`dogfood-e2e.svg`](docs/images/dogfood-e2e.svg) | **Dogfood:** pytest runs `mcp-test` against bundled MCP fixtures (840+ tests, 100% lib coverage) |
+| [`dogfood-e2e.svg`](docs/images/dogfood-e2e.svg) | **Dogfood:** pytest runs `mcp-test` against bundled MCP fixtures (1080+ tests, 100% lib coverage) |
 
 ---
 
 ## We eat our own dogfood
 
-A test harness should prove itself. This repo runs **840+ pytest cases** with a **100% line coverage gate** on `src/mcp_test_harness`, plus **end-to-end dogfood** tests that spawn the real `mcp-test` CLI against a bundled FastMCP server:
+A test harness should prove itself. This repo runs **1080+ pytest cases** with a **100% line coverage gate** on `src/mcp_test_harness`, plus **end-to-end dogfood** tests that spawn the real `mcp-test` CLI against a bundled FastMCP server:
 
 <p align="center">
   <img src="docs/images/dogfood-e2e.svg" alt="Dogfood flow: pytest and coverage gate invoke mcp-test CLI against minimal FastMCP server and self-tests" width="100%" />
@@ -224,10 +256,12 @@ MCP Test Harness supports **Responsible AI** and governance programs: schema con
 
 ## Documentation
 
+**Handbook (single entry):** [docs/HANDBOOK.md](docs/HANDBOOK.md) · [docs hub](https://vaquarkhan.github.io/mcp-test-harness/guide/) · [published handbook](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html) · companion [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html)  
 **Hub (table of all guides + suggested reading order):** [docs/README.md](docs/README.md)
 
 | Document | Contents |
 |----------|----------|
+| [docs/HANDBOOK.md](docs/HANDBOOK.md) | **Documentation handbook** - security-first rationale, CI scan report, feature map, end references |
 | [docs/QUICK_START.md](docs/QUICK_START.md) | **Fastest path** - install, `mcp-test init`, run |
 | [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | **Canonical reference** - setup, config, stdio/parallel/validation, assertions, reporting |
 | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) | **CI, JUnit, JSON, HTML** - do you need to *publish* test reports? (usually: no) |
@@ -301,15 +335,15 @@ MCP Test Harness is **deterministic** (your tests call the protocol directly; no
   <img src="docs/images/docker-distribution.png" alt="Install via pip, pull the GHCR container image, or use the standalone binary - three ways to run mcp-test" width="100%" />
 </p>
 
-**Current stable version:** **3.0.10** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
+**Current stable version:** **4.0.0** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
 
 ```bash
 pip install mcp-test-harness
 # pin, if you need a fixed version:
-# pip install mcp-test-harness==3.0.10
+# pip install mcp-test-harness==4.0.0
 ```
 
-**Same release as a container (GHCR, no local Python):** `docker pull ghcr.io/vaquarkhan/mcp-test-harness:3.0.10` or `:latest` - see the [image](#docker) section for `docker run` and dev tags.
+**Same release as a container (GHCR, no local Python):** `docker pull ghcr.io/vaquarkhan/mcp-test-harness:4.0.0` or `:latest` - see the [image](#docker) section for `docker run` and dev tags.
 
 **Optional** [mcplint](src/mcplint/) / MCP-Bastion pin helpers (transitive set can be **large**; same as a full Bastion install):
 
@@ -337,7 +371,7 @@ mcp-test --version
 
 **One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
 
-Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). Each **`v*`** git tag triggers CI that pushes **`ghcr.io/vaquarkhan/mcp-test-harness`**: e.g. **`:3.0.10`**, **`:latest`**, **`:3.0.10-dev`**, **`:dev`**. Quick pull: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. [All versions (GHCR)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). Each **`v*`** git tag triggers CI that pushes **`ghcr.io/vaquarkhan/mcp-test-harness`**: e.g. **`:4.0.0`**, **`:latest`**, **`:4.0.0-dev`**, **`:dev`**. Quick pull: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. [All versions (GHCR)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
 
 | Build | Description |
 |-------|-------------|
@@ -539,6 +573,23 @@ async def test_noisy_output(mcp_server):
 
 First run creates the snapshot. Later runs compare against it. Update with `mcp-test --update-snapshots`.
 
+### Manifest rug-pull gate -- sanctioned MCP surface in CI
+
+Opt-in supply-chain control: snapshot the full tool/resource/prompt manifest and fail the PR if it changes without an approved update.
+
+```yaml
+# mcp-test.yaml
+manifest_gate:
+  enabled: true
+```
+
+```bash
+mcp-test manifest check    # exit 1 on rug-pull
+mcp-test manifest update   # rewrite baseline after intentional surface changes
+```
+
+See [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) and [docs/ROADMAP.md](docs/ROADMAP.md) (Moat).
+
 All assertions produce diff output on failure:
 
 ```
@@ -708,7 +759,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test MCP Server
         id: mcp
-        uses: vaquarkhan/mcp-test-harness@v3.0.10
+        uses: vaquarkhan/mcp-test-harness@v4.0.0
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
@@ -719,7 +770,7 @@ jobs:
 Zero-config probe (no suite yet):
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v3.0.10
+- uses: vaquarkhan/mcp-test-harness@v4.0.0
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -743,7 +794,7 @@ Zero-config probe (no suite yet):
 | `conformance-level` | RFC-002 level name (Boot … Resilient) |
 | `conformance-level-num` | Numeric level (-1 to 4) |
 
-Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v3.0.10` - see [examples/example_github_actions.md](examples/example_github_actions.md).
+Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v4.0.0` - see [examples/example_github_actions.md](examples/example_github_actions.md).
 
 ## Plugins
 
@@ -941,7 +992,7 @@ mcp-test-harness/
 +-- scripts/
 |   +-- verify_upstream.py
 |   +-- build_binary.py
-+-- tests/                          # 840+ tests; 100% line gate + e2e dogfood (see [docs/DEVELOPER.md](docs/DEVELOPER.md#end-to-end-dogfood))
++-- tests/                          # 1080+ tests; 100% line gate + e2e dogfood (see [docs/DEVELOPER.md](docs/DEVELOPER.md#end-to-end-dogfood))
 +-- docs/
 |   +-- README.md                   # documentation hub
 |   +-- index.md                    # short landing (e.g. GitHub Pages)
@@ -989,29 +1040,29 @@ MCP Test Harness provides framework-specific testing helpers. Each package auto-
 
 | Package | Tests for | Version | Downloads |
 |---------|-----------|---------|-----------|
-| `mcp-test-harness` | Any MCP server (core) | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness)](https://pepy.tech/project/mcp-test-harness) |
-| `mcp-test-harness-fastmcp` | FastMCP servers | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-fastmcp)](https://pypi.org/project/mcp-test-harness-fastmcp/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-fastmcp)](https://pepy.tech/project/mcp-test-harness-fastmcp) |
-| `mcp-test-harness-openai` | OpenAI function calling | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-openai)](https://pypi.org/project/mcp-test-harness-openai/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-openai)](https://pepy.tech/project/mcp-test-harness-openai) |
-| `mcp-test-harness-anthropic` | Anthropic Claude tool use | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-anthropic)](https://pypi.org/project/mcp-test-harness-anthropic/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-anthropic)](https://pepy.tech/project/mcp-test-harness-anthropic) |
-| `mcp-test-harness-bedrock` | AWS Bedrock agents | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-bedrock)](https://pypi.org/project/mcp-test-harness-bedrock/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-bedrock)](https://pepy.tech/project/mcp-test-harness-bedrock) |
-| `mcp-test-harness-gemini` | Google Gemini | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-gemini)](https://pypi.org/project/mcp-test-harness-gemini/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-gemini)](https://pepy.tech/project/mcp-test-harness-gemini) |
-| `mcp-test-harness-langchain` | LangChain MCP tools | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-langchain)](https://pypi.org/project/mcp-test-harness-langchain/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-langchain)](https://pepy.tech/project/mcp-test-harness-langchain) |
-| `mcp-test-harness-crewai` | CrewAI agents | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-crewai)](https://pypi.org/project/mcp-test-harness-crewai/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-crewai)](https://pepy.tech/project/mcp-test-harness-crewai) |
-| `mcp-test-harness-llamaindex` | LlamaIndex tools | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-llamaindex)](https://pypi.org/project/mcp-test-harness-llamaindex/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-llamaindex)](https://pepy.tech/project/mcp-test-harness-llamaindex) |
-| `mcp-test-harness-groq` | Groq inference | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-groq)](https://pypi.org/project/mcp-test-harness-groq/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-groq)](https://pepy.tech/project/mcp-test-harness-groq) |
-| `mcp-test-harness-mistral` | Mistral AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-mistral)](https://pypi.org/project/mcp-test-harness-mistral/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-mistral)](https://pepy.tech/project/mcp-test-harness-mistral) |
-| `mcp-test-harness-cohere` | Cohere | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-cohere)](https://pypi.org/project/mcp-test-harness-cohere/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-cohere)](https://pepy.tech/project/mcp-test-harness-cohere) |
-| `mcp-test-harness-azure` | Azure OpenAI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-azure)](https://pypi.org/project/mcp-test-harness-azure/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-azure)](https://pepy.tech/project/mcp-test-harness-azure) |
-| `mcp-test-harness-vertexai` | Google Vertex AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-vertexai)](https://pypi.org/project/mcp-test-harness-vertexai/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-vertexai)](https://pepy.tech/project/mcp-test-harness-vertexai) |
-| `mcp-test-harness-huggingface` | Hugging Face Inference | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-huggingface)](https://pypi.org/project/mcp-test-harness-huggingface/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-huggingface)](https://pepy.tech/project/mcp-test-harness-huggingface) |
-| `mcp-test-harness-deepseek` | DeepSeek AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-deepseek)](https://pypi.org/project/mcp-test-harness-deepseek/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-deepseek)](https://pepy.tech/project/mcp-test-harness-deepseek) |
-| `mcp-test-harness-together` | Together AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-together)](https://pypi.org/project/mcp-test-harness-together/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-together)](https://pepy.tech/project/mcp-test-harness-together) |
-| `mcp-test-harness-fireworks` | Fireworks AI | [![PyPI](https://img.shields.io/pypi/v/mcp-test-harness-fireworks)](https://pypi.org/project/mcp-test-harness-fireworks/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-fireworks)](https://pepy.tech/project/mcp-test-harness-fireworks) |
-| `mcp-test-harness-ollama` | Ollama local models | [![PyPI](https://img.shields.io/badge/pypi-v3.0.10-blue)](https://pypi.org/project/mcp-test-harness-ollama/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-ollama/) |
-| `mcp-test-harness-openrouter` | OpenRouter gateway | [![PyPI](https://img.shields.io/badge/pypi-v3.0.10-blue)](https://pypi.org/project/mcp-test-harness-openrouter/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-openrouter/) |
-| `mcp-test-harness-litellm` | LiteLLM proxy | [![PyPI](https://img.shields.io/badge/pypi-v3.0.10-blue)](https://pypi.org/project/mcp-test-harness-litellm/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-litellm/) |
-| `mcp-test-harness-xai` | xAI Grok | [![PyPI](https://img.shields.io/badge/pypi-v3.0.10-blue)](https://pypi.org/project/mcp-test-harness-xai/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-xai/) |
-| `mcp-test-harness-autogen` | Microsoft AutoGen | [![PyPI](https://img.shields.io/badge/pypi-v3.0.10-blue)](https://pypi.org/project/mcp-test-harness-autogen/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-autogen/) |
+| `mcp-test-harness` | Any MCP server (core) | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness)](https://pepy.tech/project/mcp-test-harness) |
+| `mcp-test-harness-fastmcp` | FastMCP servers | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-fastmcp/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-fastmcp)](https://pepy.tech/project/mcp-test-harness-fastmcp) |
+| `mcp-test-harness-openai` | OpenAI function calling | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-openai/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-openai)](https://pepy.tech/project/mcp-test-harness-openai) |
+| `mcp-test-harness-anthropic` | Anthropic Claude tool use | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-anthropic/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-anthropic)](https://pepy.tech/project/mcp-test-harness-anthropic) |
+| `mcp-test-harness-bedrock` | AWS Bedrock agents | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-bedrock/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-bedrock)](https://pepy.tech/project/mcp-test-harness-bedrock) |
+| `mcp-test-harness-gemini` | Google Gemini | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-gemini/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-gemini)](https://pepy.tech/project/mcp-test-harness-gemini) |
+| `mcp-test-harness-langchain` | LangChain MCP tools | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-langchain/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-langchain)](https://pepy.tech/project/mcp-test-harness-langchain) |
+| `mcp-test-harness-crewai` | CrewAI agents | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-crewai/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-crewai)](https://pepy.tech/project/mcp-test-harness-crewai) |
+| `mcp-test-harness-llamaindex` | LlamaIndex tools | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-llamaindex/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-llamaindex)](https://pepy.tech/project/mcp-test-harness-llamaindex) |
+| `mcp-test-harness-groq` | Groq inference | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-groq/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-groq)](https://pepy.tech/project/mcp-test-harness-groq) |
+| `mcp-test-harness-mistral` | Mistral AI | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-mistral/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-mistral)](https://pepy.tech/project/mcp-test-harness-mistral) |
+| `mcp-test-harness-cohere` | Cohere | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-cohere/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-cohere)](https://pepy.tech/project/mcp-test-harness-cohere) |
+| `mcp-test-harness-azure` | Azure OpenAI | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-azure/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-azure)](https://pepy.tech/project/mcp-test-harness-azure) |
+| `mcp-test-harness-vertexai` | Google Vertex AI | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-vertexai/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-vertexai)](https://pepy.tech/project/mcp-test-harness-vertexai) |
+| `mcp-test-harness-huggingface` | Hugging Face Inference | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-huggingface/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-huggingface)](https://pepy.tech/project/mcp-test-harness-huggingface) |
+| `mcp-test-harness-deepseek` | DeepSeek AI | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-deepseek/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-deepseek)](https://pepy.tech/project/mcp-test-harness-deepseek) |
+| `mcp-test-harness-together` | Together AI | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-together/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-together)](https://pepy.tech/project/mcp-test-harness-together) |
+| `mcp-test-harness-fireworks` | Fireworks AI | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-fireworks/) | [![Downloads](https://static.pepy.tech/badge/mcp-test-harness-fireworks)](https://pepy.tech/project/mcp-test-harness-fireworks) |
+| `mcp-test-harness-ollama` | Ollama local models | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-ollama/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-ollama/) |
+| `mcp-test-harness-openrouter` | OpenRouter gateway | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-openrouter/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-openrouter/) |
+| `mcp-test-harness-litellm` | LiteLLM proxy | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-litellm/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-litellm/) |
+| `mcp-test-harness-xai` | xAI Grok | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-xai/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-xai/) |
+| `mcp-test-harness-autogen` | Microsoft AutoGen | [![PyPI](https://img.shields.io/badge/pypi-v4.0.0-blue)](https://pypi.org/project/mcp-test-harness-autogen/) | [![Downloads](https://img.shields.io/badge/downloads-pending%20PyPI-lightgrey)](https://pypi.org/project/mcp-test-harness-autogen/) |
 
 > **Note:** for optional security-oriented version checks in CI, install `mcp-test-harness[mcplint]` (or `mcplint`) to include `mcp-bastion-python` helpers such as `bastion_version()`.
 

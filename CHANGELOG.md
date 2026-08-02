@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Added
 
+- **HTML scan report UI:** sticky scan TOC, quality-gate scorecard, full security findings table (severity/OWASP/framework/file + client severity filter), MCP contract-coverage % ring and coverage issue rows — still a self-contained CI artifact (no hosted dashboard).
+- **Documentation handbook** (`docs/HANDBOOK.md` + `html/guide/`): Bastion-style docs chrome (sidebar hub, handbook, getting started, security, reports) with security-first rationale, scan report map, feature map, and end references to the [MCP-Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html). README top nav / Go-to table mirrors Bastion pattern.
+- **Docs / CI hygiene:** marketing copy uses **1080+** tests (matches current suite); dist-smoke installs provider shims from checkout and runs try-mode against the editable install so CI is not blocked on unpublished PyPI `4.0.0`.
+
+## [4.0.0] - 2026-08-02
+
+### Added
+
+- **Manifest / rug-pull gate** (`manifest_gate:` + `mcp-test manifest`): deterministic snapshot of the full MCP surface (tools/resources/prompts schemas + capabilities) that fails CI when the sanctioned baseline changes without `--update-snapshots` / `mcp-test manifest update`. Merge-time supply-chain control, not runtime detection.
 - **Declarative quality gate** (`quality_gate:` in mcp-test.yaml): `require_security_tests`, `fail_on_severity`; emits `unified_summary.quality_gate` alongside SARIF/HTML and can fail CI when security tests were skipped.
 - **Expanded security rule catalogue** (OWASP-MCP, OWASP-LLM, agentic themes) in `security_rules.py` with `list_rules()` for report correlation.
 
@@ -13,6 +22,10 @@ All notable changes to this project are documented in this file. The format is b
 
 - **`mcp-test generate`:** docstring closers were truncated to `.""` (SyntaxError); now emit valid `"""`.
 - **`--update-snapshots`:** CLI flag is applied at runtime so corrupted/outdated `.snap` files are rewritten (was parsed into config but ignored).
+
+### Changed
+
+- **Major version 4.0.0** — CI quality gate + MCP surface integrity are first-class product surfaces; all **23** PyPI artifacts and Marketplace Action pins align at **4.0.0**.
 
 ## [3.0.10] - 2026-08-01
 

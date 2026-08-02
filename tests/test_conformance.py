@@ -43,7 +43,7 @@ def _session(
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="",
-        harness_version="3.0.10",
+        harness_version="4.0.0",
         passed=passed,
         failed=failed,
         coverage={"summary": {"tools_tested": tools_tested}, "gaps": {}},

@@ -21,6 +21,23 @@ This roadmap groups planned capabilities into practical delivery phases while pr
 4. ~~Throughput + baseline-based performance regression gates~~ — **shipped:** `assert_throughput` (`max_p99_ms`, `max_error_rate`), `assert_latency_within_baseline`.
 5. ~~Stateless MCP (SEP-2575) dual mode~~ — **shipped:** `mcp-test conformance stateless`, `assert_stateless_throughput`, RFC-006, [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md).
 
+## Moat (deterministic CI gate — build these)
+
+Filter: (a) deterministic/reproducible, (b) something a scanner or interactive inspector cannot do well, (c) MCP-specific. No LLM judge, no always-on hosted dashboard, no generic API load farm.
+
+| Tier | Initiative | Status |
+|------|------------|--------|
+| **1** | **Manifest snapshot / rug-pull gate** — sanctioned baseline of tools/resources/prompts; fail PR on unapproved surface change | **Shipped (this release track):** `manifest_gate:` + `mcp-test manifest` |
+| **1** | Persisted history + trend gates (files/artifacts + static Pages report; not a live server) | Next |
+| **1** | Determinism / flakiness detector (N-run per-tool scores) | Next |
+| **1** | Spec-version + self-version compatibility matrix | Next |
+| **2** | Static MCP rule engine (heuristic CI rules; not live threat intel) | Partial via `security_rules` / quality_gate |
+| **2** | Contract coverage as a first-class threshold gate | Partial map shipped; threshold gate next |
+| **2** | Golden traffic replay (Bastion/proxy → CI) | Later |
+| **3** | Governance evidence packs, token/output budgets, regression autobisect | Later |
+
+**Do not build:** LLM playground / model-vs-model scoring; always-on multi-tenant dashboard; out-scanning mcp-scan on general threat research; datacenter-scale generic load testing.
+
 ## Later (platform and enterprise)
 
 1. Contract recording/replay and compatibility matrix runs.
@@ -38,6 +55,7 @@ Core harness should own:
 - protocol-aware assertions and CI gates
 - reproducible local/CI reports
 - opt-in declarative `quality_gate` + OWASP/MCP rule metadata in SARIF/JSON/HTML
+- opt-in `manifest_gate` (merge-time MCP surface integrity)
 
 Core harness should not replace:
 
@@ -45,6 +63,7 @@ Core harness should not replace:
 - full observability backends
 - org-specific policy engines
 - SonarQube / hosted quality SaaS (we emit SARIF into GitHub Code Scanning instead)
+- interactive MCP playgrounds or LLM-as-judge accuracy scoring
 
 Those remain integrations/plugins.
 

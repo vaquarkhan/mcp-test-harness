@@ -1,9 +1,10 @@
-# MCP Test Harness — documentation
+﻿# MCP Test Harness — documentation
 
 **Published-style entry (e.g. GitHub Pages) for the `docs/` folder.** The canonical **hub** with adoption paths and the full table of documents is [README.md](README.md).
 
 | Start here | Link |
 |------------|------|
+| **Documentation handbook** (single handbook — Bastion-style) | [HANDBOOK.md](HANDBOOK.md) · [published HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html) |
 | **Docs hub** (read first) | [README.md](README.md) |
 | **Changelog (releases, upgrades)** | [CHANGELOG.md](../CHANGELOG.md) |
 | **Contributing** | [CONTRIBUTING.md](../CONTRIBUTING.md) |

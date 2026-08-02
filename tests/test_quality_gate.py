@@ -32,7 +32,7 @@ def _session(*cases: CaseResult) -> SessionResults:
         total_duration_ms=10.0,
         server_capabilities={},
         protocol_version="2025-03-26",
-        harness_version="3.0.10",
+        harness_version="4.0.0",
         passed=sum(1 for c in cases if c.status == CaseStatus.PASSED),
         failed=sum(1 for c in cases if c.status == CaseStatus.FAILED),
         errored=0,
