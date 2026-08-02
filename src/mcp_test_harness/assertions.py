@@ -18,7 +18,7 @@ import weakref
 from pathlib import Path
 from typing import Any, Literal
 
-from mcp_test_harness.snapshots import SnapshotManager
+from mcp_test_harness.snapshots import SnapshotManager, cli_update_snapshots
 from mcp_test_harness.coverage import (
     record_auth_test,
     record_prompt,
@@ -530,11 +530,12 @@ async def assert_snapshot(
     working = _drop_field_paths(working, ignore_fields)
     working = _apply_mask_strings(working, patterns if patterns else None)
 
-    mgr = SnapshotManager(update=update)
+    effective_update = update or cli_update_snapshots()
+    mgr = SnapshotManager(update=effective_update)
     snap_path = mgr.get_snapshot_path(test_file, snapshot_name)
     stored = mgr.read_snapshot(snap_path)
 
-    if stored is None or update:
+    if stored is None or effective_update:
         mgr.write_snapshot(snap_path, working)
         return
 

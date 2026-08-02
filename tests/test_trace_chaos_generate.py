@@ -127,9 +127,17 @@ def test_example_arguments_from_schema() -> None:
 
 
 def test_render_test_module() -> None:
+    import ast
+
     src = render_test_module([_FakeTool("echo")])
     assert "test_tool_echo_happy_path" in src
     assert "assert_tool_call" in src
+    assert '"""Happy-path call for tool ``echo``."""' in src
+    assert '"""Tool ``echo`` should reject invalid input."""' in src
+    # Regression: truncated closers were `.""` (2 quotes) → SyntaxError
+    assert 'invalid input.""\n' not in src
+    assert '``echo``.""\n' not in src
+    ast.parse(src)  # must be valid Python
 
 
 def test_trace_timeline_html() -> None:

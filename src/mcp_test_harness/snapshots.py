@@ -4,8 +4,27 @@ from __future__ import annotations
 
 import json
 import difflib
+from contextvars import ContextVar, Token
 from pathlib import Path
 from typing import Any
+
+# Set by the CLI when ``--update-snapshots`` is passed (see cli._run_harness).
+_cli_update_snapshots: ContextVar[bool] = ContextVar("_cli_update_snapshots", default=False)
+
+
+def set_cli_update_snapshots(enabled: bool) -> Token[bool]:
+    """Enable/disable CLI-driven snapshot rewrite for the current context."""
+    return _cli_update_snapshots.set(bool(enabled))
+
+
+def reset_cli_update_snapshots(token: Token[bool]) -> None:
+    """Restore the previous CLI update-snapshots flag."""
+    _cli_update_snapshots.reset(token)
+
+
+def cli_update_snapshots() -> bool:
+    """True when ``mcp-test --update-snapshots`` is active for this run."""
+    return _cli_update_snapshots.get()
 
 
 class SnapshotManager:
@@ -84,7 +103,7 @@ class SnapshotManager:
         snap_path = self.get_snapshot_path(test_file, test_name)
         stored = self.read_snapshot(snap_path)
 
-        if stored is None or self._update:
+        if stored is None or self._update or cli_update_snapshots():
             self.write_snapshot(snap_path, actual)
             return
 
