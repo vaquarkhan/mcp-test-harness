@@ -1,12 +1,12 @@
-# Documentation bible
+﻿# Documentation handbook
 
 **Version:** 4.0.0  
 **Purpose:** Single entry point for the full system — concepts, security-first rationale, CI scan report, feature map, operate recipes, and companion references.  
-**Published:** https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html  
-**Source:** this file (`docs/BIBLE.md`)
+**Published:** https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html  
+**Source:** this file (`docs/HANDBOOK.md`)
 
-> Prefer this handbook over stuffing the root README. The README stays a thin index; **this page is the bible**.  
-> Companion runtime bible: [MCP-Bastion Documentation bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
+> Prefer this handbook over stuffing the root README. The README stays a thin index; **this page is the handbook**.  
+> Companion runtime handbook: [MCP-Bastion Documentation handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
 
 ---
 
@@ -50,7 +50,7 @@ Developer / CI
 
 ---
 
-## How to use this bible
+## How to use this handbook
 
 | You want… | Go to |
 |-----------|--------|
@@ -62,7 +62,7 @@ Developer / CI
 | Ecosystem map (Inspector, mcp-scan, Bastion) | [COMPARISON.md](COMPARISON.md) · [POSITIONING.md](POSITIONING.md) |
 | Moat roadmap (deterministic only) | [ROADMAP.md](ROADMAP.md) |
 | CRA / SBOM evidence | [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md) |
-| Runtime enforce (companion) | [MCP-Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) |
+| Runtime enforce (companion) | [MCP-Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) |
 
 **Repos:** MCP Test Harness = **CI test gate** (`mcp-test-harness`).  
 **MCP-Bastion** = runtime **security engine** (`mcp-bastion-python`). They pair; they do not replace each other.
@@ -113,7 +113,7 @@ Security-first here means: **fail the PR when behavioral defenses or the sanctio
 
 ### What Bastion owns (runtime)
 
-See the [Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html): prompt guard, PII vault/redaction, rate/cost, RBAC, schema validation, replay, proxy boundary, local dashboard.
+See the [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html): prompt guard, PII vault/redaction, rate/cost, RBAC, schema validation, replay, proxy boundary, local dashboard.
 
 ```text
 Scan / config (mcp-shark, Bastion scan)
@@ -200,7 +200,7 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 ## Part 6 — Learning paths
 
 1. **Developer (30 min):** [QUICK_START](QUICK_START.md) → feature demo packs → one HTML report locally  
-2. **Security reviewer:** Part 2 → [SECURITY_TESTING](SECURITY_TESTING.md) → enable `quality_gate` + `manifest_gate` → SARIF in Code Scanning → [Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) for runtime  
+2. **Security reviewer:** Part 2 → [SECURITY_TESTING](SECURITY_TESTING.md) → enable `quality_gate` + `manifest_gate` → SARIF in Code Scanning → [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) for runtime  
 3. **Platform / perf:** [PERFORMANCE](PERFORMANCE.md) → baselines → RFC-006 stateless  
 4. **Compliance:** [CRA_COMPLIANCE](CRA_COMPLIANCE.md) → [ENTERPRISE_GOVERNANCE](ENTERPRISE_GOVERNANCE.md) → evidence packs  
 
@@ -225,7 +225,7 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 
 ### This project
 
-- https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html
+- https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html
 - https://vaquarkhan.github.io/mcp-test-harness/
 - https://vaquarkhan.github.io/mcp-test-harness/compare.html
 - https://vaquarkhan.github.io/mcp-test-harness/examples.html
@@ -237,7 +237,7 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 
 | Reference | Why it matters |
 |-----------|----------------|
-| [MCP-Bastion Documentation bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) | Canonical runtime security handbook — attack→defense, dashboard, pillars |
+| [MCP-Bastion Documentation handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) | Canonical runtime security handbook — attack→defense, dashboard, pillars |
 | [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) | Enforce in production what CI verified |
 | [Bastion attack demos](https://vaquarkhan.github.io/MCP-Bastion/guide/attack-demos.html) | Runnable ATTACK → BLOCK/REDACT stories |
 | [Bastion feature deep dive](https://vaquarkhan.github.io/MCP-Bastion/guide/feature-deep-dive.html) | Issue → control → benefit for every pillar |
@@ -251,4 +251,4 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 ---
 
 MCP Test Harness 4.0.0 · MIT License · Author: Vaquar Khan  
-Website · [Source markdown](https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/BIBLE.md)
+Website · [Source markdown](https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/HANDBOOK.md)

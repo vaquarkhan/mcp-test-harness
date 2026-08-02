@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -7,7 +7,7 @@ All notable changes to this project are documented in this file. The format is b
 ### Added
 
 - **HTML scan report UI:** sticky scan TOC, quality-gate scorecard, full security findings table (severity/OWASP/framework/file + client severity filter), MCP contract-coverage % ring and coverage issue rows — still a self-contained CI artifact (no hosted dashboard).
-- **Documentation bible** (`docs/BIBLE.md` + `html/guide/bible.html`): Bastion-style handbook with security-first rationale, scan report map, feature map, and end references to the [MCP-Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
+- **Documentation handbook** (`docs/HANDBOOK.md` + `html/guide/handbook.html`): Bastion-style handbook with security-first rationale, scan report map, feature map, and end references to the [MCP-Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
 
 ## [4.0.0] - 2026-08-02
 

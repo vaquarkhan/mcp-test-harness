@@ -1,8 +1,8 @@
-# Security testing
+﻿# Security testing
 
 MCP Test Harness catches **security regressions in CI** using deterministic, MCP-aware tests — without becoming a runtime WAF.
 
-**Why security-first:** see the [Documentation bible — Part 2](BIBLE.md#part-2--why-security-first) ([HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html#security-first)). Runtime enforce: [MCP-Bastion bible](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
+**Why security-first:** see the [Documentation handbook — Part 2](HANDBOOK.md#part-2--why-security-first) ([HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html#security-first)). Runtime enforce: [MCP-Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
 
 ## Shipped capabilities
 
