@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security testing | MCP Test Harness Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/docs.css">
+</head>
+<body class="docs-body">
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="docs-header">
+  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">4.0.0</span></a>
+  <nav class="docs-topnav" aria-label="Docs top">
+    <a href="index.html" class="active">Docs</a>
+    <a href="../integrations.html">Integrations</a>
+    <a href="../features-deck.html">Features</a>
+    <a href="https://github.com/vaquarkhan/mcp-test-harness">GitHub</a>
+    <a class="accent" href="https://pypi.org/project/mcp-test-harness/">PyPI</a>
+  </nav>
+  <button type="button" class="docs-mobile-toggle" id="docs-menu" aria-expanded="false" aria-controls="docs-sidebar">Menu</button>
+</header>
+<div class="docs-shell">
+  <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+    <div class="docs-side-group"><div class="docs-side-label">Start here</div>
+      <a href="index.html">Documentation Home</a>
+      <a href="handbook.html">Documentation handbook</a>
+      <a href="getting-started.html">Getting started</a>
+    </div>
+    <div class="docs-side-group"><div class="docs-side-label">Security</div>
+      <a href="handbook.html#security-first">Why security-first</a>
+      <a href="security.html" class="active">Security testing</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">Payloads &amp; gates</a>
+      <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html" target="_blank" rel="noopener">Bastion (runtime)</a>
+    </div>
+  </aside>
+  <main class="docs-main" id="content">
+    <p class="docs-crumb"><a href="index.html">Docs</a> / Security testing</p>
+    <h1>Security testing</h1>
+    <p>MCP Test Harness owns the <strong>CI gate</strong>: deterministic security payloads, auth boundaries, quality gate, and manifest rug-pull. Runtime enforcement stays with <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html" target="_blank" rel="noopener">MCP-Bastion</a>.</p>
+    <div class="docs-callout">
+      Full rationale: <a href="handbook.html#security-first">Why security-first</a> in the handbook.
+    </div>
+    <h2>What to enable</h2>
+    <pre class="docs-pre">quality_gate:
+  require_security_tests: true
+  fail_on_severity: high
+manifest_gate:
+  enabled: true
+  path: __snapshots__/mcp_manifest.snap</pre>
+    <h2>Commands</h2>
+    <pre class="docs-pre">mcp-test -m security
+mcp-test --sarif-output findings.sarif
+mcp-test manifest check
+mcp-test --report-format html --report-output report.html</pre>
+    <h2>Lifecycle</h2>
+    <pre class="docs-pre">Scan / config → Test / CI (this harness) → Enforce / runtime (Bastion)</pre>
+    <p>Canonical guide: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">SECURITY_TESTING.md</a></p>
+    <footer class="docs-footer">MCP Test Harness 4.0.0 · <a href="handbook.html">Handbook</a></footer>
+  </main>
+</div>
+<script src="assets/docs.js"></script>
+</body>
+</html>

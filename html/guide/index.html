@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation Home | MCP Test Harness Docs</title>
+<meta name="description" content="Enterprise documentation for MCP Test Harness — deterministic CI gate for MCP servers. Handbook, security-first guides, reports, and Bastion pairing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/docs.css">
+</head>
+<body class="docs-body">
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="docs-header">
+  <a class="docs-brand" href="index.html">
+    <span class="docs-mark">MT</span>
+    <span>MCP Test Harness</span>
+    <span class="docs-ver">4.0.0</span>
+  </a>
+  <nav class="docs-topnav" aria-label="Docs top">
+    <a href="index.html" class="active">Docs</a>
+    <a href="../integrations.html">Integrations</a>
+    <a href="../features-deck.html">Features</a>
+    <a href="https://github.com/vaquarkhan/mcp-test-harness">GitHub</a>
+    <a class="accent" href="https://pypi.org/project/mcp-test-harness/">PyPI</a>
+  </nav>
+  <button type="button" class="docs-mobile-toggle" id="docs-menu" aria-expanded="false" aria-controls="docs-sidebar">Menu</button>
+</header>
+
+<div class="docs-shell">
+  <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+    <div class="docs-side-group">
+      <div class="docs-side-label">Start here</div>
+      <a href="index.html" class="active">Documentation Home</a>
+      <a href="handbook.html"><strong>Documentation handbook</strong></a>
+      <a href="getting-started.html">Getting started</a>
+      <a href="../examples.html">Examples / demos</a>
+      <a href="../reports/sample_mcp_test_report.html">Sample scan report</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Guides</div>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/QUICK_START.md">Quick start</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/TUTORIAL.md">Tutorial (stateful)</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/TUTORIAL_STATELESS.md">Tutorial (stateless)</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/DEVELOPER_GUIDE.md">Developer guide</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/PERFORMANCE.md">Performance</a>
+      <a href="../integrations.html">Integrations</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Security</div>
+      <a href="handbook.html#security-first">Why security-first</a>
+      <a href="security.html">Security testing</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">Payloads &amp; gates</a>
+      <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html" target="_blank" rel="noopener">Bastion (runtime)</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Reference</div>
+      <a href="reports.html">CI &amp; reports</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/COMPARISON.md">Ecosystem comparison</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/ARCHITECTURE.md">Architecture</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/DOCKER.md">Docker</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/RELEASING.md">Releasing</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Compliance</div>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/CRA_COMPLIANCE.md">CRA &amp; SBOM</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/ENTERPRISE_GOVERNANCE.md">Enterprise governance</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Contribute</div>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/CONTRIBUTING.md">Contributing</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/SECURITY.md">Security policy</a>
+    </div>
+  </aside>
+
+  <main class="docs-main" id="content">
+    <p class="docs-crumb">MCP Test Harness Documentation</p>
+    <h1>Documentation Home</h1>
+    <p>
+      Enterprise documentation for MCP Test Harness — the <strong>deterministic, CI-native gate</strong> for
+      Model Context Protocol servers. Structured like large-platform handbooks: concepts, getting started,
+      how-to guides, and reference.
+    </p>
+    <p class="docs-meta">
+      <span>Current release: <strong>4.0.0</strong></span>
+      <span><code>pip install mcp-test-harness==4.0.0</code></span>
+    </p>
+
+    <div class="docs-callout">
+      Prefer the <a href="handbook.html"><strong>Documentation handbook</strong></a> as the single entry point.
+      The README stays a thin index — same pattern as
+      <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/" target="_blank" rel="noopener">MCP-Bastion Docs</a>.
+    </div>
+
+    <h2>Start here</h2>
+    <div class="docs-cards">
+      <a class="docs-card" href="handbook.html">
+        <h3>Documentation handbook</h3>
+        <p>Visual tour, security-first rationale, CI scan report, feature map, operate recipes, Bastion pairing.</p>
+      </a>
+      <a class="docs-card" href="getting-started.html">
+        <h3>Getting started</h3>
+        <p>Install → <code>mcp-test init</code> → first green run in minutes.</p>
+      </a>
+      <a class="docs-card" href="../examples.html">
+        <h3>Examples / demos</h3>
+        <p>Feature demos for functional, regression, performance, and security.</p>
+      </a>
+      <a class="docs-card" href="../reports/sample_mcp_test_report.html">
+        <h3>Sample scan report</h3>
+        <p>Static HTML CI artifact — gate scorecard, findings table, contract coverage.</p>
+      </a>
+      <a class="docs-card" href="security.html">
+        <h3>Security testing</h3>
+        <p>Payload packs, quality_gate, manifest rug-pull, SARIF — CI owns the gate.</p>
+      </a>
+      <a class="docs-card" href="https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html" target="_blank" rel="noopener">
+        <h3>Bastion runtime handbook</h3>
+        <p>Companion product: enforce in production what CI verified.</p>
+      </a>
+    </div>
+
+    <h2>Learning paths</h2>
+    <ol>
+      <li><strong>Developer (minutes):</strong> Getting started → Examples → Developer guide</li>
+      <li><strong>Security reviewer:</strong> Handbook (security-first) → Security testing → Bastion runtime handbook</li>
+      <li><strong>Platform / perf:</strong> Performance → Stateless tutorial → Docker</li>
+      <li><strong>Compliance:</strong> CRA &amp; SBOM → Enterprise governance → scan report evidence</li>
+    </ol>
+
+    <h2>Scan → Test → Enforce</h2>
+    <pre class="docs-pre">Scan / config (mcp-shark, Bastion scan)
+        →  Test / CI gate (MCP Test Harness)
+        →  Enforce / runtime (MCP-Bastion)</pre>
+
+    <footer class="docs-footer">
+      MCP Test Harness 4.0.0 ·
+      <a href="../index.html">Website</a> ·
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/HANDBOOK.md">Source markdown</a> ·
+      Pattern inspired by <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/" target="_blank" rel="noopener">MCP-Bastion Docs</a>
+    </footer>
+  </main>
+</div>
+<script src="assets/docs.js"></script>
+</body>
+</html>

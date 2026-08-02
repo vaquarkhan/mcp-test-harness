@@ -3,13 +3,19 @@
 <p align="center">
   <a href="#mcp-test-harness"><strong>README</strong></a>
   ·
-  <a href="CONTRIBUTING.md"><strong>Contributing</strong></a>
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/guide/"><strong>Documentation</strong></a>
   ·
-  <a href="LICENSE"><strong>MIT license</strong></a>
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/examples.html"><strong>Examples</strong></a>
   ·
-  <a href=".github/SECURITY.md"><strong>Security</strong></a>
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/features-deck.html"><strong>Features</strong></a>
   ·
-  <a href="docs/HANDBOOK.md"><strong>Documentation</strong></a>
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/integrations.html"><strong>Integrations</strong></a>
+  ·
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html"><strong>Reports</strong></a>
+  ·
+  <a href="LICENSE"><strong>License</strong></a>
+  ·
+  <a href="SECURITY.md"><strong>Security</strong></a>
 </p>
 
 <p align="center">
@@ -21,11 +27,24 @@
 [![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![CI](https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&label=CI)](https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Docs](https://img.shields.io/badge/docs-handbook-0B5FFF?logo=readthedocs&logoColor=white)](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html)
+[![Docs](https://img.shields.io/badge/docs-handbook-0B5FFF?logo=readthedocs&logoColor=white)](https://vaquarkhan.github.io/mcp-test-harness/guide/)
+[![Examples](https://img.shields.io/badge/examples-demos-22C55E?logo=github)](https://vaquarkhan.github.io/mcp-test-harness/examples.html)
 [![Tests](https://img.shields.io/badge/tests-840%2B%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)](CONTRIBUTING.md#develop--test)
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
 [![Website](https://img.shields.io/badge/website-6366f1)](https://vaquarkhan.github.io/mcp-test-harness/)
+
+**Current release: [4.0.0](https://pypi.org/project/mcp-test-harness/)** · Docker `4.0.0` · [CHANGELOG](CHANGELOG.md)
+
+| Go to | Link |
+|-------|------|
+| **Documentation handbook** | https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html |
+| **Docs hub** | https://vaquarkhan.github.io/mcp-test-harness/guide/ |
+| **Examples / demos** | https://vaquarkhan.github.io/mcp-test-harness/examples.html |
+| **Sample scan report** | https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html |
+| **Features deck** | https://vaquarkhan.github.io/mcp-test-harness/features-deck.html |
+| **Integrations** | https://vaquarkhan.github.io/mcp-test-harness/integrations.html |
+| **MCP-Bastion** (sister product — runtime security) | https://github.com/vaquarkhan/MCP-Bastion · [handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) |
 
 **Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`4.0.0`** (runtime, `mcp-test` entrypoint), **`dev`** and **`4.0.0-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
 
@@ -89,7 +108,7 @@ Zero-config probe: `mcp-test try --server-command "…"`. CI: Marketplace Action
 
 MCP Test Harness is a pytest-style framework for MCP servers: the `mcp-test` CLI discovers, runs, and reports tests automatically - replacing much of the manual validation you might do in the MCP Inspector. **Repository:** [github.com/vaquarkhan/mcp-test-harness](https://github.com/vaquarkhan/mcp-test-harness).
 
-> **Documentation:** [**Handbook**](docs/HANDBOOK.md) ([published](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html)) · [QUICK_START](docs/QUICK_START.md) · [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md) · [CI & reports](docs/CI_AND_REPORTS.md) · [performance](docs/PERFORMANCE.md) · [comparison](docs/COMPARISON.md) · [discovery checklist](docs/DISCOVERY.md). Companion runtime: [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html). **Community:** Issues for bugs; PRs for docs and examples.
+> **Documentation:** [**Docs hub**](https://vaquarkhan.github.io/mcp-test-harness/guide/) · [**Handbook**](docs/HANDBOOK.md) ([published](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html)) · [QUICK_START](docs/QUICK_START.md) · [DEVELOPER_GUIDE](docs/DEVELOPER_GUIDE.md) · [CI & reports](docs/CI_AND_REPORTS.md) · [performance](docs/PERFORMANCE.md) · [comparison](docs/COMPARISON.md) · [discovery checklist](docs/DISCOVERY.md). Companion runtime: [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html). **Community:** Issues for bugs; PRs for docs and examples.
 
 ---
 
@@ -237,7 +256,7 @@ MCP Test Harness supports **Responsible AI** and governance programs: schema con
 
 ## Documentation
 
-**Handbook (single entry):** [docs/HANDBOOK.md](docs/HANDBOOK.md) · [published HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html) · companion [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html)  
+**Handbook (single entry):** [docs/HANDBOOK.md](docs/HANDBOOK.md) · [docs hub](https://vaquarkhan.github.io/mcp-test-harness/guide/) · [published handbook](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html) · companion [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html)  
 **Hub (table of all guides + suggested reading order):** [docs/README.md](docs/README.md)
 
 | Document | Contents |

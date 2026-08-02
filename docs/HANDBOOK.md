@@ -225,7 +225,11 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 
 ### This project
 
+- https://vaquarkhan.github.io/mcp-test-harness/guide/ (docs hub)
 - https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html
+- https://vaquarkhan.github.io/mcp-test-harness/guide/getting-started.html
+- https://vaquarkhan.github.io/mcp-test-harness/guide/security.html
+- https://vaquarkhan.github.io/mcp-test-harness/guide/reports.html
 - https://vaquarkhan.github.io/mcp-test-harness/
 - https://vaquarkhan.github.io/mcp-test-harness/compare.html
 - https://vaquarkhan.github.io/mcp-test-harness/examples.html
