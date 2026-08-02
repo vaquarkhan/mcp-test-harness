@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "4.0.0"
+__version__ = "4.0.1"
 
 from mcp_test_harness_cohere.helpers import (
     assert_cohere_tool,

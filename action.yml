@@ -28,7 +28,7 @@ inputs:
     required: false
     default: "json"
   harness-version:
-    description: "Version of mcp-test-harness to install (e.g. 4.0.0). Defaults to latest."
+    description: "Version of mcp-test-harness to install (e.g. 4.0.1). Defaults to latest."
     required: false
     default: "latest"
   sarif-output:

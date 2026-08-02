@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness-ollama"
-version = "4.0.0"
+version = "4.0.1"
 description = "Ollama local models testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ classifiers = [
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-test-harness>=4.0.0",
+  "mcp-test-harness>=4.0.1",
 ]
 
 [project.urls]
