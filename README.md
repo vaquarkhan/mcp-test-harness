@@ -1,14 +1,27 @@
+# MCP Test Harness
+
+<p align="center">
+  <a href="#mcp-test-harness"><strong>README</strong></a>
+  ·
+  <a href="CONTRIBUTING.md"><strong>Contributing</strong></a>
+  ·
+  <a href="LICENSE"><strong>MIT license</strong></a>
+  ·
+  <a href=".github/SECURITY.md"><strong>Security</strong></a>
+  ·
+  <a href="docs/BIBLE.md"><strong>Documentation</strong></a>
+</p>
+
 <p align="center">
   <img src="docs/images/hero-banner.png" alt="MCP Test Harness - pytest-style testing for MCP servers" width="100%" />
 </p>
-
-# MCP Test Harness
 
 [![PyPI version](https://img.shields.io/pypi/v/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![PyPI downloads](https://static.pepy.tech/badge/mcp-test-harness)](https://pepy.tech/project/mcp-test-harness)
 [![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![CI](https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&label=CI)](https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-handbook%20%2B%20bible-0B5FFF?logo=readthedocs&logoColor=white)](https://vaquarkhan.github.io/mcp-test-harness/guide/bible.html)
 [![Tests](https://img.shields.io/badge/tests-840%2B%20passing-brightgreen)]()
 [![Coverage](https://img.shields.io/badge/coverage-100%25%20%28lib%29-brightgreen)](CONTRIBUTING.md#develop--test)
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
