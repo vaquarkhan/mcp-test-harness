@@ -30,6 +30,17 @@ Corpora: `PROMPT_INJECTION_PAYLOADS`, `PATH_TRAVERSAL_PAYLOADS`, `SECRET_LEAK_PA
 
 Security tests appear in the **unified portal** (HTML/JSON `unified_summary.categories.security`) and contribute to the overall CI gate.
 
+**Declarative quality gate** (opt-in — still CI-native; not a hosted dashboard):
+
+```yaml
+# mcp-test.yaml
+quality_gate:
+  require_security_tests: true   # fail if no @marker(tags=["security"]) cases ran
+  fail_on_severity: high          # fail when security findings ≥ this severity
+```
+
+JSON/HTML emit `unified_summary.quality_gate` (`status`, `reasons`, findings counts, catalogue size) alongside the legacy `gate` field and existing SARIF/HTML artifacts. Exit code is `1` when the quality gate fails (including “no security tests” when required).
+
 **SARIF export** (GitHub Code Scanning):
 
 ```bash
@@ -44,7 +55,9 @@ mcp-test --report-format junit --report-output report.xml --sarif-output mcp-sec
 mcp-test --cra-output reports/cra_conformity_matrix.json -m security
 ```
 
-**OWASP rule metadata** is attached to failed security tests in JSON (`security_findings[].rule`) and SARIF (`ruleId`, `properties.owasp_id`). Rule IDs align with mcp-shark packs (`mcp06-prompt-injection`, `path-traversal`, `mcp07-insufficient-auth`, etc.). Tag tests explicitly with `@marker(tags=["security", "mcp06"])`.
+**OWASP / MCP / LLM rule catalogue** (`security_rules.py`) attaches metadata to failed security tests in JSON (`security_findings[].rule`) and SARIF (`ruleId`, `properties.owasp_id`). Frameworks: `OWASP-MCP`, `OWASP-LLM`, `agentic-security`, `general-security`. Tag tests explicitly, e.g. `@marker(tags=["security", "mcp06"])` or `llm01`, `agency`, `exfiltration`.
+
+> **Not `mcplint`:** the optional `mcp-test-harness[mcplint]` extra is only a Bastion **version pin helper**. The quality gate lives in the core harness (`mcp-test` + `quality_gate:`).
 
 **PR comments** — enable in the GitHub Action with `pr-comment: true` or write locally:
 

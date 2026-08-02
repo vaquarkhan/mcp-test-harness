@@ -29,6 +29,7 @@ This roadmap groups planned capabilities into practical delivery phases while pr
    - signed audit exports
    - role/tenant matrices
    - policy-as-code plugin adapters
+4. **Optional (only with clear traction):** local run-history delta (“new findings since last run”) as a **file/SQLite artifact** in CI — not a hosted multi-tenant dashboard. Hosted org dashboards stay out of core.
 
 ## Scope guardrails
 
@@ -36,14 +37,18 @@ Core harness should own:
 
 - protocol-aware assertions and CI gates
 - reproducible local/CI reports
+- opt-in declarative `quality_gate` + OWASP/MCP rule metadata in SARIF/JSON/HTML
 
 Core harness should not replace:
 
 - distributed load generators
 - full observability backends
 - org-specific policy engines
+- SonarQube / hosted quality SaaS (we emit SARIF into GitHub Code Scanning instead)
 
 Those remain integrations/plugins.
+
+**Product naming:** do **not** grow `mcplint` into a Sonar-style scanner brand. `mcplint` remains the optional Bastion version shim; the CI quality gate is `mcp-test` + `quality_gate:`.
 
 ## Where we see the most value (prioritized)
 

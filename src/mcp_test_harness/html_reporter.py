@@ -1087,10 +1087,23 @@ class HTMLReporter:
     def generate(self, results: SessionResults) -> str:
         p, f, e, sk, t = _outcome_tally(results)
         total_cases = p + f + e + sk + t
-        ok = _quality_ok(results)
-        gate = "QUALITY GATE: PASSED" if ok and total_cases > 0 else (
-            "QUALITY GATE: FAILED" if not ok else "QUALITY GATE: N/A (no cases)"
-        )
+        us_gate = (results.unified_summary or {}).get("quality_gate") or {}
+        qg_status = us_gate.get("status")
+        if qg_status in ("pass", "fail", "n/a"):
+            ok = qg_status == "pass"
+            if qg_status == "pass" and total_cases > 0:
+                gate = "QUALITY GATE: PASSED"
+            elif qg_status == "fail":
+                reasons = us_gate.get("reasons") or []
+                suffix = f" — {'; '.join(reasons[:2])}" if reasons else ""
+                gate = f"QUALITY GATE: FAILED{suffix}"
+            else:
+                gate = "QUALITY GATE: N/A (no cases)"
+        else:
+            ok = _quality_ok(results)
+            gate = "QUALITY GATE: PASSED" if ok and total_cases > 0 else (
+                "QUALITY GATE: FAILED" if not ok else "QUALITY GATE: N/A (no cases)"
+            )
         exit_badge = "RUN PASSED" if ok and total_cases else ("RUN FAILED" if not ok else "NO TESTS")
         pass_pct = (100.0 * p / total_cases) if total_cases else 0.0
         pie_style = _conic_gradient_pie_style(results)

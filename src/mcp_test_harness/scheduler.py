@@ -38,6 +38,7 @@ from mcp_test_harness.fixtures import (
 from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, ServerLifecycleManager, StartupError
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
 from mcp_test_harness.conformance import attach_conformance
+from mcp_test_harness.quality_gate import QualityGatePolicy, apply_quality_gate
 from mcp_test_harness.unified_report import build_unified_summary
 from mcp_test_harness.schema import SchemaValidator, validate_mcp_server_after_connect
 
@@ -266,6 +267,7 @@ class HarnessScheduler:
             finished_at=run_finished,
             environment=_build_environment(config),
             coverage=cov_dict,
+            quality_gate=getattr(config, "quality_gate", None),
         )
 
     async def run_parallel(
@@ -308,6 +310,7 @@ class HarnessScheduler:
                 started_at=now,
                 finished_at=now,
                 environment=_build_environment(config),
+                quality_gate=getattr(config, "quality_gate", None),
             )
 
         # Group by module so per-module fixtures (e.g. mcp_server_session) stay
@@ -373,6 +376,7 @@ class HarnessScheduler:
             finished_at=run_finished,
             environment=_build_environment(config),
             coverage=cov_dict,
+            quality_gate=getattr(config, "quality_gate", None),
         )
 
     # ------------------------------------------------------------------
@@ -541,6 +545,7 @@ def _aggregate_results(
     finished_at: str = "",
     environment: dict[str, str] | None = None,
     coverage: dict[str, Any] | None = None,
+    quality_gate: QualityGatePolicy | None = None,
 ) -> SessionResults:
     """Build a ``SessionResults`` from a flat list of ``CaseResult``."""
     passed = sum(1 for r in results if r.status == CaseStatus.PASSED)
@@ -567,5 +572,6 @@ def _aggregate_results(
         coverage=cov,
     )
     session.unified_summary = build_unified_summary(session, cov or None)
+    apply_quality_gate(session, quality_gate)
     attach_conformance(session)
     return session
