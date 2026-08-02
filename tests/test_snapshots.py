@@ -95,3 +95,28 @@ class TestAssertMatch:
         mgr.assert_match({"new": True}, test_file, "upd")
         data = json.loads(snap.read_text())
         assert data == {"new": True}
+
+    def test_cli_update_snapshots_context_overwrites(self, tmp_path: Path):
+        from mcp_test_harness.snapshots import (
+            cli_update_snapshots,
+            reset_cli_update_snapshots,
+            set_cli_update_snapshots,
+        )
+
+        assert cli_update_snapshots() is False
+        mgr = SnapshotManager()
+        test_file = tmp_path / "test_x.py"
+        test_file.touch()
+        snap_dir = tmp_path / "__snapshots__"
+        snap_dir.mkdir()
+        snap = snap_dir / "upd.snap"
+        snap.write_text(json.dumps({"old": True}, indent=2, sort_keys=True) + "\n")
+        token = set_cli_update_snapshots(True)
+        try:
+            assert cli_update_snapshots() is True
+            mgr.assert_match({"new": True}, test_file, "upd")
+        finally:
+            reset_cli_update_snapshots(token)
+        assert cli_update_snapshots() is False
+        data = json.loads(snap.read_text())
+        assert data == {"new": True}

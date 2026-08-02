@@ -46,20 +46,26 @@ async def run_experiments(
     catalog: ExperimentCatalog | None = None,
 ) -> SessionResults:
     """Compile and run experiment templates; attach scorecard to results."""
-    cat = catalog or load_catalog()
-    templates = templates_for_ids(experiment_ids, cat)
-    cases = compile_experiments(templates)
-    scheduler = HarnessScheduler()
-    results = await scheduler.run_sequential(cases, config)
+    from mcp_test_harness.snapshots import reset_cli_update_snapshots, set_cli_update_snapshots
 
-    template_map = {t.id: t for t in templates}
-    abort_reasons = collect_abort_reasons(results, template_map)
-    scorecard = build_experiment_scorecard(results, template_map, aborted_reasons=abort_reasons)
+    update_token = set_cli_update_snapshots(bool(getattr(config, "update_snapshots", False)))
+    try:
+        cat = catalog or load_catalog()
+        templates = templates_for_ids(experiment_ids, cat)
+        cases = compile_experiments(templates)
+        scheduler = HarnessScheduler()
+        results = await scheduler.run_sequential(cases, config)
 
-    cov = results.coverage or None
-    results.unified_summary = build_unified_summary(results, cov)
-    results.unified_summary["experiments"] = scorecard
-    from mcp_test_harness.conformance import attach_conformance
+        template_map = {t.id: t for t in templates}
+        abort_reasons = collect_abort_reasons(results, template_map)
+        scorecard = build_experiment_scorecard(results, template_map, aborted_reasons=abort_reasons)
 
-    attach_conformance(results)
-    return results
+        cov = results.coverage or None
+        results.unified_summary = build_unified_summary(results, cov)
+        results.unified_summary["experiments"] = scorecard
+        from mcp_test_harness.conformance import attach_conformance
+
+        attach_conformance(results)
+        return results
+    finally:
+        reset_cli_update_snapshots(update_token)

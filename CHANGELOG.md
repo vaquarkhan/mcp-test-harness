@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Fixed
+
+- **`mcp-test generate`:** docstring closers were truncated to `.""` (SyntaxError); now emit valid `"""`.
+- **`--update-snapshots`:** CLI flag is applied at runtime so corrupted/outdated `.snap` files are rewritten (was parsed into config but ignored).
+
 ## [3.0.10] - 2026-08-01
 
 ### Added

@@ -357,6 +357,26 @@ class TestAssertSnapshot:
         data = json.loads(snap.read_text())
         assert data == {"new": True}
 
+    def test_cli_update_snapshots_flag_overwrites(self, tmp_path: Path) -> None:
+        from mcp_test_harness.snapshots import (
+            reset_cli_update_snapshots,
+            set_cli_update_snapshots,
+        )
+
+        test_file = tmp_path / "test_example.py"
+        test_file.touch()
+        snap_dir = tmp_path / "__snapshots__"
+        snap_dir.mkdir()
+        snap = snap_dir / "s.snap"
+        snap.write_text(json.dumps({"old": True}, indent=2, sort_keys=True) + "\n")
+        token = set_cli_update_snapshots(True)
+        try:
+            asyncio.run(assert_snapshot({"new": True}, "s", test_file))
+        finally:
+            reset_cli_update_snapshots(token)
+        data = json.loads(snap.read_text())
+        assert data == {"new": True}
+
 
 # ---------------------------------------------------------------------------
 # Extended FakeSession for list operations

@@ -207,6 +207,28 @@ async def _run_harness(
     last_failed: bool = False,
 ) -> int:
     """Single harness execution: discover, (optionally) run, report. Returns exit code."""
+    from mcp_test_harness.snapshots import reset_cli_update_snapshots, set_cli_update_snapshots
+
+    update_token = set_cli_update_snapshots(bool(getattr(config, "update_snapshots", False)))
+    try:
+        return await _run_harness_impl(
+            config,
+            list_only,
+            fail_fast=fail_fast,
+            last_failed=last_failed,
+        )
+    finally:
+        reset_cli_update_snapshots(update_token)
+
+
+async def _run_harness_impl(
+    config,
+    list_only: bool,
+    *,
+    fail_fast: bool = False,
+    last_failed: bool = False,
+) -> int:
+    """Internal harness body (runs under the CLI snapshot-update context)."""
     from mcp_test_harness.html_reporter import HTMLReporter
     from mcp_test_harness.last_failed_cache import (
         filter_harness_cases,

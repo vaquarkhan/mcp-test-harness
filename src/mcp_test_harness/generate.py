@@ -94,14 +94,14 @@ def render_test_module(
         lines.append("")
         lines.append('@marker(tags=["smoke", "generated"])')
         lines.append(f"async def test_tool_{safe_name}_happy_path(mcp_server) -> None:")
-        lines.append(f'    """Happy-path call for tool ``{name}``.""')
+        lines.append(f'    """Happy-path call for tool ``{name}``."""')
         lines.append(f"    await assert_tool_call(mcp_server, {name!r}, {args_repr})")
         if include_edge_cases:
             lines.append("")
             lines.append("@skip(reason='Generated edge case — tailor invalid payload')")
             lines.append("@marker(tags=['generated', 'edge'])")
             lines.append(f"async def test_tool_{safe_name}_rejects_bad_input(mcp_server) -> None:")
-            lines.append(f'    """Tool ``{name}`` should reject invalid input.""')
+            lines.append(f'    """Tool ``{name}`` should reject invalid input."""')
             lines.append(
                 f"    await assert_tool_rejects(mcp_server, {name!r}, {{'__invalid__': True}})"
             )
