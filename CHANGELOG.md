@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- **HTML scan report UI:** sticky scan TOC, quality-gate scorecard, full security findings table (severity/OWASP/framework/file + client severity filter), MCP contract-coverage % ring and coverage issue rows — still a self-contained CI artifact (no hosted dashboard).
+
 ## [4.0.0] - 2026-08-02
 
 ### Added

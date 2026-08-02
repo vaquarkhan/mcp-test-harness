@@ -496,12 +496,94 @@ class TestHTMLReporter:
         run.unified_summary = {"categories": {}, "coverage_headline": "1 tools tested"}
         html = HTMLReporter().generate(run)
         assert "Harness features in this run" in html
-        assert "MCP inventory coverage" in html
+        assert "MCP contract coverage" in html
+        assert "contract coverage" in html
+        assert "Scan report" in html
         assert "Results by tag" in html
         assert "Diagnostics" in html
         assert 'data-status="passed"' in html
         assert "filter-chip" in html
         assert 'id="test-' in html
+
+    def test_html_scan_report_panels(self):
+        from mcp_test_harness.html_reporter import (
+            _contract_coverage_pct,
+            _quality_gate_panel_html,
+            _scan_overview_html,
+            _scan_toc_html,
+        )
+
+        sec = _failed("test_injection", error="injection payload echoed")
+        sec.tags = ["security", "mcp06"]
+        manifest = _failed("manifest_gate", error="rug-pull: tools added: evil")
+        manifest.tags = ["security", "mcp04", "manifest"]
+        run = _make_results([_passed("ok"), sec, manifest], total_duration_ms=300.0)
+        run.coverage = {
+            "advertised": {
+                "tools": ["echo", "search"],
+                "resources": ["res://a"],
+                "prompts": [],
+            },
+            "tested": {
+                "tools": ["echo"],
+                "resources": [],
+                "prompts": [],
+                "auth_tools": [],
+            },
+            "gaps": {
+                "untested_tools": ["search"],
+                "untested_resources": ["res://a"],
+                "untested_prompts": [],
+                "tools_missing_auth_tests": ["echo"],
+            },
+            "summary": {
+                "tools_advertised": 2,
+                "tools_tested": 1,
+                "tools_untested": 1,
+                "tools_missing_auth": 1,
+            },
+        }
+        run.unified_summary = {
+            "categories": {
+                "security": {"total": 1, "passed": 0, "failed": 1, "score_pct": 0, "status": "fail"},
+            },
+            "quality_gate": {
+                "status": "fail",
+                "reasons": ["1 security finding(s) at or above severity high"],
+                "policy": {"require_security_tests": True, "fail_on_severity": "high"},
+                "security_findings": {"total": 1, "by_severity": {"high": 1}},
+                "rules_catalog_size": 12,
+                "security_tests_ran": 1,
+            },
+            "coverage_headline": "1/2 tools tested",
+        }
+        html = HTMLReporter().generate(run)
+        assert "Scan report" in html
+        assert 'id="scan-overview"' in html
+        assert 'id="scan-gate"' in html
+        assert 'id="scan-security"' in html
+        assert "Quality gate scorecard" in html
+        assert "require_security_tests" in html
+        assert "mcp-findings-table" in html
+        assert "OWASP" in html
+        assert "mcp06-prompt-injection" in html or "path-traversal" in html or "finding-row" in html
+        assert "Coverage issues" in html
+        assert "missing auth test" in html
+        assert "mcp-finding-sev" in html
+        assert _scan_toc_html().startswith('<nav class="scan-toc')
+        assert "Quality gate" in _scan_overview_html(run)
+        assert "QUALITY GATE" in _quality_gate_panel_html(run).upper() or "FAIL" in _quality_gate_panel_html(run)
+        assert _contract_coverage_pct(run) is not None
+        assert _contract_coverage_pct(_make_results([_passed()])) is None
+        assert _quality_gate_panel_html(_make_results([_passed()])) == ""
+        summary_only = _make_results([_passed()])
+        summary_only.coverage = {
+            "advertised": {"tools": [], "resources": [], "prompts": []},
+            "tested": {"tools": [], "resources": [], "prompts": [], "auth_tools": []},
+            "gaps": {},
+            "summary": {"tools_advertised": 4, "tools_tested": 3},
+        }
+        assert _contract_coverage_pct(summary_only) == 75.0
 
     def test_html_platform_chaos_perf_bastion_panels(self):
         chaos = _passed("test_chaos_delay", duration=50.0)

@@ -247,6 +247,7 @@ def build_security_findings(results: SessionResults) -> list[dict[str, Any]]:
                     "framework": rule.framework,
                     "owasp_id": rule.owasp_id,
                     "severity": rule.severity,
+                    "help_uri": rule.help_uri,
                 },
             }
         )

@@ -567,6 +567,27 @@ def _cov_chips(items: list[str], tested_set: set[str], *, limit: int = 12) -> st
     return "".join(chips)
 
 
+def _contract_coverage_pct(results: SessionResults) -> float | None:
+    """Advertised MCP surface coverage percent (tools+resources+prompts)."""
+    cov = results.coverage or {}
+    adv = cov.get("advertised") or {}
+    tst = cov.get("tested") or {}
+    ad_n = len(adv.get("tools") or []) + len(adv.get("resources") or []) + len(
+        adv.get("prompts") or []
+    )
+    te_n = len(tst.get("tools") or []) + len(tst.get("resources") or []) + len(
+        tst.get("prompts") or []
+    )
+    if ad_n <= 0:
+        summary = cov.get("summary") or {}
+        tools_adv = int(summary.get("tools_advertised", 0) or 0)
+        tools_tested = int(summary.get("tools_tested", 0) or 0)
+        if tools_adv <= 0:
+            return None
+        return round(100.0 * tools_tested / tools_adv, 1)
+    return round(100.0 * te_n / ad_n, 1)
+
+
 def _coverage_inventory_html(results: SessionResults) -> str:
     cov = results.coverage or {}
     if not cov:
@@ -574,11 +595,20 @@ def _coverage_inventory_html(results: SessionResults) -> str:
     adv = cov.get("advertised", {})
     tst = cov.get("tested", {})
     gaps = cov.get("gaps", {})
-    summary = cov.get("summary", {})
     tested_tools = set(tst.get("tools", []))
     tested_res = set(tst.get("resources", []))
     tested_pr = set(tst.get("prompts", []))
     auth_tools = set(tst.get("auth_tools", []))
+    pct = _contract_coverage_pct(results)
+    pct_html = (
+        f'<div class="cov-scorecard"><div class="cov-score-ring">'
+        f'<span class="cov-score-n">{pct:.0f}%</span>'
+        f'<span class="cov-score-l">contract coverage</span></div>'
+        f'<p class="cov-score-note">Deterministic MCP contract metric — '
+        f'advertised tools/resources/prompts exercised in this run.</p></div>'
+        if pct is not None
+        else ""
+    )
 
     blocks: list[str] = []
     for title, ad_list, tested_set, gap_key in (
@@ -599,6 +629,25 @@ def _coverage_inventory_html(results: SessionResults) -> str:
             + "</div>"
         )
 
+    issue_rows: list[str] = []
+    for tool in gaps.get("untested_tools", []):
+        issue_rows.append(
+            f'<tr class="scan-issue"><td><span class="sev-chip sev-med">GAP</span></td>'
+            f'<td>untested tool</td><td><code>{_html_escape(str(tool))}</code></td></tr>'
+        )
+    for tool in gaps.get("tools_missing_auth_tests", []):
+        issue_rows.append(
+            f'<tr class="scan-issue"><td><span class="sev-chip sev-high">AUTH</span></td>'
+            f'<td>missing auth test</td><td><code>{_html_escape(str(tool))}</code></td></tr>'
+        )
+    issues_html = ""
+    if issue_rows:
+        issues_html = (
+            f'<div class="cov-issues"><h3 class="scan-h3">Coverage issues</h3>'
+            f'<table class="scan-table"><thead><tr><th>Kind</th><th>Issue</th><th>Surface</th>'
+            f'</tr></thead><tbody>{"".join(issue_rows)}</tbody></table></div>'
+        )
+
     missing_auth = gaps.get("tools_missing_auth_tests", [])
     auth_line = ""
     if tested_tools:
@@ -610,9 +659,12 @@ def _coverage_inventory_html(results: SessionResults) -> str:
         )
 
     return (
-        f'<section class="cov-panel"><h2 class="section-title">MCP inventory coverage</h2>'
-        f'<p class="section-sub">Advertised vs exercised tools, resources, and prompts (coverage map).</p>'
-        f'{auth_line}<div class="cov-blocks">{"".join(blocks)}</div></section>'
+        f'<section class="cov-panel" id="scan-coverage">'
+        f'<h2 class="section-title">MCP contract coverage</h2>'
+        f'<p class="section-sub">Advertised vs exercised tools, resources, and prompts — '
+        f'CI-native coverage map (not line coverage).</p>'
+        f'{pct_html}{auth_line}<div class="cov-blocks">{"".join(blocks)}</div>'
+        f'{issues_html}</section>'
     )
 
 
@@ -831,30 +883,229 @@ def _performance_load_panel_html(results: SessionResults) -> str:
     )
 
 
+_SEV_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3, "unknown": 4}
+
+
+def _severity_chip(sev: str) -> str:
+    s = (sev or "medium").lower()
+    cls = {
+        "critical": "sev-crit",
+        "high": "sev-high",
+        "medium": "sev-med",
+        "low": "sev-low",
+    }.get(s, "sev-med")
+    return f'<span class="sev-chip {cls}">{_html_escape(s.upper())}</span>'
+
+
+def _scan_toc_html() -> str:
+    links = (
+        ("scan-overview", "Overview"),
+        ("scan-gate", "Quality gate"),
+        ("scan-security", "Security scan"),
+        ("scan-coverage", "Coverage"),
+        ("scan-portal", "Portal"),
+        ("results-by-file", "Results"),
+    )
+    items = "".join(
+        f'<a class="scan-toc-a" href="#{aid}">{_html_escape(label)}</a>'
+        for aid, label in links
+    )
+    return (
+        f'<nav class="scan-toc no-print" aria-label="Scan report sections">'
+        f'<span class="scan-toc-label">Scan</span>{items}</nav>'
+    )
+
+
+def _scan_overview_html(results: SessionResults) -> str:
+    """Sonar-like static scan overview (single-run, no history server)."""
+    us = results.unified_summary or {}
+    qg = us.get("quality_gate") or {}
+    findings = build_security_findings(results)
+    by_sev: dict[str, int] = {}
+    for f in findings:
+        sev = str((f.get("rule") or {}).get("severity", "unknown")).lower()
+        by_sev[sev] = by_sev.get(sev, 0) + 1
+    if qg.get("security_findings", {}).get("by_severity"):
+        by_sev = {str(k).lower(): int(v) for k, v in qg["security_findings"]["by_severity"].items()}
+
+    pct = _contract_coverage_pct(results)
+    flaky_n = sum(1 for tr in results.test_results if tr.flaky)
+    manifest_n = sum(
+        1
+        for tr in results.test_results
+        if (
+            tr.name == "manifest_gate"
+            or "manifest" in {t.lower() for t in tr.tags}
+        )
+        and tr.status in (CaseStatus.FAILED, CaseStatus.ERROR)
+    )
+    gate_status = str(qg.get("status") or ("pass" if _quality_ok(results) else "fail"))
+    gate_cls = {
+        "pass": "scan-card-pass",
+        "fail": "scan-card-fail",
+        "n/a": "scan-card-na",
+    }.get(gate_status, "scan-card-na")
+
+    sev_bits = " ".join(
+        f'{_severity_chip(k)} <span class="muted">{int(v)}</span>'
+        for k, v in sorted(by_sev.items(), key=lambda kv: _SEV_ORDER.get(kv[0], 9))
+    ) or '<span class="muted">none</span>'
+
+    reason_sub = (
+        _html_escape(f'{len(qg.get("reasons") or [])} reason(s)')
+        if qg.get("reasons")
+        else "tests + policy"
+    )
+    cards_html = "".join(
+        [
+            (
+                f'<div class="scan-card {gate_cls}"><div class="scan-card-k">Quality gate</div>'
+                f'<div class="scan-card-v">{_html_escape(gate_status.upper())}</div>'
+                f'<div class="scan-card-s">{reason_sub}</div></div>'
+            ),
+            (
+                f'<div class="scan-card {"scan-card-fail" if findings else "scan-card-pass"}">'
+                f'<div class="scan-card-k">Security findings</div>'
+                f'<div class="scan-card-v">{len(findings)}</div>'
+                f'<div class="scan-card-s">{sev_bits}</div></div>'
+            ),
+            (
+                f'<div class="scan-card '
+                f'{"scan-card-pass" if (pct is not None and pct >= 90) else "scan-card-na"}">'
+                f'<div class="scan-card-k">Contract coverage</div>'
+                f'<div class="scan-card-v">'
+                f'{_html_escape(f"{pct:.0f}%" if pct is not None else "—")}</div>'
+                f'<div class="scan-card-s">advertised surface exercised</div></div>'
+            ),
+            (
+                f'<div class="scan-card {"scan-card-fail" if manifest_n else "scan-card-pass"}">'
+                f'<div class="scan-card-k">Supply-chain</div>'
+                f'<div class="scan-card-v">'
+                f'{_html_escape(str(manifest_n) if manifest_n else "OK")}</div>'
+                f'<div class="scan-card-s">manifest rug-pull failures</div></div>'
+            ),
+            (
+                f'<div class="scan-card {"scan-card-fail" if flaky_n else "scan-card-pass"}">'
+                f'<div class="scan-card-k">Flaky / retries</div>'
+                f'<div class="scan-card-v">{flaky_n}</div>'
+                f'<div class="scan-card-s">non-deterministic candidates</div></div>'
+            ),
+        ]
+    )
+    return (
+        f'<section class="scan-overview" id="scan-overview">'
+        f'<h2 class="section-title">Scan report</h2>'
+        f'<p class="section-sub">Deterministic CI evidence for this run — quality gate, '
+        f'security findings, MCP contract coverage, and supply-chain integrity. '
+        f'Not a hosted dashboard; export SARIF for Code Scanning.</p>'
+        f'<div class="scan-grid">{cards_html}</div></section>'
+    )
+
+
+def _quality_gate_panel_html(results: SessionResults) -> str:
+    qg = (results.unified_summary or {}).get("quality_gate") or {}
+    if not qg:
+        return ""
+    status = str(qg.get("status", "n/a"))
+    status_cls = {
+        "pass": "qg-pass",
+        "fail": "qg-fail",
+        "n/a": "qg-na",
+    }.get(status, "qg-na")
+    pol = qg.get("policy") or {}
+    reasons = qg.get("reasons") or []
+    reason_lis = "".join(f"<li>{_html_escape(str(r))}</li>" for r in reasons) or (
+        "<li class=\"muted\">No gate failures</li>"
+    )
+    by_sev = (qg.get("security_findings") or {}).get("by_severity") or {}
+    sev_row = "".join(
+        f'<span class="sev-chip">{_html_escape(str(k).upper())} {int(v)}</span> '
+        for k, v in sorted(by_sev.items(), key=lambda kv: _SEV_ORDER.get(str(kv[0]).lower(), 9))
+    ) or '<span class="muted">0</span>'
+    return (
+        f'<section class="qg-panel" id="scan-gate">'
+        f'<h2 class="section-title">Quality gate scorecard</h2>'
+        f'<p class="section-sub">Opt-in <code>quality_gate:</code> policy evaluated for this run.</p>'
+        f'<div class="qg-row">'
+        f'<div class="qg-status {status_cls}">{_html_escape(status.upper())}</div>'
+        f'<div class="qg-meta">'
+        f'<p><strong>require_security_tests</strong>: '
+        f'{_html_escape(str(pol.get("require_security_tests", False)))}</p>'
+        f'<p><strong>fail_on_severity</strong>: '
+        f'{_html_escape(str(pol.get("fail_on_severity") or "—"))}</p>'
+        f'<p><strong>security tests ran</strong>: '
+        f'{int(qg.get("security_tests_ran") or 0)} &middot; '
+        f'<strong>rules catalog</strong>: {int(qg.get("rules_catalog_size") or 0)}</p>'
+        f'<p><strong>findings by severity</strong>: {sev_row}</p>'
+        f'</div></div>'
+        f'<h3 class="scan-h3">Reasons</h3><ul class="qg-reasons">{reason_lis}</ul></section>'
+    )
+
+
 def _security_bastion_panel_html(results: SessionResults) -> str:
     findings = build_security_findings(results)
     bastion_ver = _optional_bastion_version(results.environment)
     bastion_paired = results.environment.get("bastion_paired", "")
 
-    finding_rows: list[str] = []
-    for f in findings[:8]:
+    # Sort: severity then rule id then test name (deterministic)
+    findings_sorted = sorted(
+        findings,
+        key=lambda f: (
+            _SEV_ORDER.get(str((f.get("rule") or {}).get("severity", "")).lower(), 9),
+            str((f.get("rule") or {}).get("id", "")),
+            str(f.get("test_name", "")),
+        ),
+    )
+
+    table_rows: list[str] = []
+    for f in findings_sorted:
         rule = f.get("rule") or {}
         rule_id = str(rule.get("id", ""))
-        sev = str(rule.get("severity", "medium")).upper()
-        sev_cls = "sev-high" if sev == "HIGH" else "sev-med"
+        sev = str(rule.get("severity", "medium"))
         tname = str(f.get("test_name", ""))
-        finding_rows.append(
-            f'<li class="finding-item {sev_cls}">'
-            f'<span class="finding-rule">{_html_escape(rule_id)}</span> '
-            f'<span class="finding-sev">{sev}</span><br>'
-            f'<a href="#test-{_slug_id(tname)}">{_html_escape(tname)}</a>'
-            f'<div class="finding-msg">{_html_escape(str(f.get("message", ""))[:120])}</div></li>'
+        owasp = str(rule.get("owasp_id", ""))
+        framework = str(rule.get("framework", ""))
+        help_uri = str(rule.get("help_uri") or "")
+        file_path = str(f.get("file") or "")
+        msg = str(f.get("message", ""))[:200]
+        help_cell = (
+            f'<a href="{_html_escape(help_uri)}" target="_blank" rel="noopener">docs</a>'
+            if help_uri
+            else "—"
         )
-    findings_block = (
-        f'<ul class="findings-list">{"".join(finding_rows)}</ul>'
-        if finding_rows
-        else '<p class="good-note">No OWASP-tagged security failures in this run.</p>'
-    )
+        table_rows.append(
+            f'<tr class="finding-row" data-sev="{_html_escape(sev.lower())}">'
+            f'<td>{_severity_chip(sev)}</td>'
+            f'<td><code>{_html_escape(rule_id)}</code></td>'
+            f'<td>{_html_escape(owasp)}</td>'
+            f'<td class="muted">{_html_escape(framework)}</td>'
+            f'<td><a href="#test-{_slug_id(tname)}">{_html_escape(tname)}</a></td>'
+            f'<td class="muted">{_html_escape(file_path)}</td>'
+            f'<td class="finding-msg">{_html_escape(msg)}</td>'
+            f'<td>{help_cell}</td></tr>'
+        )
+
+    if table_rows:
+        findings_block = (
+            f'<div class="scan-findings-toolbar no-print">'
+            f'<label class="muted">Severity </label>'
+            f'<select id="mcp-finding-sev" aria-label="Filter findings by severity">'
+            f'<option value="all">All</option>'
+            f'<option value="critical">Critical</option>'
+            f'<option value="high">High</option>'
+            f'<option value="medium">Medium</option>'
+            f'<option value="low">Low</option>'
+            f'</select>'
+            f'<span class="muted" id="mcp-finding-count">{len(table_rows)} finding(s)</span></div>'
+            f'<div class="scan-table-wrap"><table class="scan-table" id="mcp-findings-table">'
+            f'<thead><tr><th>Sev</th><th>Rule</th><th>OWASP</th><th>Framework</th>'
+            f'<th>Test</th><th>File</th><th>Message</th><th>Help</th></tr></thead>'
+            f'<tbody>{"".join(table_rows)}</tbody></table></div>'
+        )
+    else:
+        findings_block = (
+            '<p class="good-note">No OWASP-tagged security failures in this run.</p>'
+        )
 
     bastion_status = (
         f'Installed <code>mcp-bastion-python {_html_escape(bastion_ver)}</code>'
@@ -870,6 +1121,7 @@ def _security_bastion_panel_html(results: SessionResults) -> str:
         ("Auth boundaries", "assert_authorization_boundary", "RBAC + tool policies"),
         ("Rate limits", "assert_throughput SLOs", "Token budgets &amp; iteration caps"),
         ("Path traversal", "assert_path_traversal_blocked", "Policy-as-code rules"),
+        ("Manifest rug-pull", "manifest_gate / mcp-test manifest", "Runtime allow-lists"),
     )
     pair_table = "".join(
         f'<tr><td>{_html_escape(ci)}</td><td><code>{ci_assert}</code></td>'
@@ -878,16 +1130,18 @@ def _security_bastion_panel_html(results: SessionResults) -> str:
     )
 
     return (
-        f'<section class="bastion-panel platform-panel">'
-        f'<h2 class="section-title">Security findings &amp; MCP-Bastion pairing</h2>'
-        f'<p class="section-sub">Test defenses in CI with the harness; enforce at runtime with '
+        f'<section class="bastion-panel platform-panel" id="scan-security">'
+        f'<h2 class="section-title">Security scan &amp; MCP-Bastion pairing</h2>'
+        f'<p class="section-sub">Full deterministic findings table (OWASP/MCP rule metadata). '
+        f'Test in CI with the harness; enforce at runtime with '
         f'<a href="{_BASTION_REPO}" target="_blank" rel="noopener">MCP-Bastion</a>.</p>'
         f'<div class="bastion-split">'
         f'<div class="bastion-col-card ci-card">'
-        f'<h3>CI gate (this report)</h3>'
+        f'<h3>CI scan (this report)</h3>'
         f'<p class="bastion-ver">{bastion_status}</p>'
         f'{findings_block}'
-        f'<p class="bastion-cta muted">Export SARIF: <code>mcp-test --sarif-output findings.sarif</code></p>'
+        f'<p class="bastion-cta muted">Export SARIF: <code>mcp-test --sarif-output findings.sarif</code> '
+        f'&middot; PR summary: <code>--pr-summary-output</code></p>'
         f'</div>'
         f'<div class="bastion-col-card prod-card">'
         f'<h3>Production (MCP-Bastion)</h3>'
@@ -1006,7 +1260,7 @@ def _unified_portal_html(results: SessionResults) -> str:
     if gap_bits:
         gaps_html = f'<ul class="portal-gaps">{"".join(gap_bits)}</ul>'
     return (
-        f'<section class="portal"><h2>Unified test portal</h2>'
+        f'<section class="portal" id="scan-portal"><h2>Unified test portal</h2>'
         f'<div class="portal-grid">{"".join(cards)}</div>{cov_line}{gaps_html}</section>'
     )
 
@@ -1166,6 +1420,9 @@ class HTMLReporter:
         chaos_html = _chaos_monkey_panel_html(results)
         perf_html = _performance_load_panel_html(results)
         bastion_html = _security_bastion_panel_html(results)
+        scan_toc_html = _scan_toc_html()
+        scan_overview_html = _scan_overview_html(results)
+        qg_panel_html = _quality_gate_panel_html(results)
         brand_html = _product_brand_bar_html(h_ver)
         print_css = _print_stylesheet_css()
         site_esc = _html_escape(PRODUCT_SITE)
@@ -1299,6 +1556,90 @@ body {{
 .quality.ok {{ background: rgba(34,197,94,.1); color: var(--c-pass); border-color: rgba(34,197,94,.3); }}
 .quality.bad {{ background: rgba(239,68,68,.1); color: var(--c-fail); border-color: rgba(239,68,68,.3); }}
 .quality.neutral {{ background: var(--panel2); color: var(--muted); }}
+.scan-toc {{
+  position: sticky; top: 0; z-index: 40; display: flex; flex-wrap: wrap; gap: 0.4rem 0.65rem;
+  align-items: center; padding: 0.55rem 0.85rem; margin: 0 0 1rem;
+  background: rgba(13,19,32,.92); border: 1px solid var(--border); border-radius: 999px;
+  backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(0,0,0,.35);
+}}
+.scan-toc-label {{
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #93c5fd; margin-right: 0.25rem;
+}}
+.scan-toc-a {{
+  font-size: 0.72rem; font-weight: 600; color: var(--muted); text-decoration: none;
+  padding: 0.2rem 0.55rem; border-radius: 999px; border: 1px solid transparent;
+}}
+.scan-toc-a:hover {{ color: #e2e8f0; border-color: var(--border); background: var(--panel2); }}
+.scan-overview, .qg-panel {{
+  margin-bottom: 1.25rem; padding: 1.1rem 1.15rem; background: var(--panel);
+  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+}}
+.scan-grid {{
+  display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 0.65rem;
+}}
+@media (max-width: 1100px) {{ .scan-grid {{ grid-template-columns: repeat(3, 1fr); }} }}
+@media (max-width: 700px) {{ .scan-grid {{ grid-template-columns: repeat(2, 1fr); }} }}
+.scan-card {{
+  padding: 0.85rem; border-radius: 12px; border: 1px solid var(--border); background: var(--panel2);
+  min-height: 6.5rem;
+}}
+.scan-card-pass {{ border-color: rgba(34,197,94,.35); }}
+.scan-card-fail {{ border-color: rgba(239,68,68,.4); }}
+.scan-card-na {{ border-color: var(--border); }}
+.scan-card-k {{ font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }}
+.scan-card-v {{ font-size: 1.55rem; font-weight: 800; margin: 0.25rem 0; font-feature-settings: "tnum"; }}
+.scan-card-s {{ font-size: 0.72rem; color: var(--muted); line-height: 1.35; }}
+.scan-h3 {{ margin: 1rem 0 0.4rem; font-size: 0.85rem; color: #cbd5e1; }}
+.qg-row {{ display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; }}
+.qg-status {{
+  font-size: 1.1rem; font-weight: 800; letter-spacing: 0.04em; padding: 0.75rem 1rem;
+  border-radius: 12px; border: 1px solid var(--border); min-width: 7rem; text-align: center;
+}}
+.qg-pass {{ background: rgba(34,197,94,.12); color: var(--c-pass); }}
+.qg-fail {{ background: rgba(239,68,68,.12); color: var(--c-fail); }}
+.qg-na {{ background: var(--panel2); color: var(--muted); }}
+.qg-meta {{ flex: 1; font-size: 0.82rem; color: var(--muted); }}
+.qg-meta p {{ margin: 0.2rem 0; }}
+.qg-reasons {{ margin: 0; padding-left: 1.1rem; font-size: 0.82rem; }}
+.sev-chip {{
+  display: inline-block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.04em;
+  padding: 0.12rem 0.4rem; border-radius: 999px; border: 1px solid var(--border);
+  vertical-align: middle;
+}}
+.sev-crit {{ background: rgba(127,29,29,.45); color: #fecaca; border-color: #b91c1c; }}
+.sev-high {{ background: rgba(239,68,68,.18); color: #fca5a5; border-color: rgba(239,68,68,.45); }}
+.sev-med {{ background: rgba(245,158,11,.15); color: #fcd34d; border-color: rgba(245,158,11,.4); }}
+.sev-low {{ background: rgba(59,130,246,.15); color: #93c5fd; border-color: rgba(59,130,246,.35); }}
+.scan-table-wrap {{ overflow: auto; max-height: 28rem; margin-top: 0.5rem; }}
+.scan-table {{
+  width: 100%; border-collapse: collapse; font-size: 0.72rem;
+}}
+.scan-table th, .scan-table td {{
+  text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}}
+.scan-table th {{ color: var(--muted); font-weight: 700; position: sticky; top: 0; background: var(--panel2); }}
+.scan-findings-toolbar {{
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.4rem 0;
+}}
+.scan-findings-toolbar select {{
+  background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.25rem 0.45rem; font-size: 0.75rem;
+}}
+.cov-scorecard {{
+  display: flex; gap: 1rem; align-items: center; margin-bottom: 0.85rem;
+  padding: 0.75rem; border-radius: 12px; background: var(--panel2); border: 1px solid var(--border);
+}}
+.cov-score-ring {{
+  width: 5.5rem; height: 5.5rem; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 3px solid rgba(59,130,246,.55); background: rgba(59,130,246,.08); flex-shrink: 0;
+}}
+.cov-score-n {{ font-size: 1.35rem; font-weight: 800; color: #93c5fd; }}
+.cov-score-l {{ font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); text-align: center; }}
+.cov-score-note {{ margin: 0; font-size: 0.78rem; color: var(--muted); }}
+.cov-issues {{ margin-top: 0.85rem; }}
 .stat-grid {{
   display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0.75rem;
   margin-bottom: 1.25rem;
@@ -1689,15 +2030,18 @@ footer a:hover {{ text-decoration: underline; }}
   {brand_html}
   <header class="hero">
     <h1>MCP Test Report</h1>
-    <p class="tagline">One test run. Multiple formats. Complete visibility.</p>
+    <p class="tagline">Deterministic CI scan — gate, security, contract coverage, results.</p>
     <div class="hero-meta">
       <span class="badge-top {badge_class}">{_html_escape(exit_badge)}</span>
       <span>Harness <strong>{h_ver}</strong>{proto_line}</span>
       <span>{_html_escape(run_start)} &rarr; {_html_escape(run_end)}</span>
     </div>
   </header>
+  {scan_toc_html}
   {formats_html}
   <div class="quality {gate_cls}" role="status"><span>{_html_escape(gate)}</span></div>
+  {scan_overview_html}
+  {qg_panel_html}
   {stat_cards}
   {analytics_html}
   {features_html}
@@ -1748,7 +2092,7 @@ footer a:hover {{ text-decoration: underline; }}
       {env_block}
     </div>
   </div>
-  <h2 class="results-head">Results by file</h2>
+  <h2 class="results-head" id="results-by-file">Results by file</h2>
   {body_main}
   <div class="footer-bar">
     <strong>Multiple formats. Maximum value.</strong>
@@ -2007,6 +2351,22 @@ footer a:hover {{ text-decoration: underline; }}
       }}
     }});
   }});
+  var sevSel=document.getElementById("mcp-finding-sev");
+  var findingCount=document.getElementById("mcp-finding-count");
+  function applyFindingSev(){{
+    if(!sevSel) return;
+    var want=sevSel.value||"all";
+    var rows=[].slice.call(document.querySelectorAll("#mcp-findings-table tr.finding-row"));
+    var shown=0;
+    rows.forEach(function(r){{
+      var sev=r.getAttribute("data-sev")||"";
+      var ok=(want==="all")||sev===want;
+      r.style.display=ok?"":"none";
+      if(ok) shown++;
+    }});
+    if(findingCount) findingCount.textContent=shown+" finding(s)";
+  }}
+  if(sevSel) sevSel.addEventListener("change", applyFindingSev);
 }})();
 </script>
 </body>
