@@ -64,7 +64,9 @@ async def run_experiments(
         results.unified_summary = build_unified_summary(results, cov)
         results.unified_summary["experiments"] = scorecard
         from mcp_test_harness.conformance import attach_conformance
+        from mcp_test_harness.quality_gate import apply_quality_gate
 
+        apply_quality_gate(results, getattr(config, "quality_gate", None))
         attach_conformance(results)
         return results
     finally:

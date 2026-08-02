@@ -28,6 +28,11 @@ def generate_pr_summary(results: SessionResults) -> str:
 
     gate = us.get("gate", "n/a")
     lines.append(f"**Overall gate:** {_status_badge(gate)}")
+    qg = us.get("quality_gate") or {}
+    if qg:
+        lines.append(f"**Quality gate:** {_status_badge(qg.get('status', 'n/a'))}")
+        for reason in qg.get("reasons") or []:
+            lines.append(f"- {reason}")
     lines.append("")
 
     categories = us.get("categories", {})

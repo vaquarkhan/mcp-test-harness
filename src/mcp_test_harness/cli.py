@@ -359,6 +359,13 @@ async def _run_harness_impl(
 
     if results.failed > 0 or results.errored > 0:
         return 1
+    # Opt-in quality_gate (e.g. require_security_tests) can fail with 0 test failures.
+    qg = (results.unified_summary or {}).get("quality_gate") or {}
+    if qg.get("status") == "fail":
+        reasons = qg.get("reasons") or []
+        if reasons:
+            print("Quality gate failed: " + "; ".join(reasons), file=sys.stderr)
+        return 1
     return 0
 
 
