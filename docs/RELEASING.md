@@ -22,7 +22,7 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
 
 ## Release checklist (each version)
 
-1. **Version** — bump in [pyproject.toml](../pyproject.toml), all **`packages/mcp-test-harness-*`** `pyproject.toml` + `__init__.py` files (23 artifacts total), [server.json](../server.json), [CITATION.cff](../CITATION.cff) (if you track version there), [html/](../html/) site badges, and [README.md](../README.md).
+1. **Version** — bump in [pyproject.toml](../pyproject.toml), all **`packages/mcp-test-harness-*`** `pyproject.toml` + `__init__.py` files (**26** artifacts total: core + 25 shims), [server.json](../server.json), [CITATION.cff](../CITATION.cff) (if you track version there), [html/](../html/) site badges, and [README.md](../README.md).
 2. **Changelog** — add a dated section in [CHANGELOG.md](../CHANGELOG.md) for `X.Y.Z`.
 3. **Commit** — merge to `main` (or your release branch).
 4. **Tag and push** (from the commit you want to release):
@@ -51,6 +51,8 @@ docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version
 ### Optional `packages/*` wheels (separate PyPI projects)
 
 These use [`.github/workflows/publish-packages.yml`](../.github/workflows/publish-packages.yml), **not** the main `publish.yml`.
+
+Trusted publisher setup: [PYPI_TRUSTED_PUBLISHERS.md](PYPI_TRUSTED_PUBLISHERS.md)
 
 | Correct | Wrong |
 |---------|--------|

@@ -95,7 +95,7 @@ jobs:
             ./packages/mcp-test-harness-openai \
             ./packages/mcp-test-harness-fastmcp \
             ./packages/mcp-test-harness-langchain
-          python -c "import mcp_test_harness_openai, mcp_test_harness_fastmcp, mcp_test_harness_langchain; print('provider shims ok')"
+          python -c "import mcp_test_harness_openai, mcp_test_harness_fastmcp, mcp_test_harness_langchain, mcp_test_harness_langgraph, mcp_test_harness_pydantic_ai, mcp_test_harness_openai_agents; print('provider shims ok')"
 
       - name: Action-equivalent try-mode against fixture
         # Same smoke as the composite Action, but use the editable checkout install — PyPI may not have 4.0.0 yet.

@@ -37,6 +37,9 @@ PROVIDERS: list[tuple[str, str, str, str]] = [
     ("litellm", "LiteLLM", "LiteLLM proxy / router", "openai"),
     ("xai", "xAI", "xAI Grok", "openai"),
     ("autogen", "AutoGen", "Microsoft AutoGen agents", "autogen"),
+    ("langgraph", "LangGraph", "LangGraph agent graphs", "langchain"),
+    ("pydantic-ai", "Pydantic AI", "Pydantic AI agents", "autogen"),
+    ("openai-agents", "OpenAI Agents", "OpenAI Agents SDK", "openai"),
 ]
 
 

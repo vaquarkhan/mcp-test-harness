@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- **Three provider shims** (Bastion parity): `mcp-test-harness-langgraph`, `mcp-test-harness-pydantic-ai`, `mcp-test-harness-openai-agents` — generated via `scripts/sync_provider_packages.py`, covered by `tests/test_provider_package_helpers.py` (adopter/validate matrix).
+
 ## [4.0.1] - 2026-08-02
 
 ### Added

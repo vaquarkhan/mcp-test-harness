@@ -39,6 +39,9 @@ ALL_PROVIDERS: list[tuple[str, str | None, tuple[str, ...]]] = [
     ("litellm", "mcp_tools_to_litellm_functions", ("type", "function")),
     ("xai", "mcp_tools_to_xai_functions", ("type", "function")),
     ("autogen", "mcp_tools_to_autogen_functions", ("name", "parameters")),
+    ("langgraph", "mcp_tools_to_langgraph_tools", ("name", "args_schema")),
+    ("pydantic-ai", "mcp_tools_to_pydantic_ai_functions", ("name", "parameters")),
+    ("openai-agents", "mcp_tools_to_openai_agents_functions", ("type", "function")),
 ]
 
 SAMPLE_TOOL_DICT = {
