@@ -103,7 +103,15 @@ mcp-test --pr-summary-output mcp-pr-summary.md
 ## Example
 
 ```python
-from mcp_test_harness import marker, run_security_payload_pack, assert_authorization_boundary
+from mcp_test_harness import (
+    marker,
+    run_security_payload_pack,
+    assert_authorization_boundary,
+    assert_egress_quarantined,
+    assert_egress_allowed,
+    assert_covert_channel_neutralized,
+    assert_general_exec_tools_absent,
+)
 
 @marker(tags=["security", "smoke"])
 async def test_chat_injection_blocked(mcp_server):
@@ -112,6 +120,20 @@ async def test_chat_injection_blocked(mcp_server):
         injection_argument="input",
         path_argument="path",
     )
+
+@marker(tags=["security", "semantic-egress"])
+async def test_egress_quarantine(mcp_server):
+    # Recorded-verdict / fixture server in CI — not a live evaluator.
+    await assert_egress_quarantined(mcp_server, "send_message")
+    await assert_egress_allowed(mcp_server, "send_message")
+
+@marker(tags=["security", "covert-channel"])
+async def test_known_covert_encodings(mcp_server):
+    await assert_covert_channel_neutralized(mcp_server, "send_message")
+
+@marker(tags=["security", "capability-reduction"])
+async def test_no_general_exec_tools(mcp_server):
+    await assert_general_exec_tools_absent(mcp_server)
 
 @marker(tags=["security"])
 async def test_admin_boundary(mcp_server):
@@ -146,5 +168,6 @@ Test artifacts support compliance **evidence packages**; they supplement — not
 
 ## Roadmap (remaining)
 
+- Suite B/C/D cyber extensions (attestation, provenance) — phased; keep gated path deterministic
 - Optional toxic-flow heuristics when multiple tool sources are detected
 - Deeper integration with external fuzz engines (delegate, not embed)

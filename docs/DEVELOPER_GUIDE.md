@@ -255,6 +255,10 @@ If fixture `A` depends on `B` and `B` depends on `A` (or any cycle), resolution 
 | `assert_stateless_throughput(url, …)` | Stateless Streamable HTTP load (SEP-2575; no handshake) — [PERFORMANCE.md](PERFORMANCE.md) §4.1 · [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md). |
 | `assert_tool_call_validates_input(...)` | Assert the server rejects bad arguments; wraps `assert_tool_rejects`. |
 | `assert_snapshot(..., ignore_fields=[...], mask_patterns=[...])` | Snapshots: drop volatile keys or mask strings matching regexes. |
+| `assert_injection_blocked` / `assert_path_traversal_blocked` / `assert_no_secret_leak` | Deterministic security corpora — [SECURITY_TESTING.md](SECURITY_TESTING.md). |
+| `assert_egress_quarantined` / `assert_egress_allowed` | Suite A: manipulative egress must quarantine; benign controls must pass (CI recorded-verdict). |
+| `assert_covert_channel_neutralized` | Suite A: known encodings only (zero-width / homoglyph / whitespace) must not survive. |
+| `assert_general_exec_tools_absent` | Capability-reduction: shell/exec tools must not appear in `list_tools`. |
 
 ---
 

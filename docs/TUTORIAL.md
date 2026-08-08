@@ -455,6 +455,40 @@ Stateful paths in this document stay the default for stdio / session servers.
 
 ---
 
+## Security payload packs (Suite A)
+
+Tag tests `@marker(tags=["security"])` and keep the CI gate **deterministic** (recorded-verdict / fixture servers — not a live model):
+
+```python
+from mcp_test_harness import (
+    marker,
+    assert_egress_quarantined,
+    assert_egress_allowed,
+    assert_covert_channel_neutralized,
+    assert_general_exec_tools_absent,
+)
+
+@marker(tags=["security", "semantic-egress"])
+async def test_egress_policy(mcp_server):
+    await assert_egress_quarantined(mcp_server, "send_message")
+    await assert_egress_allowed(mcp_server, "send_message")
+
+@marker(tags=["security", "covert-channel"])
+async def test_known_covert_encodings(mcp_server):
+    # Known encodings only — not a claim that every channel is gone.
+    await assert_covert_channel_neutralized(mcp_server, "send_message")
+
+@marker(tags=["security", "capability-reduction"])
+async def test_no_shell_tools(mcp_server):
+    await assert_general_exec_tools_absent(mcp_server)
+```
+
+Run: `mcp-test -m security` or `pytest -m security`. Full strategy and honesty bounds: [SECURITY_TESTING.md](SECURITY_TESTING.md).
+
+Nightly (not PR-gated) markers reserved for later phases: `semantic_live`, `adaptive`.
+
+---
+
 ## License
 
 Non-commercial use with mandatory attribution.
