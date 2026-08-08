@@ -21,8 +21,20 @@ Tag tests with `@marker(tags=["security"])`:
 | `assert_path_traversal_blocked` | Path traversal payloads; fails on sensitive content |
 | `assert_no_secret_leak` | Scans output for API keys, JWT, private keys, etc. |
 | `run_security_payload_pack` | Runs injection (+ optional path) checks in one call |
+| `assert_egress_quarantined` | Social-engineering / synthetic-identity egress must error with quarantine deny |
+| `assert_egress_allowed` | Benign egress controls must pass (false-positive guard) |
+| `assert_covert_channel_neutralized` | **Known encodings only** (zero-width, homoglyph, whitespace) must not survive |
+| `assert_general_exec_tools_absent` | Capability-reduction: shell/exec tools must not be exposed |
 
-Corpora: `PROMPT_INJECTION_PAYLOADS`, `PATH_TRAVERSAL_PAYLOADS`, `SECRET_LEAK_PATTERNS`.
+Corpora: `PROMPT_INJECTION_PAYLOADS`, `PATH_TRAVERSAL_PAYLOADS`, `SECRET_LEAK_PATTERNS`, `SOCIAL_ENGINEERING_PAYLOADS`, `BENIGN_EGRESS_CONTROLS`, `COVERT_CHANNEL_PAYLOADS`, `AISI_MAINTAINER_PRESSURE_PAYLOAD`.
+
+### Suite A honesty (semantic egress)
+
+- **CI gate** asserts *enforcement* against a recorded-verdict / fixture server (deny code / quarantine substring), not live model prose.
+- **`semantic_live`** / **`adaptive`** pytest markers are reserved for nightly detection-quality and adaptive-attack trend runs — they must not gate PRs.
+- Covert-channel helpers prove **known-encoding capacity reduction**, not absence of every channel.
+- The AISI maintainer-pressure fixture is a **visible skip** (issue-linked known-gap) until bastion Extension A lands — not a silent `xfail`.
+- Out-of-band shell/Tor paths are **out of scope** here; `assert_general_exec_tools_absent` is the deterministic configuration control for that gap.
 
 ### Resiliency (related)
 
@@ -114,8 +126,10 @@ async def test_admin_boundary(mcp_server):
 
 | Track | When | Command |
 |-------|------|---------|
-| Security smoke | Every PR | `mcp-test -m security` |
+| Security smoke | Every PR | `mcp-test -m security` / `pytest -m security` |
 | Full payload suite | Nightly / main | All security-tagged tests |
+| Detection quality | Nightly (not gated) | `pytest -m semantic_live` |
+| Adaptive trend | Nightly (not gated) | `pytest -m adaptive` |
 | Config audit (optional) | PR | `npx @mcp-shark/mcp-shark scan --ci` — see [COMPARISON.md](COMPARISON.md) |
 
 ## Integration model
