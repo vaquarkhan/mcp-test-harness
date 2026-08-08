@@ -59,7 +59,7 @@
         const eco = await ecoRes.json();
         const ecoTotal = Number(eco.total_downloads) || 0;
         const indexed = eco.indexed_count ?? eco.package_count;
-        const count = eco.package_count || 23;
+        const count = eco.package_count || 26;
         parts.push(`${fmt(ecoTotal)} ecosystem total`);
         parts.push(`${indexed}/${count} indexed`);
       }

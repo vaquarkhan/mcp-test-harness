@@ -55,6 +55,9 @@ PACKAGES: list[tuple[str, str]] = [
     ("mcp-test-harness-litellm", "LiteLLM proxy"),
     ("mcp-test-harness-xai", "xAI Grok"),
     ("mcp-test-harness-autogen", "Microsoft AutoGen"),
+    ("mcp-test-harness-langgraph", "LangGraph stateful agents"),
+    ("mcp-test-harness-pydantic-ai", "Pydantic AI agents"),
+    ("mcp-test-harness-openai-agents", "OpenAI Agents SDK"),
 ]
 
 UA = {

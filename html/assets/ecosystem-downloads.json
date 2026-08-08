@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-08-08T08:38:02Z",
+  "updated_at": "2026-08-08T09:00:45Z",
   "source": "pepy.tech total_downloads (all-time); pypistats.org fallback (~180d)",
   "note": "All-time cumulative per package when PePy has indexed the project. New releases show stats_status=pending until PePy/pypistats index them (usually 24\u201348h). Installing an integration also pulls mcp-test-harness, so core + integration totals can overlap.",
-  "package_count": 23,
-  "indexed_count": 23,
+  "package_count": 26,
+  "indexed_count": 26,
   "pending_count": 0,
-  "total_downloads": 194899,
+  "total_downloads": 195804,
   "packages": [
     {
       "package": "mcp-test-harness",
@@ -282,6 +282,42 @@
       "pypi": "https://pypi.org/project/mcp-test-harness-autogen/",
       "pepy": "https://pepy.tech/projects/mcp-test-harness-autogen",
       "pypistats": "https://pypistats.org/packages/mcp-test-harness-autogen"
+    },
+    {
+      "package": "mcp-test-harness-langgraph",
+      "protects": "LangGraph stateful agents",
+      "downloads": 287,
+      "stats_status": "indexed",
+      "stats_source": "pepy.tech all-time",
+      "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-langgraph-downloads.json",
+      "badge_shields": "https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-langgraph-downloads.json",
+      "pypi": "https://pypi.org/project/mcp-test-harness-langgraph/",
+      "pepy": "https://pepy.tech/projects/mcp-test-harness-langgraph",
+      "pypistats": "https://pypistats.org/packages/mcp-test-harness-langgraph"
+    },
+    {
+      "package": "mcp-test-harness-pydantic-ai",
+      "protects": "Pydantic AI agents",
+      "downloads": 298,
+      "stats_status": "indexed",
+      "stats_source": "pepy.tech all-time",
+      "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-pydantic-ai-downloads.json",
+      "badge_shields": "https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-pydantic-ai-downloads.json",
+      "pypi": "https://pypi.org/project/mcp-test-harness-pydantic-ai/",
+      "pepy": "https://pepy.tech/projects/mcp-test-harness-pydantic-ai",
+      "pypistats": "https://pypistats.org/packages/mcp-test-harness-pydantic-ai"
+    },
+    {
+      "package": "mcp-test-harness-openai-agents",
+      "protects": "OpenAI Agents SDK",
+      "downloads": 320,
+      "stats_status": "indexed",
+      "stats_source": "pepy.tech all-time",
+      "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-openai-agents-downloads.json",
+      "badge_shields": "https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-openai-agents-downloads.json",
+      "pypi": "https://pypi.org/project/mcp-test-harness-openai-agents/",
+      "pepy": "https://pepy.tech/projects/mcp-test-harness-openai-agents",
+      "pypistats": "https://pypistats.org/packages/mcp-test-harness-openai-agents"
     }
   ]
 }

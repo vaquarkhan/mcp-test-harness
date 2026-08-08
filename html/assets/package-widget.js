@@ -54,7 +54,7 @@
       const pendingNote = pending
         ? ` · ${pending} new package${pending === 1 ? '' : 's'} pending pypistats index`
         : '';
-      meta.textContent = `${data.indexed_count || data.package_count}/${data.package_count || 23} indexed · updated ${updated || '—'}${pendingNote}`;
+      meta.textContent = `${data.indexed_count || data.package_count}/${data.package_count || 26} indexed · updated ${updated || '—'}${pendingNote}`;
     }
   }
 

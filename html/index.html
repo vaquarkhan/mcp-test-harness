@@ -58,7 +58,7 @@
       <a href="guide/" class="pypi-bar-pill">Docs</a>
       <a href="guide/handbook.html" class="pypi-bar-pill">Handbook</a>
       <a href="features-deck.html" class="pypi-bar-pill">Features deck</a>
-      <a href="integrations.html" class="pypi-bar-pill">23 pkgs · 194k+</a>
+      <a href="integrations.html" class="pypi-bar-pill">26 pkgs · 195k+</a>
       <a href="https://github.com/sponsors/vaquarkhan" class="pypi-bar-pill" target="_blank" rel="noopener noreferrer">Sponsor</a>
       <span class="pypi-stat-live" id="pypi-stats-live-detail">Loading live stats…</span>
     </div>
@@ -127,7 +127,7 @@
         <a href="guide/" class="btn-ghost">Docs</a>
         <a href="guide/handbook.html" class="btn-ghost">Handbook</a>
         <a href="features-deck.html" class="btn-ghost">Features deck</a>
-        <a href="integrations.html" class="btn-ghost">23 pkgs · 194k+</a>
+        <a href="integrations.html" class="btn-ghost">26 pkgs · 195k+</a>
       </div>
       <div class="flex items-center gap-6 text-sm text-slate-400">
         <div class="flex items-center gap-2">
@@ -178,7 +178,7 @@
     </div>
     <div class="mt-10 text-center">
       <a href="examples.html" class="btn-primary">Record &amp; generate examples</a>
-      <a href="integrations.html" class="btn-ghost ml-2">Ecosystem downloads (194k+) →</a>
+      <a href="integrations.html" class="btn-ghost ml-2">Ecosystem downloads (195k+) →</a>
     </div>
   </div>
 </section>
@@ -187,8 +187,8 @@
 <section id="ecosystem-downloads" class="py-16 bg-slate-900 text-white border-t border-slate-800">
   <div class="max-w-5xl mx-auto px-6 text-center">
     <p class="text-xs uppercase tracking-wider text-indigo-300 mb-3">All packages · total downloads (all-time)</p>
-    <p class="text-6xl font-extrabold tabular-nums mb-3" id="home-ecosystem-total">194.9k</p>
-    <p class="text-slate-400 mb-8" id="home-ecosystem-meta">23/23 indexed · refreshed daily from PePy / pypistats</p>
+    <p class="text-6xl font-extrabold tabular-nums mb-3" id="home-ecosystem-total">195.8k</p>
+    <p class="text-slate-400 mb-8" id="home-ecosystem-meta">26/26 indexed · refreshed daily from PePy / pypistats</p>
     <a href="integrations.html" class="btn-primary">Open integrations dashboard</a>
   </div>
 </section>
@@ -225,10 +225,10 @@
       <div class="feature-card"><strong>CLI</strong><p class="text-slate-600 mt-1">init, try, record, generate, experiment, conformance, export-pdf, doctor</p></div>
       <div class="feature-card"><strong>Reports</strong><p class="text-slate-600 mt-1">Console, JUnit, JSON, HTML dashboard, PDF export, MCP trace timeline</p></div>
       <div class="feature-card"><strong>Chaos &amp; resiliency</strong><p class="text-slate-600 mt-1">@marker chaos_faults, experiment catalog, throughput SLO params</p></div>
-      <div class="feature-card"><strong>Security</strong><p class="text-slate-600 mt-1">SARIF export, OWASP MCP rules, injection/path/leak packs, authorization boundaries, Bastion pairing</p></div>
+      <div class="feature-card"><strong>Security</strong><p class="text-slate-600 mt-1">SARIF · OWASP MCP · injection/path/leak · <strong>Suite A</strong> egress quarantine, covert-channel neutralization, general-exec tools absent · Bastion pairing</p></div>
       <div class="feature-card"><strong>Conformance</strong><p class="text-slate-600 mt-1">Levels + badge (RFC-002); stateless SEP-2575 via <code>mcp-test conformance stateless</code> (RFC-006)</p></div>
       <div class="feature-card"><strong>Automation</strong><p class="text-slate-600 mt-1">GitHub Marketplace Action, pre-commit hook, Docker GHCR, PyInstaller binary</p></div>
-      <div class="feature-card"><strong>23 PyPI packages · 194k+ downloads</strong><p class="text-slate-600 mt-1">Core + 22 framework shims — all-time ecosystem total on <a href="integrations.html" class="text-indigo-600 underline">Integrations</a></p></div>
+      <div class="feature-card"><strong>26 PyPI packages · 195k+ downloads</strong><p class="text-slate-600 mt-1">Core + 25 framework shims (incl. LangGraph, Pydantic AI, OpenAI Agents) — all-time total on <a href="integrations.html" class="text-indigo-600 underline">Integrations</a></p></div>
       <div class="feature-card"><strong>Platform QA</strong><p class="text-slate-600 mt-1">Tool coverage map, unified portal in reports, performance baselines</p></div>
       <div class="feature-card"><strong>Dogfood</strong><p class="text-slate-600 mt-1">pytest spawns real mcp-test CLI against bundled FastMCP fixtures</p></div>
     </div>
@@ -250,8 +250,30 @@
         <code class="block text-xs bg-slate-900 text-emerald-300 p-3 rounded-lg mb-4">manifest_gate: { enabled: true }  # mcp-test.yaml
 mcp-test manifest check</code>
         <a href="guide/handbook.html#security-first" class="btn-primary">Why security-first</a>
-        <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md" class="btn-ghost ml-2">Security testing</a>
+        <a href="guide/security.html" class="btn-ghost ml-2">Security testing</a>
         <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/ROADMAP.md" class="btn-ghost ml-2">Moat roadmap</a>
+      </div>
+    </div>
+    <div class="mt-12 grid lg:grid-cols-2 gap-8 items-center border-t border-slate-100 pt-12">
+      <div>
+        <span class="section-kicker">Suite A · CI security packs</span>
+        <h3 class="text-2xl font-bold mb-3">Egress · covert channel · capability reduction</h3>
+        <p class="text-slate-600 mb-4">Deterministic assertions for merge gates — no live model required. Recorded-verdict egress quarantine/allow, known-encoding covert-channel neutralization, and <code class="text-sm">assert_general_exec_tools_absent</code> for dangerous tool surfaces.</p>
+        <ul class="text-sm text-slate-600 space-y-2 mb-4 list-disc list-inside">
+          <li><code>assert_egress_quarantined</code> / <code>assert_egress_allowed</code></li>
+          <li><code>assert_covert_channel_neutralized</code></li>
+          <li><code>assert_general_exec_tools_absent</code></li>
+        </ul>
+        <a href="guide/security.html" class="btn-primary">Security docs</a>
+        <a href="examples.html#assertions" class="btn-ghost ml-2">Assertion table</a>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-slate-900 text-slate-100 p-6 font-mono text-xs leading-relaxed">
+        <div class="text-emerald-300 mb-2"># pytest marker: security</div>
+        <div>await assert_egress_quarantined(mcp, "send_message")</div>
+        <div>await assert_covert_channel_neutralized(mcp, "echo")</div>
+        <div>await assert_general_exec_tools_absent(mcp)</div>
+        <div class="text-slate-500 mt-4"># nightly only — not PR gates:</div>
+        <div class="text-slate-400"># -m semantic_live · -m adaptive</div>
       </div>
     </div>
   </div>
@@ -484,7 +506,7 @@ async def test_echo_latency(mcp_server):
       <div class="feature-card">
         <div class="feature-icon">🔐</div>
         <h3 class="font-bold mb-2">Security testing</h3>
-        <p class="text-sm text-slate-600">assert_tool_denied, assert_authorization_boundary. MCP-aware security assertions. Pairs with MCP-Bastion for runtime defense.</p>
+        <p class="text-sm text-slate-600">Auth boundaries plus Suite A packs: egress quarantine, covert-channel neutralization, general-exec tools absent. Pairs with MCP-Bastion for runtime defense.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">✅</div>
@@ -541,7 +563,7 @@ async def test_echo_latency(mcp_server):
       <div class="feature-card">
         <div class="badge badge-primary mb-3">SECURITY</div>
         <h3 class="font-bold mb-2">Security test packs</h3>
-        <p class="text-sm text-slate-600">Catch common misuse patterns early. Authorization boundary assertions. Pairs with MCP-Bastion for runtime defense.</p>
+        <p class="text-sm text-slate-600">Injection / path / leak plus Suite A egress &amp; covert-channel packs. Authorization boundaries. Pairs with MCP-Bastion for runtime defense.</p>
       </div>
       <div class="feature-card">
         <div class="badge badge-primary mb-3">AUDIT</div>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Integrations &amp; Packages - MCP Test Harness</title>
-<meta name="description" content="All 23 MCP Test Harness PyPI packages with live version and download badges. Core harness plus 22 LLM framework shims.">
+<meta name="description" content="All 26 MCP Test Harness PyPI packages with live version and download badges. Core harness plus 25 LLM framework shims.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
     </div>
     <div class="pypi-badge-row pypi-badge-row-meta">
       <a href="features-deck.html" class="pypi-bar-pill">Features deck</a>
-      <a href="integrations.html" class="pypi-bar-pill pypi-bar-pill-active">23 pkgs · 194k+</a>
+      <a href="integrations.html" class="pypi-bar-pill pypi-bar-pill-active">26 pkgs · 195k+</a>
       <a href="https://github.com/sponsors/vaquarkhan" class="pypi-bar-pill" target="_blank" rel="noopener noreferrer">Sponsor</a>
       <span class="pypi-stat-live" id="pypi-stats-live-detail">Loading live stats…</span>
     </div>
@@ -89,7 +89,7 @@
 <section class="py-10 border-y border-slate-200 bg-slate-900 text-white">
   <div class="max-w-6xl mx-auto px-6 overflow-x-auto">
     <h2 class="text-lg font-bold mb-2 text-center text-white">Package versions &amp; downloads</h2>
-    <p class="text-sm text-slate-400 text-center mb-6">23 PyPI packages · <strong class="text-slate-300">total downloads</strong> (all-time via PePy) from <a class="text-indigo-300 hover:text-white underline" href="assets/ecosystem-downloads.json">ecosystem-downloads.json</a> · <span class="text-slate-500">on PyPI</span> until indexed. · <a class="text-indigo-300 hover:text-white" href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/html/assets/ecosystem-downloads.json">view on GitHub</a></p>
+    <p class="text-sm text-slate-400 text-center mb-6">26 PyPI packages · <strong class="text-slate-300">total downloads</strong> (all-time via PePy) from <a class="text-indigo-300 hover:text-white underline" href="assets/ecosystem-downloads.json">ecosystem-downloads.json</a> · <span class="text-slate-500">on PyPI</span> until indexed. · <a class="text-indigo-300 hover:text-white" href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/html/assets/ecosystem-downloads.json">view on GitHub</a></p>
     <table class="w-full text-sm text-left border-collapse min-w-[720px]">
       <thead>
         <tr class="text-slate-400 border-b border-white/10">
@@ -158,7 +158,7 @@ fetch("assets/ecosystem-downloads.json")
     const pendingNote = pending
       ? ` · ${pending} new package${pending === 1 ? "" : "s"} pending pypistats index`
       : "";
-    meta.textContent = `${data.indexed_count || data.package_count}/${data.package_count || 23} indexed · updated ${updated || "—"}${pendingNote}`;
+    meta.textContent = `${data.indexed_count || data.package_count}/${data.package_count || 26} indexed · updated ${updated || "—"}${pendingNote}`;
 
     const core = (data.packages || []).find((p) => p.package === "mcp-test-harness");
     if (core && core.badge_shields) {
@@ -183,17 +183,21 @@ fetch("assets/ecosystem-downloads.json")
     </div>
     <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-4 text-center text-sm font-medium text-slate-700">
       <div class="feature-card py-4">LangChain</div>
+      <div class="feature-card py-4">LangGraph <span class="text-xs text-indigo-600 font-semibold">New</span></div>
       <div class="feature-card py-4">OpenAI</div>
+      <div class="feature-card py-4">OpenAI Agents <span class="text-xs text-indigo-600 font-semibold">New</span></div>
       <div class="feature-card py-4">Anthropic</div>
       <div class="feature-card py-4">Bedrock</div>
       <div class="feature-card py-4">Gemini</div>
       <div class="feature-card py-4">CrewAI</div>
       <div class="feature-card py-4">LlamaIndex</div>
+      <div class="feature-card py-4">Pydantic AI <span class="text-xs text-indigo-600 font-semibold">New</span></div>
       <div class="feature-card py-4">Groq</div>
       <div class="feature-card py-4">Mistral</div>
       <div class="feature-card py-4">Azure</div>
       <div class="feature-card py-4">Vertex AI</div>
       <div class="feature-card py-4">FastMCP</div>
+      <div class="feature-card py-4">AutoGen</div>
     </div>
     <div class="mt-10 text-center">
       <a href="features-deck.html" class="btn-primary">View features deck</a>
