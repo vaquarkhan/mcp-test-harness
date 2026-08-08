@@ -13,6 +13,7 @@ All notable changes to this project are documented in this file. The format is b
 
 - **`[dev]` extra is lightweight again** — `mcp-bastion-python` stays in `[mcplint]` only (avoids multi-GB torch/spacy/presidio for the normal contributor loop). Use `pip install -e ".[dev,mcplint]"` for Bastion pairing. Cap pytest / pytest-asyncio majors (`<10` / `<2`).
 - **`mcp-test try` exit codes documented** — `0` when boot+protocol pass; higher conformance levels are informational only.
+- **Nightly workflow** `security-nightly.yml` exercises reserved `semantic_live` / `adaptive` markers (not PR gates); empty collection (exit 5) is success until suites land.
 
 ## [4.0.1] - 2026-08-02
 
