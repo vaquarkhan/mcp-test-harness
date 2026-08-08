@@ -10,6 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="assets/style.css">
+<style>
+  .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+</style>
 </head>
 <body class="bg-slate-50 text-slate-900 has-pypi-bar" data-pypi-package="mcp-test-harness">
 
@@ -58,43 +61,118 @@
   </div>
 </nav>
 
-<section class="hero-gradient pt-32 pb-16 text-white">
-  <div class="max-w-7xl mx-auto px-6 text-center">
-    <span class="section-kicker text-indigo-300">23 PyPI packages</span>
-    <h1 class="text-5xl md:text-6xl font-extrabold mb-4 mt-2">Framework integrations</h1>
-    <p class="text-xl text-slate-300 max-w-3xl mx-auto">One-line install per stack. Core harness plus optional shims for OpenAI, Anthropic, LangChain, FastMCP, and 18 more — same version line on every wheel.</p>
-    <div class="mt-8 inline-block rounded-xl bg-slate-900/50 border border-white/10 px-6 py-3 font-mono text-emerald-300 text-sm">
-      pip install mcp-test-harness-<span class="text-indigo-300">{framework}</span>
+<!-- HEADER (Bastion-parity: glass total + shields → ecosystem-downloads.json) -->
+<section class="hero-gradient pt-32 pb-16 text-white relative overflow-hidden">
+  <div class="absolute top-0 left-1/4 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-0 right-1/4 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+    <h1 class="text-5xl md:text-6xl font-black mb-4">Framework Integrations</h1>
+    <p class="text-xl text-slate-300 max-w-2xl mx-auto">One-line install. Each package auto-installs the core harness. Works with every major LLM framework.</p>
+    <div class="mt-8 inline-block rounded-xl bg-slate-900/80 border border-white/10 px-6 py-3 font-mono text-indigo-300 text-sm">
+      pip install mcp-test-harness-<span class="text-emerald-300">{framework}</span>
     </div>
-    <div class="mt-10 mx-auto max-w-xl rounded-2xl border border-white/15 bg-slate-950/40 px-8 py-6 text-left">
-      <p class="text-xs uppercase tracking-wider text-indigo-300/90 mb-2">All packages · total downloads (all-time)</p>
-      <p id="ecosystem-total-count" class="text-5xl font-extrabold text-white tabular-nums">…</p>
-      <p id="ecosystem-total-meta" class="mt-2 text-sm text-slate-400">Loading ecosystem downloads…</p>
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+      <a href="https://pypi.org/project/mcp-test-harness/"><img src="https://img.shields.io/pypi/v/mcp-test-harness?label=core%20PyPI&amp;color=3775A9" alt="PyPI version mcp-test-harness"></a>
+      <a href="https://pypi.org/project/mcp-test-harness/" id="core-downloads-badge-link"><img id="core-downloads-badge" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-downloads.json" alt="Core downloads"></a>
+      <a href="assets/ecosystem-downloads.json" title="ecosystem-downloads.json"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json" alt="Ecosystem PyPI downloads"></a>
+      <a href="https://github.com/sponsors/vaquarkhan"><img src="https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=github" alt="Sponsor"></a>
+    </div>
+    <div id="ecosystem-total" class="mt-8 mx-auto max-w-md glass rounded-2xl px-6 py-5 text-center">
+      <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">All packages · total downloads (all-time)</div>
+      <div class="text-4xl font-black text-white tabular-nums" id="ecosystem-total-count">…</div>
+      <div class="text-sm text-slate-400 mt-1" id="ecosystem-total-meta">Loading ecosystem downloads…</div>
     </div>
   </div>
 </section>
 
-<section class="py-12 bg-white border-y border-slate-200">
-  <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-2xl font-bold mb-2 text-center">Package versions &amp; downloads</h2>
-    <p class="text-sm text-slate-500 text-center mb-8">23 PyPI packages · total downloads (all-time via PePy) from <code class="text-xs">ecosystem-downloads.json</code> · on PyPI until indexed.</p>
-    <div class="pypi-widget-wrap overflow-x-auto">
-      <table class="pypi-widget-table">
-        <thead>
-          <tr>
-            <th>Package</th>
-            <th>Covers</th>
-            <th>Version</th>
-            <th>Downloads</th>
-            <th>Install</th>
-          </tr>
-        </thead>
-        <tbody id="pypi-widget-body"></tbody>
-      </table>
-    </div>
-    <p class="text-xs text-slate-500 text-center mt-6">Docker: <code class="text-xs">ghcr.io/vaquarkhan/mcp-test-harness:latest</code> · GitHub Action: <code class="text-xs">vaquarkhan/mcp-test-harness@v4.0.1</code></p>
+<!-- DOWNLOAD WIDGET (same pattern as MCP-Bastion integrations.html) -->
+<section class="py-10 border-y border-slate-200 bg-slate-900 text-white">
+  <div class="max-w-6xl mx-auto px-6 overflow-x-auto">
+    <h2 class="text-lg font-bold mb-2 text-center text-white">Package versions &amp; downloads</h2>
+    <p class="text-sm text-slate-400 text-center mb-6">23 PyPI packages · <strong class="text-slate-300">total downloads</strong> (all-time via PePy) from <a class="text-indigo-300 hover:text-white underline" href="assets/ecosystem-downloads.json">ecosystem-downloads.json</a> · <span class="text-slate-500">on PyPI</span> until indexed. · <a class="text-indigo-300 hover:text-white" href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/html/assets/ecosystem-downloads.json">view on GitHub</a></p>
+    <table class="w-full text-sm text-left border-collapse min-w-[720px]">
+      <thead>
+        <tr class="text-slate-400 border-b border-white/10">
+          <th class="py-3 pr-4 font-medium">Package</th>
+          <th class="py-3 pr-4 font-medium">Tests for</th>
+          <th class="py-3 pr-4 font-medium">Version</th>
+          <th class="py-3 font-medium">Downloads</th>
+        </tr>
+      </thead>
+      <tbody class="text-slate-300" id="pypi-widget-body">
+        <!-- rows injected from ecosystem-downloads.json -->
+      </tbody>
+    </table>
+    <p class="text-xs text-slate-500 text-center mt-6">Docker: <code class="text-xs text-slate-400">ghcr.io/vaquarkhan/mcp-test-harness:latest</code> · Action: <code class="text-xs text-slate-400">vaquarkhan/mcp-test-harness@v4.0.1</code></p>
   </div>
 </section>
+
+<script>
+/* Bastion-parity ecosystem loader */
+function formatCount(n) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, "") + "k";
+  return String(n);
+}
+
+function buildDownloadsCell(pkg) {
+  const badge = pkg.badge_shields
+    || `https://img.shields.io/endpoint?url=${encodeURIComponent(
+      `https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/${pkg.package}-downloads.json`
+    )}`;
+  const statsLink = pkg.stats_status === "indexed"
+    ? `<a href="${pkg.pypistats}" class="ml-2 text-xs text-slate-500 hover:text-indigo-300">pypistats</a>`
+    : `<span class="ml-2 text-xs text-slate-600" title="Download stats appear on pypistats.org ~24–48h after first publish">stats pending</span>`;
+  const link = pkg.stats_status === "indexed" ? pkg.pypistats : pkg.pypi;
+  return `<a href="${link}"><img src="${badge}" alt="Downloads ${pkg.package}"></a>${statsLink}`;
+}
+
+function renderPackageTable(packages) {
+  const tbody = document.getElementById("pypi-widget-body");
+  tbody.innerHTML = "";
+  packages.forEach((pkg) => {
+    const tr = document.createElement("tr");
+    tr.className = "border-b border-white/5 hover:bg-white/[0.02]";
+    tr.innerHTML = `
+      <td class="py-3 pr-4 font-mono text-indigo-300"><a href="${pkg.pypi}" class="hover:text-white">${pkg.package}</a></td>
+      <td class="py-3 pr-4">${pkg.protects}</td>
+      <td class="py-3 pr-4"><a href="${pkg.pypi}"><img src="https://img.shields.io/pypi/v/${pkg.package}" alt="PyPI ${pkg.package}"></a></td>
+      <td class="py-3">${buildDownloadsCell(pkg)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+fetch("assets/ecosystem-downloads.json")
+  .then((r) => {
+    if (!r.ok) throw new Error("missing json");
+    return r.json();
+  })
+  .then((data) => {
+    renderPackageTable(data.packages || []);
+
+    const el = document.getElementById("ecosystem-total-count");
+    const meta = document.getElementById("ecosystem-total-meta");
+    el.textContent = formatCount(data.total_downloads || 0);
+    const updated = (data.updated_at || "").slice(0, 10);
+    const pending = data.pending_count || 0;
+    const pendingNote = pending
+      ? ` · ${pending} new package${pending === 1 ? "" : "s"} pending pypistats index`
+      : "";
+    meta.textContent = `${data.indexed_count || data.package_count}/${data.package_count || 23} indexed · updated ${updated || "—"}${pendingNote}`;
+
+    const core = (data.packages || []).find((p) => p.package === "mcp-test-harness");
+    if (core && core.badge_shields) {
+      const badge = document.getElementById("core-downloads-badge");
+      const link = document.getElementById("core-downloads-badge-link");
+      if (badge) badge.src = core.badge_shields;
+      if (link) link.href = core.stats_status === "indexed" ? core.pypistats : core.pypi;
+    }
+  })
+  .catch(() => {
+    document.getElementById("ecosystem-total-meta").textContent =
+      "Could not load ecosystem-downloads.json — run scripts/update_ecosystem_downloads.py";
+  });
+</script>
 
 <section class="py-20 bg-slate-50">
   <div class="max-w-7xl mx-auto px-6">
@@ -134,6 +212,5 @@
 </footer>
 
 <script src="assets/pypi-stats.js"></script>
-<script src="assets/package-widget.js"></script>
 </body>
 </html>
