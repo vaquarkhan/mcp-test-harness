@@ -11,6 +11,8 @@
   ·
   <a href="https://vaquarkhan.github.io/mcp-test-harness/integrations.html"><strong>Integrations</strong></a>
   ·
+  <a href="https://vaquarkhan.github.io/mcp-test-harness/guide/multi-language.html"><strong>Multi-language</strong></a>
+  ·
   <a href="https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html"><strong>Reports</strong></a>
   ·
   <a href="LICENSE"><strong>License</strong></a>
@@ -25,6 +27,7 @@
 [![PyPI version](https://img.shields.io/badge/pypi-v4.0.1-blue)](https://pypi.org/project/mcp-test-harness/)
 [![PyPI downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-downloads.json)](https://pypistats.org/packages/mcp-test-harness)
 [![Ecosystem PyPI downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json)](https://vaquarkhan.github.io/mcp-test-harness/integrations.html)
+[![Multi-language](https://img.shields.io/badge/suite-TS%20Java%20Go%20.NET-7C3AED)](https://vaquarkhan.github.io/mcp-test-harness/guide/multi-language.html)
 [![Python](https://img.shields.io/pypi/pyversions/mcp-test-harness)](https://pypi.org/project/mcp-test-harness/)
 [![CI](https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&label=CI)](https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -45,6 +48,7 @@
 | **Sample scan report** | https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html |
 | **Features deck** | https://vaquarkhan.github.io/mcp-test-harness/features-deck.html |
 | **Integrations & download totals** | https://vaquarkhan.github.io/mcp-test-harness/integrations.html · [JSON](html/assets/ecosystem-downloads.json) |
+| **Multi-language suite** | https://vaquarkhan.github.io/mcp-test-harness/guide/multi-language.html · [suite repo](https://github.com/vaquarkhan/mcp-test-suite) · [downloads](https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/DOWNLOADS.md) |
 | **MCP-Bastion** (sister product — runtime security) | https://github.com/vaquarkhan/MCP-Bastion · [handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) |
 
 **Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`4.0.1`** (runtime, `mcp-test` entrypoint), **`dev`** and **`4.0.1-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
