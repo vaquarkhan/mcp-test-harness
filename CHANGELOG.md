@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Fixed
+
+- **Plain `pytest` from repo root** no longer collects `examples/` (which need the `mcp-test` runner fixtures) — set `testpaths = ["tests"]` in pytest config.
+- **Unawaited coroutine warning** in `test_shutdown_timeout_kill_process_gone` when mocking `asyncio.wait_for` (consume the `process.wait()` coroutine).
+
+### Changed
+
+- **`[dev]` extra is lightweight again** — `mcp-bastion-python` stays in `[mcplint]` only (avoids multi-GB torch/spacy/presidio for the normal contributor loop). Use `pip install -e ".[dev,mcplint]"` for Bastion pairing. Cap pytest / pytest-asyncio majors (`<10` / `<2`).
+- **`mcp-test try` exit codes documented** — `0` when boot+protocol pass; higher conformance levels are informational only.
+
 ## [4.0.1] - 2026-08-02
 
 ### Added

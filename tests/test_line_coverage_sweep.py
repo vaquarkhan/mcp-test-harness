@@ -652,8 +652,14 @@ async def test_shutdown_timeout_kill_process_gone() -> None:
         capabilities={},
     )
     mgr = ServerLifecycleManager()
-    with patch("mcp_test_harness.lifecycle.asyncio.wait_for", new_callable=AsyncMock) as wf:
-        wf.side_effect = asyncio.TimeoutError
+
+    async def _wait_for(awaitable: object, *args: object, **kwargs: object) -> None:
+        # Consume the process.wait() coroutine so it is not left unawaited.
+        if asyncio.iscoroutine(awaitable):
+            awaitable.close()
+        raise asyncio.TimeoutError
+
+    with patch("mcp_test_harness.lifecycle.asyncio.wait_for", side_effect=_wait_for):
         await mgr.shutdown(srv)
     proc.kill.assert_called_once()
 

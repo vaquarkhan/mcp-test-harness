@@ -34,17 +34,19 @@ dependencies = [
 mcp-test = "mcp_test_harness.cli:main"
 
 [project.optional-dependencies]
-# Pins MCP-Bastion for the mcplint shim (optional; core harness does not need it)
+# Pins MCP-Bastion for the mcplint shim (optional; core harness does not need it).
+# Bastion pulls a heavy ML/NLP tree (torch/spacy/presidio) — keep it out of [dev].
 mcplint = [
   "mcp-bastion-python>=1.0.12",
 ]
 bedrock = [
   "mcp-bastion-bedrock>=0.1.0",
 ]
+# Lightweight contributor loop (matches CI Quick job intent). For Bastion pairing smoke:
+#   pip install -e ".[dev,mcplint]"
 dev = [
-  "mcp-bastion-python>=1.0.12",
-  "pytest>=7.0.0",
-  "pytest-asyncio>=0.21.0",
+  "pytest>=7.0.0,<10",
+  "pytest-asyncio>=0.21.0,<2",
   "jsonschema>=4.0.0",
   "pyinstaller>=6.0.0",
   "coverage>=7.0.0",
@@ -83,9 +85,16 @@ include = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 pythonpath = ["src"]
+# Only the harness unit suite. examples/feature-demo/** needs the mcp-test runner
+# (mcp_server fixtures), not plain pytest — collecting them from the repo root
+# produces dozens of fixture errors.
+testpaths = ["tests"]
 addopts = "--ignore=tests/fixtures/harness_self_test --ignore=tests/fixtures/harness_seam_test"
 markers = [
   "e2e: end-to-end dogfood tests (subprocess mcp-test CLI against real MCP server)",
+  "security: deterministic security payload / gate tests",
+  "semantic_live: nightly detection-quality only — must not gate PRs",
+  "adaptive: nightly adaptive probes — must not gate PRs",
 ]
 
 # 100% line gate on the harness package.
