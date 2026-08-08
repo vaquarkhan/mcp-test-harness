@@ -14,6 +14,7 @@ All notable changes to this project are documented in this file. The format is b
 - **Plain `pytest` from repo root** no longer collects `examples/` (which need the `mcp-test` runner fixtures) — set `testpaths = ["tests"]` in pytest config.
 - **Unawaited coroutine warning** in `test_shutdown_timeout_kill_process_gone` when mocking `asyncio.wait_for` (consume the `process.wait()` coroutine).
 - **Unawaited coroutine warnings** from CLI sync wrappers: tests that patch `asyncio.run` now close `_cmd_run_async` / `run_generate_async` coroutines (`test_experiments`, `test_trace_chaos_generate`).
+- **`--watch` change detection** now fingerprints test files by mtime, size, and sha256 content (not mtime alone), so same-size quick edits are not missed.
 
 ### Changed
 

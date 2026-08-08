@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import logging
 import os
 import sys
@@ -184,19 +185,35 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _test_tree_snapshot(test_dirs: list[Path]) -> tuple[tuple[str, float], ...]:
-    """Return (path, mtime) for all Python files under *test_dirs*."""
-    entries: list[tuple[str, float]] = []
+def _file_watch_fingerprint(path: Path) -> tuple[str, float, int, str] | None:
+    """Return (resolved path, mtime, size, sha256) or None if unreadable.
+
+    Watch mode must not rely on mtime alone: same-size rewrites can share an
+    mtime tick (or editors can preserve mtime), which would miss real edits.
+    """
+    try:
+        st = path.stat()
+        data = path.read_bytes()
+    except OSError:
+        return None
+    digest = hashlib.sha256(data).hexdigest()
+    return (str(path.resolve()), st.st_mtime, st.st_size, digest)
+
+
+def _test_tree_snapshot(test_dirs: list[Path]) -> tuple[tuple[str, float, int, str], ...]:
+    """Return (path, mtime, size, sha256) for all Python files under *test_dirs*."""
+    entries: list[tuple[str, float, int, str]] = []
     for d in test_dirs:
         p = Path(d)
         if p.is_file() and p.suffix == ".py":
-            entries.append((str(p.resolve()), p.stat().st_mtime))
+            fp = _file_watch_fingerprint(p)
+            if fp is not None:
+                entries.append(fp)
         elif p.is_dir():
             for f in p.rglob("*.py"):
-                try:
-                    entries.append((str(f.resolve()), f.stat().st_mtime))
-                except OSError:
-                    continue
+                fp = _file_watch_fingerprint(f)
+                if fp is not None:
+                    entries.append(fp)
     return tuple(sorted(entries))
 
 
