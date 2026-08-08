@@ -1,0 +1,35 @@
+name: Update ecosystem download stats
+
+on:
+  schedule:
+    # Daily 06:20 UTC — keeps README / Pages total fresh
+    - cron: "20 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Aggregate PyPI download totals
+        run: python scripts/update_ecosystem_downloads.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add html/assets/ecosystem-downloads.json html/assets/ecosystem-downloads-badge.json html/assets/badges/
+          if git diff --staged --quiet; then
+            echo "No download-stat changes"
+            exit 0
+          fi
+          git commit -m "chore: refresh ecosystem PyPI download totals"
+          git push

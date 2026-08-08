@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- **Ecosystem download totals** (Bastion-style): `scripts/update_ecosystem_downloads.py` + daily workflow write `html/assets/ecosystem-downloads.json` and per-package Shields badges; README + integrations page show all-package all-time total and live download badges (including ollama / openrouter / litellm / xai / autogen).
+
 ## [4.0.1] - 2026-08-02
 
 ### Added

@@ -19,7 +19,7 @@
     <div class="pypi-badge-row" aria-label="Project badges">
       <span class="pypi-bar-label">README</span>
       <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v4.0.1-blue" alt="PyPI version" height="22" loading="eager" /></a>
-      <a class="pypi-badge-link" href="https://pepy.tech/project/mcp-test-harness" target="_blank" rel="noopener noreferrer" title="PyPI total downloads"><img class="pypi-badge" data-pepy-total src="https://static.pepy.tech/badge/mcp-test-harness" alt="PyPI downloads" height="22" loading="eager" /></a>
+      <a class="pypi-badge-link" href="https://vaquarkhan.github.io/mcp-test-harness/integrations.html" title="Ecosystem total downloads"><img class="pypi-badge" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json" alt="Ecosystem PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="Python versions"><img class="pypi-badge" src="https://img.shields.io/pypi/pyversions/mcp-test-harness" alt="Python" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml" target="_blank" rel="noopener noreferrer" title="CI status"><img class="pypi-badge" src="https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&amp;label=CI" alt="CI" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" title="MIT License"><img class="pypi-badge" src="https://img.shields.io/badge/license-MIT-blue" alt="License MIT" height="22" loading="eager" /></a>
@@ -65,13 +65,18 @@
     <div class="mt-8 inline-block rounded-xl bg-slate-900/50 border border-white/10 px-6 py-3 font-mono text-emerald-300 text-sm">
       pip install mcp-test-harness-<span class="text-indigo-300">{framework}</span>
     </div>
+    <div class="mt-10 mx-auto max-w-xl rounded-2xl border border-white/15 bg-slate-950/40 px-8 py-6 text-left">
+      <p class="text-xs uppercase tracking-wider text-indigo-300/90 mb-2">All packages · total downloads (all-time)</p>
+      <p id="ecosystem-total-count" class="text-5xl font-extrabold text-white tabular-nums">…</p>
+      <p id="ecosystem-total-meta" class="mt-2 text-sm text-slate-400">Loading ecosystem downloads…</p>
+    </div>
   </div>
 </section>
 
 <section class="py-12 bg-white border-y border-slate-200">
   <div class="max-w-6xl mx-auto px-6">
     <h2 class="text-2xl font-bold mb-2 text-center">Package versions &amp; downloads</h2>
-    <p class="text-sm text-slate-500 text-center mb-8">Live badges from PyPI and pepy — no manual version bump in this table.</p>
+    <p class="text-sm text-slate-500 text-center mb-8">23 PyPI packages · total downloads (all-time via PePy) from <code class="text-xs">ecosystem-downloads.json</code> · on PyPI until indexed.</p>
     <div class="pypi-widget-wrap overflow-x-auto">
       <table class="pypi-widget-table">
         <thead>
