@@ -217,7 +217,8 @@
     <h3>What the harness owns (CI)</h3>
     <ul>
       <li>Auth boundaries (<code>assert_tool_denied</code>, <code>assert_authorization_boundary</code>)</li>
-      <li>Payload packs (injection, path traversal, secret leak)</li>
+      <li>Payload packs (injection, path traversal, secret leak, Suite A semantic egress + known covert encodings)</li>
+      <li>Capability-reduction check (<code>assert_general_exec_tools_absent</code>) for forbidden shell/exec tools</li>
       <li>OWASP-MCP / OWASP-LLM rule metadata (SARIF + HTML scan)</li>
       <li>Opt-in <code>quality_gate:</code> — require security tests, fail on severity</li>
       <li>Opt-in <code>manifest_gate:</code> — merge-time rug-pull baseline</li>
