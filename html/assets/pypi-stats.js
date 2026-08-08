@@ -1,12 +1,13 @@
 /**
- * Enhance the PyPI stats bar with live JSON (PyPI version + pepy totals).
+ * Enhance the PyPI stats bar with live JSON (PyPI version + pepy + ecosystem total).
  * Badge images in the HTML render immediately; JS updates the detail line when
- * fetch succeeds (pepy API may block CORS - badges still show ~10k total).
+ * fetch succeeds (pepy API may block CORS - badges still show totals).
  */
 (function () {
   const PACKAGE = document.body.dataset.pypiPackage || 'mcp-test-harness';
   const PYPI_JSON = `https://pypi.org/pypi/${PACKAGE}/json`;
   const PEPY_JSON = `https://pepy.tech/api/v2/projects/${PACKAGE}`;
+  const ECO_JSON = 'assets/ecosystem-downloads.json';
 
   function fmt(n) {
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
@@ -43,23 +44,39 @@
     if (!detail) return;
 
     try {
-      const [pypiRes, pepyRes] = await Promise.all([
+      const [pypiRes, pepyRes, ecoRes] = await Promise.all([
         fetch(PYPI_JSON, { cache: 'no-store' }),
         fetch(PEPY_JSON, { cache: 'no-store' }),
+        fetch(ECO_JSON, { cache: 'no-store' }),
       ]);
-      if (!pypiRes.ok || !pepyRes.ok) throw new Error('stats fetch failed');
+      if (!pypiRes.ok) throw new Error('pypi fetch failed');
 
       const pypi = await pypiRes.json();
-      const pepy = await pepyRes.json();
       const version = pypi.info?.version || '?';
-      const total = Number(pepy.total_downloads) || 0;
-      const month = sumLastDays(pepy.downloads, 30);
-      const parts = [`Live: v${version}`, `${fmt(total)} total downloads`];
-      if (month != null) parts.push(`${fmt(month)} last 30 days`);
+      const parts = [`Live: v${version}`];
+
+      if (ecoRes.ok) {
+        const eco = await ecoRes.json();
+        const ecoTotal = Number(eco.total_downloads) || 0;
+        const indexed = eco.indexed_count ?? eco.package_count;
+        const count = eco.package_count || 23;
+        parts.push(`${fmt(ecoTotal)} ecosystem total`);
+        parts.push(`${indexed}/${count} indexed`);
+      }
+
+      if (pepyRes.ok) {
+        const pepy = await pepyRes.json();
+        const total = Number(pepy.total_downloads) || 0;
+        const month = sumLastDays(pepy.downloads, 30);
+        parts.push(`${fmt(total)} core`);
+        if (month != null) parts.push(`${fmt(month)} last 30 days`);
+      }
+
       detail.textContent = parts.join(' · ');
       bustBadgeImages();
     } catch {
-      detail.textContent = 'Badge totals from pepy/PyPI · live JSON blocked in browser (badges still update on CDN)';
+      detail.textContent =
+        'Badge totals from ecosystem JSON / pepy · live fetch blocked (badges still update)';
     }
   }
 
