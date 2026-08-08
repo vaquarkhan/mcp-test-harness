@@ -1117,8 +1117,11 @@ def _security_bastion_panel_html(results: SessionResults) -> str:
 
     pairing_rows = (
         ("Prompt injection", "assert_injection_blocked", "PromptGuard middleware"),
+        ("Semantic egress / social engineering", "assert_egress_quarantined", "Semantic egress screen"),
+        ("Known covert encodings", "assert_covert_channel_neutralized", "Capacity / canonicalize"),
         ("PII / secrets", "assert_no_secret_leak", "Presidio redaction"),
         ("Auth boundaries", "assert_authorization_boundary", "RBAC + tool policies"),
+        ("Exec capability reduction", "assert_general_exec_tools_absent", "Tool allow-lists"),
         ("Rate limits", "assert_throughput SLOs", "Token budgets &amp; iteration caps"),
         ("Path traversal", "assert_path_traversal_blocked", "Policy-as-code rules"),
         ("Manifest rug-pull", "manifest_gate / mcp-test manifest", "Runtime allow-lists"),

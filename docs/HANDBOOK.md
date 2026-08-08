@@ -105,7 +105,8 @@ Security-first here means: **fail the PR when behavioral defenses or the sanctio
 ### What the harness owns (CI)
 
 - Auth boundaries (`assert_tool_denied`, `assert_authorization_boundary`)
-- Payload packs (injection, path traversal, secret leak)
+- Payload packs (injection, path traversal, secret leak, Suite A semantic egress + known covert encodings)
+- Capability-reduction check (`assert_general_exec_tools_absent`) for forbidden shell/exec tools
 - OWASP-MCP / OWASP-LLM rule metadata on findings (SARIF + HTML scan)
 - Opt-in `quality_gate:` (require security tests, fail on severity)
 - Opt-in `manifest_gate:` (merge-time rug-pull / supply-chain baseline)
@@ -169,7 +170,7 @@ Deep dive: [SECURITY_TESTING.md](SECURITY_TESTING.md) · [CI_AND_REPORTS.md](CI_
 | Correctness | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities` |
 | Regression | `assert_snapshot`, `assert_tool_idempotent`, manifest snapshot |
 | Performance | `assert_latency`, `assert_throughput`, `assert_stateless_throughput`, baselines |
-| Security | payload packs, auth boundaries, SARIF, quality_gate, OWASP rules |
+| Security | payload packs (injection, path, leak, Suite A egress/covert, exec capability reduction), auth boundaries, SARIF, quality_gate, OWASP rules |
 | Resiliency | `assert_reconnects`, experiments catalog (`mcp-test experiment`) |
 | Chaos | protocol-aware faults (`chaos.py`) |
 | Coverage | advertised vs tested inventory + gaps |

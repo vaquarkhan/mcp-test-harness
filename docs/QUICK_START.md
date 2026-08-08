@@ -51,3 +51,5 @@ mcp-test
 ## Related: MCP-Bastion (security)
 
 To **protect** a server in production (not only test it), see [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion) — policy-as-code, PII, rate limits, and audit. Test with this harness; run with Bastion in front of untrusted clients.
+
+CI security packs (injection, Suite A egress/covert, capability reduction): [SECURITY_TESTING.md](SECURITY_TESTING.md) · tutorial: [TUTORIAL.md](TUTORIAL.md#security-payload-packs-suite-a).

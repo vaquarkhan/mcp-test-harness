@@ -86,6 +86,9 @@ pythonpath = ["src"]
 addopts = "--ignore=tests/fixtures/harness_self_test --ignore=tests/fixtures/harness_seam_test"
 markers = [
   "e2e: end-to-end dogfood tests (subprocess mcp-test CLI against real MCP server)",
+  "security: structural security payload packs (deterministic, CI-gated)",
+  "semantic_live: detection-quality checks against a live evaluator (nightly, not gated)",
+  "adaptive: adaptive-attack trend runs (nightly, not gated)",
 ]
 
 # 100% line gate on the harness package.

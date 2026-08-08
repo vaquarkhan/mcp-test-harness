@@ -31,6 +31,10 @@ class _FakeSession:
 def test_new_security_assertions_exported() -> None:
     assert "assert_tool_denied" in harness_exports
     assert "assert_authorization_boundary" in harness_exports
+    assert "assert_egress_quarantined" in harness_exports
+    assert "assert_egress_allowed" in harness_exports
+    assert "assert_covert_channel_neutralized" in harness_exports
+    assert "assert_general_exec_tools_absent" in harness_exports
 
 
 def test_feature_demo_yaml_configs_match_schema() -> None:
