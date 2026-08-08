@@ -29,8 +29,11 @@ Thanks for helping improve **MCP Test Harness**.
 
 ```bash
 pip install -e ".[dev]"
+# Optional Bastion/mcplint pairing (heavy ML transitive deps — not needed for core tests):
+# pip install -e ".[dev,mcplint]"
 set PYTHONPATH=src   # Windows; on POSIX: export PYTHONPATH=src
-coverage run -m pytest tests/ --ignore=tests/test_workspace.py -q
+# Prefer scoping to tests/ (configured as testpaths). examples/ need `mcp-test`, not plain pytest.
+coverage run -m pytest -q
 coverage report --fail-under=100
 ```
 

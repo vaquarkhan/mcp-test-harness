@@ -9,6 +9,17 @@ All notable changes to this project are documented in this file. The format is b
 - **Ecosystem download totals** (Bastion-style): `scripts/update_ecosystem_downloads.py` + daily workflow write `html/assets/ecosystem-downloads.json` and per-package Shields badges; README + GitHub Pages (home, integrations, features deck, badge bars) show all-package all-time total and live download badges (including ollama / openrouter / litellm / xai / autogen).
 - **Suite A security packs (deterministic):** `assert_egress_quarantined`, `assert_egress_allowed`, `assert_covert_channel_neutralized` (known encodings only), and `assert_general_exec_tools_absent` in `security_payloads.py`, with corpora for social-engineering egress, benign controls, and covert encodings. Pytest markers `security`, `semantic_live`, and `adaptive` declared; AISI regression tracked as a visible skip until bastion Extension A lands ([#48](https://github.com/vaquarkhan/mcp-test-harness/issues/48)). Docs/tutorial/handbook/guide security pages updated. See [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) and [docs/TUTORIAL.md](docs/TUTORIAL.md).
 
+### Fixed
+
+- **Plain `pytest` from repo root** no longer collects `examples/` (which need the `mcp-test` runner fixtures) — set `testpaths = ["tests"]` in pytest config.
+- **Unawaited coroutine warning** in `test_shutdown_timeout_kill_process_gone` when mocking `asyncio.wait_for` (consume the `process.wait()` coroutine).
+
+### Changed
+
+- **`[dev]` extra is lightweight again** — `mcp-bastion-python` stays in `[mcplint]` only (avoids multi-GB torch/spacy/presidio for the normal contributor loop). Use `pip install -e ".[dev,mcplint]"` for Bastion pairing. Cap pytest / pytest-asyncio majors (`<10` / `<2`).
+- **`mcp-test try` exit codes documented** — `0` when boot+protocol pass; higher conformance levels are informational only.
+- **Nightly workflow** `security-nightly.yml` exercises reserved `semantic_live` / `adaptive` markers (not PR gates); empty collection (exit 5) is success until suites land.
+
 ## [4.0.1] - 2026-08-02
 
 ### Added

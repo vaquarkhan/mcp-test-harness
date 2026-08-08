@@ -98,6 +98,17 @@ async def _probe_boot_protocol(config: HarnessConfig) -> tuple[bool, bool, str |
 
 
 async def _try_async(args: argparse.Namespace) -> int:
+    """Run try-mode probe.
+
+    Exit codes (by design, all platforms including Windows):
+    - ``0`` — boot + protocol checks passed (and optional suite had no failures)
+    - ``1`` — boot failed, protocol/schema checks failed, or experiment suite failed
+    - ``2`` — usage / config errors
+
+    Higher conformance levels (covered / secure / resilient) are informational in
+    the scorecard only; they do **not** change the exit code. A green ``[PASS] boot``
+    and ``[PASS] protocol`` with exit ``0`` is success even when covered/secure show ``-``.
+    """
     cfg_path = Path(args.config) if args.config else _discover_config_file()
     if not args.server_command and (cfg_path is None or not Path(cfg_path).is_file()):
         print(

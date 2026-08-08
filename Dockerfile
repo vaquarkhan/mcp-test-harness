@@ -17,6 +17,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir .
 
 # Optional: pytest, jsonschema, PyInstaller, etc. (same as pip install ".[dev]").
+# Does not include mcp-bastion-python — use ".[dev,mcplint]" if you need Bastion pairing.
 # Run tests: docker run --rm -v ${PWD}:/work -w /work --entrypoint pytest mcp-test-harness:dev tests/ -q
 FROM base AS dev
 RUN pip install --no-cache-dir ".[dev]"
