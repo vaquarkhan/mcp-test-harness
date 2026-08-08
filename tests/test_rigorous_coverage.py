@@ -199,9 +199,13 @@ def test_test_tree_snapshot_file_and_dir(tmp_path: Path) -> None:
     a = tmp_path / "a.py"
     a.write_text("x", encoding="utf-8")
     t1 = _test_tree_snapshot([a, tmp_path])
+    # Same-size rewrite (1 byte -> 1 byte) must still change the snapshot even
+    # when mtime does not advance (watch mode used to key on mtime only).
     a.write_text("y", encoding="utf-8")
     t2 = _test_tree_snapshot([a, tmp_path])
     assert t1 != t2
+    assert t1[0][2] == t2[0][2] == 1  # size unchanged
+    assert t1[0][3] != t2[0][3]  # content hash differs
 
 
 def test_test_tree_snapshot_stat_oserror(tmp_path: Path) -> None:
