@@ -153,6 +153,27 @@ RULES: dict[str, SecurityRule] = {
         owasp_id="MCP01",
         severity="high",
     ),
+    "semantic-egress-quarantine": SecurityRule(
+        rule_id="semantic-egress-quarantine",
+        name="Semantic / Social-Engineering Egress Quarantine",
+        framework="OWASP-MCP",
+        owasp_id="MCP06",
+        severity="high",
+    ),
+    "covert-channel-known-encoding": SecurityRule(
+        rule_id="covert-channel-known-encoding",
+        name="Known Covert-Encoding Capacity Reduction",
+        framework="agentic-security",
+        owasp_id="MCP01",
+        severity="medium",
+    ),
+    "capability-reduction-exec": SecurityRule(
+        rule_id="capability-reduction-exec",
+        name="General Execution Tool Capability Reduction",
+        framework="OWASP-MCP",
+        owasp_id="MCP09",
+        severity="high",
+    ),
 }
 
 _TAG_TO_RULE: dict[str, str] = {
@@ -177,6 +198,9 @@ _TAG_TO_RULE: dict[str, str] = {
     "agency": "llm06-excessive-agency",
     "exfiltration": "agent-cross-tool-exfiltration",
     "tool-loop": "agent-tool-loop-abuse",
+    "semantic-egress": "semantic-egress-quarantine",
+    "covert-channel": "covert-channel-known-encoding",
+    "capability-reduction": "capability-reduction-exec",
 }
 
 _ERROR_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
@@ -189,6 +213,9 @@ _ERROR_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"excessive agency|over.?privileged", re.I), "llm06-excessive-agency"),
     (re.compile(r"exfiltrat", re.I), "agent-cross-tool-exfiltration"),
     (re.compile(r"tool.?loop|runaway", re.I), "agent-tool-loop-abuse"),
+    (re.compile(r"quarantin|egress payload", re.I), "semantic-egress-quarantine"),
+    (re.compile(r"covert encoding|covert markers", re.I), "covert-channel-known-encoding"),
+    (re.compile(r"capability reduction|execution tool", re.I), "capability-reduction-exec"),
 )
 
 _SECURITY_TAGS = frozenset({"security", "sec"})

@@ -10,6 +10,10 @@ __all__ = [
     "assert_capabilities",
     "assert_authorization_boundary",
     "assert_degrades_gracefully",
+    "assert_covert_channel_neutralized",
+    "assert_egress_allowed",
+    "assert_egress_quarantined",
+    "assert_general_exec_tools_absent",
     "assert_injection_blocked",
     "assert_invalid_tool",
     "assert_latency",
@@ -72,6 +76,10 @@ from mcp_test_harness.resiliency import (
     assert_survives_crash,
 )
 from mcp_test_harness.security_payloads import (
+    assert_covert_channel_neutralized,
+    assert_egress_allowed,
+    assert_egress_quarantined,
+    assert_general_exec_tools_absent,
     assert_injection_blocked,
     assert_no_secret_leak,
     assert_path_traversal_blocked,

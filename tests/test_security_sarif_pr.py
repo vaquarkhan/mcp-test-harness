@@ -173,6 +173,44 @@ def test_infer_rule_default_for_security_without_match() -> None:
     assert rule.rule_id == "mcp06-prompt-injection"
 
 
+def test_infer_suite_a_rules_from_tags_and_errors() -> None:
+    from mcp_test_harness.security_rules import rule_by_id
+
+    assert rule_by_id("semantic-egress-quarantine") is not None
+    assert rule_by_id("covert-channel-known-encoding") is not None
+    assert rule_by_id("capability-reduction-exec") is not None
+
+    by_tag = CaseResult(
+        name="test_egress",
+        module="tests.test_security_egress",
+        status=CaseStatus.FAILED,
+        duration_ms=1.0,
+        error="fail",
+        tags=["security", "semantic-egress"],
+    )
+    assert infer_rule_for_case(by_tag).rule_id == "semantic-egress-quarantine"
+
+    by_err = CaseResult(
+        name="test_covert",
+        module="tests.test_security_egress",
+        status=CaseStatus.FAILED,
+        duration_ms=1.0,
+        error="Tool 'x' did not neutralize 1 known covert encoding(s)",
+        tags=["security"],
+    )
+    assert infer_rule_for_case(by_err).rule_id == "covert-channel-known-encoding"
+
+    by_cap = CaseResult(
+        name="test_cap",
+        module="tests.test_security_egress",
+        status=CaseStatus.FAILED,
+        duration_ms=1.0,
+        error="Capability reduction failed: general execution tool(s) exposed: shell",
+        tags=["security", "capability-reduction"],
+    )
+    assert infer_rule_for_case(by_cap).rule_id == "capability-reduction-exec"
+
+
 def test_result_for_case_returns_none_for_non_security() -> None:
     from mcp_test_harness.sarif_reporter import _result_for_case
 

@@ -50,14 +50,28 @@
 manifest_gate:
   enabled: true
   path: __snapshots__/mcp_manifest.snap</pre>
+    <h2>Payload helpers</h2>
+    <ul>
+      <li><code>assert_injection_blocked</code> / <code>assert_path_traversal_blocked</code> / <code>assert_no_secret_leak</code></li>
+      <li><code>assert_egress_quarantined</code> / <code>assert_egress_allowed</code> — Suite A semantic egress (recorded-verdict CI)</li>
+      <li><code>assert_covert_channel_neutralized</code> — known encodings only</li>
+      <li><code>assert_general_exec_tools_absent</code> — capability-reduction config check</li>
+    </ul>
+    <pre class="docs-pre">from mcp_test_harness import marker, assert_egress_quarantined, assert_egress_allowed
+
+@marker(tags=["security", "semantic-egress"])
+async def test_egress(mcp_server):
+    await assert_egress_quarantined(mcp_server, "send_message")
+    await assert_egress_allowed(mcp_server, "send_message")</pre>
     <h2>Commands</h2>
     <pre class="docs-pre">mcp-test -m security
 mcp-test --sarif-output findings.sarif
 mcp-test manifest check
 mcp-test --report-format html --report-output report.html</pre>
+    <p>Markers <code>semantic_live</code> and <code>adaptive</code> are reserved for nightly detection-quality runs — they must not gate PRs.</p>
     <h2>Lifecycle</h2>
     <pre class="docs-pre">Scan / config → Test / CI (this harness) → Enforce / runtime (Bastion)</pre>
-    <p>Canonical guide: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">SECURITY_TESTING.md</a></p>
+    <p>Canonical guide: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">SECURITY_TESTING.md</a> · Tutorial: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/TUTORIAL.md">TUTORIAL.md</a> (Security payload packs)</p>
     <footer class="docs-footer">MCP Test Harness 4.0.1 · <a href="handbook.html">Handbook</a></footer>
   </main>
 </div>

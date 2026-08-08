@@ -118,6 +118,9 @@ Tag tests `@marker(tags=["security"])` and use:
 - `assert_path_traversal_blocked` — path traversal payloads
 - `assert_no_secret_leak` — secret pattern scanner
 - `run_security_payload_pack` — combined smoke
+- `assert_egress_quarantined` / `assert_egress_allowed` — semantic egress (Suite A; recorded-verdict CI gate)
+- `assert_covert_channel_neutralized` — known encodings only (zero-width / homoglyph / whitespace)
+- `assert_general_exec_tools_absent` — capability-reduction config conformance
 - `assert_tool_denied`, `assert_authorization_boundary` — auth boundaries
 
 See [SECURITY_TESTING.md](SECURITY_TESTING.md).
