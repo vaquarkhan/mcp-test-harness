@@ -530,7 +530,14 @@ def test_cmd_run_verbose() -> None:
     from mcp_test_harness.experiments.cli import _cmd_run
 
     args = argparse.Namespace(verbose=True)
-    with patch("mcp_test_harness.experiments.cli.asyncio.run", return_value=0) as run:
+
+    def _run(coro: object, *args: object, **kwargs: object) -> int:
+        # Consume the coroutine created for asyncio.run(_cmd_run_async(...)).
+        if asyncio.iscoroutine(coro):
+            coro.close()
+        return 0
+
+    with patch("mcp_test_harness.experiments.cli.asyncio.run", side_effect=_run) as run:
         assert _cmd_run(args) == 0
         run.assert_called_once()
 
