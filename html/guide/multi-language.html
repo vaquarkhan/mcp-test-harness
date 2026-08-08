@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-language suite | MCP Test Harness Docs</title>
+<meta name="description" content="Bridge to mcp-test-suite — multi-language MCP testing connectors (Java, Node, Go, .NET) with shared mcp-suite.yaml. Engine from PyPI mcp-test-harness.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/docs.css">
+</head>
+<body class="docs-body">
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="docs-header">
+  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">4.0.1</span></a>
+  <nav class="docs-topnav" aria-label="Docs top">
+    <a href="index.html" class="active">Docs</a>
+    <a href="../integrations.html">Integrations</a>
+    <a href="../features-deck.html">Features</a>
+    <a href="https://github.com/vaquarkhan/mcp-test-harness">GitHub</a>
+    <a class="accent" href="https://pypi.org/project/mcp-test-harness/">PyPI</a>
+  </nav>
+  <button type="button" class="docs-mobile-toggle" id="docs-menu" aria-expanded="false" aria-controls="docs-sidebar">Menu</button>
+</header>
+<div class="docs-shell">
+  <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+    <div class="docs-side-group"><div class="docs-side-label">Start here</div>
+      <a href="index.html">Documentation Home</a>
+      <a href="handbook.html">Documentation handbook</a>
+      <a href="getting-started.html">Getting started</a>
+      <a href="multi-language.html" class="active">Multi-language suite</a>
+    </div>
+    <div class="docs-side-group"><div class="docs-side-label">Guides</div>
+      <a href="../integrations.html">Python integrations</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-suite" target="_blank" rel="noopener">Suite repo</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/DOWNLOADS.md" target="_blank" rel="noopener">Suite DOWNLOADS.md</a>
+    </div>
+    <div class="docs-side-group"><div class="docs-side-label">Security</div>
+      <a href="handbook.html#security-first">Why security-first</a>
+      <a href="security.html">Security testing</a>
+    </div>
+  </aside>
+  <main class="docs-main" id="content">
+    <p class="docs-crumb"><a href="index.html">Docs</a> / Multi-language suite</p>
+    <h1>Multi-language suite</h1>
+    <p>
+      <strong>MCP Test Harness</strong> (this repo) is the <strong>Python test engine</strong> on
+      <a href="https://pypi.org/project/mcp-test-harness/">PyPI</a> — assertions, transports, HTML dashboard, reports.
+    </p>
+    <p>
+      <a href="https://github.com/vaquarkhan/mcp-test-suite" target="_blank" rel="noopener"><strong>mcp-test-suite</strong></a>
+      is the <strong>multi-language connector layer</strong>: shared <code>mcp-suite.yaml</code>, adapters for
+      Node / Java / Go / .NET, Docker, and a GitHub Action. It does not vendor harness source; the engine always comes from PyPI.
+    </p>
+    <div class="docs-callout">
+      Same pattern as Bastion → <a href="https://github.com/vaquarkhan/mcp-bastion-suite" target="_blank" rel="noopener">mcp-bastion-suite</a>.
+      Deep language tutorials live in the suite so this README stays light. This page is the bridge.
+    </div>
+
+    <h2>How the two repos relate</h2>
+    <pre class="docs-pre">┌─────────────────────────────────────────────────────────┐
+│  Your app (Nest, Spring, FastAPI, .NET, Go, Rust, …)    │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+              ┌─────────────▼─────────────┐
+              │  mcp-test-suite           │
+              │  adapters · YAML · Action │
+              │  github.com/…/mcp-test-suite
+              └─────────────┬─────────────┘
+                            │  mcp-suite.yaml
+                            ▼
+              ┌───────────────────────────────────────┐
+              │  mcp-test-harness (this project)      │
+              │  assertions · reports · CI gate       │
+              │  pip install mcp-test-harness         │
+              └───────────────────────────────────────┘</pre>
+
+    <div class="docs-table-wrap">
+      <table>
+        <thead><tr><th>Repo</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://github.com/vaquarkhan/mcp-test-harness">mcp-test-harness</a></td><td>Engine + Python pytest API + docs site + PyPI ecosystem shims</td></tr>
+          <tr><td><a href="https://github.com/vaquarkhan/mcp-test-suite" target="_blank" rel="noopener">mcp-test-suite</a></td><td>Connectors for every language / framework</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="downloads">Package downloads (suite v4.0.0)</h2>
+    <p>
+      <a href="https://pypi.org/project/mcp-test-harness/">Python / PyPI</a> ·
+      <a href="https://github.com/vaquarkhan/mcp-test-suite/packages/3158511" target="_blank" rel="noopener">Java / Maven</a> ·
+      <a href="https://github.com/users/vaquarkhan/packages/npm/package/mcp-test-suite-jest" target="_blank" rel="noopener">Node / npm</a> ·
+      <a href="https://pkg.go.dev/github.com/vaquarkhan/mcp-test-suite/adapters/gotest@v4.0.0" target="_blank" rel="noopener">Go module</a> ·
+      <a href="https://github.com/users/vaquarkhan/packages/nuget/package/McpTestSuite.Xunit" target="_blank" rel="noopener">.NET / NuGet</a> ·
+      <a href="https://github.com/vaquarkhan/mcp-test-suite/releases/tag/v4.0.0" target="_blank" rel="noopener">Release assets</a> ·
+      <a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/DOWNLOADS.md" target="_blank" rel="noopener">Install guide</a>
+    </p>
+
+    <h2>Install matrix</h2>
+    <div class="docs-table-wrap">
+      <table>
+        <thead><tr><th>You use</th><th>Install</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Python engine / CLI</td>
+            <td><code>pip install mcp-test-harness</code></td>
+          </tr>
+          <tr>
+            <td>Suite CLI (<code>mcp-suite</code>)</td>
+            <td><code>pip install "git+https://github.com/vaquarkhan/mcp-test-suite.git"</code></td>
+          </tr>
+          <tr>
+            <td>Java / Kotlin</td>
+            <td>Maven GitHub Packages <code>io.github.vaquarkhan:mcp-test-suite-junit5:4.0.0</code> · <a href="https://github.com/vaquarkhan/mcp-test-suite/packages/3158511" target="_blank" rel="noopener">package</a></td>
+          </tr>
+          <tr>
+            <td>Node / TypeScript</td>
+            <td><code>npm install -D @vaquarkhan/mcp-test-suite-jest</code> (GitHub Packages) · <a href="https://github.com/users/vaquarkhan/packages/npm/package/mcp-test-suite-jest" target="_blank" rel="noopener">package</a></td>
+          </tr>
+          <tr>
+            <td>Go</td>
+            <td><code>go get github.com/vaquarkhan/mcp-test-suite/adapters/gotest@v4.0.0</code></td>
+          </tr>
+          <tr>
+            <td>.NET</td>
+            <td>NuGet GitHub Packages <code>McpTestSuite.Xunit</code> · <a href="https://github.com/users/vaquarkhan/packages/nuget/package/McpTestSuite.Xunit" target="_blank" rel="noopener">package</a></td>
+          </tr>
+          <tr>
+            <td>Any / CI</td>
+            <td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/action.yml" target="_blank" rel="noopener">GitHub Action</a> · Release assets · Docker in suite repo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>GitHub Packages installs need a PAT with <code>read:packages</code>. Direct JAR / <code>.tgz</code> / <code>.nupkg</code> from <a href="https://github.com/vaquarkhan/mcp-test-suite/releases/tag/v4.0.0" target="_blank" rel="noopener">Release v4.0.0</a> do not.</p>
+
+    <h2>Language support</h2>
+    <div class="docs-table-wrap">
+      <table>
+        <thead><tr><th>Language</th><th>Package</th><th>Suite tutorial</th></tr></thead>
+        <tbody>
+          <tr><td>Any (YAML)</td><td><code>mcp-suite</code></td><td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/tutorials/yaml.md" target="_blank" rel="noopener">yaml.md</a></td></tr>
+          <tr><td>Python</td><td><code>mcp-test-harness</code></td><td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/tutorials/python.md" target="_blank" rel="noopener">python.md</a></td></tr>
+          <tr><td>TypeScript</td><td><code>@vaquarkhan/mcp-test-suite-jest</code></td><td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/tutorials/typescript.md" target="_blank" rel="noopener">typescript.md</a></td></tr>
+          <tr><td>Java / Kotlin</td><td><code>mcp-test-suite-junit5</code></td><td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/tutorials/java.md" target="_blank" rel="noopener">java.md</a></td></tr>
+          <tr><td>Go</td><td><code>adapters/gotest</code></td><td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/tutorials/go.md" target="_blank" rel="noopener">go.md</a></td></tr>
+          <tr><td>.NET</td><td><code>McpTestSuite.Xunit</code></td><td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/tutorials/dotnet.md" target="_blank" rel="noopener">dotnet.md</a></td></tr>
+          <tr><td>Rust</td><td>YAML + CLI</td><td><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/tutorials/rust.md" target="_blank" rel="noopener">rust.md</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Where to go next</h2>
+    <ul>
+      <li><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/DOWNLOADS.md" target="_blank" rel="noopener">Suite DOWNLOADS.md</a> — full install commands</li>
+      <li><a href="https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/MULTI_LANGUAGE.md" target="_blank" rel="noopener">MULTI_LANGUAGE.md</a> — architecture</li>
+      <li><a href="../integrations.html">Python framework integrations</a> — OpenAI, LangChain, FastMCP, … + ecosystem download totals</li>
+      <li><a href="getting-started.html">Getting started</a> — Python-first path in this repo</li>
+    </ul>
+
+    <footer class="docs-footer">MCP Test Harness 4.0.1 · <a href="handbook.html">Handbook</a> · <a href="https://github.com/vaquarkhan/mcp-test-suite" target="_blank" rel="noopener">mcp-test-suite</a></footer>
+  </main>
+</div>
+<script src="assets/docs.js"></script>
+</body>
+</html>

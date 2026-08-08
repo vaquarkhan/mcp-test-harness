@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Features Deck - MCP Test Harness</title>
-<meta name="description" content="MCP Test Harness feature deck: pytest-style MCP testing, reports, CI, record-to-suite, chaos, conformance, and 23 PyPI packages.">
+<meta name="description" content="MCP Test Harness feature deck: pytest-style MCP testing, reports, CI, record-to-suite, chaos, conformance, Suite A security, and 26 PyPI packages.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -19,7 +19,8 @@
     <div class="pypi-badge-row" aria-label="Project badges">
       <span class="pypi-bar-label">README</span>
       <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v4.0.1-blue" alt="PyPI version" height="22" loading="eager" /></a>
-      <a class="pypi-badge-link" href="https://pepy.tech/project/mcp-test-harness" target="_blank" rel="noopener noreferrer" title="PyPI total downloads"><img class="pypi-badge" data-pepy-total src="https://static.pepy.tech/badge/mcp-test-harness" alt="PyPI downloads" height="22" loading="eager" /></a>
+      <a class="pypi-badge-link" href="https://pypistats.org/packages/mcp-test-harness" target="_blank" rel="noopener noreferrer" title="Core package total downloads"><img class="pypi-badge" data-pepy-total src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-downloads.json" alt="PyPI downloads" height="22" loading="eager" /></a>
+      <a class="pypi-badge-link" href="integrations.html" title="Ecosystem total downloads (all packages)"><img class="pypi-badge" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json" alt="Ecosystem PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="Python versions"><img class="pypi-badge" src="https://img.shields.io/pypi/pyversions/mcp-test-harness" alt="Python" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://github.com/vaquarkhan/mcp-test-harness/actions/workflows/validate.yml" target="_blank" rel="noopener noreferrer" title="CI status"><img class="pypi-badge" src="https://img.shields.io/github/actions/workflow/status/vaquarkhan/mcp-test-harness/validate.yml?branch=main&amp;label=CI" alt="CI" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" title="MIT License"><img class="pypi-badge" src="https://img.shields.io/badge/license-MIT-blue" alt="License MIT" height="22" loading="eager" /></a>
@@ -29,7 +30,7 @@
       <a class="pypi-badge-link" href="https://vaquarkhan.github.io/mcp-test-harness/" title="Official product website"><img class="pypi-badge" src="https://img.shields.io/badge/website-6366f1" alt="Website" height="22" loading="eager" /></a>
     </div>
     <div class="pypi-badge-row pypi-badge-row-meta">
-      <a href="integrations.html" class="pypi-bar-pill">23 packages</a>
+      <a href="integrations.html" class="pypi-bar-pill">26 pkgs · 195k+</a>
       <button type="button" class="pypi-bar-pill pypi-bar-pill-btn" onclick="window.print()">Save as PDF</button>
       <span class="pypi-stat-live" id="pypi-stats-live-detail">Loading live stats…</span>
     </div>
@@ -59,7 +60,7 @@
       <p class="deck-lead">The pytest-style testing framework for MCP servers — functional, regression, and performance in one CI-native tool.</p>
       <ul class="deck-bullets">
         <li>1080+ tests · 100% library coverage gate</li>
-        <li>23 PyPI packages + GHCR Docker + GitHub Action</li>
+        <li>26 PyPI packages + GHCR Docker + GitHub Action</li>
         <li>MIT licensed · no LLM required</li>
       </ul>
     </div>
@@ -121,8 +122,11 @@
       <div class="grid md:grid-cols-2 gap-6 mt-6">
         <div class="feature-card"><strong>Chaos testing</strong><p>@marker chaos_faults — delay, 503, truncate, schema drift</p></div>
         <div class="feature-card"><strong>Experiment catalog</strong><p><code>mcp-test experiment run --suite core</code> with scorecards</p></div>
-        <div class="feature-card"><strong>Security packs</strong><p>assert_tool_denied, authorization boundaries, OWASP MCP SARIF</p></div>
+        <div class="feature-card"><strong>Security packs</strong><p>Injection / path / leak · <strong>Suite A</strong> egress quarantine, covert channel, general-exec absent · OWASP MCP SARIF</p></div>
         <div class="feature-card"><strong>MCP-Bastion</strong><p>Test defenses in CI; enforce at runtime in production</p></div>
+        <div class="feature-card"><strong>Ecosystem downloads</strong><p>All-time PyPI totals across 26 packages · live Integrations dashboard</p></div>
+        <div class="feature-card"><strong>Multi-language suite</strong><p>TS · Java · Go · .NET adapters via <a href="guide/multi-language.html">mcp-test-suite</a> · package download links</p></div>
+        <div class="feature-card"><strong>Manifest rug-pull gate</strong><p>Snapshot sanctioned MCP surface; fail CI on unapproved schema drift</p></div>
       </div>
       <img src="assets/images/harness-bastion-pairing.png" alt="Harness and Bastion pairing" class="mt-8 rounded-xl mx-auto max-w-xl" loading="lazy">
     </div>
@@ -131,13 +135,13 @@
   <section class="deck-slide deck-slide-dark">
     <div class="deck-slide-inner text-center">
       <p class="deck-kicker text-indigo-300">Distribution</p>
-      <h2 class="deck-h2 text-white">18 PyPI wheels · Docker · Binary · Action</h2>
-      <p class="deck-body text-slate-300 max-w-2xl mx-auto">Core harness plus 17 framework shims. GHCR runtime and dev images. PyInstaller binary. Marketplace composite action with PR comments.</p>
+      <h2 class="deck-h2 text-white">26 PyPI wheels · Docker · Binary · Action</h2>
+      <p class="deck-body text-slate-300 max-w-2xl mx-auto">Core harness plus 25 framework shims (LangGraph, Pydantic AI, OpenAI Agents, and more) — <strong class="text-white">195k+</strong> all-time ecosystem downloads. GHCR runtime and dev images. Marketplace composite action with PR comments.</p>
       <div class="flex flex-wrap justify-center gap-4 mt-8">
         <code class="deck-code">pip install mcp-test-harness==4.0.1</code>
         <code class="deck-code">docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest</code>
       </div>
-      <a href="integrations.html" class="btn-primary mt-8 inline-flex">All 23 packages →</a>
+      <a href="integrations.html" class="btn-primary mt-8 inline-flex">Ecosystem downloads (26 pkgs · 195k+) →</a>
     </div>
   </section>
 

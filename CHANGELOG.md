@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Added
 
+- **Ecosystem download totals** (Bastion-style): `scripts/update_ecosystem_downloads.py` + daily workflow write `html/assets/ecosystem-downloads.json` and per-package Shields badges; README + GitHub Pages (home, integrations, features deck, badge bars) show all-package all-time total and live download badges (including ollama / openrouter / litellm / xai / autogen).
 - **Suite A security packs (deterministic):** `assert_egress_quarantined`, `assert_egress_allowed`, `assert_covert_channel_neutralized` (known encodings only), and `assert_general_exec_tools_absent` in `security_payloads.py`, with corpora for social-engineering egress, benign controls, and covert encodings. Pytest markers `security`, `semantic_live`, and `adaptive` declared; AISI regression tracked as a visible skip until bastion Extension A lands ([#48](https://github.com/vaquarkhan/mcp-test-harness/issues/48)). Docs/tutorial/handbook/guide security pages updated. See [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) and [docs/TUTORIAL.md](docs/TUTORIAL.md).
 
 ## [4.0.1] - 2026-08-02
