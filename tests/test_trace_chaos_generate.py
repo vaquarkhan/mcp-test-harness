@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -507,5 +508,10 @@ def test_wrap_setattr_swallowed() -> None:
 
 
 def test_run_generate_sync_entry() -> None:
-    with patch("asyncio.run", return_value=0):
+    def _run(coro: object, *args: object, **kwargs: object) -> int:
+        if asyncio.iscoroutine(coro):
+            coro.close()
+        return 0
+
+    with patch("asyncio.run", side_effect=_run):
         assert run_generate(["--server-command", "x"]) == 0
