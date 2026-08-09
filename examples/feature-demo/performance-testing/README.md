@@ -1,10 +1,10 @@
 # Performance testing demo pack
 
-This folder contains **performance-focused MCP tests** using latency assertions and SLO-style thresholds.
+This folder contains **performance-focused MCP tests** using latency assertions, concurrent load, and SLO-style thresholds.
 
 ## Files
 
-- `test_performance_demo.py` - latency checks with p95/p99/mean/median examples
+- `test_performance_demo.py` - latency (p95/p99), `assert_throughput` burst, and `assert_load_phases` ramp
 - `mcp_test_performance_demo.yaml` - sample config for perf runs
 - `reports/` - demo report artifacts and generation commands
 
@@ -19,6 +19,8 @@ Or with the sample config:
 ```bash
 mcp-test -c examples/feature-demo/performance-testing/mcp_test_performance_demo.yaml
 ```
+
+See [docs/PERFORMANCE.md](../../../docs/PERFORMANCE.md) for `duration_s`, weighted `calls` mixes, and full gate parameters.
 
 ## Stateless Streamable HTTP (2026-07-28)
 

@@ -18,7 +18,7 @@
   <div class="pypi-stats-inner pypi-stats-stacked max-w-7xl mx-auto px-4">
     <div class="pypi-badge-row" aria-label="Project badges">
       <span class="pypi-bar-label">README</span>
-      <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v4.0.1-blue" alt="PyPI version" height="22" loading="eager" /></a>
+      <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v5.0.0-blue" alt="PyPI version" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypistats.org/packages/mcp-test-harness" target="_blank" rel="noopener noreferrer" title="Core package total downloads"><img class="pypi-badge" data-pepy-total src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-downloads.json" alt="PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="integrations.html" title="Ecosystem total downloads (all packages)"><img class="pypi-badge" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json" alt="Ecosystem PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="Python versions"><img class="pypi-badge" src="https://img.shields.io/pypi/pyversions/mcp-test-harness" alt="Python" height="22" loading="eager" /></a>
@@ -44,7 +44,7 @@
     <a href="index.html" class="flex items-center gap-2">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
       <span class="font-bold text-lg">MCP Test Harness</span>
-      <span class="badge badge-primary text-xs">v4.0.1</span>
+      <span class="badge badge-primary text-xs">v5.0.0</span>
     </a>
     <div class="hidden md:flex items-center gap-8">
       <a href="index.html" class="nav-link">Home</a>
@@ -215,14 +215,14 @@ async def test_idempotent(mcp_server):
         <div class="badge badge-primary">PERFORMANCE</div>
         <h3 class="text-xl font-bold">Latency gates and load testing</h3>
       </div>
-<pre><code>from mcp_test_harness import assert_latency, assert_throughput, marker
+<pre><code>from mcp_test_harness import assert_latency, assert_throughput, assert_load_phases, marker
 
 @marker(tags=["perf"])
 async def test_echo_p95(mcp_server):
     """Echo responds under 200ms at p95."""
     await assert_latency(
         mcp_server, "echo", {"message": "hi"},
-        p95_ms=200, iterations=20, warmup=3
+        max_ms=200, runs=20, aggregate="p95", warmup=3
     )
 
 @marker(tags=["perf"])
@@ -230,15 +230,27 @@ async def test_echo_p99(mcp_server):
     """Echo responds under 500ms at p99."""
     await assert_latency(
         mcp_server, "echo", {"message": "hi"},
-        p99_ms=500, iterations=50, warmup=5
+        max_ms=500, runs=50, aggregate="p99", warmup=5
     )
 
 @marker(tags=["perf", "load"])
 async def test_throughput(mcp_server):
-    """Sustain 10 RPS with p95 under 300ms."""
+    """Sustain 10 RPS with p95 under 300ms (closed-loop soak)."""
     await assert_throughput(
         mcp_server, "echo", {"message": "load"},
-        target_rps=10, duration_s=10, p95_ms=300
+        concurrent=8, duration_s=10, min_rps=10, max_p95_ms=300
+    )
+
+@marker(tags=["perf", "load"])
+async def test_load_ramp(mcp_server):
+    """Ramp concurrency; warmup excluded from aggregate gates."""
+    await assert_load_phases(
+        mcp_server, "echo", {"message": "load"},
+        phases=[
+            {"name": "warmup", "concurrent": 4, "duration_s": 1, "warmup": True},
+            {"name": "c16", "concurrent": 16, "duration_s": 3},
+        ],
+        min_rps=10, max_p95_ms=300,
     )</code></pre>
     </div>
   </div>
@@ -361,7 +373,7 @@ mcp-test export-pdf reports/run.html -o reports/run.pdf</code></pre>
       <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/performance-testing" class="feature-card hover:border-purple-400 block">
         <div class="badge badge-warn mb-3">PERFORMANCE</div>
         <h3 class="font-bold mb-2">Performance Testing Pack</h3>
-        <p class="text-sm text-slate-600">assert_latency p95/p99, warmup, assert_throughput, SLO gates.</p>
+        <p class="text-sm text-slate-600">assert_latency p90/p95/p99, warmup, assert_throughput / assert_load_phases, SLO gates.</p>
       </a>
       <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/eu-ai-act" class="feature-card hover:border-rose-400 block">
         <div class="badge badge-warn mb-3">GOVERNANCE</div>
@@ -415,8 +427,9 @@ mcp-test export-pdf reports/run.html -o reports/run.pdf</code></pre>
           <tr><td class="font-mono font-semibold">assert_general_exec_tools_absent</td><td>Security · Suite A</td><td>Dangerous general-exec tools must be absent</td></tr>
           <tr><td class="font-mono font-semibold">assert_snapshot</td><td>Regression</td><td>Compare response to stored snapshot</td></tr>
           <tr><td class="font-mono font-semibold">assert_tool_idempotent</td><td>Regression</td><td>Same input produces same output N times</td></tr>
-          <tr><td class="font-mono font-semibold">assert_latency</td><td>Performance</td><td>p95/p99/mean/median over N iterations + warmup</td></tr>
-          <tr><td class="font-mono font-semibold">assert_throughput</td><td>Performance</td><td>Concurrent load, target RPS, latency gate</td></tr>
+          <tr><td class="font-mono font-semibold">assert_latency</td><td>Performance</td><td>p90/p95/p99/mean/median over N iterations + warmup</td></tr>
+          <tr><td class="font-mono font-semibold">assert_throughput</td><td>Performance</td><td>Concurrent load, duration_s or total_calls, RPS + p90/p95/p99 gates</td></tr>
+          <tr><td class="font-mono font-semibold">assert_load_phases</td><td>Performance</td><td>Concurrency ramp; warmup phases excluded from aggregate gates</td></tr>
         </tbody>
       </table>
     </div>
@@ -457,7 +470,7 @@ mcp-test export-pdf reports/run.html -o reports/run.pdf</code></pre>
       </div>
     </div>
     <div class="mt-8 pt-8 border-t border-slate-800 text-xs text-center">
-      MCP Test Harness v4.0.1 · MIT License · Author: Vaquar Khan
+      MCP Test Harness v5.0.0 · MIT License · Author: Vaquar Khan
     </div>
   </div>
 </footer>

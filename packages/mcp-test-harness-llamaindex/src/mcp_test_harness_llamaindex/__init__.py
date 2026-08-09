@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "4.0.1"
+__version__ = "5.0.0"
 
 from mcp_test_harness_llamaindex.helpers import (
     assert_llamaindex_tool,

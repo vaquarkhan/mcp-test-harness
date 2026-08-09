@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "4.0.1"
+__version__ = "5.0.0"
 
 __all__ = [
     "__version__",
@@ -29,6 +29,7 @@ __all__ = [
     "assert_snapshot",
     "assert_survives_crash",
     "assert_throughput",
+    "assert_load_phases",
     "assert_stateless_throughput",
     "assert_tool_call",
     "assert_tool_call_validates_input",
@@ -52,6 +53,7 @@ from mcp_test_harness.assertions import (
     assert_invalid_tool,
     assert_latency,
     assert_throughput,
+    assert_load_phases,
     assert_stateless_throughput,
     assert_prompt,
     assert_protocol_version,

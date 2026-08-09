@@ -97,7 +97,7 @@ def test_all_provider_package_dirs_exist():
 
 def test_version_aligned(provider_slug: str):
     mod = _load_package(provider_slug)
-    assert mod.__version__ == "4.0.1"
+    assert mod.__version__ == "5.0.0"
 
 
 @pytest.mark.parametrize("slug,convert_attr,expected_keys", ALL_PROVIDERS)

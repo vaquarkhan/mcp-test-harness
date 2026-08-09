@@ -41,7 +41,7 @@ mcp-test
 
 ## 4. Next steps
 
-- **Performance checks** (latency budgets, p95, tags like `perf`): [PERFORMANCE.md](PERFORMANCE.md)
+- **Performance checks** (latency budgets, p90/p95/p99, throughput / load phases, tags like `perf`): [PERFORMANCE.md](PERFORMANCE.md)
 - **Stateless MCP (2026-07-28)** — `mcp-test conformance stateless` + `assert_stateless_throughput`: [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) · [RFC-006](design/RFC-006-stateless-mcp.md)
 - **Other MCP tools** (conformance, LLM evals, benchmarks) vs this harness: [COMPARISON.md](COMPARISON.md)
 - Assertions and fixtures: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)

@@ -11,12 +11,13 @@ import asyncio
 import difflib
 import json
 import math
+import random
 import re
 import statistics
 import time
 import weakref
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Mapping, Sequence
 
 from mcp_test_harness.snapshots import SnapshotManager, cli_update_snapshots
 from mcp_test_harness.coverage import (
@@ -835,7 +836,7 @@ async def assert_tool_idempotent(
 # assert_latency
 # ---------------------------------------------------------------------------
 
-_LatencyAggregate = Literal["max", "p95", "p99", "mean", "median"]
+_LatencyAggregate = Literal["max", "p90", "p95", "p99", "mean", "median"]
 
 
 def _aggregate_latency_ms(timings: list[float], aggregate: _LatencyAggregate) -> float:
@@ -848,7 +849,7 @@ def _aggregate_latency_ms(timings: list[float], aggregate: _LatencyAggregate) ->
         return float(statistics.mean(timings))
     if aggregate == "median":
         return float(statistics.median(timings))
-    q = 0.95 if aggregate == "p95" else 0.99
+    q = {"p90": 0.90, "p95": 0.95, "p99": 0.99}[aggregate]
     s = sorted(timings)
     n = len(s)
     if n == 1:
@@ -861,6 +862,154 @@ def _aggregate_latency_ms(timings: list[float], aggregate: _LatencyAggregate) ->
         return s[lo]
     w = pos - lo
     return s[lo] * (1 - w) + s[hi] * w
+
+
+def _normalize_load_calls(
+    tool_name: str,
+    arguments: dict[str, Any] | None,
+    calls: Sequence[Mapping[str, Any]] | None,
+) -> list[tuple[str, dict[str, Any], float]]:
+    """Return ``(tool, arguments, weight)`` entries for a load burst."""
+    if calls is not None:
+        if not calls:
+            raise ValueError("calls must be a non-empty sequence when provided")
+        out: list[tuple[str, dict[str, Any], float]] = []
+        for entry in calls:
+            name = str(entry.get("tool") or entry.get("tool_name") or "")
+            if not name:
+                raise ValueError("each calls entry requires 'tool' (or 'tool_name')")
+            args = entry.get("arguments") or entry.get("args") or {}
+            if not isinstance(args, dict):
+                raise ValueError(f"calls entry for {name!r} has non-dict arguments")
+            weight = float(entry.get("weight", 1) or 0)
+            if weight <= 0:
+                raise ValueError(f"calls entry for {name!r} requires weight > 0")
+            out.append((name, dict(args), weight))
+        return out
+    if not tool_name:
+        raise ValueError("tool_name is required when calls is not provided")
+    return [(tool_name, dict(arguments or {}), 1.0)]
+
+
+def _pick_load_call(
+    catalog: list[tuple[str, dict[str, Any], float]],
+) -> tuple[str, dict[str, Any]]:
+    tools, args_list, weights = zip(*catalog)
+    idx = random.choices(range(len(catalog)), weights=weights, k=1)[0]
+    return tools[idx], dict(args_list[idx])
+
+
+async def _execute_throughput_burst(
+    session: Any,
+    catalog: list[tuple[str, dict[str, Any], float]],
+    *,
+    concurrent: int,
+    total_calls: int | None,
+    duration_s: float | None,
+) -> tuple[list[float], int, float, int]:
+    """Run a closed-loop or fixed-N burst. Returns timings, errors, wall_s, n_calls."""
+    c = max(1, int(concurrent))
+    timings: list[float] = []
+    error_count = 0
+    lock = asyncio.Lock()
+
+    async def _one_call() -> None:
+        nonlocal error_count
+        tool, args = _pick_load_call(catalog)
+        t0 = time.perf_counter()
+        failed = False
+        try:
+            result = await session.call_tool(tool, args)
+            failed = _result_is_error(result)
+        except Exception:
+            failed = True
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+        async with lock:
+            timings.append(elapsed_ms)
+            if failed:
+                error_count += 1
+
+    wall_t0 = time.perf_counter()
+    if duration_s is not None:
+        if float(duration_s) <= 0:
+            raise ValueError("duration_s must be > 0")
+        end = wall_t0 + float(duration_s)
+        sem = asyncio.Semaphore(c)
+
+        async def _worker() -> None:
+            while time.perf_counter() < end:
+                async with sem:
+                    if time.perf_counter() >= end:
+                        return
+                    await _one_call()
+
+        await asyncio.gather(*[_worker() for _ in range(c)])
+    else:
+        n = max(1, int(total_calls if total_calls is not None else 16))
+        sem = asyncio.Semaphore(c)
+
+        async def _bounded() -> None:
+            async with sem:
+                await _one_call()
+
+        await asyncio.gather(*[_bounded() for _ in range(n)])
+
+    elapsed = time.perf_counter() - wall_t0
+    return timings, error_count, elapsed, len(timings)
+
+
+def _check_throughput_gates(
+    *,
+    label: str,
+    timings: list[float],
+    error_count: int,
+    n_calls: int,
+    elapsed: float,
+    min_rps: float | None,
+    max_p90_ms: float | None,
+    max_p95_ms: float | None,
+    max_p99_ms: float | None,
+    max_error_rate: float | None,
+) -> None:
+    rps = n_calls / elapsed if elapsed > 0 else float("inf")
+    errors: list[str] = []
+    if min_rps is not None and rps < float(min_rps):
+        errors.append(
+            f"{label} sustained ~{rps:.2f} req/s; "
+            f"minimum {float(min_rps):.2f} req/s "
+            f"(n={n_calls}, {elapsed * 1000:.1f}ms wall)",
+        )
+    if timings:
+        if max_p90_ms is not None:
+            p90 = _aggregate_latency_ms(timings, "p90")
+            if p90 > float(max_p90_ms):
+                errors.append(
+                    f"{label} p90 latency {p90:.1f}ms exceeds budget "
+                    f"{float(max_p90_ms):.1f}ms (n={n_calls})",
+                )
+        if max_p95_ms is not None:
+            p95 = _aggregate_latency_ms(timings, "p95")
+            if p95 > float(max_p95_ms):
+                errors.append(
+                    f"{label} p95 latency {p95:.1f}ms exceeds budget "
+                    f"{float(max_p95_ms):.1f}ms (n={n_calls})",
+                )
+        if max_p99_ms is not None:
+            p99 = _aggregate_latency_ms(timings, "p99")
+            if p99 > float(max_p99_ms):
+                errors.append(
+                    f"{label} p99 latency {p99:.1f}ms exceeds budget "
+                    f"{float(max_p99_ms):.1f}ms (n={n_calls})",
+                )
+    if max_error_rate is not None and n_calls > 0:
+        rate = error_count / n_calls
+        if rate > float(max_error_rate):
+            errors.append(
+                f"{label} error rate {rate:.1%} exceeds maximum "
+                f"{float(max_error_rate):.1%} ({error_count}/{n_calls} calls failed)",
+            )
+    if errors:
+        raise MCPAssertionError("\n".join(errors))
 
 
 async def assert_latency(
@@ -887,8 +1036,9 @@ async def assert_latency(
     warmup
         Number of **untimed** ``call_tool`` invocations before measuring (JIT / cold start).
     aggregate
-        How to combine samples when ``runs > 1``: ``"max"`` (worst case), ``"p95"`` / ``"p99"``,
-        ``"mean"``, or ``"median"`` (all in milliseconds from ``perf_counter``).
+        How to combine samples when ``runs > 1``: ``"max"`` (worst case),
+        ``"p90"`` / ``"p95"`` / ``"p99"``, ``"mean"``, or ``"median"``
+        (all in milliseconds from ``perf_counter``).
     """
     for _ in range(warmup):
         await session.call_tool(tool_name, arguments)
@@ -910,95 +1060,162 @@ async def assert_latency(
 
 async def assert_throughput(
     session: Any,
-    tool_name: str,
-    arguments: dict[str, Any],
+    tool_name: str = "",
+    arguments: dict[str, Any] | None = None,
     *,
     concurrent: int = 4,
-    total_calls: int = 16,
+    total_calls: int | None = 16,
+    duration_s: float | None = None,
     min_rps: float | None = None,
+    max_p90_ms: float | None = None,
+    max_p95_ms: float | None = None,
     max_p99_ms: float | None = None,
     max_error_rate: float | None = None,
     warmup: int = 0,
+    calls: Sequence[Mapping[str, Any]] | None = None,
 ) -> None:
     """Run concurrent ``call_tool`` invocations with optional SLO gates.
 
     Complements :func:`assert_latency` (single-request latency) with a **load** check:
-    many overlapping calls, bounded by a semaphore.
+    many overlapping calls, bounded by a semaphore. Prefer ``duration_s`` for a
+    closed-loop soak at fixed concurrency; use ``total_calls`` for a fixed burst.
 
     Parameters
     ----------
     concurrent
         Maximum in-flight calls at once (semaphore size).
     total_calls
-        Number of ``call_tool`` invocations in the measured window.
+        Number of ``call_tool`` invocations in the measured window (ignored when
+        ``duration_s`` is set). Defaults to ``16`` when neither budget is set.
+    duration_s
+        When set, run closed-loop workers for this many seconds instead of a fixed
+        ``total_calls`` count.
     min_rps
-        If set, fail when ``total_calls / wall_seconds`` is below this value.
-    max_p99_ms
-        If set, fail when the **p99** per-call latency (ms) across the burst exceeds
-        this budget.
+        If set, fail when ``n_calls / wall_seconds`` is below this value.
+    max_p90_ms / max_p95_ms / max_p99_ms
+        If set, fail when the matching per-call latency percentile (ms) exceeds
+        the budget.
     max_error_rate
         If set, fail when the fraction of calls that raise or return ``isError``
         exceeds this value (0.0–1.0, e.g. ``0.05`` = 5%).
     warmup
         Untimed ``call_tool`` calls before the measured burst (single-threaded).
+    calls
+        Optional weighted mix of tools, e.g.
+        ``[{"tool": "echo", "arguments": {"text": "x"}, "weight": 1}, ...]``.
+        When omitted, ``tool_name`` + ``arguments`` are used for every call.
     """
-    c = max(1, int(concurrent))
-    n = max(1, int(total_calls))
+    catalog = _normalize_load_calls(tool_name, arguments, calls)
+    label = catalog[0][0] if len(catalog) == 1 else "load mix"
 
     for _ in range(warmup):
-        await session.call_tool(tool_name, arguments)
-    record_tool_call(session, tool_name)
+        w_tool, w_args = _pick_load_call(catalog)
+        await session.call_tool(w_tool, w_args)
+    record_tool_call(session, catalog[0][0])
 
-    sem = asyncio.Semaphore(c)
-    timings: list[float] = []
-    error_count = 0
-    lock = asyncio.Lock()
-
-    def _call_failed(result: Any) -> bool:
-        return _result_is_error(result)
-
-    async def _bounded() -> None:
-        nonlocal error_count
-        async with sem:
-            t0 = time.perf_counter()
-            failed = False
-            try:
-                result = await session.call_tool(tool_name, arguments)
-                failed = _call_failed(result)
-            except Exception:
-                failed = True
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            async with lock:
-                timings.append(elapsed_ms)
-                if failed:
-                    error_count += 1
-
-    wall_t0 = time.perf_counter()
-    await asyncio.gather(*[_bounded() for _ in range(n)])
-    elapsed = time.perf_counter() - wall_t0
-    rps = n / elapsed if elapsed > 0 else float("inf")
-
-    if min_rps is not None and rps < float(min_rps):
+    timings, error_count, elapsed, n_calls = await _execute_throughput_burst(
+        session,
+        catalog,
+        concurrent=concurrent,
+        total_calls=total_calls,
+        duration_s=duration_s,
+    )
+    if n_calls == 0:
         raise MCPAssertionError(
-            f"Tool '{tool_name}' sustained ~{rps:.2f} req/s; "
-            f"minimum {float(min_rps):.2f} req/s (concurrent={c}, n={n}, {elapsed*1000:.1f}ms wall)",
+            f"{label}: load window produced 0 calls "
+            f"(concurrent={concurrent}, duration_s={duration_s!r})",
         )
+    _check_throughput_gates(
+        label=f"Tool '{label}'",
+        timings=timings,
+        error_count=error_count,
+        n_calls=n_calls,
+        elapsed=elapsed,
+        min_rps=min_rps,
+        max_p90_ms=max_p90_ms,
+        max_p95_ms=max_p95_ms,
+        max_p99_ms=max_p99_ms,
+        max_error_rate=max_error_rate,
+    )
 
-    if max_p99_ms is not None and timings:
-        p99 = _aggregate_latency_ms(timings, "p99")
-        if p99 > float(max_p99_ms):
-            raise MCPAssertionError(
-                f"Tool '{tool_name}' p99 latency {p99:.1f}ms exceeds budget "
-                f"{float(max_p99_ms):.1f}ms under load (concurrent={c}, n={n})",
-            )
 
-    if max_error_rate is not None and n > 0:
-        rate = error_count / n
-        if rate > float(max_error_rate):
-            raise MCPAssertionError(
-                f"Tool '{tool_name}' error rate {rate:.1%} exceeds maximum "
-                f"{float(max_error_rate):.1%} ({error_count}/{n} calls failed under load)",
+async def assert_load_phases(
+    session: Any,
+    tool_name: str = "",
+    arguments: dict[str, Any] | None = None,
+    *,
+    phases: Sequence[Mapping[str, Any]],
+    calls: Sequence[Mapping[str, Any]] | None = None,
+    min_rps: float | None = None,
+    max_p90_ms: float | None = None,
+    max_p95_ms: float | None = None,
+    max_p99_ms: float | None = None,
+    max_error_rate: float | None = None,
+) -> None:
+    """Run a concurrency ramp (or multi-phase soak) and gate on non-warmup aggregate.
+
+    Each phase mapping accepts:
+
+    - ``name`` (optional label)
+    - ``concurrent`` / ``concurrency`` (required, workers)
+    - ``duration_s`` and/or ``total_calls`` / ``requests`` (measured budget)
+    - ``warmup`` (bool): measured but **excluded** from aggregate SLO gates
+    """
+    if not phases:
+        raise ValueError("phases must be a non-empty sequence")
+    catalog = _normalize_load_calls(tool_name, arguments, calls)
+    label = catalog[0][0] if len(catalog) == 1 else "load mix"
+
+    agg_timings: list[float] = []
+    agg_errors = 0
+    agg_calls = 0
+    agg_elapsed = 0.0
+
+    for i, phase in enumerate(phases):
+        name = str(phase.get("name") or f"phase-{i}")
+        concurrent = int(phase.get("concurrent") or phase.get("concurrency") or 0)
+        if concurrent < 1:
+            raise ValueError(f"phase {name!r} requires concurrent/concurrency >= 1")
+        duration = phase.get("duration_s")
+        total = phase.get("total_calls", phase.get("requests"))
+        if duration is None and total is None:
+            raise ValueError(
+                f"phase {name!r} requires duration_s or total_calls/requests",
             )
+        exclude = bool(phase.get("warmup", False))
+        timings, errors, elapsed, n_calls = await _execute_throughput_burst(
+            session,
+            catalog,
+            concurrent=concurrent,
+            total_calls=None if duration is not None else (
+                int(total) if total is not None else None
+            ),
+            duration_s=float(duration) if duration is not None else None,
+        )
+        record_tool_call(session, catalog[0][0])
+        if not exclude:
+            agg_timings.extend(timings)
+            agg_errors += errors
+            agg_calls += n_calls
+            agg_elapsed += elapsed
+
+    if agg_calls == 0:
+        raise MCPAssertionError(
+            f"{label}: no non-warmup phase produced measured calls "
+            f"({len(phases)} phase(s))",
+        )
+    _check_throughput_gates(
+        label=f"Load phases '{label}'",
+        timings=agg_timings,
+        error_count=agg_errors,
+        n_calls=agg_calls,
+        elapsed=agg_elapsed,
+        min_rps=min_rps,
+        max_p90_ms=max_p90_ms,
+        max_p95_ms=max_p95_ms,
+        max_p99_ms=max_p99_ms,
+        max_error_rate=max_error_rate,
+    )
 
 
 async def assert_stateless_throughput(
@@ -1009,6 +1226,7 @@ async def assert_stateless_throughput(
     duration_s: float = 10.0,
     concurrency: int = 50,
     min_rps: float | None = None,
+    max_p95_ms: float | None = None,
     max_p99_ms: float | None = None,
     max_error_rate: float | None = None,
     protocol_version: str | None = None,
@@ -1037,6 +1255,10 @@ async def assert_stateless_throughput(
     if min_rps is not None and metrics.rps < float(min_rps):
         errors.append(
             f"Throughput: required {float(min_rps):.2f} RPS, achieved {metrics.rps:.2f} RPS.",
+        )
+    if max_p95_ms is not None and metrics.p95_ms > float(max_p95_ms):
+        errors.append(
+            f"Latency p95: max {float(max_p95_ms):.1f}ms, observed {metrics.p95_ms:.2f}ms.",
         )
     if max_p99_ms is not None and metrics.p99_ms > float(max_p99_ms):
         errors.append(

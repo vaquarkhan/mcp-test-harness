@@ -1,6 +1,6 @@
 # Scenario 24: Latency and performance assertions
 
-> **Goal:** Use `assert_latency` (single, mean, p95) with warmups; see the perf doc.
+> **Goal:** Use `assert_latency` (single, mean, p90/p95/p99) with warmups, plus `assert_throughput` / `assert_load_phases` for load; see the perf doc.
 
 | Field | |
 | --- | --- |

@@ -4,8 +4,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [5.0.0] - 2026-08-08
+
 ### Added
 
+- **Load test enhancements:** `assert_throughput` supports closed-loop `duration_s`, `max_p90_ms` / `max_p95_ms` gates, and weighted multi-tool `calls` mixes; new `assert_load_phases` runs concurrency ramps with warmup phases excluded from aggregate SLO gates; `assert_latency` / percentiles gain `p90`; stateless throughput gains `max_p95_ms`. Docs, Pages examples, performance demo pack, and HTML report copy updated to match.
+- **Docs guide testing-mode tabs:** sticky Home / Load / Chaos / Resiliency / Security / Reports tabs across `html/guide/`, plus dedicated pages for load, chaos, and resiliency (security & reports enhanced).
 - **Ecosystem download totals** (Bastion-style): `scripts/update_ecosystem_downloads.py` + daily workflow write `html/assets/ecosystem-downloads.json` and per-package Shields badges; README + GitHub Pages (home, integrations, features deck, badge bars) show all-package all-time total and live download badges (including ollama / openrouter / litellm / xai / autogen).
 - **Suite A security packs (deterministic):** `assert_egress_quarantined`, `assert_egress_allowed`, `assert_covert_channel_neutralized` (known encodings only), and `assert_general_exec_tools_absent` in `security_payloads.py`, with corpora for social-engineering egress, benign controls, and covert encodings. Pytest markers `security`, `semantic_live`, and `adaptive` declared; AISI regression tracked as a visible skip until bastion Extension A lands ([#48](https://github.com/vaquarkhan/mcp-test-harness/issues/48)). Docs/tutorial/handbook/guide security pages updated. See [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) and [docs/TUTORIAL.md](docs/TUTORIAL.md).
 
@@ -18,6 +22,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Changed
 
+- **Major release 5.0.0** — all **23** PyPI artifacts (core + 22 provider shims) + Marketplace Action pins aligned.
 - **`[dev]` extra is lightweight again** — `mcp-bastion-python` stays in `[mcplint]` only (avoids multi-GB torch/spacy/presidio for the normal contributor loop). Use `pip install -e ".[dev,mcplint]"` for Bastion pairing. Cap pytest / pytest-asyncio majors (`<10` / `<2`).
 - **`mcp-test try` exit codes documented** — `0` when boot+protocol pass; higher conformance levels are informational only.
 - **Nightly workflow** `security-nightly.yml` exercises reserved `semantic_live` / `adaptive` markers (not PR gates); empty collection (exit 5) is success until suites land.

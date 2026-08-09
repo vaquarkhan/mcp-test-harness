@@ -24,7 +24,7 @@
   <img src="docs/images/hero-banner.png" alt="MCP Test Harness - pytest-style testing for MCP servers" width="100%" />
 </p>
 
-[![PyPI version](https://img.shields.io/badge/pypi-v4.0.1-blue)](https://pypi.org/project/mcp-test-harness/)
+[![PyPI version](https://img.shields.io/badge/pypi-v5.0.0-blue)](https://pypi.org/project/mcp-test-harness/)
 [![PyPI downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-downloads.json)](https://pypistats.org/packages/mcp-test-harness)
 [![Ecosystem PyPI downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json)](https://vaquarkhan.github.io/mcp-test-harness/integrations.html)
 [![Multi-language](https://img.shields.io/badge/suite-TS%20Java%20Go%20.NET-7C3AED)](https://vaquarkhan.github.io/mcp-test-harness/guide/multi-language.html)
@@ -38,11 +38,12 @@
 [![GHCR image](https://img.shields.io/badge/ghcr.io-image-2496ed?logo=github)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness)
 [![Website](https://img.shields.io/badge/website-6366f1)](https://vaquarkhan.github.io/mcp-test-harness/)
 
-**Current release: [4.0.1](https://pypi.org/project/mcp-test-harness/)** · Docker `4.0.1` · [CHANGELOG](CHANGELOG.md)
+**Current release: [5.0.0](https://pypi.org/project/mcp-test-harness/)** · Docker `5.0.0` · [CHANGELOG](CHANGELOG.md)
 
 | Go to | Link |
 |-------|------|
 | **Documentation handbook** | https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html |
+| **Docs tabs** (Load · Chaos · Resiliency · Security · Reports) | https://vaquarkhan.github.io/mcp-test-harness/guide/ |
 | **Docs hub** | https://vaquarkhan.github.io/mcp-test-harness/guide/ |
 | **Examples / demos** | https://vaquarkhan.github.io/mcp-test-harness/examples.html |
 | **Sample scan report** | https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html |
@@ -51,7 +52,7 @@
 | **Multi-language suite** | https://vaquarkhan.github.io/mcp-test-harness/guide/multi-language.html · [suite repo](https://github.com/vaquarkhan/mcp-test-suite) · [downloads](https://github.com/vaquarkhan/mcp-test-suite/blob/init/docs/DOWNLOADS.md) |
 | **MCP-Bastion** (sister product — runtime security) | https://github.com/vaquarkhan/MCP-Bastion · [handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) |
 
-**Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`4.0.1`** (runtime, `mcp-test` entrypoint), **`dev`** and **`4.0.1-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
+**Latest Release** - install from **[PyPI](https://pypi.org/project/mcp-test-harness/)** (`pip install mcp-test-harness`) or use the **OCI image** on **GitHub Container Registry:** **`ghcr.io/vaquarkhan/mcp-test-harness`**. Tags: **`latest`** and **`5.0.0`** (runtime, `mcp-test` entrypoint), **`dev`** and **`5.0.0-dev`** (pytest + dev extras). [Browse tags on GHCR](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · `docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version` · [docs/DOCKER.md](docs/DOCKER.md) · [docs/RELEASING.md](docs/RELEASING.md)
 
 Author: [Vaquar Khan](https://github.com/vaquarkhan) · **License:** [MIT](LICENSE) ([NOTICE](NOTICE)) · **Cite:** [CITATION.cff](CITATION.cff) · **Sponsors:** [SPONSORS.md](SPONSORS.md)
 
@@ -88,7 +89,7 @@ mcp-test CLI → config → discover test_*.py → schedule (optional parallel)
 | Concern | Approach |
 |---------|----------|
 | Correctness | Protocol-aware fixtures (`mcp_server`), schema checks, snapshots |
-| Performance | `assert_latency` / `assert_throughput` / `assert_stateless_throughput`, baselines, SLO params |
+| Performance | `assert_latency` / `assert_throughput` / `assert_load_phases` / `assert_stateless_throughput`, baselines, SLO params |
 | Security / resiliency | Payload packs, chaos faults, experiment catalog + scorecard (RFC-005) |
 | Conformance signal | Levels + README badge via `mcp-test try` / `conformance` (RFC-002); **stateless** via `mcp-test conformance stateless` (RFC-006) |
 | Adoption speed | `init`, `generate`, `record` (RFC-001) - live session → suite |
@@ -133,7 +134,7 @@ Everything below is **implemented, tested, and documented** in this repo (1080+ 
 | **Conformance** | **Levels + badge** - `mcp-test try` / `conformance badge` (RFC-002); **stateless SEP-2575** via `mcp-test conformance stateless` (RFC-006); README shields.io seal | [docs/design/RFC-002-conformance-levels.md](docs/design/RFC-002-conformance-levels.md) · [RFC-006](docs/design/RFC-006-stateless-mcp.md) |
 | **Productivity** | **`mcp-test record`** (RFC-001) + **`generate`** - live calls → suite + snapshots; schema drafts | [RFC-001](docs/design/RFC-001-record-to-suite.md) · [example_generate_scaffold.md](examples/example_generate_scaffold.md) |
 | **Marketplace** | GitHub Action with conformance PR outputs | [Marketplace](https://github.com/marketplace/actions/mcp-test-harness) · [example_github_actions.md](examples/example_github_actions.md) |
-| **Platform QA** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** / **`assert_stateless_throughput`** SLO params | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) · [RFC-006](docs/design/RFC-006-stateless-mcp.md) |
+| **Platform QA** | Tool **coverage map**, **unified portal** in HTML/JSON, **security payload** packs, **resiliency** assertions, **performance baselines**, **`assert_throughput`** / **`assert_load_phases`** / **`assert_stateless_throughput`** SLO params | [docs/POSITIONING.md](docs/POSITIONING.md) · [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) · [RFC-006](docs/design/RFC-006-stateless-mcp.md) |
 | **CI / security** | **SARIF** export, OWASP MCP rule metadata, **PR summary** markdown + GitHub Action `pr-comment` | [docs/CI_AND_REPORTS.md](docs/CI_AND_REPORTS.md) |
 | **Self-test** | **E2E dogfood** - pytest spawns real `mcp-test` CLI against bundled FastMCP fixtures; **100% coverage** enforced on every PR | [We eat our own dogfood](#we-eat-our-own-dogfood) |
 | **Examples** | Runnable **platform-qa** demo pack (trace + chaos + generate) | [feature-demo/platform-qa](examples/feature-demo/platform-qa/README.md) |
@@ -244,7 +245,7 @@ MCP Test Harness is the **deterministic, CI-native gate** for MCP servers - one 
 
 | # | Differentiator | What you get |
 |---|----------------|--------------|
-| **1** | **Tri-modal CI architecture** | Functional + regression + performance in one `mcp-test` run - `assert_latency` (p95/p99 + warmup), `assert_throughput` (`min_rps`, `max_p99_ms`, `max_error_rate`), `assert_tool_idempotent`, JSON **performance baselines** |
+| **1** | **Tri-modal CI architecture** | Functional + regression + performance in one `mcp-test` run - `assert_latency` (p90/p95/p99 + warmup), `assert_throughput` / `assert_load_phases` (`duration_s`, `min_rps`, `max_p90/p95/p99_ms`, `max_error_rate`, weighted mixes), `assert_tool_idempotent`, JSON **performance baselines** |
 | **2** | **Protocol-aware fixtures** | `mcp_server` / `mcp_server_session` - spawn, handshake, inject session, teardown; parallel module grouping |
 | **3** | **Code-first workflows** | Multi-step agent flows in async Python (anti-DSL); `@marker(tags=[...])` for smoke/security/perf |
 | **4** | **Unified portal** | One HTML/JSON artifact: category scores, **tool coverage map** (advertised vs tested vs missing auth), security/resiliency packs |
@@ -253,7 +254,7 @@ MCP Test Harness is the **deterministic, CI-native gate** for MCP servers - one 
 
 - **Functional:** `assert_tool_call`, `assert_resource_read`, schema validation
 - **Regression:** `assert_snapshot`, `assert_tool_idempotent`
-- **Performance:** `assert_latency`, `assert_throughput`, `assert_latency_within_baseline`
+- **Performance:** `assert_latency`, `assert_throughput`, `assert_load_phases`, `assert_latency_within_baseline`
 
 Pair with **[mcp-shark](https://github.com/mcp-shark/mcp-shark)** for IDE config security and **[MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion)** for runtime protection - see [docs/COMPARISON.md](docs/COMPARISON.md).
 
@@ -305,7 +306,7 @@ For production security (prompt injection defense, PII redaction, rate limiting,
 | Feature | Description |
 |---------|-------------|
 | Test discovery | Finds `test_*.py` files and `test_` functions automatically (pytest conventions); broken files log a warning with path and exception |
-| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (p95/p99/mean + **warmup**), **`assert_throughput`** (concurrent load + **`min_rps`**, **`max_p99_ms`**, **`max_error_rate`**), **`assert_latency_within_baseline`**, **security payload packs** - see [docs/PERFORMANCE.md](docs/PERFORMANCE.md), [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
+| MCP assertions | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_snapshot`, plus `assert_tool_schema`, `assert_protocol_version`, `assert_tool_idempotent`, **`assert_latency`** (p90/p95/p99/mean + **warmup**), **`assert_throughput`** / **`assert_load_phases`** (concurrent load + **`duration_s`**, **`min_rps`**, **`max_p90/p95/p99_ms`**, **`max_error_rate`**, weighted **`calls`**), **`assert_latency_within_baseline`**, **security payload packs** - see [docs/PERFORMANCE.md](docs/PERFORMANCE.md), [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md) |
 | Fixture system | Built-in `mcp_server` / `mcp_server_session`, custom fixtures; **cycle detection** for dependency errors |
 | Schema validation | JSON-RPC envelope checks; with `schema_validation: true` (default), post-connect checks on `initialize`, `tools/list` (+ tool `inputSchema`), `resources` / `prompts` list shapes, and a best-effort `call_tool` probe to validate `content` item shapes |
 | Snapshot testing | Compare responses; `ignore_fields` and `mask_patterns` for unstable data |
@@ -340,15 +341,15 @@ MCP Test Harness is **deterministic** (your tests call the protocol directly; no
   <img src="docs/images/docker-distribution.png" alt="Install via pip, pull the GHCR container image, or use the standalone binary - three ways to run mcp-test" width="100%" />
 </p>
 
-**Current stable version:** **4.0.1** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
+**Current stable version:** **5.0.0** (see [CHANGELOG.md](CHANGELOG.md)). Core harness (lightweight: `mcp` + YAML + anyio; **no** MCP-Bastion / Presidio stack):
 
 ```bash
 pip install mcp-test-harness
 # pin, if you need a fixed version:
-# pip install mcp-test-harness==4.0.1
+# pip install mcp-test-harness==5.0.0
 ```
 
-**Same release as a container (GHCR, no local Python):** `docker pull ghcr.io/vaquarkhan/mcp-test-harness:4.0.1` or `:latest` - see the [image](#docker) section for `docker run` and dev tags.
+**Same release as a container (GHCR, no local Python):** `docker pull ghcr.io/vaquarkhan/mcp-test-harness:5.0.0` or `:latest` - see the [image](#docker) section for `docker run` and dev tags.
 
 **Optional** [mcplint](src/mcplint/) / MCP-Bastion pin helpers (transitive set can be **large**; same as a full Bastion install):
 
@@ -376,7 +377,7 @@ mcp-test --version
 
 **One-page guide (PyPI, container registries, Mermaid build diagram, `docker run` copy-paste):** [docs/DOCKER.md](docs/DOCKER.md) · **System diagram (flow + sequence):** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · **Visual Studio Code & Cursor (snippets, Mermaid, extensions):** [docs/EDITORS.md](docs/EDITORS.md)
 
-Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). Each **`v*`** git tag triggers CI that pushes **`ghcr.io/vaquarkhan/mcp-test-harness`**: e.g. **`:4.0.1`**, **`:latest`**, **`:4.0.1-dev`**, **`:dev`**. Quick pull: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. [All versions (GHCR)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
+Pre-built **runtime** and **dev** (test tooling) images are defined in the repo [`Dockerfile`](Dockerfile) (and [`.dockerignore`](.dockerignore) keeps the build context small). Each **`v*`** git tag triggers CI that pushes **`ghcr.io/vaquarkhan/mcp-test-harness`**: e.g. **`:5.0.0`**, **`:latest`**, **`:5.0.0-dev`**, **`:dev`**. Quick pull: `docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest`. [All versions (GHCR)](https://github.com/vaquarkhan/mcp-test-harness/pkgs/container/mcp-test-harness/versions) · [docs/RELEASING.md](docs/RELEASING.md) · [docs/DOCKER.md](docs/DOCKER.md).
 
 | Build | Description |
 |-------|-------------|
@@ -764,7 +765,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test MCP Server
         id: mcp
-        uses: vaquarkhan/mcp-test-harness@v4.0.1
+        uses: vaquarkhan/mcp-test-harness@v5.0.0
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
@@ -775,7 +776,7 @@ jobs:
 Zero-config probe (no suite yet):
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v4.0.1
+- uses: vaquarkhan/mcp-test-harness@v5.0.0
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -799,7 +800,7 @@ Zero-config probe (no suite yet):
 | `conformance-level` | RFC-002 level name (Boot … Resilient) |
 | `conformance-level-num` | Numeric level (-1 to 4) |
 
-Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v4.0.1` - see [examples/example_github_actions.md](examples/example_github_actions.md).
+Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v5.0.0` - see [examples/example_github_actions.md](examples/example_github_actions.md).
 
 ## Plugins
 

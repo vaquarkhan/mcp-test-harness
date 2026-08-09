@@ -81,7 +81,7 @@ async def test_weather_tool(mcp_server):
     assert "temperature" in str(result)
 ```
 
-3. **CI + troubleshoot** — GitHub Actions runs `mcp-test` (or `uses: vaquarkhan/mcp-test-harness@v4.0.1`). On failure, use harness output for schema/assertion detail; reopen the Inspector locally when you need raw transport traffic.
+3. **CI + troubleshoot** — GitHub Actions runs `mcp-test` (or `uses: vaquarkhan/mcp-test-harness@v5.0.0`). On failure, use harness output for schema/assertion detail; reopen the Inspector locally when you need raw transport traffic.
 
 Also: `mcp-test try --server-command "..."` for a zero-config Boot/Protocol probe before you write a full suite.
 
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: vaquarkhan/mcp-test-harness@v4.0.1
+      - uses: vaquarkhan/mcp-test-harness@v5.0.0
         with:
           server-command: "python -m my_server.mcp"
           test-directory: tests/
@@ -124,7 +124,7 @@ jobs:
 
 **Collections** (declarative YAML flows) are roadmap — see [COLLECTIONS.md](COLLECTIONS.md). Today: **Python** multi-step tests.
 
-**Cluster-scale load** stays outside core; use k6/JMeter for extreme RPS. Harness owns **MCP-aware SLO gates** (`assert_latency`, session `assert_throughput`, and SEP-2575 `assert_stateless_throughput` with `min_rps`, `max_p99_ms`, `max_error_rate`). Stateless certification: `mcp-test conformance stateless` ([RFC-006](design/RFC-006-stateless-mcp.md)).
+**Cluster-scale load** stays outside core; use k6/JMeter for extreme RPS. Harness owns **MCP-aware SLO gates** (`assert_latency`, session `assert_throughput` / `assert_load_phases`, and SEP-2575 `assert_stateless_throughput` with `min_rps`, `max_p90_ms` / `max_p95_ms` / `max_p99_ms`, `max_error_rate`, closed-loop `duration_s`, and weighted call mixes). Stateless certification: `mcp-test conformance stateless` ([RFC-006](design/RFC-006-stateless-mcp.md)).
 
 ## LLM test generation
 

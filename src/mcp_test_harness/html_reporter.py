@@ -863,9 +863,11 @@ def _performance_load_panel_html(results: SessionResults) -> str:
         )
 
     load_note = (
-        '<p class="muted load-note"><code>assert_throughput</code> exercises concurrent '
-        '<code>call_tool</code> with <code>min_rps</code>, <code>max_p99_ms</code>, '
-        'and <code>max_error_rate</code> gates.</p>'
+        '<p class="muted load-note"><code>assert_throughput</code> / '
+        '<code>assert_load_phases</code> exercise concurrent '
+        '<code>call_tool</code> with <code>duration_s</code> or fixed bursts, '
+        '<code>min_rps</code>, <code>max_p90_ms</code> / <code>max_p95_ms</code> / '
+        '<code>max_p99_ms</code>, and <code>max_error_rate</code> gates.</p>'
     )
     table = (
         f'<table class="platform-table"><thead><tr>'
@@ -878,7 +880,8 @@ def _performance_load_panel_html(results: SessionResults) -> str:
         f'<section class="perf-panel platform-panel">'
         f'<h2 class="section-title">Load &amp; performance SLOs</h2>'
         f'<p class="section-sub">Suite duration percentiles plus '
-        f'<code>assert_latency</code> / <code>assert_throughput</code> / baseline checks.</p>'
+        f'<code>assert_latency</code> / <code>assert_throughput</code> / '
+        f'<code>assert_load_phases</code> / baseline checks.</p>'
         f'<div class="pct-grid">{pct_cards}</div>{load_note}{table}</section>'
     )
 
@@ -1122,7 +1125,7 @@ def _security_bastion_panel_html(results: SessionResults) -> str:
         ("PII / secrets", "assert_no_secret_leak", "Presidio redaction"),
         ("Auth boundaries", "assert_authorization_boundary", "RBAC + tool policies"),
         ("Exec capability reduction", "assert_general_exec_tools_absent", "Tool allow-lists"),
-        ("Rate limits", "assert_throughput SLOs", "Token budgets &amp; iteration caps"),
+        ("Rate limits", "assert_throughput / assert_load_phases SLOs", "Token budgets &amp; iteration caps"),
         ("Path traversal", "assert_path_traversal_blocked", "Policy-as-code rules"),
         ("Manifest rug-pull", "manifest_gate / mcp-test manifest", "Runtime allow-lists"),
     )
@@ -1168,7 +1171,7 @@ def _platform_toolkit_grid_html(results: SessionResults) -> str:
 
     cards = [
         ("Chaos monkey", _count_tag("chaos") or sum(1 for ts in tag_sets if any(t.startswith("chaos:") for t in ts)), "delay · 503 · truncate · drift", "toolkit-chaos"),
-        ("Load / throughput", _count_tag("perf", "performance", "throughput", "load", "latency"), "assert_latency · assert_throughput", "toolkit-perf"),
+        ("Load / throughput", _count_tag("perf", "performance", "throughput", "load", "latency"), "assert_latency · assert_throughput · assert_load_phases", "toolkit-perf"),
         ("Security payloads", _count_tag("security", "sec"), "injection · traversal · secrets", "toolkit-sec"),
         ("Resiliency", _count_tag("resiliency", "resilience"), "degrades · reconnect · crash", "toolkit-res"),
         ("Regression", _count_tag("regression", "snapshot"), "assert_snapshot · idempotent", "toolkit-reg"),

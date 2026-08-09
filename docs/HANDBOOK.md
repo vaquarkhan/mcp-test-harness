@@ -169,10 +169,10 @@ Deep dive: [SECURITY_TESTING.md](SECURITY_TESTING.md) · [CI_AND_REPORTS.md](CI_
 | Protocol fixtures | `mcp_server`, `mcp_server_session`, lifecycle + schema validation |
 | Correctness | `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities` |
 | Regression | `assert_snapshot`, `assert_tool_idempotent`, manifest snapshot |
-| Performance | `assert_latency`, `assert_throughput`, `assert_stateless_throughput`, baselines |
-| Security | payload packs (injection, path, leak, Suite A egress/covert, exec capability reduction), auth boundaries, SARIF, quality_gate, OWASP rules |
-| Resiliency | `assert_reconnects`, experiments catalog (`mcp-test experiment`) |
-| Chaos | protocol-aware faults (`chaos.py`) |
+| Performance | `assert_latency`, `assert_throughput`, `assert_load_phases`, `assert_stateless_throughput`, baselines — Pages tab: [performance.html](https://vaquarkhan.github.io/mcp-test-harness/guide/performance.html) |
+| Security | payload packs (injection, path, leak, Suite A egress/covert, exec capability reduction), auth boundaries, SARIF, quality_gate, OWASP rules — Pages tab: [security.html](https://vaquarkhan.github.io/mcp-test-harness/guide/security.html) |
+| Resiliency | `assert_reconnects`, experiments catalog (`mcp-test experiment`) — Pages tab: [resiliency.html](https://vaquarkhan.github.io/mcp-test-harness/guide/resiliency.html) |
+| Chaos | protocol-aware faults (`chaos.py`) — Pages tab: [chaos.html](https://vaquarkhan.github.io/mcp-test-harness/guide/chaos.html) |
 | Coverage | advertised vs tested inventory + gaps |
 | Conformance | `mcp-test try`, RFC-002 levels, RFC-006 stateless |
 | Productivity | `mcp-test init`, `generate`, `record`, `doctor`, pre-commit hooks |
@@ -202,8 +202,9 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 
 1. **Developer (30 min):** [QUICK_START](QUICK_START.md) → feature demo packs → one HTML report locally  
 2. **Security reviewer:** Part 2 → [SECURITY_TESTING](SECURITY_TESTING.md) → enable `quality_gate` + `manifest_gate` → SARIF in Code Scanning → [Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html) for runtime  
-3. **Platform / perf:** [PERFORMANCE](PERFORMANCE.md) → baselines → RFC-006 stateless  
-4. **Compliance:** [CRA_COMPLIANCE](CRA_COMPLIANCE.md) → [ENTERPRISE_GOVERNANCE](ENTERPRISE_GOVERNANCE.md) → evidence packs  
+3. **Platform / perf:** [PERFORMANCE](PERFORMANCE.md) → [Load tab](https://vaquarkhan.github.io/mcp-test-harness/guide/performance.html) → RFC-006 stateless  
+4. **Resiliency:** [Chaos tab](https://vaquarkhan.github.io/mcp-test-harness/guide/chaos.html) → [Resiliency tab](https://vaquarkhan.github.io/mcp-test-harness/guide/resiliency.html) → RFC-005  
+5. **Compliance:** [CRA_COMPLIANCE](CRA_COMPLIANCE.md) → [ENTERPRISE_GOVERNANCE](ENTERPRISE_GOVERNANCE.md) → evidence packs  
 
 ---
 
@@ -255,5 +256,5 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 
 ---
 
-MCP Test Harness 4.0.1 · MIT License · Author: Vaquar Khan  
+MCP Test Harness 5.0.0 · MIT License · Author: Vaquar Khan  
 Website · [Source markdown](https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/HANDBOOK.md)

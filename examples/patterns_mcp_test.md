@@ -88,6 +88,7 @@ async def test_http_under_load():
         duration_s=10,
         concurrency=50,
         min_rps=100.0,
+        max_p95_ms=150.0,
         max_p99_ms=200.0,
         max_error_rate=1.0,
     )

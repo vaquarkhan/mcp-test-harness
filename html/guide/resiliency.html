@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resiliency testing | MCP Test Harness Docs</title>
+<meta name="description" content="MCP resiliency: reconnect, crash survival, graceful degradation, and experiment catalog scorecards (RFC-005).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/docs.css">
+</head>
+<body class="docs-body" data-docs-page="resiliency">
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="docs-header">
+  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">5.0.0</span></a>
+  <nav class="docs-topnav" aria-label="Docs top">
+    <a href="index.html" class="active">Docs</a>
+    <a href="../integrations.html">Integrations</a>
+    <a href="../features-deck.html">Features</a>
+    <a href="https://github.com/vaquarkhan/mcp-test-harness">GitHub</a>
+    <a class="accent" href="https://pypi.org/project/mcp-test-harness/">PyPI</a>
+  </nav>
+  <button type="button" class="docs-mobile-toggle" id="docs-menu" aria-expanded="false" aria-controls="docs-sidebar">Menu</button>
+</header>
+<div class="docs-shell">
+  <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+    <div class="docs-side-group">
+      <div class="docs-side-label">Start here</div>
+      <a href="index.html">Documentation Home</a>
+      <a href="handbook.html">Documentation handbook</a>
+      <a href="getting-started.html">Getting started</a>
+      <a href="../examples.html">Examples / demos</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Guides</div>
+      <a href="chaos.html">Chaos faults</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/design/RFC-005-resiliency-experiments.md">RFC-005 experiments</a>
+    </div>
+  </aside>
+  <main class="docs-main" id="content">
+    <p class="docs-crumb"><a href="index.html">Docs</a> / Resiliency</p>
+    <p class="docs-mode-kicker">Testing mode</p>
+    <h1>Resiliency testing</h1>
+    <p>Prove the MCP session recovers from disconnects, crashes, and partial failure — with assertion helpers and an optional experiment catalog scorecard.</p>
+
+    <div class="docs-stat-row">
+      <div class="docs-stat"><div class="k">Assertions</div><div class="v">reconnect · crash · degrade</div></div>
+      <div class="docs-stat"><div class="k">Catalog</div><div class="v">mcp-test experiment</div></div>
+      <div class="docs-stat"><div class="k">Spec</div><div class="v">RFC-005</div></div>
+    </div>
+    <div class="docs-pill-row">
+      <span class="docs-pill green">assert_reconnects</span>
+      <span class="docs-pill green">assert_survives_crash</span>
+      <span class="docs-pill amber">assert_degrades_gracefully</span>
+      <span class="docs-pill">experiment suite</span>
+    </div>
+
+    <h2>Assertion helpers</h2>
+<pre class="docs-pre">from mcp_test_harness import (
+    assert_reconnects,
+    assert_survives_crash,
+    assert_degrades_gracefully,
+    marker,
+)
+
+@marker(tags=["resiliency"])
+async def test_session_reconnects(mcp_server):
+    await assert_reconnects(mcp_server)</pre>
+
+    <h2>Experiment catalog (RFC-005)</h2>
+    <p>Run curated resiliency scenarios with guardrails and a scorecard:</p>
+<pre class="docs-pre">mcp-test experiment list
+mcp-test experiment run --suite core
+mcp-test experiment run graceful-degradation --verbose</pre>
+
+    <h2>Related modes</h2>
+    <ul>
+      <li><a href="chaos.html">Chaos</a> — inject delay / 503 / truncate / drift during tool calls</li>
+      <li><a href="performance.html">Load</a> — soak and ramp under concurrency</li>
+      <li><a href="security.html">Security</a> — payload packs and quality gates</li>
+    </ul>
+
+    <div class="docs-callout">
+      Design: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/design/RFC-005-resiliency-experiments.md">RFC-005</a> ·
+      Handbook feature map: <a href="handbook.html">handbook</a>
+    </div>
+    <footer class="docs-footer">MCP Test Harness 5.0.0 · <a href="security.html">Next: Security</a> · <a href="chaos.html">Chaos</a></footer>
+  </main>
+</div>
+<script src="assets/docs.js"></script>
+</body>
+</html>

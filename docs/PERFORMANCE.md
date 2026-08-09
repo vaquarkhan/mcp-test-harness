@@ -1,6 +1,6 @@
 # Performance testing with MCP Test Harness
 
-You can run **automation (functional) tests** and **performance / latency** checks in the **same** `test_*.py` files. The harness does not use a second framework — it extends the same async tests with a latency assertion and optional **marker** filtering.
+You can run **automation (functional) tests** and **performance / latency** checks in the **same** `test_*.py` files. The harness does not use a second framework — it extends the same async tests with latency and load assertions and optional **marker** filtering.
 
 ## Why this matters for MCP
 
@@ -25,14 +25,14 @@ async def test_search_stays_under_500ms(mcp_server):
 
 `assert_latency` times one `call_tool` and fails if it exceeds `max_ms` (milliseconds).
 
-## 2. Warmup + many samples (JIT / p95 SLOs)
+## 2. Warmup + many samples (JIT / percentile SLOs)
 
 For noisy or cold-start systems, use **warmup** (untimed) and **multiple runs** with an **aggregate**:
 
 | `aggregate` | Use when you care about |
 |-------------|-------------------------|
 | `max` (default) | Worst of N runs (strict) |
-| `p95` / `p99` | Common SLO style on repeated samples |
+| `p90` / `p95` / `p99` | Common SLO style on repeated samples |
 | `mean` / `median` | Average / typical latency |
 
 ```python
@@ -61,7 +61,7 @@ Run everything **except** a tag by discovering all tests and using two jobs, or 
 
 ## 4. Concurrent load (`assert_throughput`)
 
-Gate **minimum RPS**, **p99 latency under load**, and **error rate** in one burst:
+Gate **minimum RPS**, **percentile latency under load**, and **error rate** in one burst. Prefer **`duration_s`** for a closed-loop soak at fixed concurrency; use **`total_calls`** for a fixed-size burst.
 
 ```python
 @marker(tags=["perf"])
@@ -73,19 +73,87 @@ async def test_reserve_under_load(mcp_server):
         concurrent=8,
         total_calls=32,
         min_rps=10.0,
+        max_p95_ms=400.0,
         max_p99_ms=500.0,
         max_error_rate=0.02,
         warmup=2,
     )
 ```
 
+Closed-loop soak (workers keep calling until the window ends):
+
+```python
+@marker(tags=["perf"])
+async def test_reserve_soak(mcp_server):
+    await assert_throughput(
+        mcp_server,
+        "reserve",
+        {"sku": "A1"},
+        concurrent=16,
+        duration_s=5.0,
+        min_rps=20.0,
+        max_p90_ms=300.0,
+        max_p95_ms=450.0,
+        max_error_rate=0.01,
+    )
+```
+
+Weighted multi-tool mix (models a realistic traffic blend):
+
+```python
+@marker(tags=["perf"])
+async def test_mixed_tool_load(mcp_server):
+    await assert_throughput(
+        mcp_server,
+        calls=[
+            {"tool": "echo", "arguments": {"text": "ping"}, "weight": 1},
+            {"tool": "search", "arguments": {"q": "x"}, "weight": 3},
+        ],
+        concurrent=8,
+        duration_s=3.0,
+        min_rps=15.0,
+        max_p95_ms=500.0,
+    )
+```
+
 | Parameter | Meaning |
 |-----------|---------|
+| `concurrent` | Max in-flight `call_tool` calls (semaphore size) |
+| `total_calls` | Fixed burst size (ignored when `duration_s` is set; default `16`) |
+| `duration_s` | Closed-loop window in seconds at the given concurrency |
 | `min_rps` | Fail if sustained requests/sec is below this |
-| `max_p99_ms` | Fail if p99 per-call latency (ms) in the burst exceeds this |
+| `max_p90_ms` / `max_p95_ms` / `max_p99_ms` | Fail if the matching per-call latency percentile exceeds the budget |
 | `max_error_rate` | Fail if fraction of exceptions or `isError` responses exceeds this (0.0–1.0) |
+| `warmup` | Untimed calls before the measured window |
+| `calls` | Optional weighted mix of `{tool, arguments, weight}` (replaces single `tool_name` / `arguments`) |
 
-### 4.1 Stateless Streamable HTTP (`assert_stateless_throughput`)
+### 4.1 Concurrency ramp (`assert_load_phases`)
+
+Run ordered phases (warmup → ramp) and apply SLO gates only to the **aggregate of non-warmup** phases:
+
+```python
+from mcp_test_harness import assert_load_phases, marker
+
+@marker(tags=["perf"])
+async def test_reserve_ramp(mcp_server):
+    await assert_load_phases(
+        mcp_server,
+        "reserve",
+        {"sku": "A1"},
+        phases=[
+            {"name": "warmup", "concurrent": 4, "duration_s": 1, "warmup": True},
+            {"name": "c8", "concurrent": 8, "duration_s": 2},
+            {"name": "c32", "concurrency": 32, "duration_s": 2},
+        ],
+        min_rps=10.0,
+        max_p95_ms=600.0,
+        max_error_rate=0.02,
+    )
+```
+
+Each phase accepts `name`, `concurrent` / `concurrency`, `duration_s` and/or `total_calls` / `requests`, and `warmup` (bool). Warmup phases are measured for visibility but **excluded** from the aggregate gates.
+
+### 4.2 Stateless Streamable HTTP (`assert_stateless_throughput`)
 
 For **MCP 2026-07-28** stateless servers (no `initialize` handshake, no `Mcp-Session-Id`), load-test the raw HTTP endpoint with protocol-aware `_meta` injection and SEP-2243 routing headers:
 
@@ -99,6 +167,7 @@ async def test_echo_under_agent_load():
         duration_s=15,
         concurrency=250,
         min_rps=1000,
+        max_p95_ms=40,
         max_p99_ms=50,
         max_error_rate=0.1,
     )

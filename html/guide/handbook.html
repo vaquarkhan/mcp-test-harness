@@ -15,14 +15,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/docs.css">
 </head>
-<body class="docs-body">
+<body class="docs-body" data-docs-page="handbook">
 <a class="skip-link" href="#content">Skip to content</a>
 
 <header class="docs-header">
   <a class="docs-brand" href="index.html">
     <span class="docs-mark">MT</span>
     <span>MCP Test Harness</span>
-    <span class="docs-ver">4.0.1</span>
+    <span class="docs-ver">5.0.0</span>
   </a>
   <nav class="docs-topnav" aria-label="Docs top">
     <a href="index.html" class="active">Docs</a>
@@ -81,7 +81,7 @@
     <p class="docs-crumb"><a href="index.html">Docs</a> / Documentation handbook</p>
     <h1>Documentation handbook</h1>
     <p class="docs-meta">
-      <span><strong>Version:</strong> 4.0.1</span>
+      <span><strong>Version:</strong> 5.0.0</span>
       <span><strong>Purpose:</strong> Single entry point for the full system</span>
       <span><a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/HANDBOOK.md">Source markdown</a></span>
     </p>
@@ -273,9 +273,9 @@ manifest_gate:
           <tr><td>Protocol fixtures</td><td><code>mcp_server</code>, lifecycle, schema validation</td></tr>
           <tr><td>Correctness</td><td><code>assert_tool_call</code>, resources, prompts, capabilities</td></tr>
           <tr><td>Regression</td><td><code>assert_snapshot</code>, idempotent, manifest snapshot</td></tr>
-          <tr><td>Performance</td><td>latency, throughput, stateless throughput, baselines</td></tr>
-          <tr><td>Security</td><td>payloads, auth, SARIF, quality_gate, OWASP rules</td></tr>
-          <tr><td>Resiliency / chaos</td><td>experiments catalog, protocol-aware faults</td></tr>
+          <tr><td><a href="performance.html">Load / performance</a></td><td>latency, throughput, load phases / ramp, stateless throughput, baselines</td></tr>
+          <tr><td><a href="security.html">Security</a></td><td>payloads, auth, SARIF, quality_gate, OWASP rules</td></tr>
+          <tr><td><a href="resiliency.html">Resiliency</a> / <a href="chaos.html">chaos</a></td><td>experiments catalog, protocol-aware faults</td></tr>
           <tr><td>Conformance</td><td><code>mcp-test try</code>, RFC-002 / RFC-006</td></tr>
           <tr><td>Moat (Tier 1)</td><td>manifest rug-pull · history/trends (next) · flakiness · version matrix</td></tr>
         </tbody>
@@ -381,7 +381,7 @@ manifest_gate:
     </div>
 
     <footer class="docs-footer">
-      MCP Test Harness 4.0.1 · MIT License · Author: Vaquar Khan<br>
+      MCP Test Harness 5.0.0 · MIT License · Author: Vaquar Khan<br>
       <a href="index.html">Docs home</a> ·
       <a href="../index.html">Website</a> ·
       <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/HANDBOOK.md">Source markdown</a> ·

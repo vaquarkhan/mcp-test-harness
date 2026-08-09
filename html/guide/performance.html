@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Load &amp; performance | MCP Test Harness Docs</title>
+<meta name="description" content="MCP-aware latency and load testing: assert_latency, assert_throughput, assert_load_phases, stateless throughput, SLO gates in CI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/docs.css">
+</head>
+<body class="docs-body" data-docs-page="performance">
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="docs-header">
+  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">5.0.0</span></a>
+  <nav class="docs-topnav" aria-label="Docs top">
+    <a href="index.html" class="active">Docs</a>
+    <a href="../integrations.html">Integrations</a>
+    <a href="../features-deck.html">Features</a>
+    <a href="https://github.com/vaquarkhan/mcp-test-harness">GitHub</a>
+    <a class="accent" href="https://pypi.org/project/mcp-test-harness/">PyPI</a>
+  </nav>
+  <button type="button" class="docs-mobile-toggle" id="docs-menu" aria-expanded="false" aria-controls="docs-sidebar">Menu</button>
+</header>
+<div class="docs-shell">
+  <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+    <div class="docs-side-group">
+      <div class="docs-side-label">Start here</div>
+      <a href="index.html">Documentation Home</a>
+      <a href="handbook.html">Documentation handbook</a>
+      <a href="getting-started.html">Getting started</a>
+      <a href="../examples.html">Examples / demos</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Guides</div>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/PERFORMANCE.md">PERFORMANCE.md (full)</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/TUTORIAL_STATELESS.md">Stateless tutorial</a>
+    </div>
+  </aside>
+  <main class="docs-main" id="content">
+    <p class="docs-crumb"><a href="index.html">Docs</a> / Load &amp; performance</p>
+    <p class="docs-mode-kicker">Testing mode</p>
+    <h1>Load &amp; performance</h1>
+    <p>Protocol-aware latency and load in the <strong>same</strong> CI suite as functional tests — not a separate load product.</p>
+
+    <div class="docs-stat-row">
+      <div class="docs-stat"><div class="k">Latency</div><div class="v">p90 / p95 / p99 + warmup</div></div>
+      <div class="docs-stat"><div class="k">Load</div><div class="v">Burst · soak · ramp</div></div>
+      <div class="docs-stat"><div class="k">Gates</div><div class="v">RPS · percentiles · errors</div></div>
+    </div>
+    <div class="docs-pill-row">
+      <span class="docs-pill">assert_latency</span>
+      <span class="docs-pill green">assert_throughput</span>
+      <span class="docs-pill green">assert_load_phases</span>
+      <span class="docs-pill amber">assert_stateless_throughput</span>
+    </div>
+
+    <h2>Latency budget</h2>
+<pre class="docs-pre">from mcp_test_harness import assert_latency, marker
+
+@marker(tags=["perf"])
+async def test_echo_p95(mcp_server):
+    await assert_latency(
+        mcp_server, "echo", {"text": "hi"},
+        max_ms=200, runs=20, aggregate="p95", warmup=3,
+    )</pre>
+
+    <h2>Concurrent load</h2>
+    <p>Fixed burst (<code>total_calls</code>) or closed-loop soak (<code>duration_s</code>). Optional weighted multi-tool <code>calls</code>.</p>
+<pre class="docs-pre">from mcp_test_harness import assert_throughput, marker
+
+@marker(tags=["perf", "load"])
+async def test_echo_soak(mcp_server):
+    await assert_throughput(
+        mcp_server, "echo", {"text": "load"},
+        concurrent=8, duration_s=5,
+        min_rps=10, max_p95_ms=300, max_error_rate=0.02,
+    )</pre>
+
+    <h2>Concurrency ramp</h2>
+    <p>Warmup phases are measured but <strong>excluded</strong> from aggregate SLO gates.</p>
+<pre class="docs-pre">from mcp_test_harness import assert_load_phases, marker
+
+@marker(tags=["perf", "load"])
+async def test_echo_ramp(mcp_server):
+    await assert_load_phases(
+        mcp_server, "echo", {"text": "load"},
+        phases=[
+            {"name": "warmup", "concurrent": 4, "duration_s": 1, "warmup": True},
+            {"name": "c16", "concurrent": 16, "duration_s": 3},
+        ],
+        min_rps=10, max_p95_ms=400,
+    )</pre>
+
+    <h2>CI + report</h2>
+<pre class="docs-pre">mcp-test -m perf --report-format html --report-output report.html
+mcp-test export-pdf report.html</pre>
+    <p>The HTML report includes a <strong>Load &amp; performance SLOs</strong> panel (suite percentiles + perf-tagged tests). It is CI evidence, not a JMeter live GUI — pair with k6/JMeter for datacenter-scale RPS.</p>
+
+    <div class="docs-callout">
+      Full guide: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/PERFORMANCE.md">docs/PERFORMANCE.md</a> ·
+      Demo pack: <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/performance-testing">performance-testing</a> ·
+      Report UI: <a href="reports.html">CI &amp; reports</a>
+    </div>
+    <footer class="docs-footer">MCP Test Harness 5.0.0 · <a href="chaos.html">Next: Chaos</a> · <a href="handbook.html">Handbook</a></footer>
+  </main>
+</div>
+<script src="assets/docs.js"></script>
+</body>
+</html>

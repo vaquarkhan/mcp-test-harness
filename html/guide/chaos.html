@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaos testing | MCP Test Harness Docs</title>
+<meta name="description" content="Protocol-aware chaos faults for MCP servers: delay, 503, truncate, schema drift via @marker chaos_faults.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/docs.css">
+</head>
+<body class="docs-body" data-docs-page="chaos">
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="docs-header">
+  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">5.0.0</span></a>
+  <nav class="docs-topnav" aria-label="Docs top">
+    <a href="index.html" class="active">Docs</a>
+    <a href="../integrations.html">Integrations</a>
+    <a href="../features-deck.html">Features</a>
+    <a href="https://github.com/vaquarkhan/mcp-test-harness">GitHub</a>
+    <a class="accent" href="https://pypi.org/project/mcp-test-harness/">PyPI</a>
+  </nav>
+  <button type="button" class="docs-mobile-toggle" id="docs-menu" aria-expanded="false" aria-controls="docs-sidebar">Menu</button>
+</header>
+<div class="docs-shell">
+  <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+    <div class="docs-side-group">
+      <div class="docs-side-label">Start here</div>
+      <a href="index.html">Documentation Home</a>
+      <a href="handbook.html">Documentation handbook</a>
+      <a href="getting-started.html">Getting started</a>
+      <a href="../examples.html">Examples / demos</a>
+    </div>
+    <div class="docs-side-group">
+      <div class="docs-side-label">Guides</div>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/examples/example_chaos_testing.md">Chaos example</a>
+      <a href="resiliency.html">Resiliency experiments</a>
+    </div>
+  </aside>
+  <main class="docs-main" id="content">
+    <p class="docs-crumb"><a href="index.html">Docs</a> / Chaos testing</p>
+    <p class="docs-mode-kicker">Testing mode</p>
+    <h1>Chaos monkey</h1>
+    <p>Inject <strong>protocol-aware</strong> faults into MCP tool traffic so clients and servers prove they degrade gracefully — not packet-level network chaos.</p>
+
+    <div class="docs-stat-row">
+      <div class="docs-stat"><div class="k">Marker</div><div class="v">@marker tags=["chaos"]</div></div>
+      <div class="docs-stat"><div class="k">Faults</div><div class="v">delay · 503 · truncate · drift</div></div>
+      <div class="docs-stat"><div class="k">Report</div><div class="v">Chaos panel in HTML</div></div>
+    </div>
+    <div class="docs-pill-row">
+      <span class="docs-pill amber">delay</span>
+      <span class="docs-pill rose">503</span>
+      <span class="docs-pill">truncate</span>
+      <span class="docs-pill">schema drift</span>
+    </div>
+
+    <h2>Fault injection via markers</h2>
+<pre class="docs-pre">from mcp_test_harness import marker, assert_tool_call
+
+@marker(tags=["chaos"], chaos_faults=["delay", "truncate"])
+async def test_echo_survives_chaos(mcp_server):
+    # Harness wraps the session with protocol-aware fault injection
+    result = await assert_tool_call(mcp_server, "echo", {"text": "ping"})
+    assert result is not None</pre>
+
+    <h2>Typical faults</h2>
+    <div class="docs-table-wrap">
+      <table>
+        <thead><tr><th>Fault</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>delay</code></td><td>Inject latency before tool responses</td></tr>
+          <tr><td><code>503</code></td><td>Simulate unavailable / overloaded tool path</td></tr>
+          <tr><td><code>truncate</code></td><td>Return partial tool result payloads</td></tr>
+          <tr><td><code>drift</code> / schema</td><td>Perturb response shape for schema resilience</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>CI</h2>
+<pre class="docs-pre">mcp-test -m chaos --report-format html --report-output report.html</pre>
+    <p>HTML reports surface a <strong>Chaos monkey</strong> toolkit card and related test rows. Pair with <a href="resiliency.html">Resiliency</a> experiments for reconnect / crash / degrade scenarios.</p>
+
+    <div class="docs-callout">
+      Example: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/examples/example_chaos_testing.md">example_chaos_testing.md</a> ·
+      Platform QA pack: <a href="https://github.com/vaquarkhan/mcp-test-harness/tree/main/examples/feature-demo/platform-qa">platform-qa</a> ·
+      Handbook: <a href="handbook.html">feature map</a>
+    </div>
+    <footer class="docs-footer">MCP Test Harness 5.0.0 · <a href="resiliency.html">Next: Resiliency</a> · <a href="performance.html">Load</a></footer>
+  </main>
+</div>
+<script src="assets/docs.js"></script>
+</body>
+</html>

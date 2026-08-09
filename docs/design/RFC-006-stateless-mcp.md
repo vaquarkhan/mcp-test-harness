@@ -63,6 +63,7 @@ async def test_echo_under_agent_load():
         duration_s=15,
         concurrency=250,
         min_rps=1000,
+        max_p95_ms=40,
         max_p99_ms=50,
         max_error_rate=0.1,
     )

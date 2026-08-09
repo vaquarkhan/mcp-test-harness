@@ -27,21 +27,24 @@ This is the differentiator versus tools that only provide manual inspection, LLM
 
 ## What is already strong today
 
-- `assert_latency` with `max`, `p95`, `p99`, `mean`, `median`
+- `assert_latency` with `max`, `p90`, `p95`, `p99`, `mean`, `median`
 - `warmup` support for cold-start exclusion
 - idempotency checks via `assert_tool_idempotent`
 - marker-driven filtering (`-m perf`)
 - shared session fixture (`mcp_server_session`) so startup overhead does not dominate every test
-- **Stateful** `assert_throughput` (session `call_tool` concurrency)
+- **Stateful** `assert_throughput` — fixed burst or closed-loop `duration_s`, `min_rps`, `max_p90_ms` / `max_p95_ms` / `max_p99_ms`, `max_error_rate`, weighted multi-tool `calls`
+- **`assert_load_phases`** — concurrency ramp with warmup phases excluded from aggregate gates
 - **Stateless** `assert_stateless_throughput` + `mcp-test conformance stateless` (SEP-2575; see [RFC-006](design/RFC-006-stateless-mcp.md))
 
 ## Production-grade roadmap (prioritized)
 
 ### 1) Throughput assertion — **shipped**
 
-Stateful: `assert_throughput(...)` — concurrent session tool calls with `min_rps`, `max_p99_ms`, `max_error_rate`.
+Stateful: `assert_throughput(...)` — concurrent session tool calls with fixed `total_calls` or closed-loop `duration_s`, percentile / RPS / error-rate gates, and optional weighted `calls` mixes.
 
-Stateless (2026-07-28): `assert_stateless_throughput(...)` — URL-direct duration × concurrency with the same SLO knobs ([PERFORMANCE.md](PERFORMANCE.md) §4.1).
+Ramp: `assert_load_phases(...)` — ordered phases with warmup excluded from aggregate SLOs ([PERFORMANCE.md](PERFORMANCE.md) §4–4.1).
+
+Stateless (2026-07-28): `assert_stateless_throughput(...)` — URL-direct duration × concurrency with `min_rps`, `max_p95_ms`, `max_p99_ms`, `max_error_rate` ([PERFORMANCE.md](PERFORMANCE.md) §4.2).
 
 ### 2) Baseline + regression file
 
@@ -63,9 +66,9 @@ Optional `psutil` integration for stdio process:
 - RSS memory caps
 - CPU usage caps
 
-### 5) Stress/ramp profile
+### 5) Stress/ramp profile — **shipped**
 
-Stage-based load assertions to find breakpoints under increasing concurrency.
+Stage-based load via `assert_load_phases` (increasing concurrency / duration). Further open-loop fixed-RPS pacing remains optional future work.
 
 ## In scope vs out of scope
 

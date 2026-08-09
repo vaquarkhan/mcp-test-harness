@@ -39,7 +39,7 @@
   <line x1="270" y1="206" x2="298" y2="206" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
 
   <rect x="70" y="260" width="470" height="72" rx="10" fill="#334155"/>
-  <text x="305" y="288" text-anchor="middle" fill="#f1f5f9" font-family="system-ui,sans-serif" font-size="13" font-weight="600">assert_tool_call, assert_throughput, assert_latency</text>
+  <text x="305" y="288" text-anchor="middle" fill="#f1f5f9" font-family="system-ui,sans-serif" font-size="13" font-weight="600">assert_tool_call, assert_throughput, assert_load_phases, assert_latency</text>
   <text x="305" y="312" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="11">RFC-002: mcp-test try - Boot - Protocol - Resilient badge</text>
 
   <rect x="70" y="360" width="220" height="44" rx="8" fill="#4338ca"/>

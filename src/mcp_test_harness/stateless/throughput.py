@@ -35,6 +35,13 @@ class ThroughputMetrics:
         return (self.errors / self.total_requests) * 100.0
 
     @property
+    def p95_ms(self) -> float:
+        if not self.latencies_s:
+            return 0.0
+        ms = [x * 1000.0 for x in self.latencies_s]
+        return _aggregate_latency_ms(ms, "p95")
+
+    @property
     def p99_ms(self) -> float:
         if not self.latencies_s:
             return 0.0

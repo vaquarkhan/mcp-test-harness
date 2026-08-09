@@ -16,6 +16,7 @@ from mcp_test_harness.assertions import (
     assert_authorization_boundary,
     assert_capabilities,
     assert_latency,
+    assert_load_phases,
     assert_throughput,
     assert_prompt,
     assert_resource_read,
@@ -804,6 +805,77 @@ class TestAssertThroughput:
                     concurrent=1,
                     total_calls=4,
                     max_error_rate=0.1,
+                )
+            )
+
+    def test_max_p95_ms_fail(self) -> None:
+        s = _SleepSession(50.0)
+        with pytest.raises(MCPAssertionError, match="p95 latency"):
+            asyncio.run(
+                assert_throughput(
+                    s, "t", {}, concurrent=2, total_calls=4, max_p95_ms=10.0
+                )
+            )
+
+    def test_duration_s_closed_loop(self) -> None:
+        s = _SleepSession(0.0)
+        asyncio.run(
+            assert_throughput(
+                s, "t", {}, concurrent=2, duration_s=0.05, min_rps=1.0
+            )
+        )
+
+    def test_weighted_calls_mix(self) -> None:
+        seen: list[str] = []
+
+        class _Track:
+            async def call_tool(self, name: str, arguments: dict[str, Any]) -> FakeToolResult:
+                seen.append(name)
+                return FakeToolResult(content=[FakeContent(text="ok")])
+
+        asyncio.run(
+            assert_throughput(
+                _Track(),
+                calls=[
+                    {"tool": "a", "arguments": {}, "weight": 1},
+                    {"tool": "b", "arguments": {}, "weight": 1},
+                ],
+                concurrent=1,
+                total_calls=20,
+            )
+        )
+        assert "a" in seen and "b" in seen
+
+
+class TestAssertLoadPhases:
+    def test_warmup_excluded_from_gates(self) -> None:
+        # Warmup phase is slow; measured phase is fast — gates use only measured.
+        s = _IndexedSleepSession([50.0] * 4 + [0.0] * 8)
+        asyncio.run(
+            assert_load_phases(
+                s,
+                "t",
+                {},
+                phases=[
+                    {"name": "warmup", "concurrent": 1, "total_calls": 4, "warmup": True},
+                    {"name": "load", "concurrent": 2, "total_calls": 4},
+                ],
+                max_p99_ms=20.0,
+            )
+        )
+
+    def test_aggregate_gate_fail(self) -> None:
+        s = _SleepSession(40.0)
+        with pytest.raises(MCPAssertionError, match="p95 latency"):
+            asyncio.run(
+                assert_load_phases(
+                    s,
+                    "t",
+                    {},
+                    phases=[
+                        {"name": "c2", "concurrency": 2, "duration_s": 0.08},
+                    ],
+                    max_p95_ms=5.0,
                 )
             )
 

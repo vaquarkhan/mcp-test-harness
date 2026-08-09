@@ -9,7 +9,7 @@ By the end you will:
 
 1. Certify a Streamable HTTP endpoint with `mcp-test conformance stateless`
 2. Gate agent-scale load with `assert_stateless_throughput`
-3. Keep **stateful** CI unchanged (`mcp-test try`, `assert_throughput`)
+3. Keep **stateful** CI unchanged (`mcp-test try`, `assert_throughput` / `assert_load_phases`)
 
 Design background: [design/RFC-006-stateless-mcp.md](design/RFC-006-stateless-mcp.md).
 
@@ -36,7 +36,7 @@ mcp-test conformance --help
 |------|---------------------|---------------------------|
 | Zero-config probe | `mcp-test try --server-command "…"` | `mcp-test conformance stateless --url …` |
 | Functional tests | `mcp_server` fixture + `assert_tool_call` | Raw HTTP tools/call with `_meta` (suite covers discover + headers) |
-| Load / SLO | `assert_throughput(mcp_server, …)` | `assert_stateless_throughput(url, …)` |
+| Load / SLO | `assert_throughput` / `assert_load_phases` (session) | `assert_stateless_throughput(url, …)` |
 | Session | `initialize` + optional session id | None — each POST is self-contained |
 
 Both can live in one repo: gate stdio servers with fixtures; gate cloud HTTP MCP with the SEP-2575 suite.
@@ -94,6 +94,7 @@ async def test_echo_under_agent_load():
         duration_s=10,
         concurrency=50,
         min_rps=100.0,
+        max_p95_ms=150.0,
         max_p99_ms=200.0,
         max_error_rate=1.0,  # percent
     )
@@ -155,7 +156,7 @@ Example GitHub Actions job sketch:
 | Doc | Why |
 |-----|-----|
 | [RFC-006](design/RFC-006-stateless-mcp.md) | Spec matrix + architecture |
-| [PERFORMANCE.md](PERFORMANCE.md) §4 / §4.1 | `assert_throughput` vs `assert_stateless_throughput` |
+| [PERFORMANCE.md](PERFORMANCE.md) §4–4.2 | `assert_throughput` / `assert_load_phases` vs `assert_stateless_throughput` |
 | [examples/example_stateless_conformance.md](../examples/example_stateless_conformance.md) | Copy-paste CLI |
 | [examples/example_stateless_throughput.md](../examples/example_stateless_throughput.md) | Copy-paste pytest |
 | [TUTORIAL.md](TUTORIAL.md) | Stateful walkthrough from scratch |

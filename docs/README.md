@@ -24,7 +24,8 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Everything else** (config, assertions, parallel, reports, plugins) | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) |
 | **Repo developer setup, test layout, examples index** | [DEVELOPER.md](DEVELOPER.md) |
 | **CI, JUnit, JSON, HTML — do I need to “publish” reports?** | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) |
-| **Performance / latency** (same tests as functional; `assert_latency`, `-m perf`) | [PERFORMANCE.md](PERFORMANCE.md) |
+| **Performance / latency / load** (same tests as functional; `assert_latency`, `assert_throughput`, `assert_load_phases`, `-m perf`) | [PERFORMANCE.md](PERFORMANCE.md) · [Pages Load tab](https://vaquarkhan.github.io/mcp-test-harness/guide/performance.html) |
+| **Chaos / resiliency** (faults + experiment catalog) | [example_chaos_testing.md](../examples/example_chaos_testing.md) · [RFC-005](design/RFC-005-resiliency-experiments.md) · [Pages Chaos](https://vaquarkhan.github.io/mcp-test-harness/guide/chaos.html) · [Pages Resiliency](https://vaquarkhan.github.io/mcp-test-harness/guide/resiliency.html) |
 | **Performance strategy** (why perf belongs in the harness; scope + roadmap) | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) |
 | **Roadmap** (delivery phases and scope guardrails) | [ROADMAP.md](ROADMAP.md) · [ROADMAP_GROWTH.md](ROADMAP_GROWTH.md) |
 | **Security testing strategy** (prompt injection, payload checks, leak detection) | [SECURITY_TESTING.md](SECURITY_TESTING.md) |
@@ -60,7 +61,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | [TUTORIAL.md](TUTORIAL.md) | Longer **stateful** walkthrough for new users |
 | [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) | **Stateless** SEP-2575 conformance + hyperscale throughput tutorial |
 | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) | **CI and reports:** exit codes, JUnit for Actions, when to upload/publish HTML |
-| [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p95, warmup), stateful `assert_throughput`, stateless `assert_stateless_throughput` |
+| [PERFORMANCE.md](PERFORMANCE.md) | **Performance tests:** `assert_latency` (p90/p95/p99, warmup), stateful `assert_throughput` / `assert_load_phases`, stateless `assert_stateless_throughput` |
 | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) | **Performance product story:** why MCP perf must be protocol-aware, what is in-core vs out-of-scope, and the proposed production-grade roadmap |
 | [ROADMAP.md](ROADMAP.md) | **Planned delivery:** now/next/later priorities and scope guardrails |
 | [ROADMAP_GROWTH.md](ROADMAP_GROWTH.md) | **Adoption engine:** conformance badge, Marketplace, record-to-suite, pre-commit |

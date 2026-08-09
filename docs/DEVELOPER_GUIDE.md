@@ -250,9 +250,10 @@ If fixture `A` depends on `B` and `B` depends on `A` (or any cycle), resolution 
 | `assert_tool_schema(session, name, expected_input_schema)` | Assert a tool’s `inputSchema` dict exactly. |
 | `assert_protocol_version(session, expected="2024-11-05")` | Compare negotiated protocol version (requires a harness-started session, which sets `_mcp_harness_init_result`). |
 | `assert_tool_idempotent(...)` | Same tool+args `n` times; identical results. |
-| `assert_latency(..., max_ms=..., runs=..., aggregate=...)` | Latency budget on a tool call; optional multi-run p95/p99 and warmup (see [PERFORMANCE.md](PERFORMANCE.md)). |
-| `assert_throughput(session, …)` | Stateful concurrent load via MCP session (`min_rps`, `max_p99_ms`, `max_error_rate`). |
-| `assert_stateless_throughput(url, …)` | Stateless Streamable HTTP load (SEP-2575; no handshake) — [PERFORMANCE.md](PERFORMANCE.md) §4.1 · [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md). |
+| `assert_latency(..., max_ms=..., runs=..., aggregate=...)` | Latency budget on a tool call; optional multi-run p90/p95/p99 and warmup (see [PERFORMANCE.md](PERFORMANCE.md)). |
+| `assert_throughput(session, …)` | Stateful concurrent load via MCP session (`total_calls` or `duration_s`, `min_rps`, `max_p90_ms` / `max_p95_ms` / `max_p99_ms`, `max_error_rate`, optional weighted `calls`). |
+| `assert_load_phases(session, …)` | Concurrency ramp / multi-phase soak; warmup phases excluded from aggregate SLO gates. |
+| `assert_stateless_throughput(url, …)` | Stateless Streamable HTTP load (SEP-2575; no handshake) — [PERFORMANCE.md](PERFORMANCE.md) §4.2 · [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md). |
 | `assert_tool_call_validates_input(...)` | Assert the server rejects bad arguments; wraps `assert_tool_rejects`. |
 | `assert_snapshot(..., ignore_fields=[...], mask_patterns=[...])` | Snapshots: drop volatile keys or mask strings matching regexes. |
 | `assert_injection_blocked` / `assert_path_traversal_blocked` / `assert_no_secret_leak` | Deterministic security corpora — [SECURITY_TESTING.md](SECURITY_TESTING.md). |
