@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Fixed
+
+- **Ecosystem download workflow** opens a PR (`chore/ecosystem-download-stats`) instead of pushing `main` directly (branch protection GH013). Checkout / setup-python bumped off deprecated Node 20 action majors.
+
 ## [5.0.0] - 2026-08-08
 
 ### Added
