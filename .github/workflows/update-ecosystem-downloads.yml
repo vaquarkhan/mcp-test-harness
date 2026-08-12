@@ -23,11 +23,16 @@ jobs:
       - name: Aggregate PyPI download totals
         run: python scripts/update_ecosystem_downloads.py
 
-      # main is PR-protected — do not push directly (GH013). Open/refresh a PR instead.
+      # main is PR-protected (GH013 on direct push). Prefer a fine-grained PAT in
+      # ECOSYSTEM_PR_TOKEN that can open PRs; otherwise GITHUB_TOKEN works only if
+      # Settings → Actions → General → "Allow GitHub Actions to create and approve
+      # pull requests" is enabled.
       - name: Open or update pull request
+        id: cpr
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.ECOSYSTEM_PR_TOKEN || secrets.GITHUB_TOKEN }}
           commit-message: "chore: refresh ecosystem PyPI download totals"
           branch: chore/ecosystem-download-stats
           delete-branch: true
@@ -40,3 +45,19 @@ jobs:
             html/assets/ecosystem-downloads.json
             html/assets/ecosystem-downloads-badge.json
             html/assets/badges/
+
+      - name: Hint if PR could not be created
+        if: steps.cpr.outcome == 'failure'
+        run: |
+          echo "::error::Could not open/update PR for ecosystem download stats."
+          echo "1) Repo Settings → Actions → General → enable 'Allow GitHub Actions to create and approve pull requests'"
+          echo "   OR set secret ECOSYSTEM_PR_TOKEN (PAT with contents+pull_requests on this repo)."
+          echo "2) Branch may already exist: chore/ecosystem-download-stats — open a PR manually if needed."
+          exit 1
+
+      - name: Summarize
+        if: steps.cpr.outcome == 'success'
+        run: |
+          echo "pull-request=${{ steps.cpr.outputs.pull-request-url }}"
+          echo "pull-request-operation=${{ steps.cpr.outputs.pull-request-operation }}"
+          echo "pull-request-number=${{ steps.cpr.outputs.pull-request-number }}"
