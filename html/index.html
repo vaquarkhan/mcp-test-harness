@@ -22,7 +22,7 @@
   "description": "pytest-style testing framework for MCP servers. Functional, regression, and performance testing.",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Linux, Windows, macOS",
-  "softwareVersion": "4.0.0",
+  "softwareVersion": "5.2.0",
   "image": "https://vaquarkhan.github.io/mcp-test-harness/assets/images/report-formats.png",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "url": "https://vaquarkhan.github.io/mcp-test-harness/",
@@ -81,6 +81,7 @@
       <a href="examples.html" class="nav-link">Examples</a>
       <a href="integrations.html" class="nav-link">Integrations</a>
       <a href="features-deck.html" class="nav-link">Features deck</a>
+      <a href="demo-reel.html" class="nav-link">Demo video</a>
       <a href="https://github.com/vaquarkhan/mcp-test-harness" class="nav-link">GitHub</a>
       <a href="https://pypi.org/project/mcp-test-harness/" class="btn-outline text-sm py-2 px-4">pip install</a>
     </div>
@@ -127,6 +128,7 @@
         <a href="guide/" class="btn-ghost">Docs</a>
         <a href="guide/handbook.html" class="btn-ghost">Handbook</a>
         <a href="features-deck.html" class="btn-ghost">Features deck</a>
+        <a href="demo-reel.html" class="btn-ghost">Demo video</a>
         <a href="integrations.html" class="btn-ghost">26 pkgs · 195k+</a>
       </div>
       <div class="flex items-center gap-6 text-sm text-slate-400">
@@ -147,6 +149,30 @@
           No LLM required
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO VIDEO -->
+<section id="demo-video" class="py-20 bg-white border-t border-slate-100">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-10">
+      <span class="section-kicker">Watch</span>
+      <h2 class="text-4xl font-bold mb-4">4-section product demo</h2>
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto">Security scan · load testing · resilience · CI/CD HTML dashboard — ~75 seconds, silent.</p>
+    </div>
+    <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-xl bg-slate-900">
+      <video controls playsinline preload="metadata" poster="assets/images/html-dashboard.png"
+        class="w-full aspect-video bg-slate-950"
+        src="assets/video/mcp-test-harness-4-section-demo.mp4">
+        Your browser does not support HTML5 video.
+        <a href="assets/video/mcp-test-harness-4-section-demo.mp4">Download the MP4</a>
+      </video>
+    </div>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="demo-reel.html" class="btn-primary">Open demo page</a>
+      <a href="assets/video/mcp-test-harness-4-section-demo.mp4" class="btn-ghost" download>Download MP4</a>
+      <a href="reports/sample_mcp_test_report.html" class="btn-ghost">Sample CI dashboard</a>
     </div>
   </div>
 </section>
@@ -222,10 +248,10 @@
       <p class="text-lg text-slate-600 max-w-3xl mx-auto">1080+ tests, 100% library coverage gate, e2e dogfood in CI. Everything below is implemented in this repo — not roadmap slides.</p>
     </div>
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 text-sm">
-      <div class="feature-card"><strong>CLI</strong><p class="text-slate-600 mt-1">init, try, record, generate, experiment, conformance, export-pdf, doctor</p></div>
-      <div class="feature-card"><strong>Reports</strong><p class="text-slate-600 mt-1">Console, JUnit, JSON, HTML dashboard, PDF export, MCP trace timeline</p></div>
-      <div class="feature-card"><strong>Chaos &amp; resiliency</strong><p class="text-slate-600 mt-1">@marker chaos_faults, experiment catalog, throughput SLO params</p></div>
-      <div class="feature-card"><strong>Security</strong><p class="text-slate-600 mt-1">SARIF · OWASP MCP · injection/path/leak · <strong>Suite A</strong> egress quarantine, covert-channel neutralization, general-exec tools absent · Bastion pairing</p></div>
+      <div class="feature-card"><strong>CLI</strong><p class="text-slate-600 mt-1">init, try, record, generate, experiment, conformance, export-pdf, doctor, <code>scan-agents</code>, <code>audit verify</code></p></div>
+      <div class="feature-card"><strong>Reports</strong><p class="text-slate-600 mt-1">Console, JUnit, JSON, HTML dashboard, PDF export, MCP trace timeline, OSCAL assessment-results helpers</p></div>
+      <div class="feature-card"><strong>Chaos &amp; resiliency</strong><p class="text-slate-600 mt-1">@marker chaos_faults, experiment catalog, throughput / load-phase SLOs, load resilience under deny</p></div>
+      <div class="feature-card"><strong>Security</strong><p class="text-slate-600 mt-1">SARIF · OWASP MCP · Suites <strong>A–D</strong> · incident E–K · audit-chain · AGENTS.md Unicode · load resilience · Bastion pairing</p></div>
       <div class="feature-card"><strong>Conformance</strong><p class="text-slate-600 mt-1">Levels + badge (RFC-002); stateless SEP-2575 via <code>mcp-test conformance stateless</code> (RFC-006)</p></div>
       <div class="feature-card"><strong>Automation</strong><p class="text-slate-600 mt-1">GitHub Marketplace Action, pre-commit hook, Docker GHCR, PyInstaller binary</p></div>
       <div class="feature-card"><strong>26 PyPI packages · 195k+ downloads</strong><p class="text-slate-600 mt-1">Core + 25 framework shims (incl. LangGraph, Pydantic AI, OpenAI Agents) — all-time total on <a href="integrations.html" class="text-indigo-600 underline">Integrations</a></p></div>
@@ -256,22 +282,25 @@ mcp-test manifest check</code>
     </div>
     <div class="mt-12 grid lg:grid-cols-2 gap-8 items-center border-t border-slate-100 pt-12">
       <div>
-        <span class="section-kicker">Suite A · CI security packs</span>
-        <h3 class="text-2xl font-bold mb-3">Egress · covert channel · capability reduction</h3>
-        <p class="text-slate-600 mb-4">Deterministic assertions for merge gates — no live model required. Recorded-verdict egress quarantine/allow, known-encoding covert-channel neutralization, and <code class="text-sm">assert_general_exec_tools_absent</code> for dangerous tool surfaces.</p>
+        <span class="section-kicker">5.2.0 · Cyber suites A–D + audit</span>
+        <h3 class="text-2xl font-bold mb-3">Egress · attestation · quarantine · load resilience</h3>
+        <p class="text-slate-600 mb-4">Deterministic merge gates — no live model required. Suites A–D, incident E–K fixtures, hash-linked audit verify, AGENTS.md Unicode scan, and load resilience (deny-codes, no-fail-open, fairness).</p>
         <ul class="text-sm text-slate-600 space-y-2 mb-4 list-disc list-inside">
-          <li><code>assert_egress_quarantined</code> / <code>assert_egress_allowed</code></li>
-          <li><code>assert_covert_channel_neutralized</code></li>
-          <li><code>assert_general_exec_tools_absent</code></li>
+          <li><code>assert_egress_quarantined</code> · <code>assert_capacity_enforced</code> · <code>assert_envelope_verified</code></li>
+          <li><code>assert_untrusted_context_quarantined</code> · <code>assert_audit_chain_intact</code></li>
+          <li><code>assert_control_engages_under_load</code> · <code>mcp-test scan-agents</code> / <code>audit verify</code></li>
         </ul>
         <a href="guide/security.html" class="btn-primary">Security docs</a>
-        <a href="examples.html#assertions" class="btn-ghost ml-2">Assertion table</a>
+        <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/CYBER_SECURITY_SUITES.md" class="btn-ghost ml-2">Cyber backlog</a>
       </div>
       <div class="rounded-2xl border border-slate-200 bg-slate-900 text-slate-100 p-6 font-mono text-xs leading-relaxed">
-        <div class="text-emerald-300 mb-2"># pytest marker: security</div>
+        <div class="text-emerald-300 mb-2"># pytest marker: security · 5.2.0</div>
         <div>await assert_egress_quarantined(mcp, "send_message")</div>
-        <div>await assert_covert_channel_neutralized(mcp, "echo")</div>
-        <div>await assert_general_exec_tools_absent(mcp)</div>
+        <div>await assert_untrusted_context_quarantined(...)</div>
+        <div>assert_audit_chain_intact("chain.json")</div>
+        <div class="text-slate-500 mt-4"># CLI</div>
+        <div>mcp-test scan-agents</div>
+        <div>mcp-test audit verify chain.json</div>
         <div class="text-slate-500 mt-4"># nightly only — not PR gates:</div>
         <div class="text-slate-400"># -m semantic_live · -m adaptive</div>
       </div>
@@ -506,7 +535,7 @@ async def test_echo_latency(mcp_server):
       <div class="feature-card">
         <div class="feature-icon">🔐</div>
         <h3 class="font-bold mb-2">Security testing</h3>
-        <p class="text-sm text-slate-600">Auth boundaries plus Suite A packs: egress quarantine, covert-channel neutralization, general-exec tools absent. Pairs with MCP-Bastion for runtime defense.</p>
+        <p class="text-sm text-slate-600">Suites A–D, incident E–K, audit-chain verify, AGENTS.md Unicode scan, load resilience. Pairs with MCP-Bastion for runtime defense.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">✅</div>
@@ -563,7 +592,7 @@ async def test_echo_latency(mcp_server):
       <div class="feature-card">
         <div class="badge badge-primary mb-3">SECURITY</div>
         <h3 class="font-bold mb-2">Security test packs</h3>
-        <p class="text-sm text-slate-600">Injection / path / leak plus Suite A egress &amp; covert-channel packs. Authorization boundaries. Pairs with MCP-Bastion for runtime defense.</p>
+        <p class="text-sm text-slate-600">Injection / path / leak plus Suites A–D, audit verify, authz/schema rules. Authorization boundaries. Pairs with MCP-Bastion for runtime defense.</p>
       </div>
       <div class="feature-card">
         <div class="badge badge-primary mb-3">AUDIT</div>

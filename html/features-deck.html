@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Features Deck - MCP Test Harness</title>
-<meta name="description" content="MCP Test Harness feature deck: pytest-style MCP testing, reports, CI, record-to-suite, chaos, conformance, Suite A security, and 26 PyPI packages.">
+<meta name="description" content="MCP Test Harness feature deck: pytest-style MCP testing, cyber suites A–D, audit verify, load resilience, reports, CI, and 26 PyPI packages.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
   <div class="pypi-stats-inner pypi-stats-stacked max-w-7xl mx-auto px-4">
     <div class="pypi-badge-row" aria-label="Project badges">
       <span class="pypi-bar-label">README</span>
-      <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v5.1.0-blue" alt="PyPI version" height="22" loading="eager" /></a>
+      <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v5.2.0-blue" alt="PyPI version" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypistats.org/packages/mcp-test-harness" target="_blank" rel="noopener noreferrer" title="Core package total downloads"><img class="pypi-badge" data-pepy-total src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-downloads.json" alt="PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="integrations.html" title="Ecosystem total downloads (all packages)"><img class="pypi-badge" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json" alt="Ecosystem PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="Python versions"><img class="pypi-badge" src="https://img.shields.io/pypi/pyversions/mcp-test-harness" alt="Python" height="22" loading="eager" /></a>
@@ -55,7 +55,7 @@
 <main class="deck-main pt-28 pb-16 no-print-nav-offset">
   <section class="deck-slide deck-slide-cover">
     <div class="deck-slide-inner">
-      <p class="deck-kicker">Features deck · v5.1.0</p>
+      <p class="deck-kicker">Features deck · v5.2.0</p>
       <h1 class="deck-title">MCP Test Harness</h1>
       <p class="deck-lead">The pytest-style testing framework for MCP servers — functional, regression, and performance in one CI-native tool.</p>
       <ul class="deck-bullets">
@@ -122,8 +122,9 @@
       <div class="grid md:grid-cols-2 gap-6 mt-6">
         <div class="feature-card"><strong>Chaos testing</strong><p>@marker chaos_faults — delay, 503, truncate, schema drift</p></div>
         <div class="feature-card"><strong>Experiment catalog</strong><p><code>mcp-test experiment run --suite core</code> with scorecards</p></div>
-        <div class="feature-card"><strong>Security packs</strong><p>Injection / path / leak · <strong>Suite A</strong> egress quarantine, covert channel, general-exec absent · OWASP MCP SARIF</p></div>
+        <div class="feature-card"><strong>Security packs</strong><p>Suites <strong>A–D</strong> · incident E–K · audit-chain · AGENTS.md Unicode · load resilience · OWASP MCP SARIF</p></div>
         <div class="feature-card"><strong>MCP-Bastion</strong><p>Test defenses in CI; enforce at runtime in production</p></div>
+        <div class="feature-card"><strong>Agent discoverability</strong><p><code>llms.txt</code> / <code>llms-full.txt</code> · <code>mcp-test scan-agents</code> · Cursor skill template</p></div>
         <div class="feature-card"><strong>Ecosystem downloads</strong><p>All-time PyPI totals across 26 packages · live Integrations dashboard</p></div>
         <div class="feature-card"><strong>Multi-language suite</strong><p>TS · Java · Go · .NET adapters via <a href="guide/multi-language.html">mcp-test-suite</a> · package download links</p></div>
         <div class="feature-card"><strong>Manifest rug-pull gate</strong><p>Snapshot sanctioned MCP surface; fail CI on unapproved schema drift</p></div>
@@ -138,7 +139,7 @@
       <h2 class="deck-h2 text-white">26 PyPI wheels · Docker · Binary · Action</h2>
       <p class="deck-body text-slate-300 max-w-2xl mx-auto">Core harness plus 25 framework shims (LangGraph, Pydantic AI, OpenAI Agents, and more) — <strong class="text-white">195k+</strong> all-time ecosystem downloads. GHCR runtime and dev images. Marketplace composite action with PR comments.</p>
       <div class="flex flex-wrap justify-center gap-4 mt-8">
-        <code class="deck-code">pip install mcp-test-harness==5.1.0</code>
+        <code class="deck-code">pip install mcp-test-harness==5.2.0</code>
         <code class="deck-code">docker pull ghcr.io/vaquarkhan/mcp-test-harness:latest</code>
       </div>
       <a href="integrations.html" class="btn-primary mt-8 inline-flex">Ecosystem downloads (26 pkgs · 195k+) →</a>

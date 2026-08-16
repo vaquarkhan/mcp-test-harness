@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Fixed
+
+- **Ecosystem download workflow (permanent):** unique `chore/ecosystem-stats-${{ run_id }}` branches (no force-push onto a sticky protected ref); repo ruleset excludes `refs/heads/chore/ecosystem-*`; Actions workflow permissions set to write + can create PRs. Docs: [`.github/workflows/update-ecosystem-downloads.yml`](.github/workflows/update-ecosystem-downloads.yml).
+
+### Changed
+
+- **GitHub Pages** refreshed for **5.2.0**: home / features deck / examples / compare / integrations / guide security + install pins cover Suites A–D, incident E–K, `mcp-test audit verify`, `scan-agents`, load resilience, and agent discoverability.
+- **4-section demo video** (`html/assets/video/mcp-test-harness-4-section-demo.mp4` + [demo-reel.html](html/demo-reel.html)): security scan · load · resilience · CI/CD HTML dashboard. Rebuild: `python scripts/build_demo_video.py`. Narration: [docs/DEMO_VIDEO_SCRIPT.md](docs/DEMO_VIDEO_SCRIPT.md).
+
 ## [5.2.0] - 2026-08-16
 
 ### Added
