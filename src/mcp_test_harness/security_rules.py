@@ -28,6 +28,9 @@ class SecurityRule:
     owasp_id: str
     severity: str
     help_uri: str = "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+    aisvs_id: str = ""
+    atlas_id: str = ""
+    asi_id: str = ""
 
 
 RULES: dict[str, SecurityRule] = {
@@ -173,6 +176,54 @@ RULES: dict[str, SecurityRule] = {
         framework="OWASP-MCP",
         owasp_id="MCP09",
         severity="high",
+        aisvs_id="C9",
+        atlas_id="AML.T0051",
+        asi_id="ASI10",
+    ),
+    "audit-chain-integrity": SecurityRule(
+        rule_id="audit-chain-integrity",
+        name="Audit Chain Integrity",
+        framework="OWASP-MCP",
+        owasp_id="MCP10",
+        severity="high",
+        aisvs_id="C10",
+        asi_id="ASI09",
+    ),
+    "attestation-conformance": SecurityRule(
+        rule_id="attestation-conformance",
+        name="Attested Tool-Server Admission",
+        framework="OWASP-MCP",
+        owasp_id="MCP04",
+        severity="high",
+        aisvs_id="C4",
+        asi_id="ASI04",
+    ),
+    "cross-agent-quarantine": SecurityRule(
+        rule_id="cross-agent-quarantine",
+        name="Cross-Agent Context Quarantine",
+        framework="OWASP-MCP",
+        owasp_id="MCP08",
+        severity="high",
+        aisvs_id="C8",
+        asi_id="ASI06",
+    ),
+    "load-resilience-control": SecurityRule(
+        rule_id="load-resilience-control",
+        name="Load Resilience Control Engagement",
+        framework="OWASP-LLM",
+        owasp_id="LLM10",
+        severity="medium",
+        aisvs_id="C10",
+        asi_id="ASI08",
+    ),
+    "schema-rce-precondition": SecurityRule(
+        rule_id="schema-rce-precondition",
+        name="Structural RCE Precondition (schema)",
+        framework="OWASP-MCP",
+        owasp_id="MCP05",
+        severity="medium",
+        aisvs_id="C5",
+        asi_id="ASI05",
     ),
 }
 
@@ -201,6 +252,11 @@ _TAG_TO_RULE: dict[str, str] = {
     "semantic-egress": "semantic-egress-quarantine",
     "covert-channel": "covert-channel-known-encoding",
     "capability-reduction": "capability-reduction-exec",
+    "audit-chain": "audit-chain-integrity",
+    "attestation": "attestation-conformance",
+    "cross-agent": "cross-agent-quarantine",
+    "load-resilience": "load-resilience-control",
+    "schema-precondition": "schema-rce-precondition",
 }
 
 _ERROR_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
@@ -216,6 +272,11 @@ _ERROR_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"quarantin|egress payload", re.I), "semantic-egress-quarantine"),
     (re.compile(r"covert encoding|covert markers", re.I), "covert-channel-known-encoding"),
     (re.compile(r"capability reduction|execution tool", re.I), "capability-reduction-exec"),
+    (re.compile(r"audit chain", re.I), "audit-chain-integrity"),
+    (re.compile(r"attestation|unattested", re.I), "attestation-conformance"),
+    (re.compile(r"cross-tenant|context not evicted|untrusted context", re.I), "cross-agent-quarantine"),
+    (re.compile(r"fail-open|deny code|RATE_LIMITED|LOAD_SHED", re.I), "load-resilience-control"),
+    (re.compile(r"unbounded-string|missing-input-schema|destructive-without", re.I), "schema-rce-precondition"),
 )
 
 _SECURITY_TAGS = frozenset({"security", "sec"})

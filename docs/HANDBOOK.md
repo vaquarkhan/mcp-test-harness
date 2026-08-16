@@ -260,5 +260,5 @@ Scope guardrails (what we **do not** build): LLM playground / model-vs-model sco
 
 ---
 
-MCP Test Harness 5.1.0 � MIT License � Author: Vaquar Khan  
+MCP Test Harness 5.2.0 � MIT License � Author: Vaquar Khan  
 Website � [Source markdown](https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/HANDBOOK.md)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -87,8 +88,34 @@ async def test_assert_throughput_calls_catalog_and_p90_gate() -> None:
 async def test_assert_throughput_duration_worker_early_return() -> None:
     s = MagicMock()
     s.call_tool = AsyncMock(return_value=MagicMock(isError=False, content=[]))
-    # Very short window + high concurrency exercises the inner time check.
     await assert_throughput(s, "t", concurrent=4, duration_s=0.05, max_error_rate=1.0)
+    # Deterministic clock: enter the while-loop, then trip the post-acquire end check.
+    clock = {"t": 100.0}
+    steps = iter(
+        [
+            100.0,  # wall_t0
+            100.05,  # while check (before end=100.1)
+            100.2,  # after sem acquire -> return
+            100.2,
+            100.2,
+            100.2,
+            100.2,
+            100.2,
+            100.2,
+            100.2,
+        ]
+    )
+
+    def fake_perf() -> float:
+        try:
+            clock["t"] = next(steps)
+        except StopIteration:
+            clock["t"] = 200.0
+        return clock["t"]
+
+    with patch("mcp_test_harness.assertions.time.perf_counter", side_effect=fake_perf):
+        with pytest.raises(MCPAssertionError, match="0 calls"):
+            await assert_throughput(s, "t", concurrent=1, duration_s=0.1, max_error_rate=1.0)
 
 
 @pytest.mark.asyncio

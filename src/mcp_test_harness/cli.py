@@ -36,7 +36,8 @@ def _build_parser() -> argparse.ArgumentParser:
             "`mcp-test try` runs a zero-config conformance probe; "
             "`mcp-test doctor` checks server handshake and lists tools (no tests required); "
             "`mcp-test manifest` snapshots the MCP surface for rug-pull CI gates; "
-            "`mcp-test scan-agents` checks AGENTS.md for hidden Unicode smuggling."
+            "`mcp-test scan-agents` checks AGENTS.md for hidden Unicode smuggling; "
+            "`mcp-test audit verify` checks Bastion-style audit chain files."
         ),
     )
 
@@ -530,6 +531,10 @@ def main(argv: list[str] | None = None) -> int:
         from mcp_test_harness.agents_md_scan import run_scan_agents
 
         return run_scan_agents(av[1:])
+    if av and av[0] == "audit":
+        from mcp_test_harness.audit_chain import run_audit_verify
+
+        return run_audit_verify(av[1:])
     return asyncio.run(_async_main(av))
 
 

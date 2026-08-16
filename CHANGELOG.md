@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [5.2.0] - 2026-08-16
+
+### Added
+
+- **Cyber-security suites (Chosen backlog, end-to-end):** audit-chain verifier (`assert_audit_chain_intact`, `mcp-test audit verify`); Suite D deterministic provenance; Suite C attestation polarities; Suite B capacity/media; incident conformance E–K; load-resilience deny-code asserts; schema RCE-precondition rules; confused-deputy / scoped-credential / pre-tool-hook fixtures; assurance `evidence` / `metrics` / OSCAL assessment-results; trust-boundary + launch-gate report helpers; nightly `adaptive.py` helpers; Numbat fixture ingestion contract. Single source: [docs/CYBER_SECURITY_SUITES.md](docs/CYBER_SECURITY_SUITES.md). Nature preserved: deterministic CI gate; adaptive/detection remain nightly-only.
+
 ## [5.1.0] - 2026-08-15
 
 ### Added

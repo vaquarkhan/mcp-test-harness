@@ -316,7 +316,7 @@ def test_public_exports() -> None:
 
     assert callable(m.assert_agents_md_clean)
     assert callable(m.scan_project_agent_rules)
-    assert m.__version__ == "5.1.0"
+    assert m.__version__ == "5.2.0"
 
 
 @pytest.mark.asyncio

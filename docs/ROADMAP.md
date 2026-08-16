@@ -32,7 +32,8 @@ Filter: (a) deterministic/reproducible, (b) something a scanner or interactive i
 | **1** | Persisted history + trend gates (files/artifacts + static Pages report; not a live server) | Next |
 | **1** | Determinism / flakiness detector (N-run per-tool scores) | Next |
 | **1** | Spec-version + self-version compatibility matrix | Next |
-| **2** | Static MCP rule engine (heuristic CI rules; not live threat intel) | Partial via `security_rules` / quality_gate |
+| **2** | Static MCP rule engine (heuristic CI rules; not live threat intel) | Partial via `security_rules` / quality_gate · see [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md) |
+| **2** | Cyber suites (audit-chain, Suite C/D, load deny-codes, incident E–K, assurance/OSCAL) | **Shipped (v5.2):** see [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md) |
 | **2** | Contract coverage as a first-class threshold gate | Partial map shipped; threshold gate next |
 | **2** | Golden traffic replay (Bastion/proxy → CI) | Later |
 | **3** | Governance evidence packs, token/output budgets, regression autobisect | Later |

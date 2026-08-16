@@ -261,6 +261,9 @@ If fixture `A` depends on `B` and `B` depends on `A` (or any cycle), resolution 
 | `assert_covert_channel_neutralized` | Suite A: known encodings only (zero-width / homoglyph / whitespace) must not survive. |
 | `assert_general_exec_tools_absent` | Capability-reduction: shell/exec tools must not appear in `list_tools`. |
 | `assert_agents_md_clean` / `scan_project_agent_rules` | Hidden Unicode in `AGENTS.md` / agent rules (Tags-block, bidi, zero-width) — [SECURITY_TESTING.md](SECURITY_TESTING.md). |
+| `assert_audit_chain_intact` / `mcp-test audit verify` | Bastion-style SHA-256 audit chain integrity. |
+| `assert_capacity_enforced` / load-resilience asserts | Capacity + deny-code control engagement under load. |
+| Cyber suites map | [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md) |
 
 ---
 

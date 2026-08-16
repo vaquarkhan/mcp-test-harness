@@ -4,6 +4,8 @@ MCP Test Harness catches **security regressions in CI** using deterministic, MCP
 
 **Why security-first:** see the [Documentation handbook — Part 2](HANDBOOK.md#part-2--why-security-first) ([HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html#security-first)). Runtime enforce: [MCP-Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
 
+**Suites & backlog (single source):** [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md) — shipped vs Chosen/Deferred/Rejected; Bastion companion for runtime extensions.
+
 ## Shipped capabilities
 
 ### Auth and boundaries
@@ -26,6 +28,13 @@ Tag tests with `@marker(tags=["security"])`:
 | `assert_covert_channel_neutralized` | **Known encodings only** (zero-width, homoglyph, whitespace) must not survive |
 | `assert_general_exec_tools_absent` | Capability-reduction: shell/exec tools must not be exposed |
 | `assert_agents_md_clean` | **Agent rules files** (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, …): fail on hidden Unicode (Tags-block / bidi / zero-width) |
+| `assert_audit_chain_intact` | SHA-256 audit chain integrity (tamper / break / truncate / reorder) |
+| `assert_capacity_enforced` / media asserts | Suite B remainder: per-sink budget + known-carrier unsigned/signed media |
+| `assert_control_engages_under_load` / `assert_no_fail_open_under_load` | Load resilience: deny-code engagement, no fail-open |
+| `assert_schema_preconditions_clean` | Structural RCE-precondition rules over `tools/list` schemas |
+| `assert_untrusted_context_quarantined` / cross-tenant | Suite D deterministic provenance |
+
+Full suite map: [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md).
 
 Corpora: `PROMPT_INJECTION_PAYLOADS`, `PATH_TRAVERSAL_PAYLOADS`, `SECRET_LEAK_PATTERNS`, `SOCIAL_ENGINEERING_PAYLOADS`, `BENIGN_EGRESS_CONTROLS`, `COVERT_CHANNEL_PAYLOADS`, `AISI_MAINTAINER_PRESSURE_PAYLOAD`.
 
