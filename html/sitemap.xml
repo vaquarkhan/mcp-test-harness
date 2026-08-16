@@ -26,13 +26,19 @@
   </url>
   <url>
     <loc>https://vaquarkhan.github.io/mcp-test-harness/features-deck.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
+    <loc>https://vaquarkhan.github.io/mcp-test-harness/demo-reel.html</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://vaquarkhan.github.io/mcp-test-harness/reports/sample_mcp_test_report.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

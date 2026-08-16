@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4-section demo video - MCP Test Harness</title>
+<meta name="description" content="Four-section MCP Test Harness demo: security vulnerability scan, load testing, resilience testing, and CI/CD HTML dashboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .demo-section { display: none; }
+  .demo-section.is-active { display: block; animation: demoFade 0.35s ease; }
+  @keyframes demoFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .demo-tab.is-active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+  .demo-video-wrap { background: #0f172a; border-radius: 1rem; overflow: hidden; border: 1px solid #1e293b; }
+  .demo-video-wrap video { width: 100%; display: block; aspect-ratio: 16/9; background: #020617; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 has-pypi-bar" data-pypi-package="mcp-test-harness">
+
+<div id="pypi-stats-bar" class="pypi-stats-bar" role="complementary" aria-label="Project badges">
+  <div class="pypi-stats-inner pypi-stats-stacked max-w-7xl mx-auto px-4">
+    <div class="pypi-badge-row">
+      <span class="pypi-bar-label">DEMO</span>
+      <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v5.2.0-blue" alt="PyPI" height="22" /></a>
+      <a href="guide/security.html" class="pypi-bar-pill">Security docs</a>
+      <a href="reports/sample_mcp_test_report.html" class="pypi-bar-pill">Sample dashboard</a>
+      <a href="features-deck.html" class="pypi-bar-pill">Features deck</a>
+    </div>
+  </div>
+</div>
+
+<nav class="fixed site-nav bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
+      <span class="font-bold text-lg">MCP Test Harness</span>
+      <span class="badge badge-primary text-xs">v5.2.0</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="demo-reel.html" class="nav-link active">Demo video</a>
+      <a href="guide/" class="nav-link">Docs</a>
+      <a href="examples.html" class="nav-link">Examples</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness" class="nav-link">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<main class="pt-28 pb-20">
+  <section class="max-w-5xl mx-auto px-6 mb-12">
+    <p class="section-kicker">Product demo · ~75 seconds · silent</p>
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Four CI gates for MCP</h1>
+    <p class="text-lg text-slate-600 max-w-3xl mb-8">
+      Vulnerability / security scan · load testing · resilience testing · then wire findings into your
+      CI/CD HTML dashboard. Deterministic recorded-verdict gates — not a live red-team console.
+    </p>
+    <div class="demo-video-wrap mb-6 shadow-xl">
+      <video id="demo-video" controls playsinline preload="metadata"
+        poster="assets/images/html-dashboard.png"
+        src="assets/video/mcp-test-harness-4-section-demo.mp4">
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+    <div class="flex flex-wrap gap-3 text-sm">
+      <a class="btn-primary" href="assets/video/mcp-test-harness-4-section-demo.mp4" download>Download MP4</a>
+      <a class="btn-ghost" href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/DEMO_VIDEO_SCRIPT.md">Narration + commands</a>
+      <a class="btn-ghost" href="reports/sample_mcp_test_report.html">Open sample report</a>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-6">
+    <div class="flex flex-wrap gap-2 mb-8" role="tablist" aria-label="Demo sections">
+      <button type="button" class="demo-tab is-active px-4 py-2 rounded-lg border border-slate-200 text-sm font-semibold" data-tab="1">1 · Security scan</button>
+      <button type="button" class="demo-tab px-4 py-2 rounded-lg border border-slate-200 text-sm font-semibold" data-tab="2">2 · Load</button>
+      <button type="button" class="demo-tab px-4 py-2 rounded-lg border border-slate-200 text-sm font-semibold" data-tab="3">3 · Resilience</button>
+      <button type="button" class="demo-tab px-4 py-2 rounded-lg border border-slate-200 text-sm font-semibold" data-tab="4">4 · CI/CD dashboard</button>
+    </div>
+
+    <article id="sec-1" class="demo-section is-active feature-card">
+      <h2 class="text-2xl font-bold mb-2">1 · Security / vulnerability scan</h2>
+      <p class="text-slate-600 mb-4">CI owns the gate: Suites A–D, incident E–K, AGENTS.md Unicode scan, audit-chain verify, quality_gate + SARIF.</p>
+      <pre class="bg-slate-900 text-emerald-300 text-xs p-4 rounded-lg overflow-x-auto"><code>mcp-test -m security --sarif-output findings.sarif
+mcp-test scan-agents
+mcp-test audit verify chain.json
+mcp-test manifest check</code></pre>
+      <p class="text-sm text-slate-500 mt-4"><a class="text-indigo-600 underline" href="guide/security.html">Security docs</a> ·
+        <a class="text-indigo-600 underline" href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/CYBER_SECURITY_SUITES.md">Cyber suites</a></p>
+    </article>
+
+    <article id="sec-2" class="demo-section feature-card">
+      <h2 class="text-2xl font-bold mb-2">2 · Load testing</h2>
+      <p class="text-slate-600 mb-4">MCP-aware latency and throughput SLOs with concurrency ramps — fail the PR when p95 or RPS slips.</p>
+      <pre class="bg-slate-900 text-emerald-300 text-xs p-4 rounded-lg overflow-x-auto"><code>await assert_latency(mcp, "echo", max_p95_ms=120, iterations=50)
+await assert_throughput(mcp, "echo", concurrency=20, duration_s=15, min_rps=40)
+await assert_load_phases(mcp, "echo", phases=[...], max_p95_ms=200)</code></pre>
+      <p class="text-sm text-slate-500 mt-4"><a class="text-indigo-600 underline" href="guide/performance.html">Load / performance guide</a></p>
+    </article>
+
+    <article id="sec-3" class="demo-section feature-card">
+      <h2 class="text-2xl font-bold mb-2">3 · Resilience testing</h2>
+      <p class="text-slate-600 mb-4">Chaos faults plus graceful degrade / reconnect. Load resilience asserts deny-codes, no-fail-open, and fairness under pressure.</p>
+      <pre class="bg-slate-900 text-emerald-300 text-xs p-4 rounded-lg overflow-x-auto"><code>@marker(chaos_faults=["delay", "http_503"])
+async def test_survives(): ...
+
+await assert_degrades_gracefully(...)
+await assert_control_engages_under_load(...)
+await assert_no_fail_open_under_load(...)</code></pre>
+      <p class="text-sm text-slate-500 mt-4"><a class="text-indigo-600 underline" href="guide/resiliency.html">Resiliency</a> ·
+        <a class="text-indigo-600 underline" href="guide/chaos.html">Chaos</a></p>
+    </article>
+
+    <article id="sec-4" class="demo-section feature-card">
+      <h2 class="text-2xl font-bold mb-2">4 · Security features → CI/CD dashboard</h2>
+      <p class="text-slate-600 mb-4">Wire the same run into HTML dashboard, JUnit, JSON, and SARIF artifacts. GitHub Action comments on the PR — no hosted multi-tenant dashboard in core.</p>
+      <pre class="bg-slate-900 text-emerald-300 text-xs p-4 rounded-lg overflow-x-auto"><code>mcp-test --report-format html --report-output report.html \
+  --junit-xml junit.xml --sarif-output findings.sarif
+
+# GitHub Action: vaquarkhan/mcp-test-harness@v5.2.0</code></pre>
+      <p class="text-sm text-slate-500 mt-4"><a class="text-indigo-600 underline" href="reports/sample_mcp_test_report.html">Sample HTML dashboard</a> ·
+        <a class="text-indigo-600 underline" href="integrations.html">Integrations / Action</a></p>
+    </article>
+  </section>
+</main>
+
+<footer class="bg-slate-900 text-slate-400 py-10 text-center text-sm">
+  MCP Test Harness v5.2.0 · MIT · Rebuild video: <code class="text-slate-300">python scripts/build_demo_video.py</code>
+</footer>
+
+<script>
+(function () {
+  const tabs = document.querySelectorAll('.demo-tab');
+  const sections = document.querySelectorAll('.demo-section');
+  tabs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-tab');
+      tabs.forEach((t) => t.classList.toggle('is-active', t === btn));
+      sections.forEach((s) => s.classList.toggle('is-active', s.id === 'sec-' + id));
+    });
+  });
+})();
+</script>
+<script src="assets/pypi-stats.js"></script>
+</body>
+</html>
