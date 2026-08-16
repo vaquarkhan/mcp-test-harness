@@ -483,6 +483,24 @@ async def test_no_shell_tools(mcp_server):
     await assert_general_exec_tools_absent(mcp_server)
 ```
 
+### AGENTS.md hidden-Unicode scan
+
+Agent instruction files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, skills) can hide Tags-block / zero-width / bidi text that humans miss. Defensive CI:
+
+```python
+from mcp_test_harness import marker, assert_agents_md_clean
+
+@marker(tags=["security", "agents-md"])
+def test_agent_rules_clean():
+    assert_agents_md_clean()
+```
+
+```bash
+mcp-test scan-agents
+```
+
+Opt-in: `agents_md_gate: { enabled: true }` in `mcp-test.yaml` (disabled by default).
+
 Run: `mcp-test -m security` or `pytest -m security`. Full strategy and honesty bounds: [SECURITY_TESTING.md](SECURITY_TESTING.md).
 
 Nightly (not PR-gated) markers reserved for later phases: `semantic_live`, `adaptive`.

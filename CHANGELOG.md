@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [5.1.0] - 2026-08-15
+
+### Added
+
+- **Agent discoverability:** root + Pages `llms.txt` / `llms-full.txt`, skill [`skills/mcp-test-harness`](skills/mcp-test-harness/SKILL.md) (copy into `.cursor/skills/` for Cursor), and pasteable [docs/templates/AGENTS.md](docs/templates/AGENTS.md) — machine-readable map without changing the deterministic CI-gate product.
+- **AGENTS.md hidden-Unicode scan (defensive CI gate):** `assert_agents_md_clean` / `scan_project_agent_rules`, CLI `mcp-test scan-agents`, and opt-in `agents_md_gate:` (disabled by default — non-breaking). Detects Tags-block smuggling, bidi overrides/isolates, zero-width / word-joiner, and mid-file BOM in `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, Cursor rules, and `SKILL.md` files. Does **not** generate attack payloads. See [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md).
+
 ### Fixed
 
 - **Ecosystem download workflow** opens a PR (`chore/ecosystem-download-stats`) instead of pushing `main` directly (branch protection GH013). Requires Actions setting “Allow GitHub Actions to create and approve pull requests”, or secret `ECOSYSTEM_PR_TOKEN`. Checkout / setup-python bumped off deprecated Node 20 action majors.

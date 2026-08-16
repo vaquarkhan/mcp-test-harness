@@ -1,0 +1,64 @@
+# MCP Test Harness — full agent context
+
+Product: deterministic CI gate for MCP servers (Python package `mcp-test-harness`, CLI `mcp-test`).
+Version line: see PyPI / `mcp-test --version`. Companion runtime: MCP-Bastion (do not conflate).
+
+## Install & entrypoints
+
+```bash
+pip install mcp-test-harness
+pip install -e ".[dev]"          # contributor tests (light; Bastion in [mcplint] only)
+docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version
+```
+
+Console scripts: `mcp-test`. GitHub Marketplace Action: `vaquarkhan/mcp-test-harness`.
+
+## Minimal workflow for a new MCP server
+
+1. `pip install mcp-test-harness`
+2. `mcp-test init --server-command "python -m your_server"`
+3. Edit generated `tests/test_*.py` assertions
+4. `mcp-test` or `mcp-test --report-format html --report-output report.html`
+5. Optional: `mcp-test try --server-command "…"` for conformance badge signal
+6. CI: Marketplace Action or `mcp-test` in GitHub Actions; attach JUnit/SARIF/HTML
+
+## Config
+
+Primary file: `mcp-test.yaml` (or `.toml`). Typical keys: `server.command`, `server.transport` (`stdio`|`sse`|`http`), `test.dirs`, `report`, optional `quality_gate`, `manifest_gate`, `agents_md_gate`.
+
+## Assertions (import from `mcp_test_harness`)
+
+**Functional:** `assert_tool_call`, `assert_resource_read`, `assert_prompt`, `assert_capabilities`, `assert_tool_list`, `assert_tool_schema`, `assert_protocol_version`
+
+**Regression:** `assert_snapshot` (mask_patterns for volatile fields), `assert_tool_idempotent`, `assert_manifest_snapshot`
+
+**Performance:** `assert_latency` (warmup, runs, aggregate p90/p95/p99), `assert_throughput` (concurrent, total_calls or duration_s, min_rps, max_p90/p95/p99_ms, max_error_rate, weighted calls), `assert_load_phases` (ramp; warmup phases excluded from gates), `assert_stateless_throughput`, `assert_latency_within_baseline`
+
+**Security (CI packs):** `assert_injection_blocked`, `assert_path_traversal_blocked`, `assert_no_secret_leak`, `assert_egress_quarantined`, `assert_egress_allowed`, `assert_covert_channel_neutralized`, `assert_general_exec_tools_absent`, `run_security_payload_pack`, `assert_agents_md_clean` / `scan_project_agent_rules` (hidden Unicode in AGENTS.md — Tags-block / bidi / zero-width; CLI `mcp-test scan-agents`; opt-in `agents_md_gate:`)
+
+**Resiliency:** `assert_reconnects`, `assert_survives_crash`, `assert_degrades_gracefully`; CLI `mcp-test experiment`
+
+**Markers:** `@marker(tags=["perf"|"security"|"chaos"|"smoke"|…])`; filter with `mcp-test -m perf`
+
+## Reports
+
+`--report-format` console|junit|json|html. SARIF: `--sarif-output`. PDF: `mcp-test export-pdf report.html`. HTML is self-contained (no hosted dashboard). Real run data only — no Bastion-style demo seed mode.
+
+## Product boundaries (do not invent features)
+
+- Do not turn the harness into an autonomous red-team or exploit PoC generator.
+- Do not require Node/JS build for the HTML report.
+- Heavy Bastion ML deps stay optional (`pip install -e ".[dev,mcplint]"`).
+- Cluster-scale load (k6/JMeter) stays out of core; harness owns MCP-aware SLO gates.
+
+## Canonical links
+
+- Repo: https://github.com/vaquarkhan/mcp-test-harness
+- Docs hub: https://vaquarkhan.github.io/mcp-test-harness/guide/
+- Handbook: https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html
+- Performance: docs/PERFORMANCE.md
+- Security: docs/SECURITY_TESTING.md
+- Comparison: docs/COMPARISON.md
+- Short map: llms.txt
+- Skill: skills/mcp-test-harness/SKILL.md
+- User AGENTS template: docs/templates/AGENTS.md

@@ -260,6 +260,7 @@ If fixture `A` depends on `B` and `B` depends on `A` (or any cycle), resolution 
 | `assert_egress_quarantined` / `assert_egress_allowed` | Suite A: manipulative egress must quarantine; benign controls must pass (CI recorded-verdict). |
 | `assert_covert_channel_neutralized` | Suite A: known encodings only (zero-width / homoglyph / whitespace) must not survive. |
 | `assert_general_exec_tools_absent` | Capability-reduction: shell/exec tools must not appear in `list_tools`. |
+| `assert_agents_md_clean` / `scan_project_agent_rules` | Hidden Unicode in `AGENTS.md` / agent rules (Tags-block, bidi, zero-width) — [SECURITY_TESTING.md](SECURITY_TESTING.md). |
 
 ---
 

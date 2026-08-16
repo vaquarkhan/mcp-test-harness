@@ -25,8 +25,40 @@ Tag tests with `@marker(tags=["security"])`:
 | `assert_egress_allowed` | Benign egress controls must pass (false-positive guard) |
 | `assert_covert_channel_neutralized` | **Known encodings only** (zero-width, homoglyph, whitespace) must not survive |
 | `assert_general_exec_tools_absent` | Capability-reduction: shell/exec tools must not be exposed |
+| `assert_agents_md_clean` | **Agent rules files** (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, …): fail on hidden Unicode (Tags-block / bidi / zero-width) |
 
 Corpora: `PROMPT_INJECTION_PAYLOADS`, `PATH_TRAVERSAL_PAYLOADS`, `SECRET_LEAK_PATTERNS`, `SOCIAL_ENGINEERING_PAYLOADS`, `BENIGN_EGRESS_CONTROLS`, `COVERT_CHANNEL_PAYLOADS`, `AISI_MAINTAINER_PRESSURE_PAYLOAD`.
+
+### Agent instruction files (`agents_md_scan.py`)
+
+Research shows invisible Unicode (Tags block U+E0000–U+E007F, zero-width, bidi overrides) can smuggle instructions into files agents treat as authority (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, skills). Humans see benign text; models still tokenize the hidden stream.
+
+**Defensive CI only** — detect and fail; do not generate smuggling payloads.
+
+```bash
+mcp-test scan-agents              # discover + scan under cwd
+mcp-test scan-agents --json       # machine-readable findings
+mcp-test scan-agents --fail-on critical
+```
+
+```python
+from mcp_test_harness import assert_agents_md_clean, marker
+
+@marker(tags=["security", "agents-md"])
+async def test_agents_md_no_hidden_unicode():
+    assert_agents_md_clean()  # auto-discovers AGENTS.md / CLAUDE.md / .cursorrules / …
+```
+
+Opt-in gate (disabled by default — **non-breaking**):
+
+```yaml
+# mcp-test.yaml
+agents_md_gate:
+  enabled: true
+  fail_on: high          # critical | high | medium | low
+  # paths: [AGENTS.md]   # optional; default discovers common names
+  # strict: false        # also flag leading BOM
+```
 
 ### Suite A honesty (semantic egress)
 

@@ -1,0 +1,51 @@
+# MCP Test Harness
+
+> Deterministic, CI-native test gate for Model Context Protocol (MCP) servers.
+> Functional · regression · performance · security assertions in one pytest-style runner.
+> Runtime protection is a separate product: [MCP-Bastion](https://github.com/vaquarkhan/MCP-Bastion).
+
+## Install
+
+```bash
+pip install mcp-test-harness
+# Docker: docker run --rm ghcr.io/vaquarkhan/mcp-test-harness:latest --version
+```
+
+## First green run
+
+```bash
+mcp-test init --server-command "python your_mcp_server.py"
+mcp-test
+# or zero-config probe:
+mcp-test try --server-command "python your_mcp_server.py"
+```
+
+## What this is / is not
+
+- **Is:** protocol-aware CI tests (`assert_tool_call`, snapshots, latency/load, security payloads, SARIF/HTML).
+- **Is not:** live AI red-team agent, Inspector GUI replacement for exploration-only, or Bastion runtime WAF.
+
+## Key commands
+
+| Command | Purpose |
+|---------|---------|
+| `mcp-test` | Discover and run suite (config or `--server-command`) |
+| `mcp-test init` | Scaffold `tests/` + `mcp-test.yaml` |
+| `mcp-test try` | Zero-config Boot→Protocol conformance probe |
+| `mcp-test record` | Live calls → generated tests |
+| `mcp-test generate` | Scaffold from server surface |
+| `mcp-test experiment` | Resiliency experiment catalog |
+| `mcp-test conformance stateless` | SEP-2575 stateless HTTP certify |
+| `mcp-test export-pdf report.html` | PDF from HTML report |
+| `mcp-test scan-agents` | Hidden-Unicode scan of AGENTS.md / agent rules |
+
+## Docs (humans)
+
+- Handbook: https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html
+- Quick start: https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/QUICK_START.md
+- Full agent context: /llms-full.txt (site) or `llms-full.txt` in repo root
+
+## Agent skill / project rules
+
+- Agent skill (repo): `skills/mcp-test-harness/SKILL.md` (copy into `.cursor/skills/mcp-test-harness/` for Cursor)
+- Pasteable user-repo rules: `docs/templates/AGENTS.md`

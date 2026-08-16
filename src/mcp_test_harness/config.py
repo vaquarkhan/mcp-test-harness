@@ -16,6 +16,7 @@ from typing import Any
 import yaml
 
 from mcp_test_harness.models import ReportFormat, TransportType
+from mcp_test_harness.agents_md_scan import AgentsMdGatePolicy, parse_agents_md_gate_policy
 from mcp_test_harness.manifest_gate import ManifestGatePolicy, parse_manifest_gate_policy
 from mcp_test_harness.quality_gate import QualityGatePolicy, parse_quality_gate_policy
 
@@ -32,6 +33,7 @@ _KNOWN_TOP_KEYS = frozenset(
         "report",
         "quality_gate",
         "manifest_gate",
+        "agents_md_gate",
         "schema_validation",
         "validate_schema_each_parallel_worker",
         "schema_probe_call_tool",
@@ -41,7 +43,9 @@ _KNOWN_TOP_KEYS = frozenset(
 )
 _KNOWN_QUALITY_GATE_KEYS = frozenset({"require_security_tests", "fail_on_severity"})
 _KNOWN_MANIFEST_GATE_KEYS = frozenset({"enabled", "path"})
-
+_KNOWN_AGENTS_MD_GATE_KEYS = frozenset(
+    {"enabled", "paths", "fail_on", "strict", "root"}
+)
 _KNOWN_SERVER_KEYS = frozenset({"command", "transport", "transport_options"})
 _KNOWN_TEST_KEYS = frozenset({"dirs", "timeout", "parallel", "workers"})
 _KNOWN_REPORT_KEYS = frozenset(
@@ -100,6 +104,8 @@ class HarnessConfig:
     quality_gate: QualityGatePolicy = field(default_factory=QualityGatePolicy)
     # Opt-in MCP surface rug-pull gate (see ``manifest_gate:``).
     manifest_gate: ManifestGatePolicy = field(default_factory=ManifestGatePolicy)
+    # Opt-in AGENTS.md / agent-rules hidden-Unicode gate (see ``agents_md_gate:``).
+    agents_md_gate: AgentsMdGatePolicy = field(default_factory=AgentsMdGatePolicy)
 
 
 # ---------------------------------------------------------------------------
@@ -249,6 +255,15 @@ def _flatten_config(raw: dict[str, Any]) -> dict[str, Any]:
     if isinstance(mg, dict):
         _warn_unknown_keys(mg, _KNOWN_MANIFEST_GATE_KEYS, "manifest_gate")
         result["manifest_gate"] = parse_manifest_gate_policy(mg)
+
+    # -- agents_md_gate section (hidden Unicode in agent instruction files) --
+    ag = raw.get("agents_md_gate", {})
+    if isinstance(ag, dict):
+        _warn_unknown_keys(ag, _KNOWN_AGENTS_MD_GATE_KEYS, "agents_md_gate")
+        try:
+            result["agents_md_gate"] = parse_agents_md_gate_policy(ag)
+        except ValueError as exc:
+            raise ValueError(str(exc)) from exc
 
     # -- top-level scalars / lists --
     if "schema_validation" in raw:
@@ -543,6 +558,28 @@ def validate_config_file(path: Path) -> list[ConfigError]:
                             line=line,
                         )
                     )
+
+    # -- agents_md_gate --
+    ag = raw.get("agents_md_gate")
+    if ag is not None:
+        if not isinstance(ag, dict):
+            line = _find_yaml_line(text, "agents_md_gate") if is_yaml else None
+            errors.append(ConfigError("'agents_md_gate' must be a mapping", line=line))
+        else:
+            for key in ag:
+                if key not in _KNOWN_AGENTS_MD_GATE_KEYS:
+                    line = _find_yaml_line(text, key) if is_yaml else None
+                    errors.append(
+                        ConfigError(
+                            f"Unknown key in agents_md_gate section: '{key}'",
+                            line=line,
+                        )
+                    )
+            try:
+                parse_agents_md_gate_policy(ag)
+            except ValueError as exc:
+                line = _find_yaml_line(text, "fail_on") if is_yaml else None
+                errors.append(ConfigError(str(exc), line=line))
 
     # -- schema_validation --
     sv = raw.get("schema_validation")
