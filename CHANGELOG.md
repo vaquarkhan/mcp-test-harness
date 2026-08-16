@@ -11,7 +11,7 @@ All notable changes to this project are documented in this file. The format is b
 ### Changed
 
 - **GitHub Pages** refreshed for **5.2.0**: home / features deck / examples / compare / integrations / guide security + install pins cover Suites A–D, incident E–K, `mcp-test audit verify`, `scan-agents`, load resilience, and agent discoverability.
-- **4-section demo video** (`html/assets/video/mcp-test-harness-4-section-demo.mp4` + [demo-reel.html](html/demo-reel.html)): security scan · load · resilience · CI/CD HTML dashboard. Rebuild: `python scripts/build_demo_video.py`. Narration: [docs/DEMO_VIDEO_SCRIPT.md](docs/DEMO_VIDEO_SCRIPT.md).
+- **4-section demo video** (`html/assets/video/mcp-test-harness-4-section-demo.mp4` + [demo-reel.html](html/demo-reel.html)): Playwright capture of **real** Pages (security, performance, resiliency/chaos, sample HTML report) plus title cards. Rebuild: `python scripts/build_demo_video.py`. Narration: [docs/DEMO_VIDEO_SCRIPT.md](docs/DEMO_VIDEO_SCRIPT.md).
 
 ## [5.2.0] - 2026-08-16
 

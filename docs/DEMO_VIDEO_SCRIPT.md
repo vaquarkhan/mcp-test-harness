@@ -1,23 +1,35 @@
-# Demo video script — 4 sections
+# Demo video script — 4 sections (real product pages)
 
-Silent product reel (~75s): [`html/assets/video/mcp-test-harness-4-section-demo.mp4`](../html/assets/video/mcp-test-harness-4-section-demo.mp4)  
+Silent product reel (~60s): [`html/assets/video/mcp-test-harness-4-section-demo.mp4`](../html/assets/video/mcp-test-harness-4-section-demo.mp4)  
 Pages player: [demo-reel.html](https://vaquarkhan.github.io/mcp-test-harness/demo-reel.html)
 
-**Framing:** deterministic CI gates (recorded-verdict / fixtures). Not a live red-team or hosted multi-tenant dashboard.
-
-Rebuild:
+**How it is built:** Playwright drives Chromium against a local server of `html/` and records
+scrolling the real docs/report pages. Title cards are still generated; page footage is not stock art.
 
 ```bash
 python scripts/build_demo_video.py
 ```
 
+Requires: `ffmpeg`, `Pillow`, `playwright` + Chromium (`python -m playwright install chromium`).
+
+**Framing:** deterministic CI gates (recorded-verdict / fixtures). Not a live red-team or hosted multi-tenant dashboard.
+
+## Pages captured
+
+| Section | Real pages |
+|---------|------------|
+| 1 Security scan | `guide/security.html`, `examples.html` |
+| 2 Load testing | `guide/performance.html` |
+| 3 Resilience | `guide/resiliency.html`, `guide/chaos.html` |
+| 4 CI/CD dashboard | `reports/sample_mcp_test_report.html`, home `#demo-video`, `integrations.html` |
+
 ## Narration (optional voice-over)
 
 ### Intro
-MCP Test Harness — four CI gates for MCP servers: security scan, load, resilience, and a report dashboard your pipeline already understands.
+MCP Test Harness — four CI gates, shown on the real product site.
 
 ### 1 — Security / vulnerability scan
-Run the security marker pack. Suites A through D, incident fixtures, AGENTS.md Unicode scan, and audit-chain verify. Export SARIF for code scanning. Green means the encoded corpus is caught — not novel adaptive adversaries.
+Security guide: Suites A–D, audit verify, scan-agents. Examples assertion table.
 
 ```bash
 mcp-test -m security --sarif-output findings.sarif
@@ -26,41 +38,18 @@ mcp-test audit verify chain.json
 ```
 
 ### 2 — Load testing
-Assert latency percentiles, throughput under concurrency, and load-phase ramps. Fail the PR when p95 or RPS slips.
-
-```python
-await assert_latency(mcp, "echo", max_p95_ms=120, iterations=50)
-await assert_throughput(mcp, "echo", concurrency=20, duration_s=15, min_rps=40)
-await assert_load_phases(mcp, "echo", phases=[...], max_p95_ms=200)
-```
+Performance guide: latency percentiles, throughput, load-phase ramps.
 
 ### 3 — Resilience testing
-Inject chaos faults — delay, 503, truncate, schema drift. Assert graceful degrade, reconnect, and load resilience: deny-codes, no-fail-open, fairness.
+Resiliency and chaos docs: fault injection, degrade, reconnect, no-fail-open.
 
-```python
-@marker(chaos_faults=["delay", "http_503"])
-async def test_survives(): ...
-await assert_no_fail_open_under_load(...)
-```
-
-### 4 — Security features → CI/CD dashboard
-One run produces HTML dashboard, JUnit, JSON, and SARIF. The GitHub Action posts evidence on the PR. Artifacts are files — no always-on hosted org dashboard in core.
+### 4 — Security → CI/CD dashboard
+Sample HTML report dashboard, then Integrations / Action distribution.
 
 ```bash
 mcp-test --report-format html --report-output report.html \
   --junit-xml junit.xml --sarif-output findings.sarif
 ```
 
-Action pin: `vaquarkhan/mcp-test-harness@v5.2.0`  
-Sample report: [html/reports/sample_mcp_test_report.html](../html/reports/sample_mcp_test_report.html)
-
 ### Outro
-`pip install mcp-test-harness==5.2.0` → `mcp-test init` → gate every merge. Sister product for runtime: MCP-Bastion.
-
-## Screen-record live (optional)
-
-If you want a live terminal capture on top of this reel:
-
-1. Play [demo-reel.html](../html/demo-reel.html) full-screen, or run the commands above against `examples/feature-demo/`.
-2. Open the generated HTML report beside GitHub Actions.
-3. Keep voice-over to the nature-safe lines above (CI gate, not live offense).
+`pip install mcp-test-harness==5.2.0` → `mcp-test init` → gate every merge.
