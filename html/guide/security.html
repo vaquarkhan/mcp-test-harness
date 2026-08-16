@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Security testing | MCP Test Harness Docs</title>
-<meta name="description" content="CI security gate for MCP: payload packs, Suite A egress/covert, quality_gate, manifest rug-pull, SARIF.">
+<meta name="description" content="CI security gate for MCP: Suites A–D, incident E–K, audit-chain verify, load resilience, AGENTS.md scan, quality_gate, SARIF.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -35,6 +35,7 @@
     <div class="docs-side-group">
       <div class="docs-side-label">Security deep dive</div>
       <a href="handbook.html#security-first">Why security-first</a>
+      <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/CYBER_SECURITY_SUITES.md">Cyber suites backlog</a>
       <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">Payloads &amp; gates</a>
       <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html" target="_blank" rel="noopener">Bastion (runtime)</a>
     </div>
@@ -43,25 +44,26 @@
     <p class="docs-crumb"><a href="index.html">Docs</a> / Security testing</p>
     <p class="docs-mode-kicker">Testing mode</p>
     <h1>Security testing</h1>
-    <p>MCP Test Harness owns the <strong>CI gate</strong>: deterministic security payloads, auth boundaries, quality gate, and manifest rug-pull. Runtime enforcement stays with <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html" target="_blank" rel="noopener">MCP-Bastion</a>.</p>
+    <p>MCP Test Harness owns the <strong>CI gate</strong>: deterministic security payloads, cyber suites A–D, incident E–K, audit-chain verify, load resilience, authz hooks, and AGENTS.md Unicode scan. Runtime enforcement stays with <a href="https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html" target="_blank" rel="noopener">MCP-Bastion</a>. Green means the encoded corpus is caught reproducibly — not novel adaptive adversaries.</p>
 
     <div class="docs-stat-row">
       <div class="docs-stat"><div class="k">CI gate</div><div class="v">quality_gate + SARIF</div></div>
-      <div class="docs-stat"><div class="k">Suite A</div><div class="v">egress · covert · exec</div></div>
-      <div class="docs-stat"><div class="k">Agent rules</div><div class="v">AGENTS.md Unicode</div></div>
-      <div class="docs-stat"><div class="k">Supply chain</div><div class="v">manifest rug-pull</div></div>
+      <div class="docs-stat"><div class="k">Suites A–D</div><div class="v">egress · capacity · attest · quarantine</div></div>
+      <div class="docs-stat"><div class="k">Incident E–K</div><div class="v">recorded-verdict fixtures</div></div>
+      <div class="docs-stat"><div class="k">Audit</div><div class="v">mcp-test audit verify</div></div>
     </div>
     <div class="docs-pill-row">
       <span class="docs-pill rose">injection</span>
-      <span class="docs-pill rose">traversal</span>
-      <span class="docs-pill amber">secret leak</span>
-      <span class="docs-pill">Suite A egress</span>
+      <span class="docs-pill rose">Suite A–D</span>
+      <span class="docs-pill amber">load resilience</span>
+      <span class="docs-pill">audit chain</span>
       <span class="docs-pill rose">agents_md scan</span>
-      <span class="docs-pill green">manifest_gate</span>
+      <span class="docs-pill green">OSCAL evidence</span>
     </div>
 
     <div class="docs-callout">
-      Full rationale: <a href="handbook.html#security-first">Why security-first</a> in the handbook.
+      Canonical backlog: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/CYBER_SECURITY_SUITES.md">CYBER_SECURITY_SUITES.md</a> ·
+      Handbook: <a href="handbook.html#security-first">Why security-first</a>
     </div>
 
     <h2>What to enable</h2>
@@ -75,26 +77,50 @@ agents_md_gate:
   enabled: true
   fail_on: high</pre>
 
-    <h2>Payload helpers</h2>
+    <h2>Cyber suites (shipped)</h2>
+    <ul>
+      <li><strong>Suite A</strong> — semantic egress quarantine/allow, covert-channel neutralization, general-exec tools absent</li>
+      <li><strong>Suite B</strong> — known encodings + capacity/media (<code>assert_capacity_enforced</code>, signed/unsigned media)</li>
+      <li><strong>Suite C</strong> — attestation polarities (<code>assert_envelope_verified</code>, unattested deny, tamper reject)</li>
+      <li><strong>Suite D</strong> — quarantine / eviction / cross-tenant (<code>assert_untrusted_context_quarantined</code>, …)</li>
+      <li><strong>Incident E–K</strong> — recorded-verdict incident conformance fixtures</li>
+      <li><strong>Load resilience</strong> — deny-codes, control engage, no-fail-open, fairness, latency SLO until shed</li>
+      <li><strong>Authz / schema</strong> — confused-deputy hooks, RCE-precondition schema rules</li>
+      <li><strong>Assurance</strong> — evidence / metrics / OSCAL assessment-results helpers</li>
+    </ul>
+
+    <h2>Payload &amp; suite helpers</h2>
     <ul>
       <li><code>assert_injection_blocked</code> / <code>assert_path_traversal_blocked</code> / <code>assert_no_secret_leak</code></li>
-      <li><code>assert_egress_quarantined</code> / <code>assert_egress_allowed</code> — Suite A semantic egress (recorded-verdict CI)</li>
+      <li><code>assert_egress_quarantined</code> / <code>assert_egress_allowed</code> — Suite A semantic egress</li>
       <li><code>assert_covert_channel_neutralized</code> — known encodings only</li>
       <li><code>assert_general_exec_tools_absent</code> — capability-reduction config check</li>
-      <li><code>assert_agents_md_clean</code> — hidden Unicode in <code>AGENTS.md</code> / agent rules (Tags-block, bidi, zero-width)</li>
+      <li><code>assert_audit_chain_intact</code> — hash-linked audit chain</li>
+      <li><code>assert_agents_md_clean</code> — hidden Unicode in <code>AGENTS.md</code> / agent rules</li>
+      <li><code>assert_control_engages_under_load</code> / <code>assert_no_fail_open_under_load</code> / <code>assert_fairness_under_load</code></li>
+      <li><code>assert_schema_preconditions_clean</code> / <code>assert_capacity_enforced</code> / <code>assert_untrusted_context_quarantined</code></li>
     </ul>
-<pre class="docs-pre">from mcp_test_harness import marker, assert_egress_quarantined, assert_egress_allowed
+<pre class="docs-pre">from mcp_test_harness import (
+    marker,
+    assert_egress_quarantined,
+    assert_audit_chain_intact,
+    assert_control_engages_under_load,
+)
 
 @marker(tags=["security", "semantic-egress"])
 async def test_egress(mcp_server):
     await assert_egress_quarantined(mcp_server, "send_message")
-    await assert_egress_allowed(mcp_server, "send_message")</pre>
+
+@marker(tags=["security", "audit"])
+def test_audit(chain_path):
+    assert_audit_chain_intact(chain_path)</pre>
 
     <h2>Commands</h2>
 <pre class="docs-pre">mcp-test -m security
 mcp-test --sarif-output findings.sarif
 mcp-test manifest check
 mcp-test scan-agents
+mcp-test audit verify chain.json
 mcp-test --report-format html --report-output report.html</pre>
     <p>Markers <code>semantic_live</code> and <code>adaptive</code> are reserved for nightly detection-quality runs — they must not gate PRs.</p>
 
@@ -102,6 +128,7 @@ mcp-test --report-format html --report-output report.html</pre>
 <pre class="docs-pre">Scan / config → Test / CI (this harness) → Enforce / runtime (Bastion)</pre>
 
     <p>Canonical guide: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">SECURITY_TESTING.md</a> ·
+    Cyber suites: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/CYBER_SECURITY_SUITES.md">CYBER_SECURITY_SUITES.md</a> ·
     Tutorial: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/TUTORIAL.md">TUTORIAL.md</a></p>
     <footer class="docs-footer">MCP Test Harness 5.2.0 · <a href="reports.html">Next: Reports</a> · <a href="handbook.html">Handbook</a></footer>
   </main>

@@ -81,7 +81,7 @@
     <p class="docs-crumb"><a href="index.html">Docs</a> / Documentation handbook</p>
     <h1>Documentation handbook</h1>
     <p class="docs-meta">
-      <span><strong>Version:</strong> 5.0.0</span>
+      <span><strong>Version:</strong> 5.2.0</span>
       <span><strong>Purpose:</strong> Single entry point for the full system</span>
       <span><a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/HANDBOOK.md">Source markdown</a></span>
     </p>
@@ -217,7 +217,7 @@
     <h3>What the harness owns (CI)</h3>
     <ul>
       <li>Auth boundaries (<code>assert_tool_denied</code>, <code>assert_authorization_boundary</code>)</li>
-      <li>Payload packs (injection, path traversal, secret leak, Suite A semantic egress + known covert encodings)</li>
+      <li>Payload packs + cyber suites A–D, incident E–K, audit-chain verify, load resilience, AGENTS.md Unicode scan</li>
       <li>Capability-reduction check (<code>assert_general_exec_tools_absent</code>) for forbidden shell/exec tools</li>
       <li>OWASP-MCP / OWASP-LLM rule metadata (SARIF + HTML scan)</li>
       <li>Opt-in <code>quality_gate:</code> — require security tests, fail on severity</li>

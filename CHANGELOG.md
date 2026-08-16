@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Fixed
+
+- **Ecosystem download workflow (permanent):** unique `chore/ecosystem-stats-${{ run_id }}` branches (no force-push onto a sticky protected ref); repo ruleset excludes `refs/heads/chore/ecosystem-*`; Actions workflow permissions set to write + can create PRs. Docs: [`.github/workflows/update-ecosystem-downloads.yml`](.github/workflows/update-ecosystem-downloads.yml).
+
+### Changed
+
+- **GitHub Pages** refreshed for **5.2.0**: home / features deck / examples / compare / integrations / guide security + install pins cover Suites A–D, incident E–K, `mcp-test audit verify`, `scan-agents`, load resilience, and agent discoverability.
+
 ## [5.2.0] - 2026-08-16
 
 ### Added
