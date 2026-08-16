@@ -4,20 +4,20 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
-### Fixed
-
-- **Ecosystem download workflow (permanent):** unique `chore/ecosystem-stats-${{ run_id }}` branches (no force-push onto a sticky protected ref); repo ruleset excludes `refs/heads/chore/ecosystem-*`; Actions workflow permissions set to write + can create PRs. Docs: [`.github/workflows/update-ecosystem-downloads.yml`](.github/workflows/update-ecosystem-downloads.yml).
-
-### Changed
-
-- **GitHub Pages** refreshed for **5.2.0**: home / features deck / examples / compare / integrations / guide security + install pins cover Suites A–D, incident E–K, `mcp-test audit verify`, `scan-agents`, load resilience, and agent discoverability.
-- **4-section demo video** (`html/assets/video/mcp-test-harness-4-section-demo.mp4` + [demo-reel.html](html/demo-reel.html)): Playwright capture of **real** Pages (security, performance, resiliency/chaos, sample HTML report) plus title cards. Rebuild: `python scripts/build_demo_video.py`. Narration: [docs/DEMO_VIDEO_SCRIPT.md](docs/DEMO_VIDEO_SCRIPT.md).
-
 ## [5.2.0] - 2026-08-16
 
 ### Added
 
 - **Cyber-security suites (Chosen backlog, end-to-end):** audit-chain verifier (`assert_audit_chain_intact`, `mcp-test audit verify`); Suite D deterministic provenance; Suite C attestation polarities; Suite B capacity/media; incident conformance E–K; load-resilience deny-code asserts; schema RCE-precondition rules; confused-deputy / scoped-credential / pre-tool-hook fixtures; assurance `evidence` / `metrics` / OSCAL assessment-results; trust-boundary + launch-gate report helpers; nightly `adaptive.py` helpers; Numbat fixture ingestion contract. Single source: [docs/CYBER_SECURITY_SUITES.md](docs/CYBER_SECURITY_SUITES.md). Nature preserved: deterministic CI gate; adaptive/detection remain nightly-only.
+
+### Fixed
+
+- **Ecosystem download workflow (permanent):** unique `chore/ecosystem-stats-<run_id>` branches (no force-push onto a sticky protected ref); repo ruleset excludes `refs/heads/chore/ecosystem-*`; Actions workflow permissions set to write + can create PRs.
+
+### Changed
+
+- **GitHub Pages** refreshed for **5.2.0** (cyber suites, agent scan, demo video from real product pages).
+- **Optional provider packages** aligned to **5.2.0** (`mcp-test-harness>=5.2.0`) for PyPI publish with the core wheel.
 
 ## [5.1.0] - 2026-08-15
 

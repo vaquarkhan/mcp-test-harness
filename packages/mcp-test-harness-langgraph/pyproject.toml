@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mcp-test-harness-groq"
+name = "mcp-test-harness-langgraph"
 version = "5.2.0"
-description = "Groq inference testing helpers for MCP Test Harness"
+description = "LangGraph agent graphs testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "Non-commercial use only with mandatory attribution"}
 authors = [{name = "Vaquar Khan", email = "vaquarkhan@gmail.com"}]
-keywords = ["mcp", "groq", "testing", "mcp-test-harness"]
+keywords = ["mcp", "langgraph", "testing", "mcp-test-harness"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
@@ -26,4 +26,4 @@ Homepage = "https://github.com/vaquarkhan/mcp-test-harness"
 Repository = "https://github.com/vaquarkhan/mcp-test-harness"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mcp_test_harness_groq"]
+packages = ["src/mcp_test_harness_langgraph"]
