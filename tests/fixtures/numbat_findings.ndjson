@@ -1,0 +1,3 @@
+{"title": "recon-scan", "mitre": ["T1046"], "owasp": ["MCP09"], "rule": "recon"}
+{"title": "secret-read", "mitre": ["T1552"], "owasp": ["MCP01"], "rule": "secret"}
+{"title": "rce-attempt", "mitre": ["T1059"], "owasp": ["MCP05"], "rule": "rce"}

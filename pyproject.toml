@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness"
-version = "5.1.0"
+version = "5.2.0"
 description = "MCP Test Harness -- pytest-style testing framework for MCP servers with automated test discovery, assertions, fixtures, and CI reporting."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -93,6 +93,7 @@ addopts = "--ignore=tests/fixtures/harness_self_test --ignore=tests/fixtures/har
 markers = [
   "e2e: end-to-end dogfood tests (subprocess mcp-test CLI against real MCP server)",
   "security: structural security payload packs (deterministic, CI-gated)",
+  "load: load / resource-exhaustion resilience (deny-code / control engagement)",
   "semantic_live: detection-quality checks against a live evaluator (nightly, not gated)",
   "adaptive: adaptive-attack trend runs (nightly, not gated)",
 ]
