@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "5.0.0"
+__version__ = "5.2.0"
 
 from mcp_test_harness_vertexai.helpers import (
     assert_vertexai_tool,
