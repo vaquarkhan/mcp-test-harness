@@ -4,6 +4,8 @@ MCP Test Harness catches **security regressions in CI** using deterministic, MCP
 
 **Why security-first:** see the [Documentation handbook — Part 2](HANDBOOK.md#part-2--why-security-first) ([HTML](https://vaquarkhan.github.io/mcp-test-harness/guide/handbook.html#security-first)). Runtime enforce: [MCP-Bastion handbook](https://vaquarkhan.github.io/MCP-Bastion/guide/bible.html).
 
+**Suites & backlog (single source):** [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md) — shipped vs Chosen/Deferred/Rejected; Bastion companion for runtime extensions.
+
 ## Shipped capabilities
 
 ### Auth and boundaries

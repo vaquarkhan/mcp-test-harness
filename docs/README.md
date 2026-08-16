@@ -31,6 +31,7 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Performance strategy** (why perf belongs in the harness; scope + roadmap) | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) |
 | **Roadmap** (delivery phases and scope guardrails) | [ROADMAP.md](ROADMAP.md) · [ROADMAP_GROWTH.md](ROADMAP_GROWTH.md) |
 | **Security testing strategy** (prompt injection, payload checks, leak detection) | [SECURITY_TESTING.md](SECURITY_TESTING.md) |
+| **Cyber-security suites & backlog** (shipped vs Chosen/Rejected; Bastion-paired) | [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md) |
 | **Contract + compatibility strategy** (drift protection, version/client matrix) | [CONTRACT_AND_COMPAT.md](CONTRACT_AND_COMPAT.md) |
 | **Enterprise governance** (audit/policy/tenant guidance) | [ENTERPRISE_GOVERNANCE.md](ENTERPRISE_GOVERNANCE.md) |
 | **CRA (EU Cyber Resilience Act) evidence packaging** | [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md) · [`.github/SECURITY.md`](../.github/SECURITY.md) |

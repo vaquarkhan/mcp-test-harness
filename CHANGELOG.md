@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- **Cyber-security suites backlog (consolidated):** [docs/CYBER_SECURITY_SUITES.md](docs/CYBER_SECURITY_SUITES.md) — single source for shipped suites, nature-filtered Chosen backlog, Rejected items, and assurance framing; companion is Bastion `MCP-BASTION-CYBER-EXTENSIONS.md` (no third file).
+
 ## [5.1.0] - 2026-08-15
 
 ### Added
