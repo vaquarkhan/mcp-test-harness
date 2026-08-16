@@ -122,6 +122,8 @@ Tag tests `@marker(tags=["security"])` and use:
 - `run_security_payload_pack` — combined smoke
 - `assert_egress_quarantined` / `assert_egress_allowed` — semantic egress (Suite A; recorded-verdict CI gate)
 - `assert_covert_channel_neutralized` — known encodings only (zero-width / homoglyph / whitespace)
+- `assert_general_exec_tools_absent` — capability reduction for shell/exec tools
+- `assert_agents_md_clean` / `mcp-test scan-agents` / opt-in `agents_md_gate:` — hidden Unicode in agent instruction files (defensive CI; not exploit generation)
 - `assert_general_exec_tools_absent` — capability-reduction config conformance
 - `assert_tool_denied`, `assert_authorization_boundary` — auth boundaries
 

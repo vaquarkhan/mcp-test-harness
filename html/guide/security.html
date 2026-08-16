@@ -13,7 +13,7 @@
 <body class="docs-body" data-docs-page="security">
 <a class="skip-link" href="#content">Skip to content</a>
 <header class="docs-header">
-  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">5.0.0</span></a>
+  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">5.1.0</span></a>
   <nav class="docs-topnav" aria-label="Docs top">
     <a href="index.html" class="active">Docs</a>
     <a href="../integrations.html">Integrations</a>
@@ -48,6 +48,7 @@
     <div class="docs-stat-row">
       <div class="docs-stat"><div class="k">CI gate</div><div class="v">quality_gate + SARIF</div></div>
       <div class="docs-stat"><div class="k">Suite A</div><div class="v">egress · covert · exec</div></div>
+      <div class="docs-stat"><div class="k">Agent rules</div><div class="v">AGENTS.md Unicode</div></div>
       <div class="docs-stat"><div class="k">Supply chain</div><div class="v">manifest rug-pull</div></div>
     </div>
     <div class="docs-pill-row">
@@ -55,6 +56,7 @@
       <span class="docs-pill rose">traversal</span>
       <span class="docs-pill amber">secret leak</span>
       <span class="docs-pill">Suite A egress</span>
+      <span class="docs-pill rose">agents_md scan</span>
       <span class="docs-pill green">manifest_gate</span>
     </div>
 
@@ -68,7 +70,10 @@
   fail_on_severity: high
 manifest_gate:
   enabled: true
-  path: __snapshots__/mcp_manifest.snap</pre>
+  path: __snapshots__/mcp_manifest.snap
+agents_md_gate:
+  enabled: true
+  fail_on: high</pre>
 
     <h2>Payload helpers</h2>
     <ul>
@@ -76,6 +81,7 @@ manifest_gate:
       <li><code>assert_egress_quarantined</code> / <code>assert_egress_allowed</code> — Suite A semantic egress (recorded-verdict CI)</li>
       <li><code>assert_covert_channel_neutralized</code> — known encodings only</li>
       <li><code>assert_general_exec_tools_absent</code> — capability-reduction config check</li>
+      <li><code>assert_agents_md_clean</code> — hidden Unicode in <code>AGENTS.md</code> / agent rules (Tags-block, bidi, zero-width)</li>
     </ul>
 <pre class="docs-pre">from mcp_test_harness import marker, assert_egress_quarantined, assert_egress_allowed
 
@@ -88,6 +94,7 @@ async def test_egress(mcp_server):
 <pre class="docs-pre">mcp-test -m security
 mcp-test --sarif-output findings.sarif
 mcp-test manifest check
+mcp-test scan-agents
 mcp-test --report-format html --report-output report.html</pre>
     <p>Markers <code>semantic_live</code> and <code>adaptive</code> are reserved for nightly detection-quality runs — they must not gate PRs.</p>
 
@@ -96,7 +103,7 @@ mcp-test --report-format html --report-output report.html</pre>
 
     <p>Canonical guide: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">SECURITY_TESTING.md</a> ·
     Tutorial: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/TUTORIAL.md">TUTORIAL.md</a></p>
-    <footer class="docs-footer">MCP Test Harness 5.0.0 · <a href="reports.html">Next: Reports</a> · <a href="handbook.html">Handbook</a></footer>
+    <footer class="docs-footer">MCP Test Harness 5.1.0 · <a href="reports.html">Next: Reports</a> · <a href="handbook.html">Handbook</a></footer>
   </main>
 </div>
 <script src="assets/docs.js"></script>

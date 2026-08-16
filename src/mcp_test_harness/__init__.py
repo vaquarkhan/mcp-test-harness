@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-__version__ = "5.0.0"
+__version__ = "5.1.0"
 
 __all__ = [
     "__version__",
     "MCPAssertionError",
+    "assert_agents_md_clean",
     "assert_capabilities",
     "assert_authorization_boundary",
     "assert_degrades_gracefully",
@@ -43,6 +44,7 @@ __all__ = [
     "marker",
     "run_security_payload_pack",
     "save_baseline",
+    "scan_project_agent_rules",
     "skip",
 ]
 
@@ -71,6 +73,10 @@ from mcp_test_harness.assertions import (
 from mcp_test_harness.discovery import marker, skip
 from mcp_test_harness.baselines import assert_latency_within_baseline, save_baseline
 from mcp_test_harness.coverage import coverage_to_dict
+from mcp_test_harness.agents_md_scan import (
+    assert_agents_md_clean,
+    scan_project_agent_rules,
+)
 from mcp_test_harness.manifest_gate import assert_manifest_snapshot, capture_server_manifest
 from mcp_test_harness.resiliency import (
     assert_degrades_gracefully,

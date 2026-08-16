@@ -18,7 +18,7 @@
   <div class="pypi-stats-inner pypi-stats-stacked max-w-7xl mx-auto px-4">
     <div class="pypi-badge-row" aria-label="Project badges">
       <span class="pypi-bar-label">README</span>
-      <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v5.0.0-blue" alt="PyPI version" height="22" loading="eager" /></a>
+      <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="PyPI version"><img class="pypi-badge" src="https://img.shields.io/badge/pypi-v5.1.0-blue" alt="PyPI version" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypistats.org/packages/mcp-test-harness" target="_blank" rel="noopener noreferrer" title="Core package total downloads"><img class="pypi-badge" data-pepy-total src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fbadges%2Fmcp-test-harness-downloads.json" alt="PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="integrations.html" title="Ecosystem total downloads (all packages)"><img class="pypi-badge" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fvaquarkhan%2Fmcp-test-harness%2Fmain%2Fhtml%2Fassets%2Fecosystem-downloads-badge.json" alt="Ecosystem PyPI downloads" height="22" loading="eager" /></a>
       <a class="pypi-badge-link" href="https://pypi.org/project/mcp-test-harness/" target="_blank" rel="noopener noreferrer" title="Python versions"><img class="pypi-badge" src="https://img.shields.io/pypi/pyversions/mcp-test-harness" alt="Python" height="22" loading="eager" /></a>
@@ -44,7 +44,7 @@
     <a href="index.html" class="flex items-center gap-2">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">MT</div>
       <span class="font-bold text-lg">MCP Test Harness</span>
-      <span class="badge badge-primary text-xs">v5.0.0</span>
+      <span class="badge badge-primary text-xs">v5.1.0</span>
     </a>
     <div class="hidden md:flex items-center gap-8">
       <a href="index.html" class="nav-link">Home</a>
@@ -425,6 +425,7 @@ mcp-test export-pdf reports/run.html -o reports/run.pdf</code></pre>
           <tr><td class="font-mono font-semibold">assert_egress_allowed</td><td>Security · Suite A</td><td>Recorded-verdict CI: allowlisted egress still works</td></tr>
           <tr><td class="font-mono font-semibold">assert_covert_channel_neutralized</td><td>Security · Suite A</td><td>Known encodings must not leak via tool I/O</td></tr>
           <tr><td class="font-mono font-semibold">assert_general_exec_tools_absent</td><td>Security · Suite A</td><td>Dangerous general-exec tools must be absent</td></tr>
+          <tr><td class="font-mono font-semibold">assert_agents_md_clean</td><td>Security · Agent rules</td><td>Fail on hidden Unicode in AGENTS.md / agent rules</td></tr>
           <tr><td class="font-mono font-semibold">assert_snapshot</td><td>Regression</td><td>Compare response to stored snapshot</td></tr>
           <tr><td class="font-mono font-semibold">assert_tool_idempotent</td><td>Regression</td><td>Same input produces same output N times</td></tr>
           <tr><td class="font-mono font-semibold">assert_latency</td><td>Performance</td><td>p90/p95/p99/mean/median over N iterations + warmup</td></tr>
@@ -470,7 +471,7 @@ mcp-test export-pdf reports/run.html -o reports/run.pdf</code></pre>
       </div>
     </div>
     <div class="mt-8 pt-8 border-t border-slate-800 text-xs text-center">
-      MCP Test Harness v5.0.0 · MIT License · Author: Vaquar Khan
+      MCP Test Harness v5.1.0 · MIT License · Author: Vaquar Khan
     </div>
   </div>
 </footer>

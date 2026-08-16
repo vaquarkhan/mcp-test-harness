@@ -24,6 +24,8 @@ This repository uses the same documentation **style** as [MCP-Bastion](https://g
 | **Everything else** (config, assertions, parallel, reports, plugins) | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) |
 | **Repo developer setup, test layout, examples index** | [DEVELOPER.md](DEVELOPER.md) |
 | **CI, JUnit, JSON, HTML — do I need to “publish” reports?** | [CI_AND_REPORTS.md](CI_AND_REPORTS.md) |
+| **Agent discoverability** (`llms.txt`, agent skill, pasteable `AGENTS.md`) | [llms.txt](../llms.txt) · [llms-full.txt](../llms-full.txt) · [templates/AGENTS.md](templates/AGENTS.md) · [`skills/mcp-test-harness`](../skills/mcp-test-harness/SKILL.md) |
+| **AGENTS.md hidden-Unicode scan** (`scan-agents`, `agents_md_gate`) | [SECURITY_TESTING.md](SECURITY_TESTING.md) |
 | **Performance / latency / load** (same tests as functional; `assert_latency`, `assert_throughput`, `assert_load_phases`, `-m perf`) | [PERFORMANCE.md](PERFORMANCE.md) · [Pages Load tab](https://vaquarkhan.github.io/mcp-test-harness/guide/performance.html) |
 | **Chaos / resiliency** (faults + experiment catalog) | [example_chaos_testing.md](../examples/example_chaos_testing.md) · [RFC-005](design/RFC-005-resiliency-experiments.md) · [Pages Chaos](https://vaquarkhan.github.io/mcp-test-harness/guide/chaos.html) · [Pages Resiliency](https://vaquarkhan.github.io/mcp-test-harness/guide/resiliency.html) |
 | **Performance strategy** (why perf belongs in the harness; scope + roadmap) | [PERFORMANCE_TESTING_STRATEGY.md](PERFORMANCE_TESTING_STRATEGY.md) |

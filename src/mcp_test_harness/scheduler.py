@@ -39,6 +39,7 @@ from mcp_test_harness.lifecycle import ManagedServer, ServerCrashedError, Server
 from mcp_test_harness.models import CaseResult, SessionResults, CaseStatus
 from mcp_test_harness.conformance import attach_conformance
 from mcp_test_harness.assertions import MCPAssertionError
+from mcp_test_harness.agents_md_scan import run_configured_agents_md_gate
 from mcp_test_harness.manifest_gate import run_configured_manifest_gate
 from mcp_test_harness.quality_gate import QualityGatePolicy, apply_quality_gate
 from mcp_test_harness.unified_report import build_unified_summary
@@ -175,6 +176,25 @@ class HarnessScheduler:
             )
             lifecycle.start_monitor(server)
 
+            agents_md_failed = False
+            try:
+                run_configured_agents_md_gate(
+                    getattr(config, "agents_md_gate", None),
+                )
+            except MCPAssertionError as exc:
+                agents_md_failed = True
+                results.append(
+                    CaseResult(
+                        name="agents_md_gate",
+                        module="mcp_test_harness.agents_md_scan",
+                        status=CaseStatus.FAILED,
+                        duration_ms=0.0,
+                        error=str(exc),
+                        file="mcp_test_harness/agents_md_scan.py",
+                        tags=["security", "mcp06", "agents-md"],
+                    )
+                )
+
             manifest_failed = False
             try:
                 await run_configured_manifest_gate(
@@ -205,7 +225,7 @@ class HarnessScheduler:
                 plugin_registry.register_fixtures(fixtures)
 
             for i, test_case in enumerate(test_cases):
-                if manifest_failed and fail_fast:
+                if (manifest_failed or agents_md_failed) and fail_fast:
                     for remaining_tc in test_cases[i:]:
                         results.append(
                             CaseResult(
@@ -461,8 +481,26 @@ class HarnessScheduler:
             )
             lifecycle.start_monitor(server)
 
-            # Only worker 0 runs the manifest gate (avoid parallel baseline races).
+            # Only worker 0 runs opt-in file/surface gates (avoid parallel races).
             if worker_id == 0:
+                try:
+                    run_configured_agents_md_gate(
+                        getattr(config, "agents_md_gate", None),
+                    )
+                except MCPAssertionError as exc:
+                    results.append(
+                        CaseResult(
+                            name="agents_md_gate",
+                            module="mcp_test_harness.agents_md_scan",
+                            status=CaseStatus.FAILED,
+                            duration_ms=0.0,
+                            error=str(exc),
+                            file="mcp_test_harness/agents_md_scan.py",
+                            tags=["security", "mcp06", "agents-md"],
+                        )
+                    )
+                    if fail_stop is not None:
+                        fail_stop.set()
                 try:
                     await run_configured_manifest_gate(
                         server.session,

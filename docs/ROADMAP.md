@@ -28,6 +28,7 @@ Filter: (a) deterministic/reproducible, (b) something a scanner or interactive i
 | Tier | Initiative | Status |
 |------|------------|--------|
 | **1** | **Manifest snapshot / rug-pull gate** — sanctioned baseline of tools/resources/prompts; fail PR on unapproved surface change | **Shipped (this release track):** `manifest_gate:` + `mcp-test manifest` |
+| **1** | **AGENTS.md hidden-Unicode scan** — fail CI when agent instruction files contain Tags-block / bidi / zero-width smuggling | **Shipped (v5.1):** `agents_md_gate:` + `mcp-test scan-agents` + `assert_agents_md_clean` |
 | **1** | Persisted history + trend gates (files/artifacts + static Pages report; not a live server) | Next |
 | **1** | Determinism / flakiness detector (N-run per-tool scores) | Next |
 | **1** | Spec-version + self-version compatibility matrix | Next |

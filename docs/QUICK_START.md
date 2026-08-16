@@ -41,6 +41,7 @@ mcp-test
 
 ## 4. Next steps
 
+- **Coding agents:** [llms.txt](../llms.txt) · skill [`skills/mcp-test-harness`](../skills/mcp-test-harness/SKILL.md) · paste [templates/AGENTS.md](templates/AGENTS.md) into your app repo · keep rules clean with `mcp-test scan-agents`
 - **Performance checks** (latency budgets, p90/p95/p99, throughput / load phases, tags like `perf`): [PERFORMANCE.md](PERFORMANCE.md)
 - **Stateless MCP (2026-07-28)** — `mcp-test conformance stateless` + `assert_stateless_throughput`: [TUTORIAL_STATELESS.md](TUTORIAL_STATELESS.md) · [RFC-006](design/RFC-006-stateless-mcp.md)
 - **Other MCP tools** (conformance, LLM evals, benchmarks) vs this harness: [COMPARISON.md](COMPARISON.md)
