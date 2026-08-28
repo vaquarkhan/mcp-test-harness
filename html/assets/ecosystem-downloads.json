@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-08-12T14:22:01Z",
+  "updated_at": "2026-08-28T18:46:36Z",
   "source": "pepy.tech total_downloads (all-time); pypistats.org fallback (~180d)",
   "note": "All-time cumulative per package when PePy has indexed the project. New releases show stats_status=pending until PePy/pypistats index them (usually 24\u201348h). Installing an integration also pulls mcp-test-harness, so core + integration totals can overlap.",
   "package_count": 26,
   "indexed_count": 26,
   "pending_count": 0,
-  "total_downloads": 210226,
+  "total_downloads": 236943,
   "packages": [
     {
       "package": "mcp-test-harness",
       "protects": "Core CLI + assertions",
-      "downloads": 19536,
+      "downloads": 21386,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-downloads.json",
@@ -22,7 +22,7 @@
     {
       "package": "mcp-test-harness-fastmcp",
       "protects": "FastMCP servers",
-      "downloads": 10763,
+      "downloads": 11910,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-fastmcp-downloads.json",
@@ -34,7 +34,7 @@
     {
       "package": "mcp-test-harness-openai",
       "protects": "OpenAI function calling",
-      "downloads": 10955,
+      "downloads": 12165,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-openai-downloads.json",
@@ -46,7 +46,7 @@
     {
       "package": "mcp-test-harness-anthropic",
       "protects": "Anthropic Claude tool use",
-      "downloads": 10579,
+      "downloads": 11752,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-anthropic-downloads.json",
@@ -58,7 +58,7 @@
     {
       "package": "mcp-test-harness-bedrock",
       "protects": "AWS Bedrock agents",
-      "downloads": 10621,
+      "downloads": 11824,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-bedrock-downloads.json",
@@ -70,7 +70,7 @@
     {
       "package": "mcp-test-harness-gemini",
       "protects": "Google Gemini",
-      "downloads": 10643,
+      "downloads": 11811,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-gemini-downloads.json",
@@ -82,7 +82,7 @@
     {
       "package": "mcp-test-harness-langchain",
       "protects": "LangChain MCP tools",
-      "downloads": 10813,
+      "downloads": 11961,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-langchain-downloads.json",
@@ -94,7 +94,7 @@
     {
       "package": "mcp-test-harness-crewai",
       "protects": "CrewAI agents",
-      "downloads": 10587,
+      "downloads": 11769,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-crewai-downloads.json",
@@ -106,7 +106,7 @@
     {
       "package": "mcp-test-harness-llamaindex",
       "protects": "LlamaIndex tools",
-      "downloads": 11217,
+      "downloads": 12413,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-llamaindex-downloads.json",
@@ -118,7 +118,7 @@
     {
       "package": "mcp-test-harness-groq",
       "protects": "Groq inference",
-      "downloads": 10761,
+      "downloads": 11938,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-groq-downloads.json",
@@ -130,7 +130,7 @@
     {
       "package": "mcp-test-harness-mistral",
       "protects": "Mistral AI",
-      "downloads": 10969,
+      "downloads": 12161,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-mistral-downloads.json",
@@ -142,7 +142,7 @@
     {
       "package": "mcp-test-harness-cohere",
       "protects": "Cohere",
-      "downloads": 10572,
+      "downloads": 11718,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-cohere-downloads.json",
@@ -154,7 +154,7 @@
     {
       "package": "mcp-test-harness-azure",
       "protects": "Azure OpenAI",
-      "downloads": 10551,
+      "downloads": 11738,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-azure-downloads.json",
@@ -166,7 +166,7 @@
     {
       "package": "mcp-test-harness-vertexai",
       "protects": "Google Vertex AI",
-      "downloads": 10966,
+      "downloads": 12145,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-vertexai-downloads.json",
@@ -178,7 +178,7 @@
     {
       "package": "mcp-test-harness-huggingface",
       "protects": "Hugging Face Inference",
-      "downloads": 11306,
+      "downloads": 12457,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-huggingface-downloads.json",
@@ -190,7 +190,7 @@
     {
       "package": "mcp-test-harness-deepseek",
       "protects": "DeepSeek AI",
-      "downloads": 10817,
+      "downloads": 12104,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-deepseek-downloads.json",
@@ -202,7 +202,7 @@
     {
       "package": "mcp-test-harness-together",
       "protects": "Together AI",
-      "downloads": 10834,
+      "downloads": 12054,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-together-downloads.json",
@@ -214,7 +214,7 @@
     {
       "package": "mcp-test-harness-fireworks",
       "protects": "Fireworks AI",
-      "downloads": 10705,
+      "downloads": 11867,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-fireworks-downloads.json",
@@ -226,7 +226,7 @@
     {
       "package": "mcp-test-harness-ollama",
       "protects": "Ollama local models",
-      "downloads": 1197,
+      "downloads": 1832,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-ollama-downloads.json",
@@ -238,7 +238,7 @@
     {
       "package": "mcp-test-harness-openrouter",
       "protects": "OpenRouter gateway",
-      "downloads": 1206,
+      "downloads": 1863,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-openrouter-downloads.json",
@@ -250,7 +250,7 @@
     {
       "package": "mcp-test-harness-litellm",
       "protects": "LiteLLM proxy",
-      "downloads": 1200,
+      "downloads": 1855,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-litellm-downloads.json",
@@ -262,7 +262,7 @@
     {
       "package": "mcp-test-harness-xai",
       "protects": "xAI Grok",
-      "downloads": 1236,
+      "downloads": 1865,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-xai-downloads.json",
@@ -274,7 +274,7 @@
     {
       "package": "mcp-test-harness-autogen",
       "protects": "Microsoft AutoGen",
-      "downloads": 1172,
+      "downloads": 1769,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-autogen-downloads.json",
@@ -286,7 +286,7 @@
     {
       "package": "mcp-test-harness-langgraph",
       "protects": "LangGraph stateful agents",
-      "downloads": 329,
+      "downloads": 836,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-langgraph-downloads.json",
@@ -298,7 +298,7 @@
     {
       "package": "mcp-test-harness-pydantic-ai",
       "protects": "Pydantic AI agents",
-      "downloads": 335,
+      "downloads": 853,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-pydantic-ai-downloads.json",
@@ -310,7 +310,7 @@
     {
       "package": "mcp-test-harness-openai-agents",
       "protects": "OpenAI Agents SDK",
-      "downloads": 356,
+      "downloads": 897,
       "stats_status": "indexed",
       "stats_source": "pepy.tech all-time",
       "badge_raw": "https://raw.githubusercontent.com/vaquarkhan/mcp-test-harness/main/html/assets/badges/mcp-test-harness-openai-agents-downloads.json",
