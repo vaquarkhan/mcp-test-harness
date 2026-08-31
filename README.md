@@ -828,7 +828,7 @@ Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-
 
 The harness proves your MCP server with deterministic tests. [TOA](https://github.com/Carmel-Labs-Inc/toa) (`toa/0.1`) is a separate signed JSON format for tool delivery evidence (reach, invoke, functional, shape, and related layers). It is not a wire protocol and is not meant for every live `tools/call`.
 
-If CI already has a `toa.json` from any emitter, you can optionally fail the job when offline verify fails. Off by default. No AgentStatus account is required to verify.
+If CI already has a `toa.json` from AgentStatus (or another emitter whose key you pin), you can optionally fail the job when offline verify fails. Off by default. The example below requires `emitter.name=agentstatus` and uses the packaged AgentStatus key; pass `--public-key` for another issuer. No AgentStatus account is required to verify.
 
 ```yaml
       - name: Test MCP Server
