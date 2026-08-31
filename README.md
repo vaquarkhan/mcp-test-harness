@@ -824,6 +824,29 @@ Zero-config probe (no suite yet):
 
 Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v5.2.0` - see [examples/example_github_actions.md](examples/example_github_actions.md).
 
+### Optional: Tool Outcome Attestation (TOA) after harness CI
+
+The harness proves your MCP server with deterministic tests. [TOA](https://github.com/Carmel-Labs-Inc/toa) (`toa/0.1`) is a separate signed JSON format for tool delivery evidence (reach, invoke, functional, shape, and related layers). It is not a wire protocol and is not meant for every live `tools/call`.
+
+If CI already has a `toa.json` from any emitter, you can optionally fail the job when offline verify fails. Off by default. No AgentStatus account is required to verify.
+
+```yaml
+      - name: Test MCP Server
+        uses: vaquarkhan/mcp-test-harness@v5.2.0
+        with:
+          server-command: "python my_server.py"
+          test-directory: "tests/"
+
+      # Optional. Provide toa.json from your emit step or an artifact.
+      - name: Verify tool delivery attestation
+        if: hashFiles('toa.json') != ''
+        run: |
+          pip install "git+https://github.com/Carmel-Labs-Inc/toa.git@345f24607919b5bdf143719b9ea062543cdfe88e#subdirectory=python"
+          toa-verify toa.json --require-layer functional=pass
+```
+
+Copy-paste: [examples/example_toa_verify.md](examples/example_toa_verify.md). Pin the emitter public key with the flags documented in the toa repo when you need a specific signer.
+
 ## Plugins
 
 Extend MCP Test Harness with custom assertions, fixtures, reporters, and transports:

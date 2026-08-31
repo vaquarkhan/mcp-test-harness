@@ -38,3 +38,24 @@ That is **not** “publishing” in the marketing sense; it is **retaining** bui
 - **You do not need to publish test results** to users of your package.
 - You **do** want **reliable CI** (exit code + log); **JUnit/JSON/HTML** are **optional** quality-of-life for humans and merge gates.
 - For security-adjacent operations (audit, long-term evidence), the **harness** produces structured output; your **governance** decides where those files live — same idea as [MCP-Bastion’s](https://github.com/vaquarkhan/MCP-Bastion) supply-chain and observability docs, at a smaller scope for testing.
+
+## Optional: Tool Outcome Attestation (TOA) after the harness gate
+
+Harness exit codes and JUnit/SARIF cover **deterministic server tests**. [TOA](https://github.com/Carmel-Labs-Inc/toa) is adjacent **delivery evidence**: a signed `toa/0.1` JSON you can verify offline after the harness step when `toa.json` is present.
+
+This is not a harness plugin requirement and not a replacement for `mcp-test`. No AgentStatus account is required to verify.
+
+```yaml
+      - uses: vaquarkhan/mcp-test-harness@v5.2.0
+        with:
+          server-command: "python my_server.py"
+          test-directory: "tests/"
+
+      - name: Verify tool delivery attestation
+        if: hashFiles('toa.json') != ''
+        run: |
+          pip install "git+https://github.com/Carmel-Labs-Inc/toa.git@345f24607919b5bdf143719b9ea062543cdfe88e#subdirectory=python"
+          toa-verify toa.json --require-layer functional=pass
+```
+
+See [examples/example_toa_verify.md](../examples/example_toa_verify.md).
