@@ -1,5 +1,5 @@
 name: "MCP Test Harness"
-description: "Run MCP server tests and emit RFC-002 conformance level (badge-ready) for PR checks"
+description: "CI gate for MCP servers: run tests, conformance level, and SARIF on pull requests"
 author: "Vaquar Khan"
 
 branding:
@@ -28,7 +28,7 @@ inputs:
     required: false
     default: "json"
   harness-version:
-    description: "Version of mcp-test-harness to install (e.g. 5.1.0). Defaults to latest."
+    description: "Version of mcp-test-harness to install (e.g. 5.2.0). Defaults to latest."
     required: false
     default: "latest"
   sarif-output:

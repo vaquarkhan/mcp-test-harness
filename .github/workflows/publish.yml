@@ -3,7 +3,8 @@ name: publish
 on:
   push:
     tags:
-      - "v*"
+      # Full semver only. Floating major tags (v5) must not republish PyPI.
+      - "v*.*.*"
 
 permissions:
   contents: read

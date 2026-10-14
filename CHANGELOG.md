@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Changed
+
+- **GitHub Action pin:** document and ship floating major tag `v5` so workflows use `uses: vaquarkhan/mcp-test-harness@v5` (Marketplace listing already live). PyPI/GHCR publish only on full `v*.*.*` tags.
+
 ## [5.2.0] - 2026-08-16
 
 ### Added
