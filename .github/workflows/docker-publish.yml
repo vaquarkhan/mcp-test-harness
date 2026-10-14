@@ -5,7 +5,8 @@ name: docker-publish
 on:
   push:
     tags:
-      - "v*"
+      # Full semver only. Floating major tags (v5) must not rebuild GHCR.
+      - "v*.*.*"
 
 permissions:
   contents: read

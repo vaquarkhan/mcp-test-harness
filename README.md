@@ -787,7 +787,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test MCP Server
         id: mcp
-        uses: vaquarkhan/mcp-test-harness@v5.2.0
+        uses: vaquarkhan/mcp-test-harness@v5
         with:
           server-command: "python my_server.py"
           test-directory: "tests/"
@@ -798,7 +798,7 @@ jobs:
 Zero-config probe (no suite yet):
 
 ```yaml
-- uses: vaquarkhan/mcp-test-harness@v5.2.0
+- uses: vaquarkhan/mcp-test-harness@v5
   with:
     try-mode: "true"
     server-command: "uvx awslabs.roda-mcp-server@latest"
@@ -822,7 +822,7 @@ Zero-config probe (no suite yet):
 | `conformance-level` | RFC-002 level name (Boot … Resilient) |
 | `conformance-level-num` | Numeric level (-1 to 4) |
 
-Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v5.2.0` - see [examples/example_github_actions.md](examples/example_github_actions.md).
+Marketplace: [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness) (workflow search: **MCP Test Harness**). Pin the major tag `uses: vaquarkhan/mcp-test-harness@v5`, or an exact release `@v5.2.0`. Path form: `vaquarkhan/mcp-test-harness/.github/actions/mcp-test@v5` — see [examples/example_github_actions.md](examples/example_github_actions.md).
 
 ## Plugins
 

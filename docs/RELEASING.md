@@ -28,9 +28,14 @@ This repo publishes **two artifacts** from the same **Git tag** `vX.Y.Z`:
 4. **Tag and push** (from the commit you want to release):
 
    ```bash
-   git tag v1.0.1
-   git push origin v1.0.1
+   git tag v5.2.1
+   git push origin v5.2.1
+   # Floating major for Marketplace / workflow picker (does not republish PyPI):
+   git tag -f v5
+   git push origin v5 --force
    ```
+
+   PyPI and GHCR workflows listen only for full tags (`v*.*.*`). `v5` is the Action pin (`uses: vaquarkhan/mcp-test-harness@v5`). The Marketplace listing is [mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness); new releases stay listed when you check **Publish this Action to the GitHub Marketplace** on the release (2FA required). Do not create a `v1` tag — the action major is **5**.
 
 5. **Watch Actions** — [Actions](https://github.com/vaquarkhan/mcp-test-harness/actions): `publish` (main + **all 17 optional** wheels via matrix), `docker-publish` (GHCR `:X.Y.Z`, `:latest`, `:X.Y.Z-dev`, `:dev`) should succeed.
 6. **SBOM** — confirm CycloneDX artifacts (`bom.json` / `bom-docker.json`) uploaded on the release workflows (fail-safe; see [CRA_COMPLIANCE.md](CRA_COMPLIANCE.md)).
