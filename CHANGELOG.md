@@ -7,6 +7,7 @@ All notable changes to this project are documented in this file. The format is b
 ### Changed
 
 - **GitHub Action pin:** document and ship floating major tag `v5` so workflows use `uses: vaquarkhan/mcp-test-harness@v5` (Marketplace listing already live). PyPI/GHCR publish only on full `v*.*.*` tags.
+- **Provider version gate:** `test_version_aligned` follows the core package version (5.2.0) and covers langgraph, pydantic-ai, and openai-agents.
 
 ## [5.2.0] - 2026-08-16
 

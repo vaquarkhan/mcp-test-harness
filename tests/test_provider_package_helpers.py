@@ -9,7 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from mcp_test_harness import MCPAssertionError
+from mcp_test_harness import MCPAssertionError, __version__ as CORE_VERSION
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = ROOT / "packages"
@@ -39,6 +39,9 @@ ALL_PROVIDERS: list[tuple[str, str | None, tuple[str, ...]]] = [
     ("litellm", "mcp_tools_to_litellm_functions", ("type", "function")),
     ("xai", "mcp_tools_to_xai_functions", ("type", "function")),
     ("autogen", "mcp_tools_to_autogen_functions", ("name", "parameters")),
+    ("langgraph", "mcp_tools_to_langgraph_tools", ("name", "args_schema")),
+    ("pydantic-ai", "mcp_tools_to_pydantic_ai_functions", ("name", "parameters")),
+    ("openai-agents", "mcp_tools_to_openai_agents_functions", ("type", "function")),
 ]
 
 SAMPLE_TOOL_DICT = {
@@ -97,7 +100,7 @@ def test_all_provider_package_dirs_exist():
 
 def test_version_aligned(provider_slug: str):
     mod = _load_package(provider_slug)
-    assert mod.__version__ == "5.0.0"
+    assert mod.__version__ == CORE_VERSION
 
 
 @pytest.mark.parametrize("slug,convert_attr,expected_keys", ALL_PROVIDERS)
