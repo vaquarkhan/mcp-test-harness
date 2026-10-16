@@ -13,7 +13,7 @@
 <body class="docs-body" data-docs-page="security">
 <a class="skip-link" href="#content">Skip to content</a>
 <header class="docs-header">
-  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">5.2.0</span></a>
+  <a class="docs-brand" href="index.html"><span class="docs-mark">MT</span><span>MCP Test Harness</span><span class="docs-ver">5.3.0</span></a>
   <nav class="docs-topnav" aria-label="Docs top">
     <a href="index.html" class="active">Docs</a>
     <a href="../integrations.html">Integrations</a>
@@ -98,7 +98,11 @@ agents_md_gate:
       <li><code>assert_audit_chain_intact</code> — hash-linked audit chain</li>
       <li><code>assert_agents_md_clean</code> — hidden Unicode in <code>AGENTS.md</code> / agent rules</li>
       <li><code>assert_control_engages_under_load</code> / <code>assert_no_fail_open_under_load</code> / <code>assert_fairness_under_load</code></li>
-      <li><code>assert_schema_preconditions_clean</code> / <code>assert_capacity_enforced</code> / <code>assert_untrusted_context_quarantined</code></li>
+      <li><code>assert_schema_preconditions_clean</code> / <code>assert_schema_bounds_clean</code> / <code>assert_schema_bounds_enforced</code></li>
+      <li><code>assert_tool_definitions_clean</code> — hidden Unicode, instruction-override text, destructive read-only hints</li>
+      <li><code>assert_unsafe_url_fetch_blocked</code> — URL scheme, userinfo, and literal non-public addresses (no DNS)</li>
+      <li><code>assert_idempotency_key</code> — replay one result; reject a changed payload under the same key</li>
+      <li><code>assert_remote_requires_auth</code> — Streamable HTTP initialize without credentials must fail closed</li>
     </ul>
 <pre class="docs-pre">from mcp_test_harness import (
     marker,
@@ -130,7 +134,7 @@ mcp-test --report-format html --report-output report.html</pre>
     <p>Canonical guide: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/SECURITY_TESTING.md">SECURITY_TESTING.md</a> ·
     Cyber suites: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/CYBER_SECURITY_SUITES.md">CYBER_SECURITY_SUITES.md</a> ·
     Tutorial: <a href="https://github.com/vaquarkhan/mcp-test-harness/blob/main/docs/TUTORIAL.md">TUTORIAL.md</a></p>
-    <footer class="docs-footer">MCP Test Harness 5.2.0 · <a href="reports.html">Next: Reports</a> · <a href="handbook.html">Handbook</a></footer>
+    <footer class="docs-footer">MCP Test Harness 5.3.0 · <a href="reports.html">Next: Reports</a> · <a href="handbook.html">Handbook</a></footer>
   </main>
 </div>
 <script src="assets/docs.js"></script>

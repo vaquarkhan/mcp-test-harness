@@ -126,6 +126,10 @@ Tag tests `@marker(tags=["security"])` and use:
 - `assert_agents_md_clean` / `mcp-test scan-agents` / opt-in `agents_md_gate:` — hidden Unicode in agent instruction files (defensive CI; not exploit generation)
 - `assert_general_exec_tools_absent` — capability-reduction config conformance
 - `assert_tool_denied`, `assert_authorization_boundary` — auth boundaries
+- `assert_tool_definitions_clean` — hidden Unicode, instruction-override text, destructive tools marked read-only
+- `assert_unsafe_url_fetch_blocked` — unsafe fetch URLs (no DNS)
+- `assert_idempotency_key` — same key, changed payload must error
+- `assert_remote_requires_auth` — remote `initialize` without credentials must fail closed
 
 See [SECURITY_TESTING.md](SECURITY_TESTING.md).
 

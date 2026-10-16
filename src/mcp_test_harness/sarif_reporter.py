@@ -44,6 +44,7 @@ def _rule_descriptor(rule: SecurityRule, index: int) -> dict[str, Any]:
             "framework": rule.framework,
             "owasp_id": rule.owasp_id,
             "tags": ["security", rule.framework.lower()],
+            **({"mcpstg_ids": list(rule.mcpstg_ids)} if rule.mcpstg_ids else {}),
         },
     }
 
@@ -71,6 +72,7 @@ def _result_for_case(tr: CaseResult, rule_index: dict[str, int]) -> dict[str, An
             "owasp_id": rule.owasp_id,
             "framework": rule.framework,
             "duration_ms": tr.duration_ms,
+            **({"mcpstg_ids": list(rule.mcpstg_ids)} if rule.mcpstg_ids else {}),
         },
     }
 

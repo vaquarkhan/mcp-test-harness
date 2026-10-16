@@ -20,6 +20,7 @@ Python ≥3.10, `src/mcp_test_harness/`, hatchling, pytest asyncio auto, `fail_u
 | Audit-chain verifier | `audit_chain.py`, `mcp-test audit verify` |
 | Load resilience (deny-codes, control engage, no-fail-open, fairness, SLO) | `load_resilience.py` (+ existing `assert_throughput` / `assert_load_phases`) |
 | Schema RCE-precondition rules | `schema_rules.py` |
+| MCPSTG server gates (tool hygiene, URL policy, idempotency key, remote auth, schema bounds) | `tool_hygiene.py`, `url_policy.py`, `remote_auth.py`, `assertions.py`, `schema_rules.py` |
 | Confused-deputy / scope / pre-tool-hook | `authz_conformance.py` |
 | Assurance evidence / metrics / OSCAL assessment-results | `evidence.py`, `metrics.py`, `oscal.py` |
 | Trust-boundary + launch-gate reports | `assurance_reports.py` |
@@ -50,10 +51,14 @@ from mcp_test_harness import (
     assert_capacity_enforced,
     assert_control_engages_under_load,
     assert_schema_preconditions_clean,
+    assert_tool_definitions_clean,
+    assert_unsafe_url_fetch_blocked,
+    assert_idempotency_key,
+    assert_remote_requires_auth,
     assert_untrusted_context_quarantined,
 )
 ```
 
 Nightly only: `run_adaptive_trend`, `assert_detection_rate` under `@marker(tags=["adaptive"])` / `semantic_live`.
 
-*Document version: 2026-08-16 · Product 5.2.0*
+*Document version: 2026-10-15 · Product 5.3.0*

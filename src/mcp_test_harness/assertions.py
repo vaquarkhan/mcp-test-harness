@@ -832,6 +832,49 @@ async def assert_tool_idempotent(
     record_tool_call(session, tool_name)
 
 
+async def assert_idempotency_key(
+    session: Any,
+    tool_name: str,
+    arguments: dict[str, Any],
+    changed_arguments: dict[str, Any],
+    *,
+    key: str,
+    key_field: str = "idempotency_key",
+) -> None:
+    """Same key must replay one result. The same key with a different payload must error.
+
+    MCPSTG-ABUS-02 / MCPSTG-AGNT-05. ``assert_tool_idempotent`` only checks
+    repeated identical arguments. This checks the key contract.
+    """
+    if arguments == changed_arguments:
+        raise ValueError("changed_arguments must differ from arguments")
+    first_args = {**arguments, key_field: key}
+    conflict_args = {**changed_arguments, key_field: key}
+    first = await session.call_tool(tool_name, first_args)
+    if _result_is_error(first):
+        raise MCPAssertionError(
+            f"Tool '{tool_name}' failed the first idempotency-key call"
+        )
+    replay = await session.call_tool(tool_name, dict(first_args))
+    if _result_is_error(replay):
+        raise MCPAssertionError(
+            f"Tool '{tool_name}' failed a replay of idempotency key {key!r}"
+        )
+    first_body = _serialize(getattr(first, "content", None) or first)
+    replay_body = _serialize(getattr(replay, "content", None) or replay)
+    if first_body != replay_body:
+        raise MCPAssertionError(
+            f"Tool '{tool_name}' returned a different result for idempotency key {key!r}",
+            diff=_diff_values(first_body, replay_body),
+        )
+    conflict = await session.call_tool(tool_name, conflict_args)
+    record_tool_call(session, tool_name)
+    if not _result_is_error(conflict):
+        raise MCPAssertionError(
+            f"Tool '{tool_name}' accepted a different payload under idempotency key {key!r}"
+        )
+
+
 # ---------------------------------------------------------------------------
 # assert_latency
 # ---------------------------------------------------------------------------
