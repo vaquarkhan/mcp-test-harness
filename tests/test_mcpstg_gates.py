@@ -242,7 +242,7 @@ def test_mcpstg_rule_ids_reach_sarif() -> None:
         total_duration_ms=1.0,
         server_capabilities={},
         protocol_version="2025-03-26",
-        harness_version="5.2.0",
+        harness_version="5.3.0",
         passed=0,
         failed=1,
         errored=0,

@@ -4,6 +4,8 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [5.3.0] - 2026-10-15
+
 ### Added
 
 - **MCPSTG server gates (deterministic, no model in the loop):** `assert_tool_definitions_clean` (hidden Unicode, instruction-override text, destructive tools marked read-only); `assert_unsafe_url_fetch_blocked` / `classify_fetch_url` (scheme, userinfo, and literal non-public addresses — no DNS); `assert_idempotency_key` (replay matches, changed payload under the same key must error); `assert_remote_requires_auth` (Streamable HTTP `initialize` without credentials must fail closed); `assert_schema_bounds_clean` / `assert_schema_bounds_enforced` (open `additionalProperties`, unknown fields, over-long strings, wrong types). Findings carry OWASP MCP Security Testing Guide IDs (`MCPSTG-*`) in JSON and SARIF. See [docs/SECURITY_TESTING.md](docs/SECURITY_TESTING.md).
@@ -11,7 +13,7 @@ All notable changes to this project are documented in this file. The format is b
 ### Changed
 
 - **GitHub Action pin:** document and ship floating major tag `v5` so workflows use `uses: vaquarkhan/mcp-test-harness@v5` (Marketplace listing already live). PyPI/GHCR publish only on full `v*.*.*` tags.
-- **Provider version gate:** `test_version_aligned` follows the core package version (5.2.0) and covers langgraph, pydantic-ai, and openai-agents.
+- **Provider packages** aligned to **5.3.0** (`mcp-test-harness>=5.3.0`). `test_version_aligned` follows the core package version.
 
 ## [5.2.0] - 2026-08-16
 

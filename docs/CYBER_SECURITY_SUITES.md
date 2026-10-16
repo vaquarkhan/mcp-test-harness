@@ -61,4 +61,4 @@ from mcp_test_harness import (
 
 Nightly only: `run_adaptive_trend`, `assert_detection_rate` under `@marker(tags=["adaptive"])` / `semantic_live`.
 
-*Document version: 2026-10-15 · Product 5.2.0 (MCPSTG gates unreleased)*
+*Document version: 2026-10-15 · Product 5.3.0*
