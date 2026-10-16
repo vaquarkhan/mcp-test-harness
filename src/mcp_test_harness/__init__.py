@@ -30,6 +30,7 @@ __all__ = [
     "assert_fairness_under_load",
     "assert_false_positive_rate",
     "assert_general_exec_tools_absent",
+    "assert_idempotency_key",
     "assert_injection_blocked",
     "assert_invalid_tool",
     "assert_latency",
@@ -48,8 +49,11 @@ __all__ = [
     "assert_prompt",
     "assert_protocol_version",
     "assert_reconnects",
+    "assert_remote_requires_auth",
     "assert_resource_list",
     "assert_resource_read",
+    "assert_schema_bounds_clean",
+    "assert_schema_bounds_enforced",
     "assert_schema_preconditions_clean",
     "assert_signed_media_exempt",
     "assert_snapshot",
@@ -61,6 +65,7 @@ __all__ = [
     "assert_tool_call",
     "assert_tool_call_validates_input",
     "assert_tool_denied",
+    "assert_tool_definitions_clean",
     "assert_tool_idempotent",
     "assert_tool_list",
     "assert_tool_rejects",
@@ -69,9 +74,11 @@ __all__ = [
     "assert_unattested_server_denied",
     "assert_untrusted_context_quarantined",
     "assert_unsigned_media_suspect",
+    "assert_unsafe_url_fetch_blocked",
     "assert_url_exfil_bounded",
     "build_assessment_results",
     "capture_server_manifest",
+    "classify_fetch_url",
     "coverage_to_dict",
     "marker",
     "run_adaptive_trend",
@@ -99,6 +106,7 @@ from mcp_test_harness.assertions import (
     assert_tool_call_validates_input,
     assert_tool_denied,
     assert_tool_idempotent,
+    assert_idempotency_key,
     assert_tool_list,
     assert_tool_rejects,
     assert_tool_schema,
@@ -154,7 +162,12 @@ from mcp_test_harness.resiliency import (
     assert_reconnects,
     assert_survives_crash,
 )
-from mcp_test_harness.schema_rules import assert_schema_preconditions_clean
+from mcp_test_harness.remote_auth import assert_remote_requires_auth
+from mcp_test_harness.schema_rules import (
+    assert_schema_bounds_clean,
+    assert_schema_bounds_enforced,
+    assert_schema_preconditions_clean,
+)
 from mcp_test_harness.security_payloads import (
     assert_covert_channel_neutralized,
     assert_egress_allowed,
@@ -175,3 +188,5 @@ from mcp_test_harness.suite_d import (
     assert_cross_tenant_read_denied,
     assert_untrusted_context_quarantined,
 )
+from mcp_test_harness.tool_hygiene import assert_tool_definitions_clean
+from mcp_test_harness.url_policy import assert_unsafe_url_fetch_blocked, classify_fetch_url

@@ -31,6 +31,7 @@ class SecurityRule:
     aisvs_id: str = ""
     atlas_id: str = ""
     asi_id: str = ""
+    mcpstg_ids: tuple[str, ...] = ()
 
 
 RULES: dict[str, SecurityRule] = {
@@ -225,6 +226,51 @@ RULES: dict[str, SecurityRule] = {
         aisvs_id="C5",
         asi_id="ASI05",
     ),
+    "tool-definition-hygiene": SecurityRule(
+        rule_id="tool-definition-hygiene",
+        name="Tool and Prompt Definition Hygiene",
+        framework="OWASP-MCP",
+        owasp_id="MCP03",
+        severity="high",
+        help_uri="https://github.com/OWASP/MCP-Security-Testing-Guide/",
+        mcpstg_ids=("MCPSTG-TOOL-01", "MCPSTG-PRMT-03", "MCPSTG-PRMT-04", "MCPSTG-PRMT-05"),
+    ),
+    "ssrf-url-policy": SecurityRule(
+        rule_id="ssrf-url-policy",
+        name="Unsafe URL Fetch Policy",
+        framework="OWASP-MCP",
+        owasp_id="MCP05",
+        severity="high",
+        help_uri="https://github.com/OWASP/MCP-Security-Testing-Guide/",
+        mcpstg_ids=("MCPSTG-GW-02",),
+    ),
+    "idempotency-key": SecurityRule(
+        rule_id="idempotency-key",
+        name="Idempotency Key Contract",
+        framework="OWASP-MCP",
+        owasp_id="LLM10",
+        severity="high",
+        help_uri="https://github.com/OWASP/MCP-Security-Testing-Guide/",
+        mcpstg_ids=("MCPSTG-ABUS-02", "MCPSTG-AGNT-05"),
+    ),
+    "remote-auth-required": SecurityRule(
+        rule_id="remote-auth-required",
+        name="Remote Initialize Requires Authentication",
+        framework="OWASP-MCP",
+        owasp_id="MCP07",
+        severity="critical",
+        help_uri="https://github.com/OWASP/MCP-Security-Testing-Guide/",
+        mcpstg_ids=("MCPSTG-AUTHN-01",),
+    ),
+    "schema-bounds": SecurityRule(
+        rule_id="schema-bounds",
+        name="Schema Bounds (unknown fields and length)",
+        framework="OWASP-MCP",
+        owasp_id="MCP05",
+        severity="medium",
+        help_uri="https://github.com/OWASP/MCP-Security-Testing-Guide/",
+        mcpstg_ids=("MCPSTG-INPV-01",),
+    ),
 }
 
 _TAG_TO_RULE: dict[str, str] = {
@@ -257,6 +303,11 @@ _TAG_TO_RULE: dict[str, str] = {
     "cross-agent": "cross-agent-quarantine",
     "load-resilience": "load-resilience-control",
     "schema-precondition": "schema-rce-precondition",
+    "tool-hygiene": "tool-definition-hygiene",
+    "ssrf": "ssrf-url-policy",
+    "idempotency": "idempotency-key",
+    "remote-auth": "remote-auth-required",
+    "schema-bounds": "schema-bounds",
 }
 
 _ERROR_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
@@ -277,6 +328,11 @@ _ERROR_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"cross-tenant|context not evicted|untrusted context", re.I), "cross-agent-quarantine"),
     (re.compile(r"fail-open|deny code|RATE_LIMITED|LOAD_SHED", re.I), "load-resilience-control"),
     (re.compile(r"unbounded-string|missing-input-schema|destructive-without", re.I), "schema-rce-precondition"),
+    (re.compile(r"tool definition hygiene|instruction-override|readOnlyHint", re.I), "tool-definition-hygiene"),
+    (re.compile(r"unsafe url fetch|non-public-address|disallowed-scheme", re.I), "ssrf-url-policy"),
+    (re.compile(r"idempotency key", re.I), "idempotency-key"),
+    (re.compile(r"unauthenticated initialize", re.I), "remote-auth-required"),
+    (re.compile(r"schema bounds|additional-properties-open", re.I), "schema-bounds"),
 )
 
 _SECURITY_TAGS = frozenset({"security", "sec"})
@@ -336,6 +392,7 @@ def build_security_findings(results: SessionResults) -> list[dict[str, Any]]:
                     "owasp_id": rule.owasp_id,
                     "severity": rule.severity,
                     "help_uri": rule.help_uri,
+                    "mcpstg_ids": list(rule.mcpstg_ids),
                 },
             }
         )

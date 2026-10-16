@@ -32,6 +32,11 @@ Tag tests with `@marker(tags=["security"])`:
 | `assert_capacity_enforced` / media asserts | Suite B remainder: per-sink budget + known-carrier unsigned/signed media |
 | `assert_control_engages_under_load` / `assert_no_fail_open_under_load` | Load resilience: deny-code engagement, no fail-open |
 | `assert_schema_preconditions_clean` | Structural RCE-precondition rules over `tools/list` schemas |
+| `assert_schema_bounds_clean` / `assert_schema_bounds_enforced` | Unknown fields, over-long strings, wrong types, open `additionalProperties` (MCPSTG-INPV-01) |
+| `assert_tool_definitions_clean` | Hidden Unicode, instruction-override text, and read-only hints on destructive tools (MCPSTG-TOOL-01, PRMT-03/04/05) |
+| `assert_unsafe_url_fetch_blocked` | Unsafe fetch URLs must error. `classify_fetch_url` does not resolve DNS (MCPSTG-GW-02) |
+| `assert_idempotency_key` | Same key replays one result; a changed payload under that key must error (MCPSTG-ABUS-02, AGNT-05) |
+| `assert_remote_requires_auth` | Streamable HTTP `initialize` with no credentials must fail closed (MCPSTG-AUTHN-01) |
 | `assert_untrusted_context_quarantined` / cross-tenant | Suite D deterministic provenance |
 
 Full suite map: [CYBER_SECURITY_SUITES.md](CYBER_SECURITY_SUITES.md).
