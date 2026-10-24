@@ -60,7 +60,7 @@ def title_slide(path: Path, kicker: str, title: str, bullets: list[str], theme: 
     im = Image.new("RGB", (W, H), bg)
     draw = ImageDraw.Draw(im)
     draw.rectangle([0, 0, 18, H], fill=accent)
-    draw.text((72, 64), "MCP Test Harness  ·  v5.3.0", fill=(148, 163, 184), font=_font(36))
+    draw.text((72, 64), "MCP Test Harness  ·  v5.3.1", fill=(148, 163, 184), font=_font(36))
     draw.text((72, 140), kicker.upper(), fill=accent, font=_font(42))
     draw.text((72, 220), title, fill=(248, 250, 252), font=_font(72))
     y = 360
@@ -308,7 +308,7 @@ def main() -> None:
             kicker="Get started",
             title="pip install · mcp-test · gate",
             bullets=[
-                "pip install mcp-test-harness==5.3.0",
+                "pip install mcp-test-harness==5.3.1",
                 "vaquarkhan.github.io/mcp-test-harness",
                 "MIT · Sister runtime: MCP-Bastion",
             ],

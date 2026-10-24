@@ -47,6 +47,6 @@ jobs:
 
 **Source of truth:** root [`action.yml`](../action.yml) (Marketplace / `owner/repo@tag`) and mirror [`.github/actions/mcp-test/action.yml`](../.github/actions/mcp-test/action.yml) (`owner/repo/.github/actions/mcp-test@tag`).
 
-**Marketplace:** listed at [github.com/marketplace/actions/mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). In a workflow file, search **MCP Test Harness**. Pin `@v5` (moves with 5.x) or an exact tag such as `@v5.3.0`.
+**Marketplace:** listed at [github.com/marketplace/actions/mcp-test-harness](https://github.com/marketplace/actions/mcp-test-harness). In a workflow file, search **MCP Test Harness**. Pin `@v5` (moves with 5.x) or an exact tag such as `@v5.3.1`.
 
 **Related:** [CI_AND_REPORTS.md](../docs/CI_AND_REPORTS.md) · [RFC-002](../docs/design/RFC-002-conformance-levels.md) · [mcp_test_report_junit.yaml](mcp_test_report_junit.yaml)

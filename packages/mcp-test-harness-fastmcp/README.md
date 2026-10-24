@@ -32,4 +32,4 @@ async def test_config(mcp_server):
 
 ## License
 
-Non-commercial use only with mandatory attribution. See [LICENSE](https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE).
+MIT. See [LICENSE](https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE).

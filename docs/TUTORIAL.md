@@ -509,7 +509,7 @@ Nightly (not PR-gated) markers reserved for later phases: `semantic_live`, `adap
 
 ## License
 
-Non-commercial use with mandatory attribution.
+MIT.
 See [LICENSE](../LICENSE) for full terms. You may use [CITATION.cff](../CITATION.cff) to cite the project in papers or public write-ups (optional).
 
 Attribution: Vaquar Khan -- https://github.com/vaquarkhan

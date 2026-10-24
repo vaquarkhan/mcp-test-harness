@@ -35,4 +35,4 @@ cfg = create_mistral_test_config("python server.py", timeout=45)
 
 ## License
 
-Non-commercial use only with mandatory attribution. See [LICENSE](https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE).
+MIT. See [LICENSE](https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE).

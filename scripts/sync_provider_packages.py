@@ -8,6 +8,7 @@ Run from repo root:
 from __future__ import annotations
 
 import argparse
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -494,7 +495,7 @@ This automatically installs `mcp-test-harness` as a dependency.
 
 ## License
 
-Non-commercial use only with mandatory attribution. See [LICENSE](https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE).
+MIT. See [LICENSE](https://github.com/vaquarkhan/mcp-test-harness/blob/main/LICENSE).
 '''
 
 
@@ -511,12 +512,13 @@ version = "{version}"
 description = "{short} testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {{text = "Non-commercial use only with mandatory attribution"}}
+license = "MIT"
 authors = [{{name = "Vaquar Khan", email = "vaquarkhan@gmail.com"}}]
 keywords = ["mcp", "{slug}", "testing", "mcp-test-harness"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Topic :: Software Development :: Testing",
 ]
@@ -530,6 +532,9 @@ Repository = "https://github.com/vaquarkhan/mcp-test-harness"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/{mod}"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"LICENSE" = "LICENSE"
 '''
 
 
@@ -543,6 +548,7 @@ def write_package(slug: str, title: str, short: str, kind: str, version: str) ->
     (src / "__init__.py").write_text(init_source(slug, title, kind, version), encoding="utf-8")
     (base / "README.md").write_text(readme_source(slug, title, short, kind), encoding="utf-8")
     (base / "pyproject.toml").write_text(pyproject_source(slug, title, short, version), encoding="utf-8")
+    shutil.copyfile(ROOT / "LICENSE", base / "LICENSE")
     print(f"wrote {pkg}")
 
 
