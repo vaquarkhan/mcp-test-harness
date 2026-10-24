@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "5.3.0"
+__version__ = "5.3.1"
 
 from mcp_test_harness_openai_agents.helpers import (
     assert_openai_agents_tool,

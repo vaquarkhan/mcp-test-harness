@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [5.3.1] - 2026-10-24
+
+### Changed
+
+- **Provider packages are MIT.** All `mcp-test-harness-*` wheels use the SPDX `MIT` license, the OSI MIT classifier, and ship the repository `LICENSE` file. This matches the core package so commercial dependency review can accept the shims.
+
 ## [5.3.0] - 2026-10-15
 
 ### Added

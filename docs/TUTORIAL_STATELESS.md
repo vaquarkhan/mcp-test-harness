@@ -165,6 +165,6 @@ Example GitHub Actions job sketch:
 
 ## License
 
-Non-commercial use with mandatory attribution. See [LICENSE](../LICENSE).
+MIT. See [LICENSE](../LICENSE).
 
 Attribution: Vaquar Khan — https://github.com/vaquarkhan

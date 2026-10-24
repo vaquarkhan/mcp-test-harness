@@ -52,4 +52,4 @@ mcp-test --report-format html --report-output report.html \
 ```
 
 ### Outro
-`pip install mcp-test-harness==5.3.0` → `mcp-test init` → gate every merge.
+`pip install mcp-test-harness==5.3.1` → `mcp-test init` → gate every merge.

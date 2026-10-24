@@ -4,21 +4,22 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-harness-llamaindex"
-version = "5.3.0"
+version = "5.3.1"
 description = "LlamaIndex tools testing helpers for MCP Test Harness"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "Non-commercial use only with mandatory attribution"}
+license = "MIT"
 authors = [{name = "Vaquar Khan", email = "vaquarkhan@gmail.com"}]
 keywords = ["mcp", "llamaindex", "testing", "mcp-test-harness"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Topic :: Software Development :: Testing",
 ]
 dependencies = [
-  "mcp-test-harness>=5.3.0",
+  "mcp-test-harness>=5.3.1",
 ]
 
 [project.urls]
@@ -27,3 +28,6 @@ Repository = "https://github.com/vaquarkhan/mcp-test-harness"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mcp_test_harness_llamaindex"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"LICENSE" = "LICENSE"
